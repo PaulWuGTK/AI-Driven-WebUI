@@ -1,38 +1,42 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { WlanStatusResponse } from '../../types/wlan';
+import { getMockWlanStatus } from '../../services/mockApi';
+import WlanBandInfo from '../../components/status/WlanBandInfo.vue';
+import WlanInterfaceTable from '../../components/status/WlanInterfaceTable.vue';
 
 const { t } = useI18n();
+const wlanData = ref<WlanStatusResponse | null>(null);
+
+const fetchWlanStatus = async () => {
+  try {
+    // In production, this would be a real API call
+    // const response = await fetch('/API/info?list=StatusWlan');
+    // wlanData.value = await response.json();
+    
+    // Using mock data for development
+    wlanData.value = getMockWlanStatus();
+  } catch (error) {
+    console.error('Error fetching WLAN status:', error);
+  }
+};
+
+onMounted(() => {
+  fetchWlanStatus();
+});
 </script>
 
 <template>
   <div class="wlan-status">
     <h1 class="page-title">{{ t('wlan.title') }}</h1>
-    <div class="content-box">
-      <p>Wireless Network Configuration</p>
-      <table>
-        <thead>
-          <tr>
-            <th>SSID</th>
-            <th>Band</th>
-            <th>Channel</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Network_2.4G</td>
-            <td>2.4 GHz</td>
-            <td>6</td>
-            <td>Active</td>
-          </tr>
-          <tr>
-            <td>Network_5G</td>
-            <td>5 GHz</td>
-            <td>36</td>
-            <td>Active</td>
-          </tr>
-        </tbody>
-      </table>
+    
+    <div v-if="wlanData" class="wlan-bands">
+      <div v-for="band in wlanData.StatusWlan" :key="band.Band" class="band-section">
+        <h2 class="band-title">WiFi {{ band.Band }}</h2>
+        <WlanBandInfo :band="band" />
+        <WlanInterfaceTable :interfaces="band.Interface" />
+      </div>
     </div>
   </div>
 </template>
@@ -55,39 +59,25 @@ const { t } = useI18n();
   border-bottom: 1px solid #e0e0e0;
 }
 
-.content-box {
-  background-color: white;
-  border-radius: 4px;
+.wlan-bands {
   padding: 1.5rem;
-  margin-top: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-h2 {
+.band-section {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.band-title {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
   color: #333;
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-th {
-  background-color: #f9f9f9;
-  font-weight: 500;
-  color: #666;
-}
-
-td {
-  color: #333;
+  margin: 0;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
 }
 </style>
