@@ -44,7 +44,22 @@ const messages = {
       status: 'Status'
     },
     wlan: {
-      title: 'WLAN Status'
+      title: 'WLAN Status',
+      channel: 'Channel',
+      bandwidth: 'Bandwidth',
+      macAddress: 'MAC Address',
+      interface: 'Interface',
+      name: 'Name',
+      alias: 'Alias',
+      status: 'Status',
+      ssid: 'SSID',
+      authentication: 'Authentication',
+      encryption: 'Encryption',
+      password: 'Password',
+      bssid: 'BSSID',
+      auto: '(auto)',
+      enable: 'Enable',
+      disable: 'Disable'
     }
   },
   ja: {

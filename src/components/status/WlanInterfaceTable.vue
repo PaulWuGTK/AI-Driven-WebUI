@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { WlanInterface } from '../../types/wlan';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 defineProps<{
   interfaces: WlanInterface[];
 }>();
@@ -8,25 +10,25 @@ defineProps<{
 
 <template>
   <div class="interface-section">
-    <h3 class="section-title">Interface</h3>
+    <h3 class="section-title">{{ t('wlan.interface') }}</h3>
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Alias</th>
-          <th>Status</th>
-          <th>SSID</th>
-          <th>Authentication</th>
-          <th>Encryption</th>
-          <th>Password</th>
-          <th>BSSID</th>
+          <th>{{ t('wlan.name') }}</th>
+          <th>{{ t('wlan.alias') }}</th>
+          <th>{{ t('wlan.status') }}</th>
+          <th>{{ t('wlan.ssid') }}</th>
+          <th>{{ t('wlan.authentication') }}</th>
+          <th>{{ t('wlan.encryption') }}</th>
+          <th>{{ t('wlan.password') }}</th>
+          <th>{{ t('wlan.bssid') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="iface in interfaces" :key="iface.Name">
           <td>{{ iface.Name }}</td>
           <td>{{ iface.Alias }}</td>
-          <td>{{ iface.Enable ? 'Enable' : 'Disable' }}</td>
+          <td>{{ iface.Enable ? t('wlan.enable') : t('wlan.disable') }}</td>
           <td>{{ iface.SSID }}</td>
           <td>{{ iface.Authentication }}</td>
           <td>{{ iface.Encryption }}</td>

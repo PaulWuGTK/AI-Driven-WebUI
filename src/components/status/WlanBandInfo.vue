@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { WlanBand } from '../../types/wlan';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 defineProps<{
   band: WlanBand;
 }>();
@@ -10,15 +12,15 @@ defineProps<{
   <div class="band-info">
     <div class="info-grid">
       <div class="info-row">
-        <span class="label">Channel</span>
-        <span class="value">{{ band.Channel }}{{ band.AutoChannel ? ' (auto)' : '' }}</span>
+        <span class="label">{{ t('wlan.channel') }}</span>
+        <span class="value">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
       </div>
       <div class="info-row">
-        <span class="label">Bandwidth</span>
+        <span class="label">{{ t('wlan.bandwidth') }}</span>
         <span class="value">{{ band.Bandwidth }}</span>
       </div>
       <div class="info-row">
-        <span class="label">MAC Address</span>
+        <span class="label">{{ t('wlan.macAddress') }}</span>
         <span class="value">{{ band.MACAddress }}</span>
       </div>
     </div>
