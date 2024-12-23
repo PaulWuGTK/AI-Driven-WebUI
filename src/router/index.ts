@@ -9,6 +9,7 @@ import LcmStatus from '../views/status/LcmStatus.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Settings from '../views/Settings.vue';
 import Management from '../views/Management.vue';
+import NtpSettings from '../views/management/NtpSettings.vue';
 import Login from '../views/Login.vue';
 
 // Auth guard
@@ -81,6 +82,11 @@ const router = createRouter({
     {
       path: '/management',
       component: Management,
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/ntp',
+      component: NtpSettings,
       beforeEnter: requireAuth
     }
   ]

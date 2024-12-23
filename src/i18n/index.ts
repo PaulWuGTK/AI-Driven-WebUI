@@ -13,7 +13,9 @@ const messages = {
       meshInfo: 'Mesh Information',
       lcm: 'LCM',
       basicSetting: 'Basic Setting',
-      management: 'Management'
+      management: 'Management',
+      ntp: 'NTP',
+      ssh: 'SSH'
     },
     header: {
       account: 'Account',
@@ -60,6 +62,31 @@ const messages = {
       auto: '(auto)',
       enable: 'Enable',
       disable: 'Disable'
+    },
+    statistics: {
+      title: 'Statistics',
+      ethernet: 'Statistics - Ethernet',
+      wlan: 'Statistics - WLAN',
+      port: 'Port',
+      rxBytes: 'RxBytes',
+      rxPackets: 'RxPackets',
+      rxError: 'RxError',
+      rxDiscard: 'RxDiscard',
+      txBytes: 'TxBytes',
+      txPackets: 'TxPackets',
+      txError: 'TxError',
+      txDiscard: 'TxDiscard'
+    },
+    ntp: {
+      title: 'NTP',
+      currentTime: 'Current Time',
+      timeZoneSelect: 'Time Zone Select',
+      automaticDaylight: 'Automatically Adjust for Daylight Saving',
+      enableNtp: 'Enable NTP client Update',
+      ntpServer: 'NTP server',
+      cancel: 'Cancel',
+      apply: 'Apply',
+      placeholder: 'Please Enter the value'
     }
   },
   ja: {
@@ -74,7 +101,9 @@ const messages = {
       meshInfo: 'メッシュ情報',
       lcm: 'LCM',
       basicSetting: '基本設定',
-      management: '管理'
+      management: '管理',
+      ntp: 'NTP',
+      ssh: 'SSH'
     },
     header: {
       account: 'アカウント',
@@ -121,6 +150,31 @@ const messages = {
       auto: '(自動)',
       enable: '有効',
       disable: '無効'
+    },
+    statistics: {
+      title: '統計情報',
+      ethernet: '統計情報 - イーサネット',
+      wlan: '統計情報 - 無線LAN',
+      port: 'ポート',
+      rxBytes: '受信バイト',
+      rxPackets: '受信パケット',
+      rxError: '受信エラー',
+      rxDiscard: '受信破棄',
+      txBytes: '送信バイト',
+      txPackets: '送信パケット',
+      txError: '送信エラー',
+      txDiscard: '送信破棄'
+    },
+    ntp: {
+      title: 'NTP',
+      currentTime: '現在時刻',
+      timeZoneSelect: 'タイムゾーン選択',
+      automaticDaylight: '夏時間を自動調整',
+      enableNtp: 'NTPクライアント更新を有効にする',
+      ntpServer: 'NTPサーバー',
+      cancel: 'キャンセル',
+      apply: '適用',
+      placeholder: '値を入力してください'
     }
   }
 };

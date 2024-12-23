@@ -25,7 +25,15 @@ const menuItems = [
     ]
   },
   { name: 'Basic Setting', icon: '⚙️', path: '/settings', translationKey: 'menu.basicSetting' },
-  { name: 'Management', icon: '🔧', path: '/management', translationKey: 'menu.management' }
+  { 
+    name: 'Management', 
+    icon: '🔧', 
+    translationKey: 'menu.management',
+    subItems: [
+      { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
+      { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' }
+    ]
+  }
 ];
 
 const handleMenuClick = (menuName: string, path?: string) => {
@@ -33,7 +41,7 @@ const handleMenuClick = (menuName: string, path?: string) => {
   if (path) {
     router.push(path);
   }
-  if (menuName !== 'Status') {
+  if (menuName !== 'Status' && menuName !== 'Management') {
     activeSubItem.value = '';
   }
 };
