@@ -105,7 +105,22 @@ const messages = {
       status: 'ステータス'
     },
     wlan: {
-      title: 'WLAN ステータス'
+      title: 'WLAN ステータス',
+      channel: 'チャンネル',
+      bandwidth: '帯域幅',
+      macAddress: 'MACアドレス',
+      interface: 'インターフェース',
+      name: '名前',
+      alias: 'エイリアス',
+      status: 'ステータス',
+      ssid: 'SSID',
+      authentication: '認証',
+      encryption: '暗号化',
+      password: 'パスワード',
+      bssid: 'BSSID',
+      auto: '(自動)',
+      enable: '有効',
+      disable: '無効'
     }
   }
 };
