@@ -2,19 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LanStatusResponse } from '../../types/lan';
-import { getMockLanStatus } from '../../services/mockApi';
+import { getLanStatus } from '../../services/api';
 
 const { t } = useI18n();
 const lanData = ref<LanStatusResponse | null>(null);
 
 const fetchLanStatus = async () => {
   try {
-    // In production, this would be a real API call
-    //const response = await fetch('/API/info?list=StatusLan');
-    //lanData.value = await response.json();
-    
-    // Using mock data for development
-    lanData.value = getMockLanStatus();
+    lanData.value = await getLanStatus();
   } catch (error) {
     console.error('Error fetching LAN status:', error);
   }

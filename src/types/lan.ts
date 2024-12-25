@@ -1,10 +1,10 @@
-export interface IPv6Config {
+export interface LanIPv6Config {
   IPv6Address: string;
   Name: string;
   Status: string;
 }
 
-export interface IPv4Config {
+export interface LanIPv4Config  {
   Status: string;
   IPv4Netmask: string;
   IPv4Address: string;
@@ -13,10 +13,10 @@ export interface IPv4Config {
 
 export interface LanInterface {
   MACAddress: string;
-  ipv6: IPv6Config[];
+  ipv6: LanIPv6Config[];
   Name: string;
   MTU: string;
-  ipv4: IPv4Config[];
+  ipv4: LanIPv4Config [];
 }
 
 export interface LanStatusResponse {

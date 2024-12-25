@@ -2,19 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { StatisticsResponse } from '../../types/statistics';
-import { getMockStatistics } from '../../services/mockApi';
+import { getStatistics } from '../../services/api';
 
 const { t } = useI18n();
 const statisticsData = ref<StatisticsResponse | null>(null);
 
 const fetchStatistics = async () => {
   try {
-    // In production, this would be a real API call
-    // const response = await fetch('/API/info?list=Statistics');
-    // statisticsData.value = await response.json();
-    
-    // Using mock data for development
-    statisticsData.value = getMockStatistics();
+    statisticsData.value = await getStatistics();
   } catch (error) {
     console.error('Error fetching statistics:', error);
   }

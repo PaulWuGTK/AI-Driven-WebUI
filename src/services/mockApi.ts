@@ -24,7 +24,7 @@ export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
     Ntp: {
       NtpServers: servers,
       NtpEnable: data.Ntp.NtpEnable,
-      TimeZones: data.Ntp.REGION,
+      TimeZones: String(data.Ntp.REGION),
       DstEnable: 0,
       CurrentLocalTime: new Date().toISOString()
     }

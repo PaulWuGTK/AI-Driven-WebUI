@@ -2,19 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanStatusResponse } from '../../types/wan';
-import { getMockWanStatus } from '../../services/mockApi';
+import { getWanStatus } from '../../services/api';
 
 const { t } = useI18n();
 const wanData = ref<WanStatusResponse | null>(null);
 
 const fetchWanStatus = async () => {
   try {
-    // In production, this would be a real API call
-    //const response = await fetch('/API/info?list=StatusWan');
-    //wanData.value = await response.json();
-    
-    // Using mock data for development
-    wanData.value = getMockWanStatus();
+    wanData.value = await getWanStatus();
   } catch (error) {
     console.error('Error fetching WAN status:', error);
   }

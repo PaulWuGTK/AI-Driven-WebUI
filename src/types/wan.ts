@@ -1,4 +1,4 @@
-export interface IPv6Config {
+export interface WanIPv6Config {
   IPv6Address: string;
   Prefix: string;
   Gateway: string;
@@ -7,7 +7,7 @@ export interface IPv6Config {
   DNSServer: string;
 }
 
-export interface IPv4Config {
+export interface WanIPv4Config  {
   DNSServer: string;
   Gateway: string;
   Status: string;
@@ -22,9 +22,9 @@ export interface WanInterface {
   PPPoEUserName: string;
   VlanPriority: string;
   MACAddress: string;
-  ipv6: IPv6Config[];
+  ipv6: WanIPv6Config[];
   Name: string;
-  ipv4: IPv4Config[];
+  ipv4: WanIPv4Config [];
   Speed: string;
   VlanID: string;
   PPPoEPassword: string;

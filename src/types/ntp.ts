@@ -13,6 +13,6 @@ export interface NtpUpdateRequest {
     SetTZ: string;
     NtpServers: string;
     NtpEnable: number;
-    REGION: string;
+    REGION: number;
   }
 }

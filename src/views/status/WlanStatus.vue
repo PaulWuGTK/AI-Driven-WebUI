@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanStatusResponse } from '../../types/wlan';
-import { getMockWlanStatus } from '../../services/mockApi';
+import { getWlanStatus } from '../../services/api';
 import WlanBandInfo from '../../components/status/WlanBandInfo.vue';
 import WlanInterfaceTable from '../../components/status/WlanInterfaceTable.vue';
 
@@ -11,12 +11,7 @@ const wlanData = ref<WlanStatusResponse | null>(null);
 
 const fetchWlanStatus = async () => {
   try {
-    // In production, this would be a real API call
-    // const response = await fetch('/API/info?list=StatusWlan');
-    // wlanData.value = await response.json();
-    
-    // Using mock data for development
-    wlanData.value = getMockWlanStatus();
+    wlanData.value = await getWlanStatus();
   } catch (error) {
     console.error('Error fetching WLAN status:', error);
   }

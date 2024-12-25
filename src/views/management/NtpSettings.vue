@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { NtpResponse, NtpUpdateRequest } from '../../types/ntp';
-import { getMockNtp, updateMockNtp } from '../../services/mockApi';
+import { getNtpSettings, updateNtpSettings } from '../../services/api';
 import TimeZoneSelect from '../../components/management/TimeZoneSelect.vue';
 
 const { t } = useI18n();
@@ -14,11 +14,7 @@ const ntpServers = ref<string[]>(['', '', '', '', '']);
 
 const fetchNtpSettings = async () => {
   try {
-    // In production, use real API
-    // const response = await fetch('/API/info?list=Ntp');
-    // ntpData.value = await response.json();
-    
-    ntpData.value = getMockNtp();
+    ntpData.value = await getNtpSettings();
     if (ntpData.value) {
       timeZone.value = ntpData.value.Ntp.TimeZones;
       daylightSaving.value = ntpData.value.Ntp.DstEnable === 1;
@@ -37,17 +33,11 @@ const handleSubmit = async () => {
         SetTZ: timeZone.value === '16' ? 'GMT' : 'CST-8',
         NtpServers: ntpServers.value.filter(Boolean).join(', '),
         NtpEnable: ntpEnabled.value ? 1 : 0,
-        REGION: timeZone.value
+        REGION: parseInt(timeZone.value, 10)
       }
     };
 
-    // In production, use real API
-    // await fetch('/API/info?list=Ntp', {
-    //   method: 'POST',
-    //   body: JSON.stringify(updateData)
-    // });
-    
-    const response = updateMockNtp(updateData);
+    const response = await updateNtpSettings(updateData);
     ntpData.value = response;
   } catch (error) {
     console.error('Error updating NTP settings:', error);
