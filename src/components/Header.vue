@@ -11,9 +11,15 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-const toggleLanguage = () => {
-  locale.value = locale.value === 'en' ? 'ja' : 'en';
-};
+const languages = [
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+  { code: 'ja', label: '日本語' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'zh_TW', label: '繁體中文' },
+  { code: 'zh_CN', label: '简体中文' },
+  { code: 'ko', label: '한국어' }
+];
 
 const username = localStorage.getItem('username') || 'admin';
 </script>
@@ -21,9 +27,15 @@ const username = localStorage.getItem('username') || 'admin';
 <template>
   <header class="header">
     <div class="header-controls">
-      <button class="header-btn" @click="toggleLanguage">
-        {{ locale === 'en' ? '日本語' : 'English' }}
-      </button>
+      <select 
+        class="language-select" 
+        :value="locale" 
+        @change="locale = ($event.target as HTMLSelectElement).value"
+      >
+        <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+          {{ lang.label }}
+        </option>
+      </select>
       <button class="header-btn">{{ username }}</button>
       <button class="header-btn" @click="handleLogout">{{ t('header.logout') }}</button>
     </div>
@@ -43,6 +55,16 @@ const username = localStorage.getItem('username') || 'admin';
 .header-controls {
   display: flex;
   gap: 1rem;
+  align-items: center;
+}
+
+.language-select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  color: #666;
+  cursor: pointer;
 }
 
 .header-btn {
