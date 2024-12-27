@@ -9,7 +9,9 @@ import LcmStatus from '../views/status/LcmStatus.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Settings from '../views/Settings.vue';
 import Management from '../views/Management.vue';
+import DdnsSettings from '../views/advanced/DdnsSettings.vue';
 import NtpSettings from '../views/management/NtpSettings.vue';
+import SshSettings from '../views/management/SshSettings.vue';
 import Login from '../views/Login.vue';
 
 // Auth guard
@@ -85,8 +87,18 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/advanced/ddns',
+      component: DdnsSettings,
+      beforeEnter: requireAuth
+    },
+    {
       path: '/management/ntp',
       component: NtpSettings,
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/ssh',
+      component: SshSettings,
       beforeEnter: requireAuth
     }
   ]

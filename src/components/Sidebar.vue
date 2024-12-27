@@ -26,6 +26,14 @@ const menuItems = [
   },
   { name: 'Basic Setting', icon: '⚙️', path: '/settings', translationKey: 'menu.basicSetting' },
   { 
+    name: 'Advanced', 
+    icon: '🔧', 
+    translationKey: 'menu.advanced',
+    subItems: [
+      { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' },
+    ]
+  },
+  { 
     name: 'Management', 
     icon: '🔧', 
     translationKey: 'menu.management',
