@@ -37,7 +37,7 @@ onMounted(fetchSsh);
 
 <template>
   <div class="ssh-settings">
-    <h1 class="page-title">SSH Settings</h1>
+    <h1 class="page-title">{{ t('ssh.title') }}</h1>
 
     <div class="settings-content">
       <div class="settings-section">
@@ -50,12 +50,12 @@ onMounted(fetchSsh);
                 :true-value="1"
                 :false-value="0"
               >
-              Enable SSH Server
+              {{ t('ssh.enableServer') }}
             </label>
           </div>
 
           <div class="form-group">
-            <label>Port</label>
+            <label>{{ t('ssh.port') }}</label>
             <input 
               type="number" 
               v-model="sshConfig.Port"
@@ -73,7 +73,7 @@ onMounted(fetchSsh);
                 :true-value="1"
                 :false-value="0"
               >
-              Allow Root Login
+              {{ t('ssh.allowRootLogin') }}
             </label>
           </div>
 
@@ -85,12 +85,12 @@ onMounted(fetchSsh);
                 :true-value="1"
                 :false-value="0"
               >
-              Enable Password Authentication
+              {{ t('ssh.enablePasswordAuth') }}
             </label>
           </div>
 
           <div class="button-group">
-            <button type="submit" class="btn btn-primary">Apply</button>
+            <button type="submit" class="btn btn-primary">{{ t('ssh.apply') }}</button>
           </div>
         </form>
       </div>

@@ -13,7 +13,9 @@ export default {
     basicSetting: 'Grundeinstellung',
     management: 'Management',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: 'Erweitert',
+    ddns: 'DDNS'
   },
   header: {
     account: 'Konto',
@@ -61,7 +63,7 @@ export default {
     enable: 'Aktivieren',
     disable: 'Deaktivieren'
   },
-    statistics: {
+  statistics: {
     title: 'Statistiken',
     ethernet: 'Statistik - Ethernet',
     wlan: 'Statistik - WLAN',
@@ -75,6 +77,16 @@ export default {
     txError: 'TxFehler',
     txDiscard: 'TxDiscard'
   },
+  ddns: {
+    title: 'DDNS-Einstellungen',
+    provider: 'Anbieter',
+    username: 'Benutzername',
+    password: 'Passwort',
+    domain: 'Domain',
+    apply: 'Anwenden',
+    currentProviders: 'Aktuelle DDNS-Anbieter',
+    status: 'Status'
+  },
   ntp: {
     title: 'NTP',
     currentTime: 'Aktuelle Zeit',
@@ -85,6 +97,14 @@ export default {
     cancel: 'Abbrechen',
     apply: 'Anwenden',
     placeholder: 'Bitte geben Sie den Wert ein'
+  },
+  ssh: {
+    title: 'SSH-Einstellungen',
+    enableServer: 'SSH-Server aktivieren',
+    port: 'Port',
+    allowRootLogin: 'Root-Login erlauben',
+    enablePasswordAuth: 'Passwort-Authentifizierung aktivieren',
+    apply: 'Anwenden'
   },
   login: {
     title: 'Login',

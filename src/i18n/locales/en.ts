@@ -15,7 +15,9 @@ const translations: Translations = {
     basicSetting: 'Basic Setting',
     management: 'Management',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: 'Advanced',
+    ddns: 'DDNS'
   },
   header: {
     account: 'Account',
@@ -77,6 +79,16 @@ const translations: Translations = {
     txError: 'TxError',
     txDiscard: 'TxDiscard'
   },
+  ddns: {
+    title: 'DDNS Settings',
+    provider: 'Provider',
+    username: 'Username',
+    password: 'Password',
+    domain: 'Domain',
+    apply: 'Apply',
+    currentProviders: 'Current DDNS Providers',
+    status: 'Status'
+  },
   ntp: {
     title: 'NTP',
     currentTime: 'Current Time',
@@ -87,6 +99,14 @@ const translations: Translations = {
     cancel: 'Cancel',
     apply: 'Apply',
     placeholder: 'Please Enter the value'
+  },
+  ssh: {
+    title: 'SSH Settings',
+    enableServer: 'Enable SSH Server',
+    port: 'Port',
+    allowRootLogin: 'Allow Root Login',
+    enablePasswordAuth: 'Enable Password Authentication',
+    apply: 'Apply'
   },
   login: {
     title: 'Login',

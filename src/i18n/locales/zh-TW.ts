@@ -13,7 +13,9 @@ export default {
     basicSetting: '基本設定',
     management: '管理',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: '進階設定',
+    ddns: 'DDNS'
   },
   header: {
     account: '帳號',
@@ -75,6 +77,16 @@ export default {
     txError: '傳送錯誤',
     txDiscard: '傳送丟棄'
   },
+  ddns: {
+    title: 'DDNS設定',
+    provider: '供應商',
+    username: '使用者名稱',
+    password: '密碼',
+    domain: '網域',
+    apply: '套用',
+    currentProviders: '目前DDNS供應商',
+    status: '狀態'
+  },
   ntp: {
     title: 'NTP',
     currentTime: '目前時間',
@@ -85,6 +97,14 @@ export default {
     cancel: '取消',
     apply: '套用',
     placeholder: '請輸入數值'
+  },
+  ssh: {
+    title: 'SSH設定',
+    enableServer: '啟用SSH伺服器',
+    port: '連接埠',
+    allowRootLogin: '允許Root登入',
+    enablePasswordAuth: '啟用密碼認證',
+    apply: '套用'
   },
   login: {
     title: '登入',

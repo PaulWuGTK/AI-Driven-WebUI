@@ -13,7 +13,9 @@ export default {
     basicSetting: '基本設定',
     management: '管理',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: '詳細設定',
+    ddns: 'DDNS'
   },
   header: {
     account: 'アカウント',
@@ -75,6 +77,16 @@ export default {
     txError: '送信エラー',
     txDiscard: '送信破棄'
   },
+  ddns: {
+    title: 'DDNS設定',
+    provider: 'プロバイダー',
+    username: 'ユーザー名',
+    password: 'パスワード',
+    domain: 'ドメイン',
+    apply: '適用',
+    currentProviders: '現在のDDNSプロバイダー',
+    status: '状態'
+  },
   ntp: {
     title: 'NTP',
     currentTime: '現在の時刻',
@@ -85,6 +97,14 @@ export default {
     cancel: 'キャンセル',
     apply: '適用',
     placeholder: '値を入力してください'
+  },
+  ssh: {
+    title: 'SSH設定',
+    enableServer: 'SSHサーバーを有効にする',
+    port: 'ポート',
+    allowRootLogin: 'rootログインを許可',
+    enablePasswordAuth: 'パスワード認証を有効にする',
+    apply: '適用'
   },
   login: {
     title: 'ログイン',

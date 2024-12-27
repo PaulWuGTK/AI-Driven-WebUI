@@ -41,13 +41,13 @@ onMounted(fetchDdns);
 
 <template>
   <div class="ddns-settings">
-    <h1 class="page-title">DDNS Settings</h1>
+    <h1 class="page-title">{{ t('ddns.title') }}</h1>
 
     <div class="settings-content">
       <div class="settings-section">
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
-            <label>Provider</label>
+            <label>{{ t('ddns.provider') }}</label>
             <select v-model="selectedProvider">
               <option value="DynDNS">DynDNS</option>
               <option value="No-IP">No-IP</option>
@@ -55,34 +55,34 @@ onMounted(fetchDdns);
           </div>
 
           <div class="form-group">
-            <label>Username</label>
+            <label>{{ t('ddns.username') }}</label>
             <input type="text" v-model="username" required>
           </div>
 
           <div class="form-group">
-            <label>Password</label>
+            <label>{{ t('ddns.password') }}</label>
             <input type="password" v-model="password" required>
           </div>
 
           <div class="form-group">
-            <label>Domain</label>
+            <label>{{ t('ddns.domain') }}</label>
             <input type="text" v-model="domain" required>
           </div>
 
           <div class="button-group">
-            <button type="submit" class="btn btn-primary">Apply</button>
+            <button type="submit" class="btn btn-primary">{{ t('ddns.apply') }}</button>
           </div>
         </form>
 
         <div class="providers-list">
-          <h2>Current DDNS Providers</h2>
+          <h2>{{ t('ddns.currentProviders') }}</h2>
           <table>
             <thead>
               <tr>
-                <th>Provider</th>
-                <th>Username</th>
-                <th>Domain</th>
-                <th>Status</th>
+                <th>{{ t('ddns.provider') }}</th>
+                <th>{{ t('ddns.username') }}</th>
+                <th>{{ t('ddns.domain') }}</th>
+                <th>{{ t('ddns.status') }}</th>
               </tr>
             </thead>
             <tbody>

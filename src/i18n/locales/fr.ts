@@ -13,7 +13,9 @@ export default {
     basicSetting: 'Paramètres de base',
     management: 'Gestion',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: 'Avancé',
+    ddns: 'DDNS'
   },
   header: {
     account: 'Compte',
@@ -75,6 +77,16 @@ export default {
     txError: 'Erreur Tx',
     txDiscard: 'Paquets rejetés Tx'
   },
+  ddns: {
+    title: 'Paramètres DDNS',
+    provider: 'Fournisseur',
+    username: 'Nom d\'utilisateur',
+    password: 'Mot de passe',
+    domain: 'Domaine',
+    apply: 'Appliquer',
+    currentProviders: 'Fournisseurs DDNS actuels',
+    status: 'Statut'
+  },
   ntp: {
     title: 'NTP',
     currentTime: 'Heure actuelle',
@@ -85,6 +97,14 @@ export default {
     cancel: 'Annuler',
     apply: 'Appliquer',
     placeholder: 'Veuillez saisir une valeur'
+  },
+  ssh: {
+    title: 'Paramètres SSH',
+    enableServer: 'Activer le serveur SSH',
+    port: 'Port',
+    allowRootLogin: 'Autoriser la connexion root',
+    enablePasswordAuth: 'Activer l\'authentification par mot de passe',
+    apply: 'Appliquer'
   },
   login: {
     title: 'Connexion',

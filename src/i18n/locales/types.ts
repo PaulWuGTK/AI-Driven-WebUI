@@ -1,5 +1,6 @@
 // Translation type definitions
 export interface Translations {
+  [key: string]: string | { [key: string]: string };
   menu: {
     dashboard: string;
     status: string;
@@ -14,6 +15,8 @@ export interface Translations {
     management: string;
     ntp: string;
     ssh: string;
+    advanced: string;
+    ddns: string;
   };
   header: {
     account: string;
@@ -75,6 +78,16 @@ export interface Translations {
     txError: string;
     txDiscard: string;
   };
+  ddns: {
+    title: string;
+    provider: string;
+    username: string;
+    password: string;
+    domain: string;
+    apply: string;
+    currentProviders: string;
+    status: string;
+  };
   ntp: {
     title: string;
     currentTime: string;
@@ -85,6 +98,14 @@ export interface Translations {
     cancel: string;
     apply: string;
     placeholder: string;
+  };
+  ssh: {
+    title: string;
+    enableServer: string;
+    port: string;
+    allowRootLogin: string;
+    enablePasswordAuth: string;
+    apply: string;
   };
   login: {
     title: string;

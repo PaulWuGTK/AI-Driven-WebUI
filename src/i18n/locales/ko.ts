@@ -13,7 +13,9 @@ export default {
     basicSetting: '기본 설정',
     management: '관리',
     ntp: 'NTP',
-    ssh: 'SSH'
+    ssh: 'SSH',
+    advanced: '고급 설정',
+    ddns: 'DDNS'
   },
   header: {
     account: '계정',
@@ -75,6 +77,16 @@ export default {
     txError: '전송 오류',
     txDiscard: 'TxDiscard'
   },
+  ddns: {
+    title: 'DDNS 설정',
+    provider: '제공자',
+    username: '사용자 이름',
+    password: '비밀번호',
+    domain: '도메인',
+    apply: '적용',
+    currentProviders: '현재 DDNS 제공자',
+    status: '상태'
+  },
   ntp: {
     title: 'NTP',
     currentTime: '현재 시간',
@@ -85,6 +97,14 @@ export default {
     cancel: '취소',
     apply: '적용',
     placeholder: '값을 입력해주세요'
+  },
+  ssh: {
+    title: 'SSH 설정',
+    enableServer: 'SSH 서버 활성화',
+    port: '포트',
+    allowRootLogin: 'Root 로그인 허용',
+    enablePasswordAuth: '비밀번호 인증 활성화',
+    apply: '적용'
   },
   login: {
     title: '로그인',
