@@ -1,22 +1,26 @@
-export interface DdnsProvider {
-  Name: string;
-  Username: string;
-  Password: string;
-  Domain: string;
-  Status: string;
+export interface DdnsService {
+  ID: string;
+  ServProv: string;
+  ServUsername: string;
+  ServPassword: string;
+  DomainName: string;
+  UpdatedIP: string;
+  Status?: string;
+  LastUpdate?: string;
+  HostEnable: number;
 }
 
 export interface DdnsResponse {
   Ddns: {
-    Providers: DdnsProvider[];
+    ServNum: number;
+    SupServProv: string[];
+    Interfaces: string[];
+    Service: DdnsService[];
   }
 }
 
 export interface DdnsUpdateRequest {
   Ddns: {
-    Provider: string;
-    Username: string;
-    Password: string;
-    Domain: string;
+    Service: DdnsService[];
   }
 }
