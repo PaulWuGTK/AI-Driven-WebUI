@@ -29,11 +29,23 @@ export interface Translations {
     sensingTimeout: string;
     wanMode: string;
     interface: string;
+    name: string;
     macAddress: string;
     speed: string;
     duplex: string;
     ipv4Address: string;
     status: string;
+    wanModeConfig: string;
+    dnsMode: string;
+    physicalType: string;
+    origin: string;
+    mode: string;
+    address: string;
+    gateway: string;
+    dnsServer: string;
+    subnetMask: string;
+    type: string;
+    prefix: string;
   };
   lan: {
     title: string;
