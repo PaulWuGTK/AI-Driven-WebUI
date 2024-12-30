@@ -9,10 +9,10 @@ const activeMenu = ref('Status');
 const activeSubItem = ref('WAN');
 
 const menuItems = [
-  { name: 'Dashboard', icon: '📊', path: '/dashboard', translationKey: 'menu.dashboard' },
+  { name: 'Dashboard', icon: '⌂', path: '/dashboard', translationKey: 'menu.dashboard' },
   { 
     name: 'Status', 
-    icon: '📈',
+    icon: '📊',
     translationKey: 'menu.status',
     subItems: [
       { name: 'WAN', path: '/status/wan', translationKey: 'menu.wan' },
@@ -24,10 +24,10 @@ const menuItems = [
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' }
     ]
   },
-  { name: 'Basic Setting', icon: '⚙️', path: '/settings', translationKey: 'menu.basicSetting' },
+  { name: 'Basic Setting', icon: '⚙', path: '/settings', translationKey: 'menu.basicSetting' },
   { 
     name: 'Advanced', 
-    icon: '🔧', 
+    icon: '⚡', 
     translationKey: 'menu.advanced',
     subItems: [
       { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' },
@@ -62,7 +62,9 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 
 <template>
   <aside class="sidebar">
-    <div class="logo">Gemtek</div>
+    <div class="logo">
+      <span class="logo-text">Gemtek</span>
+    </div>
     <nav class="menu">
       <div 
         v-for="item in menuItems" 
@@ -101,24 +103,29 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 .sidebar {
   width: 230px;
   min-height: 100vh;
-  background: linear-gradient(to bottom, #0c78be 0%, #60ccf6 100%);
+  background: linear-gradient(to bottom, #0070BB 0%, #60CCF6 100%);
   color: white;
-  padding: 1rem 0;
+  padding: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  padding: 1.5rem 2rem;
-  font-size: 1.75rem;
-  font-weight: bold;
-  color: #ffffff;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  background-color: #0070BB;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 1rem;
-  text-align: left;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 .menu {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .menu-item {
@@ -126,7 +133,7 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 }
 
 .menu-header {
-  padding: 0.875rem 2rem;
+  padding: 0.875rem 1.5rem;
   display: flex;
   align-items: center;
   cursor: pointer;

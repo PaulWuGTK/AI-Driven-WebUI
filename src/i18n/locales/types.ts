@@ -78,6 +78,18 @@ export interface Translations {
     txError: string;
     txDiscard: string;
   };
+  wifiNeighbor: {
+    title: string;
+    wifiNeighbor: string;
+    ssid: string;
+    bssid: string;
+    channel: string;
+    signal: string;
+    security: string;
+    wirelessMode: string;
+    scan: string;
+    scanning: string;
+  };
   ddns: {
     title: string;
     provider: string;

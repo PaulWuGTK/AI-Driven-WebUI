@@ -79,6 +79,18 @@ const translations: Translations = {
     txError: 'TxError',
     txDiscard: 'TxDiscard'
   },
+  wifiNeighbor: {
+    title: 'WiFi Neighbor',
+    wifiNeighbor: 'WiFi Neighbor',
+    ssid: 'SSID',
+    bssid: 'BSSID',
+    channel: 'Channel',
+    signal: 'Signal (%)',
+    security: 'Security',
+    wirelessMode: 'Wireless Mode',
+    scan: 'SCAN',
+    scanning: 'Scanning...'
+  },
   ddns: {
     title: 'DDNS Settings',
     provider: 'Provider',

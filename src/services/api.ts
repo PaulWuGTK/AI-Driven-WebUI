@@ -2,6 +2,7 @@ import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, Statisti
 import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone';
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
 import type { SshResponse, SshUpdateRequest } from '../types/ssh';
+import type { WifiNeighborResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
@@ -11,7 +12,6 @@ import { timezoneData } from './mockData/timezoneData';
 import { ddnsData } from './mockData/ddnsData';
 import { sshData } from './mockData/sshData';
 import { handleApiResponse } from '../utils/apiUtils';
-
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
@@ -46,6 +46,54 @@ export async function getStatistics(): Promise<StatisticsResponse> {
   }
   const response = await fetch(`${API_BASE_URL}/info?list=Statistics`);
   return handleApiResponse<StatisticsResponse>(response);
+}
+
+export async function getWifiNeighbors(): Promise<WifiNeighborResponse> {
+  if (isDevelopment) {
+    return {
+      Enable2g: 1,
+      Enable5g: 1,
+      Enable6g: 1
+    };
+  }
+  const response = await fetch(`${API_BASE_URL}/info?list=WifiNeighbor`);
+  return handleApiResponse<WifiNeighborResponse>(response);
+}
+
+export async function scanWifiNeighbors(band: string): Promise<WifiNeighborResponse> {
+  if (isDevelopment) {
+    return {
+      WifiNeighbor: [
+        {
+          WirelessMode: "g,n,ac,ax",
+          Channel: 1,
+          BSSID: "80:02:9C:E8:CA:CB",
+          Security: "WPA2-Personal",
+          SSID: "GO_AP",
+          Signal: -42
+        },
+        {
+          WirelessMode: "g,n",
+          Channel: 1,
+          BSSID: "EC:08:6B:ED:26:A2",
+          Security: "WPA2-Personal",
+          SSID: "GJ1750_2G",
+          Signal: -56
+        }
+      ]
+    };
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/info?list=WifiNeighbor`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      WifiNeighbor: { Band: band }
+    } as WifiNeighborScanRequest),
+  });
+  return handleApiResponse<WifiNeighborResponse>(response);
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {
