@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { DdnsService } from '../../types/ddns';
+
+const { t } = useI18n();
 
 defineProps<{
   services: DdnsService[];
@@ -17,12 +20,12 @@ defineEmits<{
     <table>
       <thead>
         <tr>
-          <th>No</th>
-          <th>Service Provider</th>
-          <th>Domain Name</th>
-          <th>Status</th>
-          <th>Last Update Time</th>
-          <th>Action</th>
+          <th>{{ t('ddns.no') }}</th>
+          <th>{{ t('ddns.provider') }}</th>
+          <th>{{ t('ddns.domain') }}</th>
+          <th>{{ t('ddns.status') }}</th>
+          <th>{{ t('ddns.lastUpdate') }}</th>
+          <th>{{ t('ddns.action') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -34,10 +37,10 @@ defineEmits<{
           <td>{{ service.LastUpdate }}</td>
           <td>
             <div class="action-buttons">
-              <button class="icon-button" @click="$emit('edit', service)">
+              <button class="icon-btn" @click="$emit('edit', service)" title="Edit">
                 <span class="material-icons">edit</span>
               </button>
-              <button class="icon-button" @click="$emit('delete', service.ID)">
+              <button class="icon-btn" @click="$emit('delete', service.ID)" title="Delete">
                 <span class="material-icons">delete</span>
               </button>
             </div>
@@ -78,7 +81,7 @@ th {
   gap: 0.5rem;
 }
 
-.icon-button {
+.icon-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -86,7 +89,7 @@ th {
   color: #666;
 }
 
-.icon-button:hover {
+.icon-btn:hover {
   color: #333;
 }
 </style>

@@ -1,21 +1,43 @@
 import type { DdnsResponse } from '../../types/ddns';
 
 export const ddnsData: DdnsResponse = {
-  "Ddns": {
-    "Providers": [
+  Ddns: {
+    ServNum: 3,
+    SupServProv: ["no-ip.com", "dyn.com"],
+    Interfaces: ["eth0"],
+    Service: [
       {
-        "Name": "DynDNS",
-        "Username": "user1",
-        "Password": "********",
-        "Domain": "example.dyndns.org",
-        "Status": "Connected"
+        ID: "no-1",
+        ServProv: "no-ip.com",
+        ServUsername: "user1",
+        ServPassword: "password1",
+        DomainName: "ddns1-1.com",
+        UpdatedIP: "eth0",
+        Status: "Registered",
+        LastUpdate: "0001-01-01T00:00:00Z",
+        HostEnable: 1
       },
       {
-        "Name": "No-IP",
-        "Username": "user2", 
-        "Password": "********",
-        "Domain": "example.no-ip.com",
-        "Status": "Disconnected"
+        ID: "no-2",
+        ServProv: "dyn.com",
+        ServUsername: "user2",
+        ServPassword: "password2",
+        DomainName: "ddns2-1.com",
+        UpdatedIP: "eth0",
+        Status: "Registered",
+        LastUpdate: "0001-01-01T00:00:00Z",
+        HostEnable: 1
+      },
+      {
+        ID: "no-3",
+        ServProv: "no-ip.com",
+        ServUsername: "user3",
+        ServPassword: "password3",
+        DomainName: "ddns2-2.com",
+        UpdatedIP: "eth0",
+        Status: "Registered",
+        LastUpdate: "0001-01-01T00:00:00Z",
+        HostEnable: 1
       }
     ]
   }

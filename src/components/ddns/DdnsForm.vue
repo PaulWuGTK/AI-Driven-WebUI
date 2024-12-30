@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { DdnsService } from '../../types/ddns';
+
+const { t } = useI18n();
 
 defineProps<{
   service: DdnsService;
@@ -16,11 +19,11 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="edit-form">
-    <h2>{{ service.ID ? 'Edit' : 'Add' }} Service</h2>
+  <div class="edit-view">
+    <h2>{{ service.ID ? t('ddns.editService') : t('ddns.addService') }}</h2>
     <form @submit.prevent="$emit('save')">
       <div class="form-group">
-        <label>Service Provider</label>
+        <label>{{ t('ddns.provider') }}</label>
         <select 
           :value="service.ServProv"
           @input="$emit('update:service', { ...service, ServProv: ($event.target as HTMLSelectElement).value })"
@@ -32,7 +35,7 @@ defineEmits<{
       </div>
 
       <div class="form-group">
-        <label>Domain Name</label>
+        <label>{{ t('ddns.domain') }}</label>
         <input 
           type="text" 
           :value="service.DomainName"
@@ -42,7 +45,7 @@ defineEmits<{
       </div>
 
       <div class="form-group">
-        <label>Username</label>
+        <label>{{ t('ddns.username') }}</label>
         <input 
           type="text" 
           :value="service.ServUsername"
@@ -52,7 +55,7 @@ defineEmits<{
       </div>
 
       <div class="form-group">
-        <label>Password</label>
+        <label>{{ t('ddns.password') }}</label>
         <input 
           type="password" 
           :value="service.ServPassword"
@@ -62,7 +65,7 @@ defineEmits<{
       </div>
 
       <div class="form-group">
-        <label>WAN Interface</label>
+        <label>{{ t('ddns.wanInterface') }}</label>
         <select 
           :value="service.UpdatedIP"
           @input="$emit('update:service', { ...service, UpdatedIP: ($event.target as HTMLSelectElement).value })"
@@ -74,26 +77,33 @@ defineEmits<{
       </div>
 
       <div class="form-group">
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            :checked="service.HostEnable === 1"
-            @change="$emit('update:service', { ...service, HostEnable: ($event.target as HTMLInputElement).checked ? 1 : 0 })"
-          >
-          Enable
+        <label class="switch-label">
+          <span>{{ t('ddns.enable') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :checked="service.HostEnable === 1"
+              @change="$emit('update:service', { ...service, HostEnable: ($event.target as HTMLInputElement).checked ? 1 : 0 })"
+            >
+            <span class="slider"></span>
+          </label>
         </label>
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="$emit('cancel')">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
+          {{ t('ddns.cancel') }}
+        </button>
+        <button type="submit" class="btn btn-primary">
+          {{ t('ddns.save') }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <style scoped>
-.edit-form {
+.edit-view {
   background-color: white;
   border-radius: 4px;
   padding: 1.5rem;
@@ -118,15 +128,55 @@ input, select {
   font-size: 0.9rem;
 }
 
-.checkbox-label {
+.switch-label {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
-  width: auto;
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0070BB;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 
 .button-group {

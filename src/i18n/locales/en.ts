@@ -93,13 +93,23 @@ const translations: Translations = {
   },
   ddns: {
     title: 'DDNS Settings',
-    provider: 'Provider',
+    management: 'DDNS Management',
+    addService: 'Add Service',
+    editService: 'Edit Service',
+    refresh: 'Refresh',
+    no: 'No',
+    provider: 'Service Provider',
+    domain: 'Domain Name',
     username: 'Username',
     password: 'Password',
-    domain: 'Domain',
-    apply: 'Apply',
-    currentProviders: 'Current DDNS Providers',
-    status: 'Status'
+    wanInterface: 'WAN Interface',
+    enable: 'Enable',
+    status: 'Status',
+    lastUpdate: 'Last Update Time',
+    action: 'Action',
+    save: 'Save',
+    cancel: 'Cancel',
+    confirmDelete: 'Are you sure you want to delete this DDNS service?'
   },
   ntp: {
     title: 'NTP',

@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { DdnsService, DdnsResponse } from '../../types/ddns';
 import { getDdns, updateDdns } from '../../services/api';
-import DdnsTable from '../../components/ddns/DdnsTable.vue';
-import DdnsForm from '../../components/ddns/DdnsForm.vue';
 
+const { t } = useI18n();
 const ddnsData = ref<DdnsResponse | null>(null);
 const isEditing = ref(false);
 const editingService = ref<DdnsService | null>(null);
-
-const services = computed(() => ddnsData.value?.Ddns.Service || []);
-const supportedProviders = computed(() => ddnsData.value?.Ddns.SupServProv || []);
-const interfaces = computed(() => ddnsData.value?.Ddns.Interfaces || []);
+const loading = ref(false);
 
 const fetchDdns = async () => {
+  loading.value = true;
   try {
-    const response = await getDdns();
-    ddnsData.value = response;
+    ddnsData.value = await getDdns();
   } catch (error) {
     console.error('Error fetching DDNS settings:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -30,8 +29,10 @@ const handleEdit = (service: DdnsService) => {
 const handleDelete = async (serviceId: string) => {
   if (!ddnsData.value) return;
   
+  if (!confirm(t('ddns.confirmDelete'))) return;
+
   try {
-    const updatedServices = services.value.filter(s => s.ID !== serviceId);
+    const updatedServices = ddnsData.value.Ddns.Service.filter(s => s.ID !== serviceId);
     await updateDdns({
       Ddns: {
         Service: updatedServices
@@ -43,18 +44,35 @@ const handleDelete = async (serviceId: string) => {
   }
 };
 
-const handleCancel = () => {
-  isEditing.value = false;
-  editingService.value = null;
+const handleAdd = () => {
+  if (!ddnsData.value) return;
+  
+  const newId = `no-${ddnsData.value.Ddns.ServNum + 1}`;
+  editingService.value = {
+    ID: newId,
+    ServProv: ddnsData.value.Ddns.SupServProv[0],
+    ServUsername: '',
+    ServPassword: '',
+    DomainName: '',
+    UpdatedIP: ddnsData.value.Ddns.Interfaces[0],
+    HostEnable: 1
+  };
+  isEditing.value = true;
 };
 
-const handleSave = async () => {
-  if (!ddnsData.value || !editingService.value) return;
+const handleSave = async (service: DdnsService) => {
+  if (!ddnsData.value) return;
 
   try {
-    const updatedServices = services.value.map(service => 
-      service.ID === editingService.value?.ID ? editingService.value : service
-    );
+    const existingIndex = ddnsData.value.Ddns.Service.findIndex(s => s.ID === service.ID);
+    let updatedServices: DdnsService[];
+    
+    if (existingIndex >= 0) {
+      updatedServices = [...ddnsData.value.Ddns.Service];
+      updatedServices[existingIndex] = service;
+    } else {
+      updatedServices = [...ddnsData.value.Ddns.Service, service];
+    }
 
     await updateDdns({
       Ddns: {
@@ -66,24 +84,13 @@ const handleSave = async () => {
     editingService.value = null;
     await fetchDdns();
   } catch (error) {
-    console.error('Error updating DDNS service:', error);
+    console.error('Error saving DDNS service:', error);
   }
 };
 
-const handleAddService = () => {
-  if (!ddnsData.value || !supportedProviders.value.length || !interfaces.value.length) return;
-  
-  const newId = `no-${ddnsData.value.Ddns.ServNum + 1}`;
-  editingService.value = {
-    ID: newId,
-    ServProv: supportedProviders.value[0],
-    ServUsername: '',
-    ServPassword: '',
-    DomainName: '',
-    UpdatedIP: interfaces.value[0],
-    HostEnable: 1
-  };
-  isEditing.value = true;
+const handleCancel = () => {
+  isEditing.value = false;
+  editingService.value = null;
 };
 
 onMounted(fetchDdns);
@@ -91,40 +98,130 @@ onMounted(fetchDdns);
 
 <template>
   <div class="ddns-settings">
-    <h1 class="page-title">DDNS</h1>
+    <h1 class="page-title">{{ t('ddns.title') }}</h1>
 
     <div class="settings-content">
-      <div class="settings-header">
-        <h2>DDNS Management</h2>
-        <div class="header-actions">
-          <button 
-            class="btn btn-primary" 
-            @click="handleAddService"
-            :disabled="!supportedProviders.length || !interfaces.length"
-          >
-            Add Service
-          </button>
-          <button class="btn btn-secondary" @click="fetchDdns">Refresh</button>
+      <div v-if="!isEditing" class="management-view">
+        <div class="header">
+          <h2>{{ t('ddns.management') }}</h2>
+          <div class="actions">
+            <button class="btn btn-primary" @click="handleAdd">
+              {{ t('ddns.addService') }}
+            </button>
+            <button class="btn btn-secondary" @click="fetchDdns">
+              {{ t('ddns.refresh') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ t('ddns.no') }}</th>
+                <th>{{ t('ddns.provider') }}</th>
+                <th>{{ t('ddns.domain') }}</th>
+                <th>{{ t('ddns.status') }}</th>
+                <th>{{ t('ddns.lastUpdate') }}</th>
+                <th>{{ t('ddns.action') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(service, index) in ddnsData?.Ddns.Service" :key="service.ID">
+                <td>{{ index + 1 }}</td>
+                <td>{{ service.ServProv }}</td>
+                <td>{{ service.DomainName }}</td>
+                <td>{{ service.Status }}</td>
+                <td>{{ service.LastUpdate }}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="icon-btn" @click="handleEdit(service)" title="Edit">
+                      <span class="material-icons">edit</span>
+                    </button>
+                    <button class="icon-btn" @click="handleDelete(service.ID)" title="Delete">
+                      <span class="material-icons">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <template v-if="!isEditing">
-        <DdnsTable 
-          :services="services"
-          @edit="handleEdit"
-          @delete="handleDelete"
-        />
-      </template>
-      <template v-else-if="editingService">
-        <DdnsForm
-          :service="editingService"
-          :supported-providers="supportedProviders"
-          :interfaces="interfaces"
-          @update:service="editingService = $event"
-          @save="handleSave"
-          @cancel="handleCancel"
-        />
-      </template>
+      <div v-else class="edit-view">
+        <h2>{{ editingService?.ID ? t('ddns.editService') : t('ddns.addService') }}</h2>
+        <form @submit.prevent="handleSave(editingService!)" v-if="editingService && ddnsData">
+          <div class="form-group">
+            <label>{{ t('ddns.provider') }}</label>
+            <select v-model="editingService.ServProv">
+              <option v-for="provider in ddnsData.Ddns.SupServProv" :key="provider" :value="provider">
+                {{ provider }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ t('ddns.domain') }}</label>
+            <input 
+              type="text" 
+              v-model="editingService.DomainName"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>{{ t('ddns.username') }}</label>
+            <input 
+              type="text" 
+              v-model="editingService.ServUsername"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>{{ t('ddns.password') }}</label>
+            <input 
+              type="password" 
+              v-model="editingService.ServPassword"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>{{ t('ddns.wanInterface') }}</label>
+            <select v-model="editingService.UpdatedIP">
+              <option v-for="iface in ddnsData.Ddns.Interfaces" :key="iface" :value="iface">
+                {{ iface }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="switch-label">
+              <span>{{ t('ddns.enable') }}</span>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  v-model="editingService.HostEnable"
+                  :true-value="1"
+                  :false-value="0"
+                >
+                <span class="slider"></span>
+              </label>
+            </label>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn btn-secondary" @click="handleCancel">
+              {{ t('ddns.cancel') }}
+            </button>
+            <button type="submit" class="btn btn-primary">
+              {{ t('ddns.save') }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -151,16 +248,140 @@ onMounted(fetchDdns);
   padding: 1.5rem;
 }
 
-.settings-header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.header-actions {
+.actions {
   display: flex;
   gap: 1rem;
+}
+
+.table-container {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #f8f8f8;
+  font-weight: normal;
+  color: #666;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #666;
+}
+
+.icon-btn:hover {
+  color: #333;
+}
+
+.edit-view {
+  background-color: white;
+  border-radius: 4px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0070BB;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn {
@@ -169,11 +390,6 @@ onMounted(fetchDdns);
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -186,7 +402,7 @@ onMounted(fetchDdns);
   color: #666;
 }
 
-.btn:not(:disabled):hover {
+.btn:hover {
   opacity: 0.9;
 }
 </style>

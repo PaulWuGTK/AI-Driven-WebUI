@@ -92,13 +92,23 @@ export interface Translations {
   };
   ddns: {
     title: string;
+    management: string;
+    addService: string;
+    editService: string;
+    refresh: string;
+    no: string;
     provider: string;
+    domain: string;
     username: string;
     password: string;
-    domain: string;
-    apply: string;
-    currentProviders: string;
+    wanInterface: string;
+    enable: string;
     status: string;
+    lastUpdate: string;
+    action: string;
+    save: string;
+    cancel: string;
+    confirmDelete: string;
   };
   ntp: {
     title: string;
