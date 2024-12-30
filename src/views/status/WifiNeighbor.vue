@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { WifiNeighborResponse, WifiNeighborInfo } from '../../types/wifiNeighbor';
+import type { WifiNeighborStatusResponse, WifiNeighborInfo } from '../../types/wifiNeighbor';
 import { getWifiNeighbors, scanWifiNeighbors } from '../../services/api';
 
 const { t } = useI18n();
-const wifiNeighborData = ref<WifiNeighborResponse | null>(null);
-const neighborResults = ref<WifiNeighborInfo[]>([]);
+const wifiNeighborData = ref<WifiNeighborStatusResponse | null>(null);
+  const neighborResults = ref<{ [key: string]: WifiNeighborInfo[] }>({
+  '2': [],
+  '5': [],
+  '6': []
+});
 const loading = ref<{ [key: string]: boolean }>({
   '2': false,
   '5': false,
@@ -23,12 +27,12 @@ const fetchWifiNeighbors = async () => {
 
 const handleScan = async (band: string) => {
   if (loading.value[band]) return;
-  
+
   loading.value[band] = true;
   try {
     const response = await scanWifiNeighbors(band);
     if (response.WifiNeighbor) {
-      neighborResults.value = response.WifiNeighbor;
+      neighborResults.value[band] = response.WifiNeighbor;
     }
   } catch (error) {
     console.error(`Error scanning ${band}G band:`, error);
@@ -46,7 +50,7 @@ onMounted(fetchWifiNeighbors);
 
     <div class="neighbor-content">
       <!-- 2.4G Section -->
-      <div class="band-section" v-if="wifiNeighborData?.Enable2g">
+      <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable2g">
         <h2 class="section-title">2.4G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
         <div class="table-container">
           <table>
@@ -61,7 +65,7 @@ onMounted(fetchWifiNeighbors);
               </tr>
             </thead>
             <tbody>
-              <tr v-for="neighbor in neighborResults" :key="neighbor.BSSID">
+              <tr v-for="neighbor in neighborResults['2']" :key="neighbor.BSSID">
                 <td>{{ neighbor.SSID }}</td>
                 <td>{{ neighbor.BSSID }}</td>
                 <td>{{ neighbor.Channel }}</td>
@@ -84,7 +88,7 @@ onMounted(fetchWifiNeighbors);
       </div>
 
       <!-- 5G Section -->
-      <div class="band-section" v-if="wifiNeighborData?.Enable5g">
+      <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable5g">
         <h2 class="section-title">5G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
         <div class="table-container">
           <table>
@@ -99,7 +103,7 @@ onMounted(fetchWifiNeighbors);
               </tr>
             </thead>
             <tbody>
-              <tr v-for="neighbor in neighborResults" :key="neighbor.BSSID">
+              <tr v-for="neighbor in neighborResults['5']" :key="neighbor.BSSID">
                 <td>{{ neighbor.SSID }}</td>
                 <td>{{ neighbor.BSSID }}</td>
                 <td>{{ neighbor.Channel }}</td>
@@ -122,7 +126,7 @@ onMounted(fetchWifiNeighbors);
       </div>
 
       <!-- 6G Section -->
-      <div class="band-section" v-if="wifiNeighborData?.Enable6g">
+      <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable6g">
         <h2 class="section-title">6G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
         <div class="table-container">
           <table>
@@ -137,7 +141,7 @@ onMounted(fetchWifiNeighbors);
               </tr>
             </thead>
             <tbody>
-              <tr v-for="neighbor in neighborResults" :key="neighbor.BSSID">
+              <tr v-for="neighbor in neighborResults['6']" :key="neighbor.BSSID">
                 <td>{{ neighbor.SSID }}</td>
                 <td>{{ neighbor.BSSID }}</td>
                 <td>{{ neighbor.Channel }}</td>

@@ -7,11 +7,16 @@ export interface WifiNeighborInfo {
   Signal: number;
 }
 
-export interface WifiNeighborResponse {
-  Enable2g?: number;
-  Enable5g?: number;
-  Enable6g?: number;
-  WifiNeighbor?: WifiNeighborInfo[];
+export interface WifiNeighborScanResponse {
+  WifiNeighbor: WifiNeighborInfo[];
+}
+
+export interface WifiNeighborStatusResponse {
+  WifiNeighbor: {
+    Enable2g: number;
+    Enable5g: number;
+    Enable6g: number;
+  };
 }
 
 export interface WifiNeighborScanRequest {

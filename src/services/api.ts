@@ -2,7 +2,7 @@ import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, Statisti
 import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone';
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
 import type { SshResponse, SshUpdateRequest } from '../types/ssh';
-import type { WifiNeighborResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
+import type { WifiNeighborScanResponse,WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
@@ -48,19 +48,21 @@ export async function getStatistics(): Promise<StatisticsResponse> {
   return handleApiResponse<StatisticsResponse>(response);
 }
 
-export async function getWifiNeighbors(): Promise<WifiNeighborResponse> {
+export async function getWifiNeighbors(): Promise<WifiNeighborStatusResponse> {
   if (isDevelopment) {
     return {
-      Enable2g: 1,
-      Enable5g: 1,
-      Enable6g: 1
+      "WifiNeighbor": {
+          Enable2g: 1,
+          Enable5g: 1,
+          Enable6g: 0,
+      }
     };
   }
   const response = await fetch(`${API_BASE_URL}/info?list=WifiNeighbor`);
-  return handleApiResponse<WifiNeighborResponse>(response);
+  return handleApiResponse<WifiNeighborStatusResponse>(response);
 }
 
-export async function scanWifiNeighbors(band: string): Promise<WifiNeighborResponse> {
+export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanResponse> {
   if (isDevelopment) {
     return {
       WifiNeighbor: [
@@ -93,7 +95,7 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborRespo
       WifiNeighbor: { Band: band }
     } as WifiNeighborScanRequest),
   });
-  return handleApiResponse<WifiNeighborResponse>(response);
+  return handleApiResponse<WifiNeighborScanResponse>(response);
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {
