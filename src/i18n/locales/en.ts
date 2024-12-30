@@ -91,6 +91,19 @@ const translations: Translations = {
     scan: 'SCAN',
     scanning: 'Scanning...'
   },
+  lcm: {
+    title: 'Status - LCM',
+    execEnv: 'Execution Environments',
+    execUnits: 'Execution Units',
+    deployUnits: 'Deployment Units',
+    deploymentUnits: 'Deployment Units',
+    name: 'Name',
+    status: 'Status',
+    url: 'URL',
+    uuid: 'UUID',
+    vendor: 'Vendor',
+    version: 'Version'
+  },
   ddns: {
     title: 'DDNS Settings',
     management: 'DDNS Management',

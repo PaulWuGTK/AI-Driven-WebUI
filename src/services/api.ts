@@ -3,6 +3,7 @@ import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone'
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
 import type { SshResponse, SshUpdateRequest } from '../types/ssh';
 import type { WifiNeighborScanResponse,WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
+import type { LcmApiResponse } from '../types/lcm';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
@@ -96,6 +97,34 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanR
     } as WifiNeighborScanRequest),
   });
   return handleApiResponse<WifiNeighborScanResponse>(response);
+}
+
+export async function getLcmStatus(): Promise<LcmApiResponse> {
+  if (isDevelopment) {
+    return [
+      {
+        parameters: {
+          ExecEnvNumberOfEntries: 1,
+          ExecutionUnitNumberOfEntries: 0,
+          DeploymentUnitNumberOfEntries: 1
+        },
+        path: "SoftwareModules."
+      },
+      {
+        parameters: {
+          URL: "docker://docker-prpl.sahrd.io/embedded-gui-hgw-generic-webui:2.0.0",
+          Status: "Installing",
+          Vendor: "docker",
+          UUID: "webui",
+          Name: "embedded-gui-hgw-generic-webui",
+          Version: "2.0.0"
+        },
+        path: "SoftwareModules.DeploymentUnit.1."
+      }
+    ];
+  }
+  const response = await fetch('/serviceElements/Device.SoftwareModules');
+  return handleApiResponse<LcmApiResponse>(response);
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {

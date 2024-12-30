@@ -90,6 +90,19 @@ export interface Translations {
     scan: string;
     scanning: string;
   };
+  lcm: {
+    title: string;
+    execEnv: string;
+    execUnits: string;
+    deployUnits: string;
+    deploymentUnits: string;
+    name: string;
+    status: string;
+    url: string;
+    uuid: string;
+    vendor: string;
+    version: string;
+  };
   ddns: {
     title: string;
     management: string;
