@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getCpuInfo } from '../../services/api/dashboard';
 
@@ -11,6 +11,7 @@ const cpuData = ref({
 
 const usageHistory = ref<number[]>([]);
 const maxHistoryPoints = 10;
+const pollingInterval = ref<number | null>(null);
 
 const fetchCpuData = async () => {
   try {
@@ -33,7 +34,13 @@ const fetchCpuData = async () => {
 
 onMounted(() => {
   fetchCpuData();
-  setInterval(fetchCpuData, 5000);
+  pollingInterval.value = window.setInterval(fetchCpuData, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+  }
 });
 </script>
 

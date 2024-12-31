@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWifiInfo } from '../../services/api/dashboard';
 
@@ -18,6 +18,7 @@ const wifiData = ref({
     txBytes: '0'
   }
 });
+const pollingInterval = ref<number | null>(null);
 
 const formatBytes = (bytes: number): string => {
   if (bytes === 0) return '0 B';
@@ -31,7 +32,6 @@ const fetchWifiData = async () => {
   try {
     const response = await getWifiInfo();
     
-    // Process WLAN data
     const wlan0 = response.find((item: any) => 
       item.path === 'WiFi.SSID.1.Stats.')?.parameters;
     const wlan1 = response.find((item: any) => 
@@ -61,7 +61,13 @@ const fetchWifiData = async () => {
 
 onMounted(() => {
   fetchWifiData();
-  setInterval(fetchWifiData, 5000);
+  pollingInterval.value = window.setInterval(fetchWifiData, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+  }
 });
 </script>
 

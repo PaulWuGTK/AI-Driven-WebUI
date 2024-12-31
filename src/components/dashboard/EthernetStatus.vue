@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getEthernetInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const ports = ref<any[]>([]);
+const pollingInterval = ref<number | null>(null);
 
 const fetchEthernetStatus = async () => {
   try {
@@ -17,7 +18,13 @@ const fetchEthernetStatus = async () => {
 
 onMounted(() => {
   fetchEthernetStatus();
-  setInterval(fetchEthernetStatus, 5000);
+  pollingInterval.value = window.setInterval(fetchEthernetStatus, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+  }
 });
 </script>
 

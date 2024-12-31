@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getMemoryInfo } from '../../services/api/dashboard';
 
@@ -8,6 +8,7 @@ const memoryData = ref({
   total: 0,
   free: 0
 });
+const pollingInterval = ref<number | null>(null);
 
 const usedMemory = computed(() => {
   return memoryData.value.total - memoryData.value.free;
@@ -38,7 +39,13 @@ const fetchMemoryData = async () => {
 
 onMounted(() => {
   fetchMemoryData();
-  setInterval(fetchMemoryData, 5000);
+  pollingInterval.value = window.setInterval(fetchMemoryData, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+  }
 });
 </script>
 

@@ -7,6 +7,7 @@ const router = useRouter();
 const { t } = useI18n();
 const activeMenu = ref('Status');
 const activeSubItem = ref('WAN');
+const expandedMenus = ref<string[]>(['Status']); // Track expanded state
 
 const menuItems = [
   { name: 'Dashboard', icon: '⌂', path: '/dashboard', translationKey: 'menu.dashboard' },
@@ -44,19 +45,31 @@ const menuItems = [
   }
 ];
 
+const toggleMenu = (menuName: string) => {
+  const index = expandedMenus.value.indexOf(menuName);
+  if (index === -1) {
+    expandedMenus.value.push(menuName);
+  } else {
+    expandedMenus.value.splice(index, 1);
+  }
+};
+
 const handleMenuClick = (menuName: string, path?: string) => {
   activeMenu.value = menuName;
   if (path) {
     router.push(path);
-  }
-  if (menuName !== 'Status' && menuName !== 'Management') {
-    activeSubItem.value = '';
+  } else {
+    toggleMenu(menuName);
   }
 };
 
 const handleSubItemClick = (subItem: { name: string; path: string }) => {
   activeSubItem.value = subItem.name;
   router.push(subItem.path);
+};
+
+const isMenuExpanded = (menuName: string): boolean => {
+  return expandedMenus.value.includes(menuName);
 };
 </script>
 
@@ -78,11 +91,16 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
         >
           <span class="icon">{{ item.icon }}</span>
           {{ t(item.translationKey) }}
-          <span v-if="item.subItems" class="arrow">▼</span>
+          <span 
+            v-if="item.subItems" 
+            class="arrow"
+            :class="{ expanded: isMenuExpanded(item.name) }"
+          >▶</span>
         </div>
         <div 
-          v-if="item.subItems && activeMenu === item.name" 
+          v-if="item.subItems" 
           class="submenu"
+          :class="{ expanded: isMenuExpanded(item.name) }"
         >
           <div 
             v-for="subItem in item.subItems" 
@@ -103,10 +121,10 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 .sidebar {
   width: 230px;
   min-height: 100vh;
-  background: linear-gradient(to bottom, #0070BB 0%, #60CCF6 100%);
+  background: linear-gradient(to bottom, #1a237e 0%, #3a4085 100%);
   color: white;
   padding: 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
@@ -114,7 +132,7 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  background-color: #0070BB;
+  background-color: #1a237e;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -163,10 +181,21 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
   right: 1.5rem;
   font-size: 0.75rem;
   opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.arrow.expanded {
+  transform: rotate(90deg);
 }
 
 .submenu {
-  padding: 0.5rem 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.submenu.expanded {
+  max-height: 500px; /* Adjust based on your needs */
 }
 
 .submenu-item {
@@ -183,7 +212,7 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 }
 
 .submenu-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #1976d2; /* Highlight color for active submenu item */
   color: #ffffff;
   font-weight: 500;
 }

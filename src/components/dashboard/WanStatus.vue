@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWanInfo } from '../../services/api/dashboard';
 
@@ -10,6 +10,7 @@ const wanData = ref({
   bytesReceived: '0',
   bytesSent: '0'
 });
+const pollingInterval = ref<number | null>(null);
 
 const fetchWanData = async () => {
   try {
@@ -31,7 +32,13 @@ const fetchWanData = async () => {
 
 onMounted(() => {
   fetchWanData();
-  setInterval(fetchWanData, 5000);
+  pollingInterval.value = window.setInterval(fetchWanData, 5000);
+});
+
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+  }
 });
 </script>
 
