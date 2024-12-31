@@ -148,12 +148,35 @@ const translations: Translations = {
     placeholder: 'Please Enter the value'
   },
   ssh: {
-    title: 'SSH Settings',
-    enableServer: 'Enable SSH Server',
+    title: 'SSH',
+    serverManagement: 'SSH Server Management',
+    publicKeyManagement: 'Public Key Management',
+    currentSessions: 'Current Sessions',
+    addServer: 'Add Server',
+    editServer: 'Edit Server',
+    id: 'ID',
+    interface: 'Interface',
+    status: 'Status',
     port: 'Port',
+    action: 'Action',
+    enable: 'Enable SSH Server',
+    allowPasswordLogin: 'Allow Password Login',
     allowRootLogin: 'Allow Root Login',
-    enablePasswordAuth: 'Enable Password Authentication',
-    apply: 'Apply'
+    maxAuthTries: 'Maximum Authentication Tries',
+    idleTimeout: 'Idle Timeout (seconds)',
+    confirmDelete: 'Are you sure you want to delete this SSH server?',
+    comment: 'Comment',
+    key: 'Public Key',
+    viewKey: 'View Key',
+    addNewKey: 'Add New SSH Key',
+    enterPublicKey: 'Enter SSH public key...',
+    addKey: 'Add Key',
+    confirmDeleteKey: 'Are you sure you want to delete this SSH key?',
+    user: 'User',
+    clientAddress: 'Client Address',
+    clientPort: 'Client Port',
+    serverId: 'Server ID',
+    serverPort: 'Server Port'
   },
   login: {
     title: 'Login',
@@ -161,6 +184,12 @@ const translations: Translations = {
     password: 'Password',
     submit: 'Login',
     error: 'Invalid username or password'
+  },
+  common: {
+    save: 'Save',
+    cancel: 'Cancel',
+    close: 'Close',
+    refresh: 'Refresh'
   },
 };
 

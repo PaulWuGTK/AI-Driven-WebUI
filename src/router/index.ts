@@ -11,7 +11,7 @@ import Settings from '../views/Settings.vue';
 import Management from '../views/Management.vue';
 import DdnsSettings from '../views/advanced/DdnsSettings.vue';
 import NtpSettings from '../views/management/NtpSettings.vue';
-import SshSettings from '../views/management/SshSettings.vue';
+import SshManagement from '../views/management/ssh/SshManagement.vue';
 import Login from '../views/Login.vue';
 
 // Auth guard
@@ -98,7 +98,7 @@ const router = createRouter({
     },
     {
       path: '/management/ssh',
-      component: SshSettings,
+      component: SshManagement,
       beforeEnter: requireAuth
     }
   ]

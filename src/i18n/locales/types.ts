@@ -148,11 +148,34 @@ export interface Translations {
   };
   ssh: {
     title: string;
-    enableServer: string;
+    serverManagement: string;
+    publicKeyManagement: string;
+    currentSessions: string;
+    addServer: string;
+    editServer: string;
+    id: string;
+    interface: string;
+    status: string;
     port: string;
+    action: string;
+    enable: string;
+    allowPasswordLogin: string;
     allowRootLogin: string;
-    enablePasswordAuth: string;
-    apply: string;
+    maxAuthTries: string;
+    idleTimeout: string;
+    confirmDelete: string;
+    comment: string;
+    key: string;
+    viewKey: string;
+    addNewKey: string;
+    enterPublicKey: string;
+    addKey: string;
+    confirmDeleteKey: string;
+    user: string;
+    clientAddress: string;
+    clientPort: string;
+    serverId: string;
+    serverPort: string;
   };
   login: {
     title: string;

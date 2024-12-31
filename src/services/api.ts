@@ -1,8 +1,8 @@
 import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, StatisticsResponse, NtpResponse, NtpUpdateRequest } from '../types';
 import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone';
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
-import type { SshResponse, SshUpdateRequest } from '../types/ssh';
-import type { WifiNeighborScanResponse,WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
+import type { SshServer, SshServerResponse, SshAuthorizedKey, SshAuthorizedKeyResponse, SshSession, SshSessionResponse } from '../types/ssh';
+import type { WifiNeighborScanResponse, WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
 import type { LcmApiResponse } from '../types/lcm';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
@@ -11,7 +11,7 @@ import { statisticsMockData } from './mockData/statisticsMockData';
 import { ntpMockData } from './mockData/ntpMockData';
 import { timezoneData } from './mockData/timezoneData';
 import { ddnsData } from './mockData/ddnsData';
-import { sshData } from './mockData/sshData';
+import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/sshData';
 import { handleApiResponse } from '../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
@@ -198,26 +198,4 @@ export async function updateDdns(data: DdnsUpdateRequest): Promise<DdnsResponse>
     body: JSON.stringify(data),
   });
   return handleApiResponse<DdnsResponse>(response);
-}
-
-export async function getSsh(): Promise<SshResponse> {
-  if (isDevelopment) {
-    return sshData;
-  }
-  const response = await fetch('/API/info?list=Ssh');
-  return handleApiResponse<SshResponse>(response);
-}
-
-export async function updateSsh(data: SshUpdateRequest): Promise<SshResponse> {
-  if (isDevelopment) {
-    return sshData;
-  }
-  const response = await fetch('/API/info?list=Ssh', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  return handleApiResponse<SshResponse>(response);
 }
