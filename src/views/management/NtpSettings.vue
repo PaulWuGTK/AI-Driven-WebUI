@@ -36,16 +36,27 @@ const handleSubmit = async () => {
   if (!selectedTimezone.value) return;
 
   try {
-    const tzValue = selectedTimezone.value.DstSupport === 2 && daylightSaving.value
-      ? selectedTimezone.value.tzDST
-      : selectedTimezone.value.tzNDST;
+    const tzValue = (() => {
+      const dstSupport = selectedTimezone.value.DstSupport;
+      if (dstSupport === 0) {
+        return selectedTimezone.value.tzNDST;
+      } else if (dstSupport === 1) {
+        return daylightSaving.value
+          ? selectedTimezone.value.tzDST
+          : selectedTimezone.value.tzNDST;
+      } else if (dstSupport === 2) {
+
+        return selectedTimezone.value.tzDST || selectedTimezone.value.tzNDST;
+      }
+      return selectedTimezone.value.tzNDST;
+    })();
 
     const updateData: NtpUpdateRequest = {
       Ntp: {
         SetTZ: tzValue,
         NtpServers: ntpServers.value.filter(Boolean).join(', '),
         NtpEnable: ntpEnabled.value ? 1 : 0,
-        REGION: parseInt(timeZone.value, 10)
+        REGION: parseInt(timeZone.value, 10) + 1
       }
     };
 
