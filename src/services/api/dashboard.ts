@@ -1,4 +1,3 @@
-import { isDevelopment } from '../config';
 import {
   getSystemMockData,
   getCpuMockData,
@@ -7,6 +6,8 @@ import {
   getWifiMockData,
   getEthernetMockData
 } from '../mockData/dashboard';
+
+const isDevelopment = import.meta.env.DEV;
 
 export const getSystemInfo = async () => {
   if (isDevelopment) {

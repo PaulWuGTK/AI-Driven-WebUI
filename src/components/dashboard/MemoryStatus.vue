@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { getMemoryInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const memoryData = ref({
@@ -16,17 +17,18 @@ const usedPercentage = computed(() => {
   return ((usedMemory.value / memoryData.value.total) * 100).toFixed(1);
 });
 
+const formatBytes = (bytes: number) => {
+  const mb = bytes / (1024 * 1024);
+  return `${mb.toFixed(2)} MB`;
+};
+
 const fetchMemoryData = async () => {
   try {
-    const response = await fetch('/serviceElements/Device.DeviceInfo.');
-    const data = await response.json();
-    const memoryStatus = data.find((item: any) => 
-      item.path === 'DeviceInfo.MemoryStatus.')?.parameters;
-    
-    if (memoryStatus) {
+    const response = await getMemoryInfo();
+    if (response.parameters) {
       memoryData.value = {
-        total: memoryStatus.Total / (1024 * 1024), // Convert to MB
-        free: memoryStatus.Free / (1024 * 1024)
+        total: response.parameters.Total,
+        free: response.parameters.Free
       };
     }
   } catch (error) {
@@ -36,7 +38,7 @@ const fetchMemoryData = async () => {
 
 onMounted(() => {
   fetchMemoryData();
-  setInterval(fetchMemoryData, 10000);
+  setInterval(fetchMemoryData, 5000);
 });
 </script>
 
@@ -75,11 +77,11 @@ onMounted(() => {
       <div class="memory-details">
         <div class="detail-item">
           <span class="label">{{ t('dashboard.total') }}</span>
-          <span class="value">{{ memoryData.total.toFixed(2) }} MB</span>
+          <span class="value">{{ formatBytes(memoryData.total) }}</span>
         </div>
         <div class="detail-item">
           <span class="label">{{ t('dashboard.free') }}</span>
-          <span class="value">{{ memoryData.free.toFixed(2) }} MB</span>
+          <span class="value">{{ formatBytes(memoryData.free) }}</span>
         </div>
       </div>
     </div>
@@ -87,16 +89,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.memory-status {
-  height: 100%;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
 .memory-container {
   display: flex;
   flex-direction: column;
@@ -162,5 +154,11 @@ onMounted(() => {
 .detail-item .value {
   color: #333;
   font-weight: 500;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 1rem 0;
 }
 </style>

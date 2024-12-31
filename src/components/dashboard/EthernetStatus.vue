@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { getEthernetInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const ports = ref<any[]>([]);
 
 const fetchEthernetStatus = async () => {
   try {
-    const response = await fetch('/API/info?list=EthernetStatus');
-    const data = await response.json();
-    ports.value = data.EthernetStatus;
+    const response = await getEthernetInfo();
+    ports.value = response.EthernetStatus;
   } catch (error) {
     console.error('Error fetching Ethernet status:', error);
   }
@@ -17,7 +17,7 @@ const fetchEthernetStatus = async () => {
 
 onMounted(() => {
   fetchEthernetStatus();
-  setInterval(fetchEthernetStatus, 10000);
+  setInterval(fetchEthernetStatus, 5000);
 });
 </script>
 
@@ -43,16 +43,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.ethernet-status {
-  height: 100%;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
 .ports-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -94,5 +84,11 @@ onMounted(() => {
 .port-speed {
   font-size: 0.8rem;
   color: #666;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 1rem 0;
 }
 </style>

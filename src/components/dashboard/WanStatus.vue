@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { getWanInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const wanData = ref({
@@ -12,9 +13,8 @@ const wanData = ref({
 
 const fetchWanData = async () => {
   try {
-    const response = await fetch('/API/info?list=EthernetStatus');
-    const data = await response.json();
-    const wanPort = data.EthernetStatus.find((port: any) => port.Role === 'wan');
+    const response = await getWanInfo();
+    const wanPort = response.EthernetStatus.find((port: any) => port.Role === 'wan');
     
     if (wanPort) {
       wanData.value = {
@@ -31,7 +31,7 @@ const fetchWanData = async () => {
 
 onMounted(() => {
   fetchWanData();
-  setInterval(fetchWanData, 10000);
+  setInterval(fetchWanData, 5000);
 });
 </script>
 
@@ -61,16 +61,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.wan-status {
-  height: 100%;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
 .status-container {
   display: flex;
   flex-direction: column;
@@ -108,5 +98,11 @@ onMounted(() => {
 .value {
   color: #333;
   font-weight: 500;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 1rem 0;
 }
 </style>

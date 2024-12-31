@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { getWifiInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const wifiData = ref({
@@ -18,15 +19,22 @@ const wifiData = ref({
   }
 });
 
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+};
+
 const fetchWifiData = async () => {
   try {
-    const response = await fetch('/serviceElements/Device.WiFi.');
-    const data = await response.json();
+    const response = await getWifiInfo();
     
     // Process WLAN data
-    const wlan0 = data.find((item: any) => 
+    const wlan0 = response.find((item: any) => 
       item.path === 'WiFi.SSID.1.Stats.')?.parameters;
-    const wlan1 = data.find((item: any) => 
+    const wlan1 = response.find((item: any) => 
       item.path === 'WiFi.SSID.2.Stats.')?.parameters;
 
     if (wlan0) {
@@ -51,17 +59,9 @@ const fetchWifiData = async () => {
   }
 };
 
-const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-};
-
 onMounted(() => {
   fetchWifiData();
-  setInterval(fetchWifiData, 10000);
+  setInterval(fetchWifiData, 5000);
 });
 </script>
 
@@ -121,16 +121,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.wifi-status {
-  height: 100%;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
 .wifi-container {
   display: grid;
   gap: 1.5rem;
@@ -177,5 +167,11 @@ onMounted(() => {
 
 .status-badge.active {
   background-color: #4caf50;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 1rem 0;
 }
 </style>
