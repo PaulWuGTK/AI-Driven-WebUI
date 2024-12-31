@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getTimezones } from '../../services/api';
-import type { TimezoneResponse } from '../../types/timezone';
+import type { TimezoneEntry } from '../../types/timezone';
 
 const { t } = useI18n();
 
@@ -12,20 +12,28 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
+  (e: 'timezone-change', timezone: TimezoneEntry): void;
 }>();
 
-const timezones = ref<string[]>([]);
+const timezones = ref<TimezoneEntry[]>([]);
 const loading = ref(true);
 
 const fetchTimezones = async () => {
   try {
-    const response: TimezoneResponse = await getTimezones();
-    timezones.value = response.Timezone.TimeZones;
+    const response = await getTimezones();
+    timezones.value = response.Timezone;
   } catch (error) {
     console.error('Error fetching timezones:', error);
   } finally {
     loading.value = false;
   }
+};
+
+const handleChange = (event: Event) => {
+  const index = parseInt((event.target as HTMLSelectElement).value);
+  const timezone = timezones.value[index];
+  emit('update:modelValue', index.toString());
+  emit('timezone-change', timezone);
 };
 
 onMounted(() => {
@@ -37,7 +45,7 @@ onMounted(() => {
   <select
     class="time-zone-select"
     :value="modelValue"
-    @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+    @change="handleChange"
     :disabled="loading"
   >
     <option v-if="loading" value="">Loading...</option>
@@ -47,7 +55,7 @@ onMounted(() => {
       :key="index" 
       :value="index"
     >
-      {{ timezone }}
+      {{ timezone.region }}
     </option>
   </select>
 </template>

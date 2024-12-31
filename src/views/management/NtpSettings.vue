@@ -2,12 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { NtpResponse, NtpUpdateRequest } from '../../types/ntp';
+import type { TimezoneEntry } from '../../types/timezone';
 import { getNtpSettings, updateNtpSettings } from '../../services/api';
 import TimeZoneSelect from '../../components/management/TimeZoneSelect.vue';
 
 const { t } = useI18n();
 const ntpData = ref<NtpResponse | null>(null);
-const timeZone = ref('16');
+const timeZone = ref('16'); // Default timezone index
+const selectedTimezone = ref<TimezoneEntry | null>(null);
 const daylightSaving = ref(false);
 const ntpEnabled = ref(true);
 const ntpServers = ref<string[]>(['', '', '', '', '']);
@@ -26,11 +28,21 @@ const fetchNtpSettings = async () => {
   }
 };
 
+const handleTimezoneChange = (timezone: TimezoneEntry) => {
+  selectedTimezone.value = timezone;
+};
+
 const handleSubmit = async () => {
+  if (!selectedTimezone.value) return;
+
   try {
+    const tzValue = selectedTimezone.value.DstSupport === 2 && daylightSaving.value
+      ? selectedTimezone.value.tzDST
+      : selectedTimezone.value.tzNDST;
+
     const updateData: NtpUpdateRequest = {
       Ntp: {
-        SetTZ: timeZone.value === '16' ? 'GMT' : 'CST-8',
+        SetTZ: tzValue,
         NtpServers: ntpServers.value.filter(Boolean).join(', '),
         NtpEnable: ntpEnabled.value ? 1 : 0,
         REGION: parseInt(timeZone.value, 10)
@@ -60,10 +72,13 @@ onMounted(fetchNtpSettings);
 
         <div class="form-group">
           <label>{{ t('ntp.timeZoneSelect') }}</label>
-          <TimeZoneSelect v-model="timeZone" />
+          <TimeZoneSelect 
+            v-model="timeZone" 
+            @timezone-change="handleTimezoneChange"
+          />
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
           <label class="checkbox-label">
             <input
               type="checkbox"

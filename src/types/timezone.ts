@@ -1,7 +1,12 @@
+export interface TimezoneEntry {
+  DstSupport: number;
+  tzNDST: string;
+  tzDST: string;
+  region: string;
+}
+
 export interface TimezoneResponse {
-  Timezone: {
-    TimeZones: string[];
-  }
+  Timezone: TimezoneEntry[];
 }
 
 export interface TimezoneUpdateRequest {
