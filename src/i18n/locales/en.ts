@@ -23,6 +23,25 @@ const translations: Translations = {
     account: 'Account',
     logout: 'Logout'
   },
+  dashboard: {
+  system: 'System',
+  model: 'Model',
+  serialNumber: 'Serial Number',
+  cpu: 'CPU',
+  processes: 'Processes',
+  memory: 'Memory',
+  total: 'Total',
+  free: 'Free',
+  used: 'Used',
+  wan: 'WAN',
+  status: 'Status',
+  speed: 'Speed',
+  received: 'Received',
+  sent: 'Sent',
+  wifi: 'WiFi',
+  clients: 'Clients',
+  ethernet: 'Ethernet Ports'
+  },
   wan: {
     title: 'WAN Status',
     operationMode: 'Operation Mode',
