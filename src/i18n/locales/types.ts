@@ -198,8 +198,6 @@ export interface Translations {
     rootLoginWithPassword: string;
     enabled: string;
     disabled: string;
-    edit: string;
-    delete: string;
     action: string;
     enable: string;
     allowPasswordLogin: string;
@@ -236,5 +234,7 @@ export interface Translations {
     refresh: string;
     create: string;
     apply: string;
+    edit: string;
+    delete: string;
   },
 }

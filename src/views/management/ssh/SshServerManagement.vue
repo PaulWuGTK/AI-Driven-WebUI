@@ -115,11 +115,11 @@ onMounted(fetchServers);
             <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
             <td>
               <div class="action-buttons">
-                <button class="icon-btn" @click="handleEdit(server)" title="Edit">
-                  <span class="material-icons">edit</span>
+    <button class="btn btn-edit" @click="handleEdit(server)" :title="t('common.edit')">
+      {{ t('common.edit') }}
                 </button>
-                <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
-                  <span class="material-icons">delete</span>
+    <button class="btn btn-delete" @click="handleDelete(server.ID)" :title="t('common.delete')">
+      {{ t('common.delete') }}
                 </button>
               </div>
             </td>
@@ -236,11 +236,12 @@ input, select {
 }
 
 .btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  color: white;
 }
 
 .btn-primary {
@@ -248,9 +249,12 @@ input, select {
   color: white;
 }
 
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
+.btn-edit {
+  background-color: #0070BB;
+}
+
+.btn-delete {
+  background-color: #dc3545;
 }
 
 .btn:hover {

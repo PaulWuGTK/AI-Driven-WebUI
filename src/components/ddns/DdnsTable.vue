@@ -37,11 +37,11 @@ defineEmits<{
           <td>{{ service.LastUpdate }}</td>
           <td>
             <div class="action-buttons">
-              <button class="icon-btn" @click="$emit('edit', service)" title="Edit">
-                <span class="material-icons">edit</span>
+              <button class="btn btn-edit" @click="$emit('edit', service)" :title="t('common.edit')">
+                {{ t('common.edit') }}
               </button>
-              <button class="icon-btn" @click="$emit('delete', service.ID)" title="Delete">
-                <span class="material-icons">delete</span>
+              <button class="btn btn-delete" @click="$emit('delete', service.ID)" :title="t('common.delete')">
+                {{ t('common.delete') }}
               </button>
             </div>
           </td>
@@ -81,15 +81,24 @@ th {
   gap: 0.5rem;
 }
 
-.icon-btn {
-  background: none;
+.btn {
+  padding: 0.25rem 0.75rem;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
-  padding: 0.25rem;
-  color: #666;
+  font-size: 0.9rem;
+  color: white;
 }
 
-.icon-btn:hover {
-  color: #333;
+.btn-edit {
+  background-color: #0070BB;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+}
+
+.btn:hover {
+  opacity: 0.9;
 }
 </style>

@@ -1,79 +1,174 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { MeshNode } from '../../types/mesh';
+import { getMeshMap } from '../../services/api/mesh';
+import MeshNodeTable from '../../components/mesh/MeshNodeTable.vue';
+import MeshClientTable from '../../components/mesh/MeshClientTable.vue';
+import MeshSteeringModal from '../../components/mesh/MeshSteeringModal.vue';
+import MeshTopologyMap from '../../components/mesh/MeshTopologyMap.vue';
+
+const { t } = useI18n();
+const meshData = ref<MeshNode[]>([]);
+const showMap = ref(false);
+const selectedClient = ref<MeshNode | null>(null);
+const loading = ref(false);
+
+const nodes = computed(() => 
+  meshData.value.filter(node => node.Mode !== 'Client')
+);
+
+const clients = computed(() => 
+  meshData.value.filter(node => node.Mode === 'Client')
+);
+
+const fetchMeshData = async () => {
+  loading.value = true;
+  try {
+    const response = await getMeshMap();
+    meshData.value = response.MeshMap;
+  } catch (error) {
+    console.error('Error fetching mesh data:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleAction = (client: MeshNode) => {
+  selectedClient.value = client;
+};
+
+const handleSteeringApply = (data: { destination: string; band: string }) => {
+  console.log('Steering control applied:', data);
+  selectedClient.value = null;
+};
+
+const getPossibleDestinations = () => {
+  return nodes.value.filter(node => 
+    node.Mode === 'Agent' && node.MACAddress !== selectedClient.value?.Upstream
+  );
+};
+
+onMounted(fetchMeshData);
 </script>
 
 <template>
-  <div class="status-page">
-    <h2>Mesh Network Information</h2>
-    <div class="content-box">
-      <p>Mesh Network Status</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Node ID</th>
-            <th>Role</th>
-            <th>Connected Devices</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Node_001</td>
-            <td>Controller</td>
-            <td>5</td>
-            <td>Active</td>
-          </tr>
-          <tr>
-            <td>Node_002</td>
-            <td>Agent</td>
-            <td>3</td>
-            <td>Active</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="mesh-info">
+    <h1 class="page-title">{{ t('mesh.title') }}</h1>
+
+    <div class="mesh-content">
+      <div class="header">
+        <h2>{{ t('mesh.networkInformation') }}</h2>
+        <button 
+          class="btn btn-primary"
+          @click="showMap = !showMap"
+        >
+          {{ showMap ? t('mesh.list') : t('mesh.map') }}
+        </button>
+      </div>
+
+      <template v-if="!showMap">
+        <MeshNodeTable :nodes="nodes" />
+        <MeshClientTable 
+          :clients="clients"
+          @action="handleAction"
+        />
+      </template>
+      <template v-else>
+        <MeshTopologyMap :nodes="meshData" />
+      </template>
+
+      <!-- Actions區塊 - 加入Back按鈕 -->
+      <div class="actions">
+        <button 
+          v-if="showMap"
+          class="btn btn-secondary" 
+          @click="showMap = false"
+        >
+          {{ t('mesh.back') }}
+        </button>
+        <button 
+          class="btn btn-secondary" 
+          @click="fetchMeshData"
+          :disabled="loading"
+        >
+          {{ t('common.refresh') }}
+        </button>
+      </div>
     </div>
+
+    <MeshSteeringModal
+      v-if="selectedClient"
+      :node="selectedClient"
+      :destinations="getPossibleDestinations()"
+      @close="selectedClient = null"
+      @apply="handleSteeringApply"
+    />
   </div>
 </template>
 
 <style scoped>
-.status-page {
-  padding: 2rem;
-  background-color: #f5f5f5;
+.mesh-info {
   flex: 1;
+  background-color: #f5f5f5;
+  min-height: 100%;
 }
 
-.content-box {
-  background-color: white;
-  border-radius: 4px;
-  padding: 1.5rem;
-  margin-top: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  color: #333;
+.page-title {
+  color: #0070BB;
   font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-th, td {
-  padding: 0.75rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 1rem 2rem;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-th {
-  background-color: #f9f9f9;
-  font-weight: 500;
+.mesh-content {
+  padding: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;  /* 加入間距 */
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background-color: #0070BB;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
   color: #666;
 }
 
-td {
-  color: #333;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>

@@ -122,6 +122,28 @@ const translations: Translations = {
     wirelessMode: 'Wireless Mode',
     scan: 'SCAN',
     scanning: 'Scanning...'
+  },mesh: {
+    title: 'Mesh Information',
+    networkInformation: 'Mesh Network Information',
+    nodeList: 'Mesh Node List',
+    clientList: 'Mesh Client List',
+    name: 'Name',
+    mode: 'Mode',
+    ipAddress: 'IPv4 Address',
+    macAddress: 'MAC Address',
+    mediaType: 'Media Type',
+    supportedBand: 'Supported Band',
+    upstream: 'Upstream',
+    action: 'Action',
+    map: 'MAP',
+    list: 'LIST',
+    back: 'Back',
+    steeringControl: 'Steering Control',
+    selectedNode: 'Selected Node',
+    destination: 'Destination',
+    selectDestination: 'Select Destination',
+    band: 'Band',
+    selectBand: 'Select Band'
   },
   lcm: {
     title: 'Status - LCM',
@@ -218,8 +240,6 @@ const translations: Translations = {
     rootLoginWithPassword: 'Root Login with Password',
     enabled: 'Enabled',
     disabled: 'Disabled',
-    edit: 'Edit',
-    delete: 'Delete',
     action: 'Action',
     enable: 'Enable SSH Server',
     allowPasswordLogin: 'Allow Password Login',
@@ -255,7 +275,9 @@ const translations: Translations = {
     close: 'Close',
     refresh: 'Refresh',
     create: 'Create',
-    apply: 'Apply'
+    apply: 'Apply',
+    edit: 'Edit',
+    delete: 'Delete'
   },
 };
 
