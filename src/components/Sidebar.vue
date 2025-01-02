@@ -25,7 +25,14 @@ const menuItems = [
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' }
     ]
   },
-  { name: 'Basic Setting', icon: '⚙', path: '/settings', translationKey: 'menu.basicSetting' },
+  { 
+    name: 'Basic Setting', 
+    icon: '⚙', 
+    translationKey: 'menu.basicSetting',
+    subItems: [
+      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
+    ]
+  },
   { 
     name: 'Advanced', 
     icon: '⚡', 

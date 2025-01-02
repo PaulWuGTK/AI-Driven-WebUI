@@ -17,6 +17,12 @@ const getAlgorithm = (key: string): string => {
   return parts[0] || '';
 };
 
+// Extract algorithm from the key
+const getPublicKey = (key: string): string => {
+  const parts = key.split(' ');
+  return parts[1] || '';
+};
+
 // Extract comment from the key
 const getComment = (key: string): string => {
   const parts = key.trim().split(' ');
@@ -37,7 +43,7 @@ const getComment = (key: string): string => {
 
         <div class="info-row">
           <label>{{ t('ssh.publicKey') }}</label>
-          <div class="value key-text">{{ publicKey.Key }}</div>
+          <div class="value key-text">{{ getPublicKey(publicKey.Key) }}</div>
         </div>
 
         <div class="info-row">

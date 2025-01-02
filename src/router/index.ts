@@ -82,13 +82,18 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
-      path: '/management',
-      component: Management,
+      path: '/settings/wireless',
+      component: () => import('../views/settings/WirelessSettings.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/advanced/ddns',
       component: DdnsSettings,
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management',
+      component: Management,
       beforeEnter: requireAuth
     },
     {

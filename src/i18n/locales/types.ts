@@ -12,6 +12,7 @@ export interface Translations {
     meshInfo: string;
     lcm: string;
     basicSetting: string;
+    wireless: string;
     management: string;
     ntp: string;
     ssh: string;
@@ -115,6 +116,36 @@ export interface Translations {
     vendor: string;
     version: string;
   };
+  wireless: {
+    title: string;
+    basicConfig: string;
+    advancedConfig: string;
+    wpsConfig: string;
+    meshNetwork: string;
+    settings: string;
+    ssid: string;
+    password: string;
+    mode: string;
+    bandwidth: string;
+    channel: string;
+    autoChannel: string;
+    wpsConfiguration: string;
+    wpsPushButton: string;
+    wpsPushButtonDesc: string;
+    wpsPinConnect: string;
+    wpsPinConnectDesc: string;
+    generatePinCode: string;
+    devicePinDesc: string;
+    enterPin: string;
+    connect: string;
+    vapInformation: string;
+    band: string;
+    authentication: string;
+    encryption: string;
+    wpsStatus: string;
+    easyMesh: string;
+    commonSsidConfig: string;
+  };
   ddns: {
     title: string;
     management: string;
@@ -204,5 +235,6 @@ export interface Translations {
     close: string;
     refresh: string;
     create: string;
+    apply: string;
   },
 }
