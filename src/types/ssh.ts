@@ -26,7 +26,6 @@ export interface SshServerResponse {
 
 export interface SshAuthorizedKey {
   Key: string;
-  Comment: string;
 }
 
 export interface SshAuthorizedKeyResponse {

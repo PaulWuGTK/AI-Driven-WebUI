@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../../types/ssh';
 import { getSshServers, updateSshServers } from '../../../services/api/ssh';
+import SshServerEditForm from '../../../components/ssh/SshServerEditForm.vue';
 
 const { t } = useI18n();
 const servers = ref<SshServer[]>([]);
@@ -98,7 +99,9 @@ onMounted(fetchServers);
             <th>{{ t('ssh.id') }}</th>
             <th>{{ t('ssh.interface') }}</th>
             <th>{{ t('ssh.status') }}</th>
-            <th>{{ t('ssh.port') }}</th>
+            <th>{{ t('ssh.loginWithPassword') }}</th>
+            <th>{{ t('ssh.rootLogin') }}</th>
+            <th>{{ t('ssh.rootLoginWithPassword') }}</th>
             <th>{{ t('ssh.action') }}</th>
           </tr>
         </thead>
@@ -107,13 +110,15 @@ onMounted(fetchServers);
             <td>{{ server.ID }}</td>
             <td>{{ server.Interface }}</td>
             <td>{{ server.Status }}</td>
-            <td>{{ server.Port }}</td>
+            <td>{{ server.AllowPasswordLogin ? '1' : '0' }}</td>
+            <td>{{ server.AllowRootLogin ? '1' : '0' }}</td>
+            <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
             <td>
               <div class="action-buttons">
-                <button class="icon-btn" @click="handleEdit(server)">
+                <button class="icon-btn" @click="handleEdit(server)" title="Edit">
                   <span class="material-icons">edit</span>
                 </button>
-                <button class="icon-btn" @click="handleDelete(server.ID)">
+                <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
                   <span class="material-icons">delete</span>
                 </button>
               </div>
@@ -123,95 +128,15 @@ onMounted(fetchServers);
       </table>
     </div>
 
-    <div v-else class="server-edit">
-      <h3>{{ editingServer?.ID ? t('ssh.editServer') : t('ssh.addServer') }}</h3>
-      <form @submit.prevent="handleSave" v-if="editingServer">
-        <div class="form-group">
-          <label>{{ t('ssh.interface') }}</label>
-          <select v-model="editingServer.Interface">
-            <option v-for="iface in interfaces" :key="iface" :value="iface">
-              {{ iface }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>{{ t('ssh.port') }}</label>
-          <input 
-            type="number" 
-            v-model="editingServer.Port"
-            min="1"
-            max="65535"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="editingServer.Enable"
-              :true-value="1"
-              :false-value="0"
-            >
-            {{ t('ssh.enable') }}
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="editingServer.AllowPasswordLogin"
-              :true-value="1"
-              :false-value="0"
-            >
-            {{ t('ssh.allowPasswordLogin') }}
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="editingServer.AllowRootLogin"
-              :true-value="1"
-              :false-value="0"
-            >
-            {{ t('ssh.allowRootLogin') }}
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>{{ t('ssh.maxAuthTries') }}</label>
-          <input 
-            type="number" 
-            v-model="editingServer.MaxAuthTries"
-            min="1"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label>{{ t('ssh.idleTimeout') }}</label>
-          <input 
-            type="number" 
-            v-model="editingServer.IdleTimeout"
-            min="0"
-            required
-          >
-        </div>
-
-        <div class="button-group">
-          <button type="button" class="btn btn-secondary" @click="isEditing = false">
-            {{ t('common.cancel') }}
-          </button>
-          <button type="submit" class="btn btn-primary">
-            {{ t('common.save') }}
-          </button>
-        </div>
-      </form>
-    </div>
+    <SshServerEditForm
+      v-else
+      v-if="editingServer"
+      :server="editingServer"
+      :interfaces="interfaces"
+      @update:server="(server) => editingServer = server"
+      @save="handleSave"
+      @cancel="isEditing = false"
+    />
   </div>
 </template>
 

@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshAuthorizedKey } from '../../../types/ssh';
 import { getSshAuthorizedKeys, updateSshAuthorizedKeys } from '../../../services/api/ssh';
+import { extractKeyComment, isValidSshKey } from '../../../utils/sshUtils';
+import SshPublicKeyViewer from '../../../components/ssh/SshPublicKeyViewer.vue';
 
 const { t } = useI18n();
 const keys = ref<SshAuthorizedKey[]>([]);
@@ -10,6 +12,7 @@ const loading = ref(true);
 const showKeyModal = ref(false);
 const selectedKey = ref<SshAuthorizedKey | null>(null);
 const newKey = ref('');
+const error = ref('');
 
 const fetchKeys = async () => {
   try {
@@ -27,6 +30,11 @@ const handleViewKey = (key: SshAuthorizedKey) => {
   showKeyModal.value = true;
 };
 
+const handleCloseViewer = () => {
+  showKeyModal.value = false;
+  selectedKey.value = null;
+};
+
 const handleDelete = async (key: SshAuthorizedKey) => {
   if (!confirm(t('ssh.confirmDeleteKey'))) return;
 
@@ -40,20 +48,20 @@ const handleDelete = async (key: SshAuthorizedKey) => {
 };
 
 const handleAddKey = async () => {
-  if (!newKey.value.trim()) return;
+  const key = newKey.value.trim();
+  if (!key) return;
+
+  if (!isValidSshKey(key)) {
+    error.value = 'Invalid SSH key format';
+    return;
+  }
 
   try {
-    const keyParts = newKey.value.trim().split(' ');
-    const comment = keyParts[2] || `key-${Date.now()}`;
-    
-    const newKeyObj: SshAuthorizedKey = {
-      Key: newKey.value.trim(),
-      Comment: comment
-    };
-
+    const newKeyObj: SshAuthorizedKey = { Key: key };
     await updateSshAuthorizedKeys([...keys.value, newKeyObj]);
     await fetchKeys();
     newKey.value = '';
+    error.value = '';
   } catch (error) {
     console.error('Error adding SSH key:', error);
   }
@@ -73,21 +81,22 @@ onMounted(fetchKeys);
         <thead>
           <tr>
             <th>{{ t('ssh.comment') }}</th>
-            <th>{{ t('ssh.action') }}</th>
+            <th>{{ t('ssh.publicKey') }}</th>
+            <th>{{ t('ssh.select') }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="key in keys" :key="key.Comment">
-            <td>{{ key.Comment }}</td>
+          <tr v-for="key in keys" :key="key.Key">
+            <td>{{ extractKeyComment(key.Key) }}</td>
             <td>
-              <div class="action-buttons">
-                <button class="btn btn-view" @click="handleViewKey(key)">
-                  {{ t('ssh.viewKey') }}
-                </button>
-                <button class="icon-btn" @click="handleDelete(key)">
-                  <span class="material-icons">delete</span>
-                </button>
-              </div>
+              <button class="btn btn-view" @click="handleViewKey(key)">
+                {{ t('ssh.clickToView') }}
+              </button>
+            </td>
+            <td>
+              <button class="icon-btn" @click="handleDelete(key)" title="Delete">
+                <span class="material-icons">delete</span>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -95,17 +104,21 @@ onMounted(fetchKeys);
     </div>
 
     <div class="add-key-section">
-      <h3>{{ t('ssh.addNewKey') }}</h3>
+      <h3>{{ t('ssh.newSshKey') }}</h3>
       <div class="form-group">
         <textarea
           v-model="newKey"
-          :placeholder="t('ssh.enterPublicKey')"
+          :placeholder="t('ssh.enterNewSshKey')"
           rows="4"
         ></textarea>
+        <div v-if="error" class="error-message">{{ error }}</div>
       </div>
       <div class="button-group">
+        <button class="btn btn-secondary" @click="newKey = ''">
+          {{ t('common.cancel') }}
+        </button>
         <button class="btn btn-primary" @click="handleAddKey">
-          {{ t('ssh.addKey') }}
+          {{ t('common.create') }}
         </button>
       </div>
     </div>
@@ -121,7 +134,7 @@ onMounted(fetchKeys);
           <div class="key-details">
             <div class="form-group">
               <label>{{ t('ssh.comment') }}</label>
-              <div class="value">{{ selectedKey?.Comment }}</div>
+              <div class="value">{{ selectedKey ? extractKeyComment(selectedKey.Key) : '' }}</div>
             </div>
             <div class="form-group">
               <label>{{ t('ssh.key') }}</label>
@@ -137,6 +150,12 @@ onMounted(fetchKeys);
       </div>
     </div>
   </div>
+
+  <SshPublicKeyViewer
+    v-if="showKeyModal && selectedKey"
+    :public-key="selectedKey"
+    :on-close="handleCloseViewer"
+  />
 </template>
 
 <style scoped>
@@ -178,20 +197,14 @@ th {
   color: #666;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
 .btn-view {
   background-color: #0070BB;
   color: white;
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .icon-btn {
@@ -218,6 +231,12 @@ textarea {
   border-radius: 4px;
   font-size: 0.9rem;
   font-family: monospace;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .modal-overlay {

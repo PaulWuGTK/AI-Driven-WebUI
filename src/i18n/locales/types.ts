@@ -157,6 +157,18 @@ export interface Translations {
     interface: string;
     status: string;
     port: string;
+    autoDisableServer: string;
+    connectionTimeout: string;
+    keepAliveMessage: string;
+    ipv4Prefix: string;
+    ipv6Prefix: string;
+    loginWithPassword: string;
+    rootLogin: string;
+    rootLoginWithPassword: string;
+    enabled: string;
+    disabled: string;
+    edit: string;
+    delete: string;
     action: string;
     enable: string;
     allowPasswordLogin: string;
@@ -165,11 +177,13 @@ export interface Translations {
     idleTimeout: string;
     confirmDelete: string;
     comment: string;
+    publicKey: string;
+    select: string;
+    clickToView: string;
     key: string;
     viewKey: string;
-    addNewKey: string;
-    enterPublicKey: string;
-    addKey: string;
+    newSshKey: string;
+    enterNewSshKey: string;
     confirmDeleteKey: string;
     user: string;
     clientAddress: string;
@@ -184,4 +198,11 @@ export interface Translations {
     submit: string;
     error: string;
   };
+  common: {
+    save: string;
+    cancel: string;
+    close: string;
+    refresh: string;
+    create: string;
+  },
 }
