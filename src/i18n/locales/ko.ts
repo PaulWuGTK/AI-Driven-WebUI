@@ -185,7 +185,6 @@ export default {
     username: '사용자 이름',
     password: '비밀번호',
     wanInterface: 'WAN 인터페이스',
-    enable: '활성화',
     status: '상태',
     lastUpdate: '마지막 업데이트',
     action: '작업',
@@ -262,6 +261,7 @@ export default {
     create: '생성',
     apply: '적용',
     edit: '편집',
-    delete: '삭제'
+    delete: '삭제',
+    enable: '활성화'
   }
 };

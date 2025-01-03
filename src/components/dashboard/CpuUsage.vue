@@ -16,16 +16,27 @@ const pollingInterval = ref<number | null>(null);
 const fetchCpuData = async () => {
   try {
     const response = await getCpuInfo();
-    if (response.parameters) {
-      cpuData.value = {
-        usage: response.parameters.CPUUsage,
-        processes: response.parameters.ProcessNumberOfEntries
-      };
-      
-      usageHistory.value.push(response.parameters.CPUUsage);
-      if (usageHistory.value.length > maxHistoryPoints) {
-        usageHistory.value.shift();
+
+    if (Array.isArray(response)) {
+      const cpuInfo = response.find(item => 
+        item.parameters?.CPUUsage !== undefined
+      );
+
+      if (cpuInfo && cpuInfo.parameters) {
+        cpuData.value = {
+          usage: cpuInfo.parameters.CPUUsage,
+          processes: cpuInfo.parameters.ProcessNumberOfEntries || 0
+        };
+        
+        usageHistory.value.push(cpuInfo.parameters.CPUUsage);
+        if (usageHistory.value.length > maxHistoryPoints) {
+          usageHistory.value.shift();
+        }
+      } else {
+        console.warn("No CPUUsage data found in response.");
       }
+    } else {
+      console.error("Unexpected response format:", response);
     }
   } catch (error) {
     console.error('Error fetching CPU data:', error);

@@ -158,7 +158,6 @@ export interface Translations {
     username: string;
     password: string;
     wanInterface: string;
-    enable: string;
     status: string;
     lastUpdate: string;
     action: string;
@@ -236,5 +235,6 @@ export interface Translations {
     apply: string;
     edit: string;
     delete: string;
+    enable: string;
   },
 }

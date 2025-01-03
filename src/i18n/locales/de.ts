@@ -185,7 +185,6 @@ export default {
     username: 'Benutzername',
     password: 'Passwort',
     wanInterface: 'WAN-Schnittstelle',
-    enable: 'Aktivieren',
     status: 'Status',
     lastUpdate: 'Letzte Aktualisierung',
     action: 'Aktion',
@@ -262,6 +261,7 @@ export default {
     create: 'Erstellen',
     apply: 'Anwenden',
     edit: 'Bearbeiten',
-    delete: 'Löschen'
+    delete: 'Löschen',
+    enable: 'Aktivieren'
   }
 };

@@ -31,27 +31,36 @@ const formatBytes = (bytes: number): string => {
 const fetchWifiData = async () => {
   try {
     const response = await getWifiInfo();
-    
-    const wlan0 = response.find((item: any) => 
-      item.path === 'WiFi.SSID.1.Stats.')?.parameters;
-    const wlan1 = response.find((item: any) => 
-      item.path === 'WiFi.SSID.2.Stats.')?.parameters;
 
+    // 獲取 2.4GHz 和 5GHz 的流量數據
+    const wlan0 = response.find((item: any) => 
+      item.path === 'Device.WiFi.SSID.1.Stats.')?.parameters;  // 修正 path
+    const wlan1 = response.find((item: any) => 
+      item.path === 'Device.WiFi.SSID.2.Stats.')?.parameters;
+
+    // 獲取 clients 數量 (通過 AccessPoint 提取)
+    const ap0 = response.find((item: any) =>
+      item.path === 'Device.WiFi.AccessPoint.1.')?.parameters;
+    const ap1 = response.find((item: any) =>
+      item.path === 'Device.WiFi.AccessPoint.2.')?.parameters;
+
+    // 更新 2.4GHz WiFi 狀態
     if (wlan0) {
       wifiData.value.wlan0 = {
-        status: 'Up',
-        clients: 2,
-        rxBytes: formatBytes(wlan0.BytesReceived),
-        txBytes: formatBytes(wlan0.BytesSent)
+        status: ap0?.Enable ? 'Up' : 'Down',
+        clients: ap0?.ActiveAssociatedDeviceNumberOfEntries || 0,
+        rxBytes: formatBytes(wlan0.BytesReceived || 0),
+        txBytes: formatBytes(wlan0.BytesSent || 0)
       };
     }
 
+    // 更新 5GHz WiFi 狀態
     if (wlan1) {
       wifiData.value.wlan1 = {
-        status: 'Up',
-        clients: 1,
-        rxBytes: formatBytes(wlan1.BytesReceived),
-        txBytes: formatBytes(wlan1.BytesSent)
+        status: ap1?.Enable ? 'Up' : 'Down',
+        clients: ap1?.ActiveAssociatedDeviceNumberOfEntries || 0,
+        rxBytes: formatBytes(wlan1.BytesReceived || 0),
+        txBytes: formatBytes(wlan1.BytesSent || 0)
       };
     }
   } catch (error) {
@@ -75,6 +84,7 @@ onUnmounted(() => {
   <div class="wifi-status">
     <h2 class="card-title">{{ t('dashboard.wifi') }}</h2>
     <div class="wifi-container">
+      <!-- 2.4GHz WiFi 狀態 -->
       <div class="wifi-band">
         <h3 class="band-title">2.4 GHz</h3>
         <div class="info-grid">
@@ -99,6 +109,7 @@ onUnmounted(() => {
         </div>
       </div>
 
+      <!-- 5GHz WiFi 狀態 -->
       <div class="wifi-band">
         <h3 class="band-title">5 GHz</h3>
         <div class="info-grid">

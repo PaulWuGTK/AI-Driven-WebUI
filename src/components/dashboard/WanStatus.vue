@@ -8,21 +8,34 @@ const wanData = ref({
   status: 'Down',
   speed: '0',
   bytesReceived: '0',
-  bytesSent: '0'
+  bytesSent: '0',
+  macAddress: ''
 });
 const pollingInterval = ref<number | null>(null);
 
 const fetchWanData = async () => {
   try {
     const response = await getWanInfo();
-    const wanPort = response.EthernetStatus.find((port: any) => port.Role === 'wan');
-    
+
+    // 修正拼寫問題 + 找出 WAN 介面
+    const wanPort = response.EthernetStatus.find(
+      (port: any) => port.Role === 'wan'
+    );
+
     if (wanPort) {
+      const {
+        Status,
+        Speed,
+        MACAddreess, // 實際拼錯的 key
+        MACAddress = MACAddreess || 'Unknown'  // 兼容拼寫錯誤
+      } = wanPort;
+
       wanData.value = {
-        status: wanPort.Status,
-        speed: wanPort.Speed,
-        bytesReceived: '150.7 kB', // Mock data for traffic
-        bytesSent: '180.7 kB'
+        status: Status,
+        speed: Speed,
+        bytesReceived: `${Math.floor(Math.random() * 500)} kB`,  // 模擬流量數據
+        bytesSent: `${Math.floor(Math.random() * 500)} kB`,
+        macAddress: MACAddress
       };
     }
   } catch (error) {
@@ -61,6 +74,10 @@ onUnmounted(() => {
         <div class="info-item">
           <span class="label">{{ t('dashboard.sent') }}</span>
           <span class="value">{{ wanData.bytesSent }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">MAC Address</span>
+          <span class="value">{{ wanData.macAddress }}</span>
         </div>
       </div>
     </div>

@@ -186,7 +186,6 @@ export default {
     username: '使用者名稱',
     password: '密碼',
     wanInterface: 'WAN介面',
-    enable: '啟用',
     status: '狀態',
     lastUpdate: '最後更新',
     action: '操作',
@@ -264,5 +263,6 @@ export default {
     apply: '套用',
     edit: '編輯',
     delete: '刪除',
+    enable: '啟用'
   }
 };

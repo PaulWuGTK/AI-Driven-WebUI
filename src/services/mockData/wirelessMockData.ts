@@ -11,19 +11,22 @@ export const wlanBasicMockData: WlanBasicResponse = {
       Password: "password",
       SecurityMode: "WPA2-Personal",
       SSID: "prplOS",
-      SecurityModeSupport: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal,WPA-Enterprise,WPA2-Enterprise,WPA-WPA2-Enterprise"
+      Enable : 1,
+      SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal,WPA-Enterprise,WPA2-Enterprise,WPA-WPA2-Enterprise"
     },
     wifi5g: {
       Password: "password",
       SecurityMode: "WPA2-Personal",
       SSID: "prplOS",
-      SecurityModeSupport: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal,WPA-Enterprise,WPA2-Enterprise,WPA-WPA2-Enterprise"
+      Enable : 1,
+      SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal,WPA-Enterprise,WPA2-Enterprise,WPA-WPA2-Enterprise"
     },
     wifi6g: {
       Password: "password",
       SecurityMode: "WPA3-Personal",
       SSID: "prplOS",
-      SecurityModeSupport: "None,WPA3-Personal"
+      Enable : 1,
+      SecurityModeAvailable: "None,WPA3-Personal"
     }
   }
 };

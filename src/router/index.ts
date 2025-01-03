@@ -33,7 +33,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: '/status/wan',
+      redirect: '/dashboard',
       beforeEnter: requireAuth
     },
     {

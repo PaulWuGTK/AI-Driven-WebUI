@@ -200,7 +200,6 @@ const translations: Translations = {
     username: 'Username',
     password: 'Password',
     wanInterface: 'WAN Interface',
-    enable: 'Enable',
     status: 'Status',
     lastUpdate: 'Last Update Time',
     action: 'Action',
@@ -277,7 +276,8 @@ const translations: Translations = {
     create: 'Create',
     apply: 'Apply',
     edit: 'Edit',
-    delete: 'Delete'
+    delete: 'Delete',
+    enable: 'Enable',
   },
 };
 

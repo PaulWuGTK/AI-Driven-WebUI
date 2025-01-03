@@ -78,7 +78,7 @@ defineEmits<{
 
       <div class="form-group">
         <label class="switch-label">
-          <span>{{ t('ddns.enable') }}</span>
+          <span>{{ t('common.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"

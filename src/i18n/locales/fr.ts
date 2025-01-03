@@ -186,7 +186,6 @@ export default {
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     wanInterface: 'Interface WAN',
-    enable: 'Activer',
     status: 'État',
     lastUpdate: 'Dernière mise à jour',
     action: 'Action',
@@ -263,6 +262,7 @@ export default {
     create: 'Créer',
     apply: 'Appliquer',
     edit: 'Modifier',
-    delete: 'Supprimer'
+    delete: 'Supprimer',
+    enable: 'Activer',
   }
 };

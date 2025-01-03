@@ -15,7 +15,9 @@ const usedMemory = computed(() => {
 });
 
 const usedPercentage = computed(() => {
-  return ((usedMemory.value / memoryData.value.total) * 100).toFixed(1);
+  return memoryData.value.total
+    ? ((usedMemory.value / memoryData.value.total) * 100).toFixed(1)
+    : '0.0';
 });
 
 const formatBytes = (bytes: number) => {
@@ -23,25 +25,32 @@ const formatBytes = (bytes: number) => {
   return `${mb.toFixed(2)} MB`;
 };
 
+// 調整 fetchMemoryData，處理回傳陣列
 const fetchMemoryData = async () => {
   try {
     const response = await getMemoryInfo();
-    if (response.parameters) {
-      memoryData.value = {
-        total: response.parameters.Total,
-        free: response.parameters.Free
-      };
+    
+    // 檢查是否為陣列，並篩選出 path 符合的項目
+    const memoryInfo = Array.isArray(response)
+      ? response.find(item => item.path === "Device.DeviceInfo.MemoryStatus.")
+      : null;
+
+    if (memoryInfo && memoryInfo.parameters) {
+      const { Total = 0, Free = 0 } = memoryInfo.parameters;
+      memoryData.value = { total: Total, free: Free };
     }
   } catch (error) {
     console.error('Error fetching memory data:', error);
   }
 };
 
+// 啟動後自動輪詢，每 5 秒獲取資料
 onMounted(() => {
   fetchMemoryData();
   pollingInterval.value = window.setInterval(fetchMemoryData, 5000);
 });
 
+// 組件卸載時清除輪詢
 onUnmounted(() => {
   if (pollingInterval.value) {
     clearInterval(pollingInterval.value);

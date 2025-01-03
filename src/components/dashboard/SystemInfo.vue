@@ -4,18 +4,35 @@ import { useI18n } from 'vue-i18n';
 import { getSystemInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
-const systemData = ref({
-  ModelName: '',
-  SerialNumber: '',
-  SoftwareVersion: '',
-  Description: ''
-});
+
+interface SystemInfo {
+  ModelName: string;
+  SerialNumber: string;
+  SoftwareVersion: string;
+  Description: string;
+}
+
+// 定義 SystemInfoItem，表示回傳的 API 資料結構
+interface SystemInfoItem {
+  parameters: Partial<SystemInfo>;
+  path: string;
+}
+
+// 使用 Partial 確保部分屬性是可選的
+const systemData = ref<Partial<SystemInfo>>({});
 
 const fetchSystemInfo = async () => {
   try {
-    const response = await getSystemInfo();
-    if (response.parameters) {
-      systemData.value = response.parameters;
+    const response: SystemInfoItem[] = await getSystemInfo();
+    
+    // 尋找 path 為 "DeviceInfo." 的資料
+    const systemInfo = response.find((item) => item.path === "Device.DeviceInfo.");
+    
+    if (systemInfo && systemInfo.parameters) {
+      systemData.value = {
+        ...systemData.value,
+        ...systemInfo.parameters
+      };
     }
   } catch (error) {
     console.error('Error fetching system info:', error);
@@ -31,11 +48,11 @@ onMounted(fetchSystemInfo);
     <div class="info-grid">
       <div class="info-item">
         <span class="label">{{ t('dashboard.model') }}</span>
-        <span class="value">{{ systemData.ModelName }}</span>
+        <span class="value">{{ systemData.ModelName || '-' }}</span>
       </div>
       <div class="info-item">
         <span class="label">{{ t('dashboard.serialNumber') }}</span>
-        <span class="value">{{ systemData.SerialNumber }}</span>
+        <span class="value">{{ systemData.SerialNumber || '-' }}</span>
       </div>
     </div>
   </div>

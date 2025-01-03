@@ -16,10 +16,10 @@ const emit = defineEmits<{
 const showPassword = ref(false);
 
 const securityModes = computed(() => 
-  props.modelValue.SecurityModeSupport.split(',')
+  props.modelValue.SecurityModeAvailable.split(',')  // Changed from SecurityModeSupport
 );
 
-const updateConfig = (field: keyof WlanBasicConfig, value: string) => {
+const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
   emit('update:modelValue', {
     ...props.modelValue,
     [field]: value
@@ -31,6 +31,21 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string) => {
   <div class="band-config">
     <h2 class="band-title">{{ title }} {{ t('wireless.settings') }}</h2>
     
+    <!-- Added Enable toggle -->
+    <div class="form-group">
+      <label class="switch-label">
+        <span>{{ t('common.enable') }}</span>
+        <label class="switch">
+          <input
+            type="checkbox"
+            :checked="modelValue.Enable === 1"
+            @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+          >
+          <span class="slider"></span>
+        </label>
+      </label>
+    </div>
+
     <div class="form-group">
       <label>{{ t('wireless.ssid') }}</label>
       <input
@@ -128,5 +143,58 @@ input, select {
 
 .toggle-password:hover {
   color: #333;
+}
+
+/* Add styles for the switch */
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0070BB;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 </style>

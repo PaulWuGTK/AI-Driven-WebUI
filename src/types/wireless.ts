@@ -3,7 +3,8 @@ export interface WlanBasicConfig {
   Password: string;
   SecurityMode: string;
   SSID: string;
-  SecurityModeSupport: string;
+  Enable: number;
+  SecurityModeAvailable: string;  // Changed from SecurityModeSupport
 }
 
 export interface WlanBasicResponse {
