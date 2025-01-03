@@ -73,7 +73,7 @@ onMounted(fetchKeys);
 <template>
   <div class="key-management">
     <div class="header">
-      <h2 class="section-title">{{ t('ssh.publicKeyManagement') }}</h2>
+      <div class="ssh-title">{{ t('ssh.publicKeyManagement') }}</div>
     </div>
 
     <div class="key-list">
@@ -104,7 +104,9 @@ onMounted(fetchKeys);
     </div>
 
     <div class="add-key-section">
-      <h3>{{ t('ssh.newSshKey') }}</h3>
+      <div class="header">
+      <div class="ssh-title">{{ t('ssh.newSshKey') }}</div>
+      </div>
       <div class="form-group">
         <textarea
           v-model="newKey"
@@ -169,32 +171,25 @@ onMounted(fetchKeys);
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e0e0e0;
 }
-
-.section-title {
+  
+.ssh-title {
   font-size: 1rem;
   color: #333;
-  margin: 0;
+  text-align: left;
+  background-color: #f8f8f8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
 }
 
 .key-list {
   padding: 1.5rem;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
 }
 
 .btn-view {
@@ -216,12 +211,11 @@ th {
 }
 
 .add-key-section {
-  padding: 1.5rem;
   border-top: 1px solid #e0e0e0;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  padding: 1rem;
 }
 
 textarea {
@@ -302,6 +296,7 @@ textarea {
 }
 
 .button-group {
+  padding: 1rem;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;

@@ -86,7 +86,7 @@ onMounted(fetchServers);
 <template>
   <div class="server-management">
     <div class="header">
-      <h2 class="section-title">{{ t('ssh.serverManagement') }}</h2>
+      <div class="ssh-title">{{ t('ssh.serverManagement') }}</div>
       <button v-if="!isEditing" class="btn btn-primary" @click="handleAdd">
         {{ t('ssh.addServer') }}
       </button>
@@ -141,41 +141,29 @@ onMounted(fetchServers);
 </template>
 
 <style scoped>
+.server-list {
+  padding: 1.5rem;
+}
 .server-management {
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+  
+.ssh-title {
+  font-size: 1rem;
+  color: #333;
+  text-align: left;
+  background-color: #f8f8f8;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 2rem;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.section-title {
-  font-size: 1rem;
-  color: #333;
-  margin: 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
   background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
 }
 
 .action-buttons {
@@ -236,7 +224,7 @@ input, select {
 }
 
 .btn {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;

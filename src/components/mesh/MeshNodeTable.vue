@@ -13,7 +13,8 @@ defineProps<{
 
 <template>
   <div class="mesh-node-table">
-    <h3 class="section-title">{{ t('mesh.nodeList') }}</h3>
+    <div class="section-title">{{ t('mesh.nodeList') }}</div>
+    <div class="table-list">
     <table>
       <thead>
         <tr>
@@ -38,6 +39,7 @@ defineProps<{
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
@@ -49,34 +51,5 @@ defineProps<{
   margin-bottom: 1.5rem;
 }
 
-.section-title {
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  color: #333;
-  margin: 0;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
-}
 </style>
 ```

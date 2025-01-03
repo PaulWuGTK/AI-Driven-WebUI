@@ -17,7 +17,8 @@ defineEmits<{
 
 <template>
   <div class="mesh-client-table">
-    <h3 class="section-title">{{ t('mesh.clientList') }}</h3>
+    <div class="section-title">{{ t('mesh.clientList') }}</div>
+    <div class="table-list">
     <table>
       <thead>
         <tr>
@@ -44,6 +45,7 @@ defineEmits<{
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
@@ -52,36 +54,6 @@ defineEmits<{
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-title {
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  color: #333;
-  margin: 0;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
 }
 
 .action-button {

@@ -51,7 +51,7 @@ onMounted(fetchWifiNeighbors);
     <div class="neighbor-content">
       <!-- 2.4G Section -->
       <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable2g">
-        <h2 class="section-title">2.4G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
+        <div class="section-title">2.4G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         <div class="table-container">
           <table>
             <thead>
@@ -89,7 +89,7 @@ onMounted(fetchWifiNeighbors);
 
       <!-- 5G Section -->
       <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable5g">
-        <h2 class="section-title">5G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
+        <div class="section-title">5G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         <div class="table-container">
           <table>
             <thead>
@@ -127,7 +127,7 @@ onMounted(fetchWifiNeighbors);
 
       <!-- 6G Section -->
       <div class="band-section" v-if="wifiNeighborData?.WifiNeighbor.Enable6g">
-        <h2 class="section-title">6G {{ t('wifiNeighbor.wifiNeighbor') }}</h2>
+        <div class="section-title">6G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         <div class="table-container">
           <table>
             <thead>
@@ -173,17 +173,6 @@ onMounted(fetchWifiNeighbors);
   min-height: 100%;
 }
 
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .neighbor-content {
   padding: 1.5rem;
   display: flex;
@@ -192,55 +181,13 @@ onMounted(fetchWifiNeighbors);
 }
 
 .band-section {
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-}
-
-.section-title {
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  color: #333;
-  margin: 0;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.table-container {
-  padding: 1.5rem;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-td {
-  color: #333;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
+  composes: table-section;
 }
 
 .scan-button-container {
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
+  margin: 1rem;
 }
 
 .scan-button {

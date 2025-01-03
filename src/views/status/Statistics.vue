@@ -27,8 +27,8 @@ onMounted(() => {
     <div v-if="statisticsData" class="statistics-content">
       <!-- Ethernet Statistics -->
       <div class="statistics-section">
-        <h2 class="section-title">{{ t('statistics.ethernet') }}</h2>
-        <div class="table-container">
+        <div class="section-header">{{ t('statistics.ethernet') }}</div>
+        <div class="table-wrapper">
           <table>
             <thead>
               <tr>
@@ -62,8 +62,8 @@ onMounted(() => {
 
       <!-- WLAN Statistics -->
       <div class="statistics-section">
-        <h2 class="section-title">{{ t('statistics.wlan') }}</h2>
-        <div class="table-container">
+        <div class="section-header">{{ t('statistics.wlan') }}</div>
+        <div class="table-wrapper">
           <table>
             <thead>
               <tr>
@@ -105,17 +105,6 @@ onMounted(() => {
   min-height: 100%;
 }
 
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .statistics-content {
   padding: 1.5rem;
   display: flex;
@@ -125,47 +114,17 @@ onMounted(() => {
 
 .statistics-section {
   background-color: white;
-  border: 1px solid #e0e0e0;
   border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.section-title {
-  padding: 1rem 1.5rem;
+.section-header {
+  padding: 0.5rem 2rem;
   font-size: 1rem;
   color: #333;
-  margin: 0;
-  background-color: #f8f8f8;
+  text-align: left;
+  background-color: #F8F8FA;
   border-bottom: 1px solid #e0e0e0;
 }
 
-.table-container {
-  padding: 1.5rem;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  white-space: nowrap;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-td {
-  color: #333;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
-}
 </style>

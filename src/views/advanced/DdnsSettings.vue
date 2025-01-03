@@ -103,7 +103,7 @@ onMounted(fetchDdns);
     <div class="settings-content">
       <div v-if="!isEditing" class="management-view">
         <div class="header">
-          <h2>{{ t('ddns.management') }}</h2>
+          <div>{{ t('ddns.management') }}</div>
           <div class="actions">
             <button class="btn btn-primary" @click="handleAdd">
               {{ t('ddns.addService') }}
@@ -252,36 +252,12 @@ onMounted(fetchDdns);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 0.5rem 2rem;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
-}
-
-.table-container {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
 }
 
 .action-buttons {

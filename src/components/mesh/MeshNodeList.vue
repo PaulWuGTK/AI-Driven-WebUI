@@ -15,7 +15,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="mesh-node-list">
+  <div class="table-list">
     <table>
       <thead>
         <tr>
@@ -50,29 +50,6 @@ defineEmits<{
 </template>
 
 <style scoped>
-.mesh-node-list {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
 
 .action-button {
   background-color: #0070BB;

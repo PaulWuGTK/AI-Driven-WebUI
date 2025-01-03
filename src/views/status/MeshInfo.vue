@@ -58,7 +58,7 @@ onMounted(fetchMeshData);
 
     <div class="mesh-content">
       <div class="header">
-        <h2>{{ t('mesh.networkInformation') }}</h2>
+        <div class="mesh-title">{{ t('mesh.networkInformation') }}</div>
         <button 
           class="btn btn-primary"
           @click="showMap = !showMap"
@@ -114,26 +114,21 @@ onMounted(fetchMeshData);
   min-height: 100%;
 }
 
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .mesh-content {
   padding: 1.5rem;
 }
 
+.table-section {
+  composes: table-section;
+  margin-bottom: 1.5rem;
+}
+
 .header {
+  background-color: #FFF;
+  padding: 0.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
 }
 
 .header h2 {
