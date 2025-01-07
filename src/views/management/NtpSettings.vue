@@ -13,8 +13,11 @@ const selectedTimezone = ref<TimezoneEntry | null>(null);
 const daylightSaving = ref(false);
 const ntpEnabled = ref(true);
 const ntpServers = ref<string[]>(['', '', '', '', '']);
+const loading = ref(false);
+const showSuccess = ref(false);
 
 const fetchNtpSettings = async () => {
+  loading.value = true;
   try {
     ntpData.value = await getNtpSettings();
     if (ntpData.value) {
@@ -25,6 +28,8 @@ const fetchNtpSettings = async () => {
     }
   } catch (error) {
     console.error('Error fetching NTP settings:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -32,9 +37,17 @@ const handleTimezoneChange = (timezone: TimezoneEntry) => {
   selectedTimezone.value = timezone;
 };
 
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
+};
+
 const handleSubmit = async () => {
   if (!selectedTimezone.value) return;
 
+  loading.value = true;
   try {
     const tzValue = (() => {
       const dstSupport = selectedTimezone.value.DstSupport;
@@ -45,7 +58,6 @@ const handleSubmit = async () => {
           ? selectedTimezone.value.tzDST
           : selectedTimezone.value.tzNDST;
       } else if (dstSupport === 2) {
-
         return selectedTimezone.value.tzDST || selectedTimezone.value.tzNDST;
       }
       return selectedTimezone.value.tzNDST;
@@ -56,14 +68,18 @@ const handleSubmit = async () => {
         SetTZ: tzValue,
         NtpServers: ntpServers.value.filter(Boolean).join(', '),
         NtpEnable: ntpEnabled.value ? 1 : 0,
-        REGION: parseInt(timeZone.value, 10) + 1
+        REGION: parseInt(timeZone.value, 10)
       }
     };
 
     const response = await updateNtpSettings(updateData);
     ntpData.value = response;
+    showSuccessMessage();
+    await fetchNtpSettings(); // Refresh data after successful update
   } catch (error) {
     console.error('Error updating NTP settings:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -75,7 +91,15 @@ onMounted(fetchNtpSettings);
     <h1 class="page-title">{{ t('ntp.title') }}</h1>
 
     <div class="settings-content">
-      <div class="settings-section">
+      <div class="settings-section" :class="{ 'loading': loading }">
+        <div v-if="loading" class="loading-overlay">
+          <div class="loading-spinner"></div>
+        </div>
+
+        <div v-if="showSuccess" class="success-message">
+          {{ t('common.apply') }} successful
+        </div>
+
         <div class="form-group">
           <label>{{ t('ntp.currentTime') }}</label>
           <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime }}</div>
@@ -119,10 +143,10 @@ onMounted(fetchNtpSettings);
         </div>
 
         <div class="button-group">
-          <button class="btn btn-cancel" @click="fetchNtpSettings">
+          <button class="btn btn-cancel" @click="fetchNtpSettings" :disabled="loading">
             {{ t('ntp.cancel') }}
           </button>
-          <button class="btn btn-apply" @click="handleSubmit">
+          <button class="btn btn-apply" @click="handleSubmit" :disabled="loading">
             {{ t('ntp.apply') }}
           </button>
         </div>
@@ -158,6 +182,53 @@ onMounted(fetchNtpSettings);
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 1.5rem;
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0070BB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 .form-group {
@@ -205,6 +276,12 @@ input[type="text"] {
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .btn-cancel {
@@ -217,7 +294,7 @@ input[type="text"] {
   color: white;
 }
 
-.btn:hover {
+.btn:not(:disabled):hover {
   opacity: 0.9;
 }
 </style>

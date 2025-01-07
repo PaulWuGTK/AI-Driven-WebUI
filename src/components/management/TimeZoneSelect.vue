@@ -31,7 +31,7 @@ const fetchTimezones = async () => {
 
 const handleChange = (event: Event) => {
   const index = parseInt((event.target as HTMLSelectElement).value);
-  const timezone = timezones.value[index];
+  const timezone = timezones.value[index-1];
   emit('update:modelValue', index.toString());
   emit('timezone-change', timezone);
 };
@@ -53,7 +53,7 @@ onMounted(() => {
       v-else
       v-for="(timezone, index) in timezones" 
       :key="index" 
-      :value="index"
+      :value="index + 1"
     >
       {{ timezone.region }}
     </option>
