@@ -102,50 +102,52 @@ onMounted(fetchDdns);
 
     <div class="settings-content">
       <div v-if="!isEditing" class="management-view">
-        <div class="header">
-          <div>{{ t('ddns.management') }}</div>
-          <div class="actions">
-            <button class="btn btn-primary" @click="handleAdd">
-              {{ t('ddns.addService') }}
-            </button>
-            <button class="btn btn-secondary" @click="fetchDdns">
-              {{ t('ddns.refresh') }}
-            </button>
+        <div class="panel-section">
+          <div class="header_btn">
+            <div>{{ t('ddns.management') }}</div>
+            <div class="actions">
+              <button class="btn btn-primary" @click="handleAdd">
+                {{ t('ddns.addService') }}
+              </button>
+              <button class="btn btn-secondary" @click="fetchDdns">
+                {{ t('ddns.refresh') }}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>{{ t('ddns.no') }}</th>
-                <th>{{ t('ddns.provider') }}</th>
-                <th>{{ t('ddns.domain') }}</th>
-                <th>{{ t('ddns.status') }}</th>
-                <th>{{ t('ddns.lastUpdate') }}</th>
-                <th>{{ t('ddns.action') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(service, index) in ddnsData?.Ddns.Service" :key="service.ID">
-                <td>{{ index + 1 }}</td>
-                <td>{{ service.ServProv }}</td>
-                <td>{{ service.DomainName }}</td>
-                <td>{{ service.Status }}</td>
-                <td>{{ service.LastUpdate }}</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="icon-btn" @click="handleEdit(service)" title="Edit">
-                      <span class="material-icons">edit</span>
-                    </button>
-                    <button class="icon-btn" @click="handleDelete(service.ID)" title="Delete">
-                      <span class="material-icons">delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ t('ddns.no') }}</th>
+                  <th>{{ t('ddns.provider') }}</th>
+                  <th>{{ t('ddns.domain') }}</th>
+                  <th>{{ t('ddns.status') }}</th>
+                  <th>{{ t('ddns.lastUpdate') }}</th>
+                  <th>{{ t('ddns.action') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(service, index) in ddnsData?.Ddns.Service" :key="service.ID">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ service.ServProv }}</td>
+                  <td>{{ service.DomainName }}</td>
+                  <td>{{ service.Status }}</td>
+                  <td>{{ service.LastUpdate }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="icon-btn" @click="handleEdit(service)" title="Edit">
+                        <span class="material-icons">edit</span>
+                      </button>
+                      <button class="icon-btn" @click="handleDelete(service.ID)" title="Delete">
+                        <span class="material-icons">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -248,13 +250,6 @@ onMounted(fetchDdns);
   padding: 1.5rem;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 2rem;
-}
-
 .actions {
   display: flex;
   gap: 1rem;
@@ -353,32 +348,4 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.btn:hover {
-  opacity: 0.9;
-}
 </style>

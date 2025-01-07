@@ -72,7 +72,7 @@ onMounted(fetchKeys);
 
 <template>
   <div class="key-management">
-    <div class="header">
+    <div class="header_btn">
       <div class="ssh-title">{{ t('ssh.publicKeyManagement') }}</div>
     </div>
 
@@ -165,11 +165,6 @@ onMounted(fetchKeys);
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.header {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
 }
   
 .ssh-title {

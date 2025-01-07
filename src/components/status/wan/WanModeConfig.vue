@@ -11,26 +11,24 @@ defineProps<{
 </script>
 
 <template>
-  <div class="panel-section">
-    <div class="section-title">{{ t('wan.wanModeConfig') }}</div>
-    <div class="config-section">
-      <div class="config-grid">
-        <div class="config-row">
-          <div class="label">{{ t('wan.dnsMode') }}</div>
-          <div class="value">{{ config.DNSMode }}</div>
-        </div>
-        <div class="config-row">
-          <div class="label">{{ t('wan.physicalType') }}</div>
-          <div class="value">{{ config.PhysicalType }}</div>
-        </div>
-        <div class="config-row">
-          <div class="label">{{ t('wan.status') }}</div>
-          <div class="value">{{ config.Status }}</div>
-        </div>
-        <div class="config-row">
-          <div class="label">{{ t('wan.origin') }}</div>
-          <div class="value">{{ config.Origin }}</div>
-        </div>
+  <div class="section-title">{{ t('wan.wanModeConfig') }}</div>
+  <div class="config-section">
+    <div class="config-grid">
+      <div class="config-row">
+        <div class="label">{{ t('wan.dnsMode') }}</div>
+        <div class="value">{{ config.DNSMode }}</div>
+      </div>
+      <div class="config-row">
+        <div class="label">{{ t('wan.physicalType') }}</div>
+        <div class="value">{{ config.PhysicalType }}</div>
+      </div>
+      <div class="config-row">
+        <div class="label">{{ t('wan.status') }}</div>
+        <div class="value">{{ config.Status }}</div>
+      </div>
+      <div class="config-row">
+        <div class="label">{{ t('wan.origin') }}</div>
+        <div class="value">{{ config.Origin }}</div>
       </div>
     </div>
   </div>

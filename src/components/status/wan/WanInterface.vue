@@ -11,82 +11,80 @@ defineProps<{
 </script>
 
 <template>
-  <div class="panel-section">
-    <div class="section-title">{{ t('wan.interface') }}</div>
-    <div class="interface-section">
-      <!-- Basic Interface Info -->
-      <div class="info-grid">
-        <div class="info-row">
-          <span class="label">{{ t('wan.name') }}</span>
-          <span class="value">{{ interface.Name }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">{{ t('wan.macAddress') }}</span>
-          <span class="value">{{ interface.MACAddress }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">{{ t('wan.speed') }}</span>
-          <span class="value">{{ interface.Speed }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">{{ t('wan.duplex') }}</span>
-          <span class="value">{{ interface.Duplex }}</span>
-        </div>
+  <div class="section-title">{{ t('wan.interface') }}</div>
+  <div class="interface-section">
+    <!-- Basic Interface Info -->
+    <div class="info-grid">
+      <div class="info-row">
+        <span class="label">{{ t('wan.name') }}</span>
+        <span class="value">{{ interface.Name }}</span>
       </div>
+      <div class="info-row">
+        <span class="label">{{ t('wan.macAddress') }}</span>
+        <span class="value">{{ interface.MACAddress }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">{{ t('wan.speed') }}</span>
+        <span class="value">{{ interface.Speed }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">{{ t('wan.duplex') }}</span>
+        <span class="value">{{ interface.Duplex }}</span>
+      </div>
+    </div>
 
-      <!-- IPv4 Configuration -->
-      <div class="ip-section">
-        <h4 class="subsection-title">IPv4</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>{{ t('wan.mode') }}</th>
-              <th>{{ t('wan.address') }}</th>
-              <th>{{ t('wan.gateway') }}</th>
-              <th>{{ t('wan.dnsServer') }}</th>
-              <th>{{ t('wan.subnetMask') }}</th>
-              <th>{{ t('wan.status') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="ip in interface.ipv4" :key="ip.IPv4Address">
-              <td>{{ ip.IPv4Mode }}</td>
-              <td>{{ ip.IPv4Address }}</td>
-              <td>{{ ip.Gateway }}</td>
-              <td>{{ ip.DNSServer }}</td>
-              <td>{{ ip.SubnetMask }}</td>
-              <td>{{ ip.Status }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- IPv4 Configuration -->
+    <div class="ip-section">
+      <h4 class="subsection-title">IPv4</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>{{ t('wan.mode') }}</th>
+            <th>{{ t('wan.address') }}</th>
+            <th>{{ t('wan.gateway') }}</th>
+            <th>{{ t('wan.dnsServer') }}</th>
+            <th>{{ t('wan.subnetMask') }}</th>
+            <th>{{ t('wan.status') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="ip in interface.ipv4" :key="ip.IPv4Address">
+            <td>{{ ip.IPv4Mode }}</td>
+            <td>{{ ip.IPv4Address }}</td>
+            <td>{{ ip.Gateway }}</td>
+            <td>{{ ip.DNSServer }}</td>
+            <td>{{ ip.SubnetMask }}</td>
+            <td>{{ ip.Status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- IPv6 Configuration -->
-      <div class="ip-section">
-        <h4 class="subsection-title">IPv6</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>{{ t('wan.type') }}</th>
-              <th>{{ t('wan.address') }}</th>
-              <th>{{ t('wan.prefix') }}</th>
-              <th>{{ t('wan.gateway') }}</th>
-              <th>{{ t('wan.dnsServer') }}</th>
-              <th>{{ t('wan.status') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="ip in interface.ipv6" :key="ip.IPv6Type">
-              <td>{{ ip.IPv6Type }}</td>
-              <td>{{ ip.IPv6Address || '-' }}</td>
-              <td>{{ ip.Prefix || '-' }}</td>
-              <td>{{ ip.Gateway || '-' }}</td>
-              <td>{{ ip.DNSServer || '-' }}</td>
-              <td>{{ ip.Status }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- IPv6 Configuration -->
+    <div class="ip-section">
+      <h4 class="subsection-title">IPv6</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>{{ t('wan.type') }}</th>
+            <th>{{ t('wan.address') }}</th>
+            <th>{{ t('wan.prefix') }}</th>
+            <th>{{ t('wan.gateway') }}</th>
+            <th>{{ t('wan.dnsServer') }}</th>
+            <th>{{ t('wan.status') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="ip in interface.ipv6" :key="ip.IPv6Type">
+            <td>{{ ip.IPv6Type }}</td>
+            <td>{{ ip.IPv6Address || '-' }}</td>
+            <td>{{ ip.Prefix || '-' }}</td>
+            <td>{{ ip.Gateway || '-' }}</td>
+            <td>{{ ip.DNSServer || '-' }}</td>
+            <td>{{ ip.Status }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

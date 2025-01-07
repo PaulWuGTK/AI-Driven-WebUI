@@ -108,7 +108,7 @@ export async function getLcmStatus(): Promise<LcmApiResponse> {
           ExecutionUnitNumberOfEntries: 0,
           DeploymentUnitNumberOfEntries: 1
         },
-        path: "SoftwareModules."
+        path: "Device.SoftwareModules."
       },
       {
         parameters: {
@@ -119,7 +119,7 @@ export async function getLcmStatus(): Promise<LcmApiResponse> {
           Name: "embedded-gui-hgw-generic-webui",
           Version: "2.0.0"
         },
-        path: "SoftwareModules.DeploymentUnit.1."
+        path: "Device.SoftwareModules.DeploymentUnit.1."
       }
     ];
   }

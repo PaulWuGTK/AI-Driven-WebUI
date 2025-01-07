@@ -28,13 +28,19 @@ onMounted(() => {
     <h1 class="page-title">{{ t('wan.title') }}</h1>
 
     <div class="status-content" v-if="wanData?.StatusWan">
-      <WanStatusSummary :status="wanData.StatusWan" />
-      <WanModeConfig :config="wanData.StatusWan.WANModeConfig" />
-      <WanInterface 
-        v-for="iface in wanData.StatusWan.WANModeConfig.Interfaces" 
-        :key="iface.Name"
-        :interface="iface"
-      />
+      <div class="panel-section">
+        <WanStatusSummary :status="wanData.StatusWan" />
+      </div>
+      <div class="panel-section">
+        <WanModeConfig :config="wanData.StatusWan.WANModeConfig" />
+      </div>
+      <div class="panel-section">
+        <WanInterface 
+          v-for="iface in wanData.StatusWan.WANModeConfig.Interfaces" 
+          :key="iface.Name"
+          :interface="iface"
+        />
+      </div>
     </div>
   </div>
 </template>

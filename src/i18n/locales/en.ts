@@ -259,7 +259,8 @@ const translations: Translations = {
     clientAddress: 'Client Address',
     clientPort: 'Client Port',
     serverId: 'Server ID',
-    serverPort: 'Server Port'
+    serverPort: 'Server Port',
+    algorithm : 'Algorithm'
   },
   login: {
     title: 'Login',

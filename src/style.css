@@ -12,6 +12,17 @@
 }
 
 /* Global Table Styles */
+
+
+.header_btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
+}
+
 .table-container {
   background-color: white;
   border-radius: 4px;
@@ -25,7 +36,9 @@
 }
 
 .panel-section {
+  background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .section-title {

@@ -244,7 +244,8 @@ export default {
     clientAddress: '클라이언트 주소',
     clientPort: '클라이언트 포트',
     serverId: '서버 ID',
-    serverPort: '서버 포트'
+    serverPort: '서버 포트',
+    algorithm : '알고리즘'
   },
   login: {
     title: '로그인',

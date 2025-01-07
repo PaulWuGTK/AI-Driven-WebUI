@@ -245,7 +245,8 @@ export default {
     clientAddress: 'クライアントアドレス',
     clientPort: 'クライアントポート',
     serverId: 'サーバーID',
-    serverPort: 'サーバーポート'
+    serverPort: 'サーバーポート',
+    algorithm : 'アルゴリズム'
   },
   login: {
     title: 'ログイン',

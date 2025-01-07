@@ -245,7 +245,8 @@ export default {
     clientAddress: 'Adresse client',
     clientPort: 'Port client',
     serverId: 'ID serveur',
-    serverPort: 'Port serveur'
+    serverPort: 'Port serveur',
+    algorithm : 'Algorithme'
   },
   login: {
     title: 'Connexion',

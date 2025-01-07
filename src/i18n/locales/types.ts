@@ -218,6 +218,7 @@ export interface Translations {
     clientPort: string;
     serverId: string;
     serverPort: string;
+    algorithm : string;
   };
   login: {
     title: string;

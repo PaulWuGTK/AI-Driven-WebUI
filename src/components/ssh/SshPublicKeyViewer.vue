@@ -37,7 +37,7 @@ const getComment = (key: string): string => {
       
       <div class="key-content">
         <div class="info-row">
-          <label>Algorithm</label>
+          <label>{{ t('ssh.algorithm') }}</label>
           <div class="value">{{ getAlgorithm(publicKey.Key) }}</div>
         </div>
 

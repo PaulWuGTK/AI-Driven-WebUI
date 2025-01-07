@@ -25,7 +25,7 @@ onMounted(fetchSessions);
 
 <template>
   <div class="sessions-management">
-    <div class="header">
+    <div class="header_btn">
       <div class="ssh-title">{{ t('ssh.currentSessions') }}</div>
       <button class="btn btn-refresh" @click="fetchSessions" :disabled="loading">
         {{ t('common.refresh') }}
@@ -68,15 +68,6 @@ onMounted(fetchSessions);
   font-size: 1rem;
   color: #333;
   text-align: left;
-  background-color: #f8f8f8;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 2.0rem;
-  border-bottom: 1px solid #e0e0e0;
   background-color: #f8f8f8;
 }
 

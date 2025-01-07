@@ -85,7 +85,7 @@ onMounted(fetchServers);
 
 <template>
   <div class="server-management">
-    <div class="header">
+    <div class="header_btn">
       <div class="ssh-title">{{ t('ssh.serverManagement') }}</div>
       <button v-if="!isEditing" class="btn btn-primary" @click="handleAdd">
         {{ t('ssh.addServer') }}
@@ -115,11 +115,11 @@ onMounted(fetchServers);
             <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
             <td>
               <div class="action-buttons">
-    <button class="btn btn-edit" @click="handleEdit(server)" :title="t('common.edit')">
-      {{ t('common.edit') }}
+      <button class="icon-btn" @click="handleEdit(server)" title="Edit">
+        <span class="material-icons">edit</span>
                 </button>
-    <button class="btn btn-delete" @click="handleDelete(server.ID)" :title="t('common.delete')">
-      {{ t('common.delete') }}
+      <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
+        <span class="material-icons">delete</span>
                 </button>
               </div>
             </td>
@@ -154,15 +154,6 @@ onMounted(fetchServers);
   font-size: 1rem;
   color: #333;
   text-align: left;
-  background-color: #f8f8f8;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
   background-color: #f8f8f8;
 }
 
@@ -216,36 +207,8 @@ input, select {
   width: auto;
 }
 
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: white;
-}
-
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
-.btn-edit {
-  background-color: #0070BB;
-}
-
+.btn-edit,
 .btn-delete {
-  background-color: #dc3545;
-}
-
-.btn:hover {
-  opacity: 0.9;
+  display: none;
 }
 </style>

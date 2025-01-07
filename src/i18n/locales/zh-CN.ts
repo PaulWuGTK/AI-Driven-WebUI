@@ -245,7 +245,8 @@ export default {
     clientAddress: '客户端地址',
     clientPort: '客户端端口',
     serverId: '服务器ID',
-    serverPort: '服务器端口'
+    serverPort: '服务器端口',
+    algorithm : '算法'
   },
   login: {
     title: '登录',

@@ -245,7 +245,8 @@ export default {
     clientAddress: '用戶端位址',
     clientPort: '用戶端連接埠',
     serverId: '伺服器ID',
-    serverPort: '伺服器連接埠'
+    serverPort: '伺服器連接埠',
+    algorithm : '演算法'
   },
   login: {
     title: '登入',

@@ -25,7 +25,7 @@ onMounted(() => {
     <h1 class="page-title">{{ t('lan.title') }}</h1>
     
     <div v-if="lanData" class="interfaces">
-      <div v-for="iface in lanData.StatusLan" :key="iface.Name" class="interface-section">
+      <div v-for="iface in lanData.StatusLan" :key="iface.Name" class="panel-section">
         <div class="interface-header">{{ iface.Name }}</div>
         
         <div class="info-grid">
@@ -96,7 +96,7 @@ onMounted(() => {
 
 .page-title {
   color: #0070BB;
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: bold;
   margin: 0;
   padding: 1rem 2rem;
@@ -113,14 +113,8 @@ onMounted(() => {
   text-align: left;
 }
 
-.interface-section {
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-}
-
 .interface-header {
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
   color: #000;
   background-color: #f8f8f8;
@@ -128,7 +122,7 @@ onMounted(() => {
 }
 
 .info-grid {
-  padding: 1.25rem;
+  padding: 2rem;
   display: grid;
   gap: 0.75rem;
   border-bottom: 1px solid #e0e0e0;
@@ -150,7 +144,7 @@ onMounted(() => {
 }
 
 .ip-section {
-  padding: 0 1.25rem 1.25rem;
+  padding: 0 2rem 2rem;
 }
 
 .ip-header {
