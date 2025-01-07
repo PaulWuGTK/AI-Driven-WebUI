@@ -11,23 +11,26 @@ defineProps<{
 </script>
 
 <template>
-  <div class="status-section">
-    <div class="status-grid">
-      <div class="status-row">
-        <div class="label">{{ t('wan.operationMode') }}</div>
-        <div class="value">{{ status.OperationMode }}</div>
-      </div>
-      <div class="status-row">
-        <div class="label">{{ t('wan.sensingPolicy') }}</div>
-        <div class="value">{{ status.SensingPolicy }}</div>
-      </div>
-      <div class="status-row">
-        <div class="label">{{ t('wan.sensingTimeout') }}</div>
-        <div class="value">{{ status.SensingTimeout }}</div>
-      </div>
-      <div class="status-row">
-        <div class="label">{{ t('wan.wanMode') }}</div>
-        <div class="value">{{ status.WANMode }}</div>
+  <div class="panel-section">
+    <div class="section-title">{{ t('wan.status') }}</div>
+    <div class="status-section">
+      <div class="status-grid">
+        <div class="status-row">
+          <div class="label">{{ t('wan.operationMode') }}</div>
+          <div class="value">{{ status.OperationMode }}</div>
+        </div>
+        <div class="status-row">
+          <div class="label">{{ t('wan.sensingPolicy') }}</div>
+          <div class="value">{{ status.SensingPolicy }}</div>
+        </div>
+        <div class="status-row">
+          <div class="label">{{ t('wan.sensingTimeout') }}</div>
+          <div class="value">{{ status.SensingTimeout }}</div>
+        </div>
+        <div class="status-row">
+          <div class="label">{{ t('wan.wanMode') }}</div>
+          <div class="value">{{ status.WANMode }}</div>
+        </div>
       </div>
     </div>
   </div>

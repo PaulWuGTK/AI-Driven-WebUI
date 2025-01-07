@@ -14,14 +14,14 @@ const fetchLcmStatus = async () => {
     const response = await getLcmStatus();
     
     // Find and set the main parameters
-    const mainModule = response.find(item => item.path === "SoftwareModules.");
+    const mainModule = response.find(item => item.path === "Device.SoftwareModules.");
     if (mainModule && 'parameters' in mainModule) {
       moduleParameters.value = mainModule.parameters as SoftwareModuleParameters;
     }
 
     // Find and set deployment units
     const units = response.filter(item => 
-      item.path.startsWith("SoftwareModules.DeploymentUnit.") &&
+      item.path.startsWith("Device.SoftwareModules.DeploymentUnit.") &&
       'parameters' in item
     ).map(item => item.parameters as DeploymentUnit);
     
@@ -46,12 +46,12 @@ onUnmounted(() => {
 
 <template>
   <div class="lcm-status">
-    <h1 class="page-title">{{ t('lcm.title') }}</h1>
+    <div class="page-title">{{ t('lcm.title') }}</div>
 
     <div class="status-content">
       <!-- Summary Section -->
       <div class="status-section">
-        <h2 class="section-title">{{ t('lcm.status') }}</h2>
+        <div class="section-title">{{ t('lcm.status') }}</div>
         <div class="summary-grid" v-if="moduleParameters">
           <div class="summary-item">
             <span class="label">{{ t('lcm.execEnv') }}</span>
@@ -70,7 +70,7 @@ onUnmounted(() => {
 
       <!-- Deployment Units Section -->
       <div class="status-section" v-if="deploymentUnits.length > 0">
-        <h2 class="section-title">{{ t('lcm.deploymentUnits') }}</h2>
+        <div class="section-title">{{ t('lcm.deploymentUnits') }}</div>
         <div class="table-container">
           <table>
             <thead>
@@ -132,7 +132,7 @@ onUnmounted(() => {
 }
 
 .section-title {
-  padding: 1rem 1.5rem;
+  padding: 1rem 2rem;
   font-size: 1rem;
   color: #333;
   margin: 0;
@@ -167,27 +167,6 @@ onUnmounted(() => {
 .table-container {
   padding: 1.5rem;
   overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-td {
-  color: #333;
 }
 
 .url-cell {

@@ -123,7 +123,7 @@ export async function getLcmStatus(): Promise<LcmApiResponse> {
       }
     ];
   }
-  const response = await fetch('/serviceElements/Device.SoftwareModules');
+  const response = await fetch('/serviceElements/Device.SoftwareModules.');
   return handleApiResponse<LcmApiResponse>(response);
 }
 

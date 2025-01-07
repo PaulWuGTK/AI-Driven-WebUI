@@ -10,7 +10,8 @@ defineProps<{
 
 <template>
   <div class="interface-section">
-    <h3 class="section-title">{{ t('wlan.interface') }}</h3>
+    <div class="section-title">{{ t('wlan.interface') }}</div>
+    <div class="table-section">
     <table>
       <thead>
         <tr>
@@ -37,6 +38,7 @@ defineProps<{
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
@@ -45,35 +47,4 @@ defineProps<{
   margin-top: 1rem;
 }
 
-.section-title {
-  font-size: 1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.5rem;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-td {
-  color: #333;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
-}
 </style>

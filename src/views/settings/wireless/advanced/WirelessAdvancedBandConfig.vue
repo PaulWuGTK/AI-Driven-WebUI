@@ -91,16 +91,6 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
   margin: 0 0 1.5rem 0;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
 .channel-header {
   display: flex;
   justify-content: space-between;

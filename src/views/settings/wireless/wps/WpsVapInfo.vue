@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
   <div class="vap-info">
-    <h3>{{ t('wireless.vapInformation') }}</h3>
+    <div >{{ t('wireless.vapInformation') }}</div>
     <table>
       <thead>
         <tr>
@@ -39,34 +39,4 @@ defineProps<{
   margin-top: 2rem;
 }
 
-h3 {
-  font-size: 1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #666;
-}
-
-td {
-  color: #333;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
-}
 </style>

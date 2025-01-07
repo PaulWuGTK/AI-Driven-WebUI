@@ -159,29 +159,4 @@ onMounted(() => {
   font-size: 1rem;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: normal;
-  color: #333;
-}
-
-td {
-  color: #000;
-  background-color: #fff;
-}
-
-tr:hover td {
-  background-color: #f5f5f5;
-}
 </style>
