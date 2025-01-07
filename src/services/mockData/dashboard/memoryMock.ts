@@ -2,8 +2,8 @@ export const getMemoryMockData = () => ([
   {
     path: "Device.DeviceInfo.MemoryStatus.",
     parameters: {
-      Total: 256704512,
-      Free: 12345678
+      Total: 256704,
+      Free: 12345
     }
   }
 ]);

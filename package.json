@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.38",
-    "vue-router": "^4.2.5",
     "axios": "^1.6.7",
-    "vue-i18n": "^9.9.1"
+    "chart.js": "^3.9.1",
+    "vue": "^3.4.38",
+    "vue-chart-3": "^3.1.8",
+    "vue-i18n": "^9.9.1",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.3",

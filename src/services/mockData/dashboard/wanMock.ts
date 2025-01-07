@@ -1,12 +1,6 @@
 export const getWanMockData = () => ({
-  EthernetStatus: [
-    {
-      Port: "Port0",
-      Role: "wan",
-      Status: Math.random() > 0.5 ? "Up" : "Down",
-      Speed: "1000",
-      Duplex: "Full",
-      MACAddreess: "00:03:7F:BA:DB:AE"  // 模擬拼錯情況
-    }
-  ]
+  PacketsSent: Math.floor(Math.random() * 15000),
+  PacketsReceived: Math.floor(Math.random() * 13000),
+  BytesSent: Math.floor(Math.random() * 3000000),
+  BytesReceived: Math.floor(Math.random() * 2500000),
 });

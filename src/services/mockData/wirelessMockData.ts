@@ -93,7 +93,7 @@ export const wlanWpsMockData: WlanWpsResponse = {
 
 export const wlanMeshMockData: WlanMeshResponse = {
   WlanMesh: {
-    MeshEnable: "1",
+    MeshEnable: 1,
     CommonSSID: "prplOS"
   }
 };

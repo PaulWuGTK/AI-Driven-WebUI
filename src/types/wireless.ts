@@ -56,7 +56,7 @@ export interface WlanWpsResponse {
 // Mesh Types
 export interface WlanMeshResponse {
   WlanMesh: {
-    MeshEnable: string;
+    MeshEnable: number;
     CommonSSID: string;
   };
 }
