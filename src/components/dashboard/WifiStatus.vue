@@ -16,6 +16,12 @@ const wifiData = ref({
     clients: 0,
     rxBytes: '0',
     txBytes: '0'
+  },
+  wlan2: {
+    status: 'Down',
+    clients: 0,
+    rxBytes: '0',
+    txBytes: '0'
   }
 });
 const pollingInterval = ref<number | null>(null);
@@ -36,14 +42,17 @@ const fetchWifiData = async () => {
     const wlan0 = response.find((item: any) => 
       item.path === 'Device.WiFi.SSID.1.Stats.')?.parameters;  // 修正 path
     const wlan1 = response.find((item: any) => 
-      item.path === 'Device.WiFi.SSID.2.Stats.')?.parameters;
+      item.path === 'Device.WiFi.SSID.4.Stats.')?.parameters;
+    const wlan2 = response.find((item: any) => 
+      item.path === 'Device.WiFi.SSID.7.Stats.')?.parameters;
 
     // 獲取 clients 數量 (通過 AccessPoint 提取)
     const ap0 = response.find((item: any) =>
       item.path === 'Device.WiFi.AccessPoint.1.')?.parameters;
     const ap1 = response.find((item: any) =>
-      item.path === 'Device.WiFi.AccessPoint.2.')?.parameters;
-
+      item.path === 'Device.WiFi.AccessPoint.3.')?.parameters;
+    const ap2 = response.find((item: any) =>
+      item.path === 'Device.WiFi.AccessPoint.5.')?.parameters;
     // 更新 2.4GHz WiFi 狀態
     if (wlan0) {
       wifiData.value.wlan0 = {
@@ -61,6 +70,16 @@ const fetchWifiData = async () => {
         clients: ap1?.ActiveAssociatedDeviceNumberOfEntries || 0,
         rxBytes: formatBytes(wlan1.BytesReceived || 0),
         txBytes: formatBytes(wlan1.BytesSent || 0)
+      };
+    }
+
+    // 更新 6GHz WiFi 狀態
+    if (wlan2) {
+      wifiData.value.wlan2 = {
+        status: ap2?.Enable ? 'Up' : 'Down',
+        clients: ap2?.ActiveAssociatedDeviceNumberOfEntries || 0,
+        rxBytes: formatBytes(wlan2.BytesReceived || 0),
+        txBytes: formatBytes(wlan2.BytesSent || 0)
       };
     }
   } catch (error) {
@@ -130,6 +149,32 @@ onUnmounted(() => {
           <div class="info-item">
             <span class="label">{{ t('dashboard.sent') }}</span>
             <span class="value">{{ wifiData.wlan1.txBytes }}</span>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- 6Hz WiFi 狀態 -->
+      <div class="wifi-band">
+        <h3 class="band-title">5 GHz</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">{{ t('dashboard.status') }}</span>
+            <span class="status-badge" :class="{ active: wifiData.wlan2.status === 'Up' }">
+              {{ wifiData.wlan2.status }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ t('dashboard.clients') }}</span>
+            <span class="value">{{ wifiData.wlan2.clients }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ t('dashboard.received') }}</span>
+            <span class="value">{{ wifiData.wlan2.rxBytes }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ t('dashboard.sent') }}</span>
+            <span class="value">{{ wifiData.wlan2.txBytes }}</span>
           </div>
         </div>
       </div>

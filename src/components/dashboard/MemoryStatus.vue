@@ -20,8 +20,8 @@ const usedPercentage = computed(() => {
     : '0.0';
 });
 
-const formatBytes = (bytes: number) => {
-  const mb = bytes / (1024 * 1024);
+const formatBytes = (kbytes: number) => {
+  const mb = kbytes / (1024);
   return `${mb.toFixed(2)} MB`;
 };
 

@@ -18,7 +18,10 @@ export const getWifiMockData = () => {
     },
     {
       parameters: generateStats(),
-      path: "Device.WiFi.SSID.2.Stats."
+      path: "Device.WiFi.SSID.4.Stats."
+    },{
+      parameters: generateStats(),
+      path: "Device.WiFi.SSID.7.Stats."
     },
     {
       parameters: generateAccessPoint(Math.floor(Math.random() * 5)),  // 模擬連線裝置數
@@ -26,7 +29,11 @@ export const getWifiMockData = () => {
     },
     {
       parameters: generateAccessPoint(Math.floor(Math.random() * 3)),  // 模擬連線裝置數
-      path: "Device.WiFi.AccessPoint.2."
+      path: "Device.WiFi.AccessPoint.3."
+    },
+    {
+      parameters: generateAccessPoint(Math.floor(Math.random() * 3)),  // 模擬連線裝置數
+      path: "Device.WiFi.AccessPoint.5."
     }
   ];
 };
