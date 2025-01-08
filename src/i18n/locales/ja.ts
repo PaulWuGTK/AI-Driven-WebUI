@@ -144,6 +144,19 @@ export default {
     band: 'バンド',
     selectBand: 'バンドを選択'
   },
+  lcm: {
+    title: "ステータス - LCM",
+    execEnv: "実行環境",
+    execUnits: "実行ユニット",
+    deployUnits: "デプロイメントユニット",
+    deploymentUnits: "デプロイメントユニット",
+    name: "名前",
+    status: "ステータス",
+    url: "URL",
+    uuid: "UUID",
+    vendor: "ベンダー",
+    version: "バージョン"
+  },
   wireless: {
     title: '無線設定',
     basicConfig: '基本設定',

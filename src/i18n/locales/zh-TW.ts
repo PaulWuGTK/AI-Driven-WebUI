@@ -144,6 +144,19 @@ export default {
     band: '頻段',
     selectBand: '選擇頻段'
   },
+  lcm: {
+    title: "狀態 - LCM",
+    execEnv: "執行環境",
+    execUnits: "執行單元",
+    deployUnits: "部署單元",
+    deploymentUnits: "部署單元",
+    name: "名稱",
+    status: "狀態",
+    url: "URL",
+    uuid: "UUID",
+    vendor: "供應商",
+    version: "版本"
+  },
   wireless: {
     title: '無線設定',
     basicConfig: '基本設定',

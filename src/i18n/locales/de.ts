@@ -143,6 +143,19 @@ export default {
     band: 'Band',
     selectBand: 'Band auswählen'
   },
+  lcm: {
+    title: "Status - LCM",
+    execEnv: "Ausführungsumgebungen",
+    execUnits: "Ausführungseinheiten",
+    deployUnits: "Bereitstellungseinheiten",
+    deploymentUnits: "Bereitstellungseinheiten",
+    name: "Name",
+    status: "Status",
+    url: "URL",
+    uuid: "UUID",
+    vendor: "Anbieter",
+    version: "Version"
+  },  
   wireless: {
     title: 'WLAN-Einstellungen',
     basicConfig: 'Grundkonfiguration',

@@ -143,6 +143,19 @@ export default {
     band: '대역',
     selectBand: '대역 선택'
   },
+  lcm: {
+    title: "상태 - LCM",
+    execEnv: "실행 환경",
+    execUnits: "실행 단위",
+    deployUnits: "배포 단위",
+    deploymentUnits: "배포 단위",
+    name: "이름",
+    status: "상태",
+    url: "URL",
+    uuid: "UUID",
+    vendor: "제조업체",
+    version: "버전"
+  },
   wireless: {
     title: '무선 설정',
     basicConfig: '기본 설정',

@@ -144,6 +144,19 @@ export default {
     band: 'Bande',
     selectBand: 'Sélectionner la Bande'
   },
+  lcm: {
+    title: "Statut - LCM",
+    execEnv: "Environnements d'exécution",
+    execUnits: "Unités d'exécution",
+    deployUnits: "Unités de déploiement",
+    deploymentUnits: "Unités de déploiement",
+    name: "Nom",
+    status: "Statut",
+    url: "URL",
+    uuid: "UUID",
+    vendor: "Fournisseur",
+    version: "Version"
+  },
   wireless: {
     title: 'Paramètres sans fil',
     basicConfig: 'Configuration de base',
