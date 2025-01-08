@@ -13,6 +13,7 @@ const meshData = ref<MeshNode[]>([]);
 const showMap = ref(false);
 const selectedClient = ref<MeshNode | null>(null);
 const loading = ref(false);
+const error = ref<string | null>(null);
 
 const nodes = computed(() => 
   meshData.value.filter(node => node.Mode !== 'Client')
@@ -24,11 +25,19 @@ const clients = computed(() =>
 
 const fetchMeshData = async () => {
   loading.value = true;
+  error.value = null;
   try {
     const response = await getMeshMap();
-    meshData.value = response.MeshMap;
-  } catch (error) {
-    console.error('Error fetching mesh data:', error);
+    if ('NOK' in response) {
+      error.value = 'Mesh is disabled';
+      meshData.value = [];
+    } else {
+      meshData.value = response.MeshMap;
+    }
+  } catch (err: unknown) {
+    console.error('Error fetching mesh data:', err);
+    error.value = 'Failed to fetch mesh data';
+    meshData.value = [];
   } finally {
     loading.value = false;
   }
@@ -57,44 +66,57 @@ onMounted(fetchMeshData);
     <h1 class="page-title">{{ t('mesh.title') }}</h1>
 
     <div class="mesh-content">
-      <div class="header">
-        <div class="mesh-title">{{ t('mesh.networkInformation') }}</div>
-        <button 
-          class="btn btn-primary"
-          @click="showMap = !showMap"
-        >
-          {{ showMap ? t('mesh.list') : t('mesh.map') }}
-        </button>
+      <!-- Loading State -->
+      <div v-if="loading" class="status-message loading">
+        <div class="loading-spinner"></div>
+        Loading...
       </div>
 
-      <template v-if="!showMap">
-        <MeshNodeTable :nodes="nodes" />
-        <MeshClientTable 
-          :clients="clients"
-          @action="handleAction"
-        />
-      </template>
+      <!-- Error State -->
+      <div v-else-if="error" class="status-message error">
+        {{ error }}
+      </div>
+
+      <!-- Content State -->
       <template v-else>
-        <MeshTopologyMap :nodes="meshData" />
-      </template>
+        <div class="header">
+          <div class="mesh-title">{{ t('mesh.networkInformation') }}</div>
+          <button 
+            class="btn btn-primary"
+            @click="showMap = !showMap"
+          >
+            {{ showMap ? t('mesh.list') : t('mesh.map') }}
+          </button>
+        </div>
 
-      <!-- Actions區塊 - 加入Back按鈕 -->
-      <div class="actions">
-        <button 
-          v-if="showMap"
-          class="btn btn-secondary" 
-          @click="showMap = false"
-        >
-          {{ t('mesh.back') }}
-        </button>
-        <button 
-          class="btn btn-secondary" 
-          @click="fetchMeshData"
-          :disabled="loading"
-        >
-          {{ t('common.refresh') }}
-        </button>
-      </div>
+        <template v-if="!showMap">
+          <MeshNodeTable :nodes="nodes" />
+          <MeshClientTable 
+            :clients="clients"
+            @action="handleAction"
+          />
+        </template>
+        <template v-else>
+          <MeshTopologyMap :nodes="meshData" />
+        </template>
+
+        <div class="actions">
+          <button 
+            v-if="showMap"
+            class="btn btn-secondary" 
+            @click="showMap = false"
+          >
+            {{ t('mesh.back') }}
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            @click="fetchMeshData"
+            :disabled="loading"
+          >
+            {{ t('common.refresh') }}
+          </button>
+        </div>
+      </template>
     </div>
 
     <MeshSteeringModal
@@ -118,9 +140,38 @@ onMounted(fetchMeshData);
   padding: 1.5rem;
 }
 
-.table-section {
-  composes: table-section;
-  margin-bottom: 1.5rem;
+.status-message {
+  background-color: white;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.status-message.error {
+  color: #dc3545;
+}
+
+.status-message.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #0070BB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .header {
@@ -141,7 +192,7 @@ onMounted(fetchMeshData);
   margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;  /* 加入間距 */
+  gap: 1rem;
 }
 
 .btn {
