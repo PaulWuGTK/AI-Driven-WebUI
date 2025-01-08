@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
-const activeMenu = ref('Status');
-const activeSubItem = ref('WAN');
+const activeMenu = ref('Dashboard');
+const activeSubItem = ref('');
 const expandedMenus = ref<string[]>(['Status']); // Track expanded state
 
 const menuItems = [
@@ -64,6 +65,7 @@ const toggleMenu = (menuName: string) => {
 const handleMenuClick = (menuName: string, path?: string) => {
   activeMenu.value = menuName;
   if (path) {
+    activeSubItem.value = ''; // Reset submenu selection when clicking main menu item
     router.push(path);
   } else {
     toggleMenu(menuName);
@@ -78,6 +80,34 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 const isMenuExpanded = (menuName: string): boolean => {
   return expandedMenus.value.includes(menuName);
 };
+
+// Watch for route changes to update active states
+watch(() => route.path, (newPath) => {
+  // Find the menu item that matches the current path
+  let found = false;
+  for (const item of menuItems) {
+    if (item.path === newPath) {
+      activeMenu.value = item.name;
+      activeSubItem.value = '';
+      found = true;
+      break;
+    }
+    if (item.subItems) {
+      const subItem = item.subItems.find(sub => sub.path === newPath);
+      if (subItem) {
+        activeMenu.value = item.name;
+        activeSubItem.value = subItem.name;
+        found = true;
+        break;
+      }
+    }
+  }
+  
+  // If no match found (e.g., on dashboard), reset submenu selection
+  if (!found) {
+    activeSubItem.value = '';
+  }
+}, { immediate: true });
 </script>
 
 <template>

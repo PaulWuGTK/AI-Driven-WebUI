@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, toRaw } from 'vue';
-import { getWanInfo } from '../../services/api/dashboard';
+import { useI18n } from 'vue-i18n';
 import LineChart from '../LineChart.vue';
+import { getWanInfo } from '../../services/api/dashboard';
 
+const { t } = useI18n();
 const wanData = ref({
   bytesReceived: '0',
   bytesSent: '0',
@@ -25,14 +27,14 @@ const chartData = ref<CustomChartData>({
   labels: [],
   datasets: [
     {
-      label: 'Bytes Received',
+      label: t('dashboard.received'),
       data: [],
       borderColor: '#42A5F5',
       fill: true,
       backgroundColor: 'rgba(66, 165, 245, 0.2)'
     },
     {
-      label: 'Bytes Sent',
+      label: t('dashboard.sent'),
       data: [],
       borderColor: '#FFA726',
       fill: true,
@@ -41,7 +43,6 @@ const chartData = ref<CustomChartData>({
   ]
 });
 
-// 獲取 WAN 數據
 const fetchWanData = async () => {
   try {
     const response = await getWanInfo();
@@ -58,27 +59,26 @@ const fetchWanData = async () => {
   }
 };
 
-// 更新圖表數據
 const updateChartData = (received: number, sent: number) => {
   const currentTime = new Date().toLocaleTimeString();
 
-  // 創建新數組，避免直接對 ref 內部數據進行操作
   chartData.value = {
     labels: [...chartData.value.labels, currentTime].slice(-10),
     datasets: [
       {
         ...chartData.value.datasets[0],
+        label: t('dashboard.received'),
         data: [...chartData.value.datasets[0].data, received].slice(-10)
       },
       {
         ...chartData.value.datasets[1],
+        label: t('dashboard.sent'),
         data: [...chartData.value.datasets[1].data, sent].slice(-10)
       }
     ]
   };
 };
 
-// 組件掛載時啟動輪詢
 onMounted(() => {
   if (!pollingInterval.value) {
     fetchWanData();
@@ -86,7 +86,6 @@ onMounted(() => {
   }
 });
 
-// 組件卸載時清除輪詢
 onUnmounted(() => {
   if (pollingInterval.value) {
     clearInterval(pollingInterval.value);
@@ -97,14 +96,14 @@ onUnmounted(() => {
 
 <template>
   <div class="wan-status">
-    <h2 class="card-title">WAN Traffic</h2>
+    <h2 class="card-title">{{ t('dashboard.wan') }} {{ t('dashboard.status') }}</h2>
     <div class="info-grid">
       <div class="info-item">
-        <span class="label">Bytes Received</span>
+        <span class="label">{{ t('dashboard.received') }}</span>
         <span class="value">{{ wanData.bytesReceived }}</span>
       </div>
       <div class="info-item">
-        <span class="label">Bytes Sent</span>
+        <span class="label">{{ t('dashboard.sent') }}</span>
         <span class="value">{{ wanData.bytesSent }}</span>
       </div>
     </div>

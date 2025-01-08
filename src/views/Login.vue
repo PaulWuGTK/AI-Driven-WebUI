@@ -11,7 +11,7 @@ const handleLogin = () => {
   if (username.value === 'admin' && password.value === 'admin') {
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('username', username.value);
-    router.push('/status/wan');
+    router.push('/dashboard');
   } else {
     error.value = 'Invalid username or password';
   }

@@ -53,6 +53,7 @@ const fetchWifiData = async () => {
       item.path === 'Device.WiFi.AccessPoint.3.')?.parameters;
     const ap2 = response.find((item: any) =>
       item.path === 'Device.WiFi.AccessPoint.5.')?.parameters;
+
     // 更新 2.4GHz WiFi 狀態
     if (wlan0) {
       wifiData.value.wlan0 = {
@@ -153,7 +154,6 @@ onUnmounted(() => {
         </div>
       </div>
 
-      
       <!-- 6Hz WiFi 狀態 -->
       <div class="wifi-band">
         <h3 class="band-title">5 GHz</h3>
