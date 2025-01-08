@@ -156,7 +156,7 @@ onUnmounted(() => {
 
       <!-- 6Hz WiFi 狀態 -->
       <div class="wifi-band">
-        <h3 class="band-title">5 GHz</h3>
+        <h3 class="band-title">6 GHz</h3>
         <div class="info-grid">
           <div class="info-item">
             <span class="label">{{ t('dashboard.status') }}</span>

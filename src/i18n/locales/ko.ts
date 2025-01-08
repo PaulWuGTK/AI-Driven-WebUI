@@ -109,8 +109,8 @@ export default {
     txDiscard: '송신 폐기'
   },
   wifiNeighbor: {
-    title: 'WiFi 이웃',
-    wifiNeighbor: 'WiFi 이웃',
+    title: 'WiFi 주변 기기',
+    wifiNeighbor: 'WiFi 주변 기기',
     ssid: 'SSID',
     bssid: 'BSSID',
     channel: '채널',

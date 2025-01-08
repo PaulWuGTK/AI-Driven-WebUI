@@ -110,8 +110,8 @@ export default {
     txDiscard: '送信破棄'
   },
   wifiNeighbor: {
-    title: 'WiFi近隣',
-    wifiNeighbor: 'WiFi近隣',
+    title: 'WiFi ネイバー',
+    wifiNeighbor: 'WiFi ネイバー',
     ssid: 'SSID',
     bssid: 'BSSID',
     channel: 'チャンネル',

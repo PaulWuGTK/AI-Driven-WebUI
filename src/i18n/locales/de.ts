@@ -109,7 +109,7 @@ export default {
     txDiscard: 'TxDiscard'
   },
   wifiNeighbor: {
-    title: 'WiFi-Nachbarn',
+    title: 'WiFi-Nachbar',
     wifiNeighbor: 'WiFi-Nachbar',
     ssid: 'SSID',
     bssid: 'BSSID',

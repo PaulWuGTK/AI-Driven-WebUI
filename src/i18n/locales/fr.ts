@@ -109,9 +109,9 @@ export default {
     txError: 'Erreur Tx',
     txDiscard: 'Paquets rejetés Tx'
   },
-    wifiNeighbor: {
-    title: 'Voisins WiFi',
-    wifiNeighbor: 'Voisin WiFi',
+  wifiNeighbor: {
+    title: 'Appareils voisins WiFi',
+    wifiNeighbor: 'Appareils voisins WiFi',
     ssid: 'SSID',
     bssid: 'BSSID',
     channel: 'Canal',
