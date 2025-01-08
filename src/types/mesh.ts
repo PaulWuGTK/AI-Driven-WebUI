@@ -13,7 +13,7 @@ export interface MeshMapResponse {
 }
 
 export interface SteeringControlData {
-  selectedNode: MeshNode;
-  destination: string;
+  stationMac: string;
+  targetBssid: string;
   band: string;
 }

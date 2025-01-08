@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
-import { getMeshMap } from '../../services/api/mesh';
+import { getMeshMap, applySteeringControl } from '../../services/api/mesh'; 
 import MeshNodeTable from '../../components/mesh/MeshNodeTable.vue';
 import MeshClientTable from '../../components/mesh/MeshClientTable.vue';
 import MeshSteeringModal from '../../components/mesh/MeshSteeringModal.vue';
@@ -47,9 +47,23 @@ const handleAction = (client: MeshNode) => {
   selectedClient.value = client;
 };
 
-const handleSteeringApply = (data: { destination: string; band: string }) => {
-  console.log('Steering control applied:', data);
-  selectedClient.value = null;
+const handleSteeringApply = async (data: { destination: string; band: string }) => {
+  if (!selectedClient.value) return;
+  
+  try {
+    await applySteeringControl({
+      stationMac: selectedClient.value.MACAddress,
+      targetBssid: data.destination,
+      band: data.band
+    });
+    
+    // Refresh mesh data after successful steering
+    await fetchMeshData();
+    selectedClient.value = null;
+  } catch (err) {
+    console.error('Error applying steering control:', err);
+    error.value = 'Failed to apply steering control';
+  }
 };
 
 const getPossibleDestinations = () => {

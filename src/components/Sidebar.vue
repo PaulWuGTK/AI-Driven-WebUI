@@ -9,6 +9,13 @@ const { t } = useI18n();
 const activeMenu = ref('Dashboard');
 const activeSubItem = ref('');
 const expandedMenus = ref<string[]>(['Status']); // Track expanded state
+const isMobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+
 
 const menuItems = [
   { name: 'Dashboard', icon: '⌂', path: '/dashboard', translationKey: 'menu.dashboard' },
@@ -111,7 +118,10 @@ watch(() => route.path, (newPath) => {
 </script>
 
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" :class="{ 'mobile-open': isMobileMenuOpen }">
+    <button class="mobile-menu-toggle" @click="toggleMobileMenu">
+      <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+    </button>
     <div class="logo">
       <span class="logo-text">Gemtek</span>
     </div>
@@ -156,12 +166,54 @@ watch(() => route.path, (newPath) => {
 
 <style scoped>
 .sidebar {
-  width: 230px;
+  width: var(--sidebar-width);
   min-height: 100vh;
   background: linear-gradient(to bottom, #002060 0%, #3660AB 100%);
   color: white;
   padding: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0.5rem;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 999;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .menu {
+    padding-top: 4rem;
+  }
+
+  .submenu-item {
+    padding: 1rem 2rem;
+  }
 }
 
 .logo {

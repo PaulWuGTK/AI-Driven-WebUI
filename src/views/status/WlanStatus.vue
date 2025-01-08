@@ -43,17 +43,6 @@ onMounted(() => {
   min-height: 100%;
 }
 
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .wlan-bands {
   padding: 1.5rem;
   display: flex;
