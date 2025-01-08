@@ -46,10 +46,35 @@ export async function getWlanAdvanced(): Promise<WlanAdvancedResponse> {
   return handleApiResponse<WlanAdvancedResponse>(response);
 }
 
-export async function updateWlanAdvanced(data: Partial<WlanAdvancedResponse>): Promise<WlanAdvancedResponse> {
+export async function updateWlanAdvanced(data: WlanAdvancedResponse): Promise<WlanAdvancedResponse> {
   if (isDevelopment) {
+    // Transform the data to match the required format
+    const transformedData = {
+      WlanAdvanced: {
+        wifi2g: {
+          Mode: data.WlanAdvanced.wifi2g.Mode,
+          Channel: data.WlanAdvanced.wifi2g.Channel.toString(),
+          ChannelBandwidth: data.WlanAdvanced.wifi2g.ChannelBandwidth,
+          AutoChannelEnable: data.WlanAdvanced.wifi2g.AutoChannelEnable.toString()
+        },
+        wifi5g: {
+          Mode: data.WlanAdvanced.wifi5g.Mode,
+          Channel: data.WlanAdvanced.wifi5g.Channel.toString(),
+          ChannelBandwidth: data.WlanAdvanced.wifi5g.ChannelBandwidth,
+          AutoChannelEnable: data.WlanAdvanced.wifi5g.AutoChannelEnable.toString()
+        },
+        wifi6g: {
+          Mode: data.WlanAdvanced.wifi6g.Mode,
+          Channel: data.WlanAdvanced.wifi6g.Channel.toString(),
+          ChannelBandwidth: data.WlanAdvanced.wifi6g.ChannelBandwidth,
+          AutoChannelEnable: data.WlanAdvanced.wifi6g.AutoChannelEnable.toString()
+        }
+      }
+    };
+    
     return wlanAdvancedMockData;
   }
+  
   const response = await fetch(`${API_URL}?list=WlanAdvanced`, {
     method: 'POST',
     headers: {

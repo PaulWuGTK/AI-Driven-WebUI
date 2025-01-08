@@ -30,10 +30,33 @@ const showSuccessMessage = () => {
 
 const handleSubmit = async () => {
   if (!advancedData.value) return;
-  
   loading.value = true;
   try {
-    await updateWlanAdvanced(advancedData.value);
+    // Transform data to match required format
+    const postData = {
+      WlanAdvanced: {
+        wifi2g: {
+          Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,
+          Channel: advancedData.value.WlanAdvanced.wifi2g.Channel.toString(),
+          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi2g.ChannelBandwidth,
+          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi2g.AutoChannelEnable.toString()
+        },
+        wifi5g: {
+          Mode: advancedData.value.WlanAdvanced.wifi5g.Mode,
+          Channel: advancedData.value.WlanAdvanced.wifi5g.Channel.toString(),
+          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi5g.ChannelBandwidth,
+          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi5g.AutoChannelEnable.toString()
+        },
+        wifi6g: {
+          Mode: advancedData.value.WlanAdvanced.wifi6g.Mode,
+          Channel: advancedData.value.WlanAdvanced.wifi6g.Channel.toString(),
+          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi6g.ChannelBandwidth,
+          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi6g.AutoChannelEnable.toString()
+        }
+      }
+    };
+
+    await updateWlanAdvanced(postData);
     showSuccessMessage();
     await fetchAdvancedConfig();
   } catch (error) {
@@ -59,12 +82,15 @@ onMounted(fetchAdvancedConfig);
 
       <div v-if="advancedData" class="band-sections">
         <WirelessAdvancedBandConfig
+          title="2.4GHz"
           v-model="advancedData.WlanAdvanced.wifi2g"
         />
         <WirelessAdvancedBandConfig
+          title="5GHz"
           v-model="advancedData.WlanAdvanced.wifi5g"
         />
         <WirelessAdvancedBandConfig
+          title="6GHz"
           v-model="advancedData.WlanAdvanced.wifi6g"
         />
       </div>

@@ -5,6 +5,7 @@ import type { WlanAdvancedConfig } from '../../../../types/wireless';
 
 const { t } = useI18n();
 const props = defineProps<{
+  title: string;
   modelValue: WlanAdvancedConfig;
 }>();
 
@@ -12,9 +13,9 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: WlanAdvancedConfig): void;
 }>();
 
-const modes = computed(() => props.modelValue.ModeList.split(','));
-const bandwidths = computed(() => props.modelValue.ChannelBandwidthList.split(','));
-const channels = computed(() => props.modelValue.ChannelList.split(',').map(Number));
+const modes = computed(() => props.modelValue.ModeList?.split(',') || []);
+const bandwidths = computed(() => props.modelValue.ChannelBandwidthList?.split(',') || []);
+const channels = computed(() => props.modelValue.ChannelList?.split(',').map(Number) || []);
 
 const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) => {
   emit('update:modelValue', {
@@ -26,7 +27,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 
 <template>
   <div class="band-config">
-    <h2 class="band-title">{{ modelValue.Band }} {{ t('wireless.settings') }}</h2>
+    <h2 class="band-title">{{ title }}  {{ t('wireless.settings') }}</h2>
     
     <div class="form-group">
       <label>{{ t('wireless.mode') }}</label>
@@ -58,16 +59,16 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
         <label class="auto-channel">
           <input
             type="checkbox"
-            :checked="modelValue.AutoChannelEnable === 1"
-            @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+            :checked="modelValue.AutoChannelEnable === '1' || modelValue.AutoChannelEnable === 1"
+            @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? '1' : '0')"
           />
           {{ t('wireless.autoChannel') }}
         </label>
       </div>
       <select
         :value="modelValue.Channel"
-        @change="updateConfig('Channel', Number(($event.target as HTMLSelectElement).value))"
-        :disabled="modelValue.AutoChannelEnable === 1"
+        @change="updateConfig('Channel', ($event.target as HTMLSelectElement).value)"
+        :disabled="modelValue.AutoChannelEnable === '1' || modelValue.AutoChannelEnable === 1"
       >
         <option v-for="channel in channels" :key="channel" :value="channel">
           {{ channel }}

@@ -34,33 +34,36 @@ export const wlanBasicMockData: WlanBasicResponse = {
 export const wlanAdvancedMockData: WlanAdvancedResponse = {
   WlanAdvanced: {
     wifi2g: {
+      Mode: "n",
+      Channel: "6",
+      ChannelBandwidth: "20MHz",
+      AutoChannelEnable: "0",
+      // UI display properties
       ModeList: "b,g,n,bg,gn,bgn,ax",
       ChannelBandwidthList: "20MHz,40MHz",
-      ChannelBandwidth: "40MHz",
-      Channel: 1,
       ChannelList: "1,2,3,4,5,6,7,8,9,10,11",
-      Mode: "ax",
-      AutoChannelEnable: 0,
       Band: "2.4GHz"
     },
     wifi5g: {
+      Mode: "ac",
+      Channel: "128",
+      ChannelBandwidth: "80MHz",
+      AutoChannelEnable: "0",
+      // UI display properties
       ModeList: "a,n,an,ac,ax",
       ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz",
-      ChannelBandwidth: "160MHz",
-      Channel: 36,
       ChannelList: "36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,144,149,153,157,161,165",
-      Mode: "ax",
-      AutoChannelEnable: 0,
       Band: "5GHz"
     },
     wifi6g: {
+      Mode: "ax",
+      Channel: "37",
+      ChannelBandwidth: "80MHz",
+      AutoChannelEnable: "0",
+      // UI display properties
       ModeList: "ax",
       ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz,320MHz",
-      ChannelBandwidth: "160MHz",
-      Channel: 33,
       ChannelList: "1,187,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,129,133,137,141,145,149,153,157,161,165,169,173,177,181,185,189,193,197,201,205,209,213,217,221,225,229,233",
-      Mode: "ax",
-      AutoChannelEnable: 0,
       Band: "6GHz"
     }
   }

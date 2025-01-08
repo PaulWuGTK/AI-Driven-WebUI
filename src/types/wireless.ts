@@ -17,14 +17,15 @@ export interface WlanBasicResponse {
 
 // Advanced Config Types
 export interface WlanAdvancedConfig {
-  ModeList: string;
-  ChannelBandwidthList: string;
-  ChannelBandwidth: string;
-  Channel: number;
-  ChannelList: string;
   Mode: string;
-  AutoChannelEnable: number;
-  Band: string;
+  Channel: string | number;
+  ChannelBandwidth: string;
+  AutoChannelEnable: string | number;
+  // Keep these for UI display only
+  ModeList?: string;
+  ChannelBandwidthList?: string;
+  ChannelList?: string;
+  Band?: string;
 }
 
 export interface WlanAdvancedResponse {
