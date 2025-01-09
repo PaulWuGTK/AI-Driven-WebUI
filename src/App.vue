@@ -67,6 +67,12 @@ body {
   overflow: auto;
 }
 
+@media (max-width: 768px) {
+  .main-content {
+    margin-top: 50px; /* Height of mobile header */
+  }
+}
+
 .page-container {
   flex: 1;
   display: flex;

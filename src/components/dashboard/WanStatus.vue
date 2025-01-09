@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, toRaw } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LineChart from '../LineChart.vue';
 import { getWanInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
 const wanData = ref({
-  bytesReceived: '0',
-  bytesSent: '0',
+  bytesReceived: '0 B/s',
+  bytesSent: '0 B/s',
   packetsReceived: '0',
   packetsSent: '0'
+});
+
+// Add state for rate calculation
+const previousData = ref({
+  bytesReceived: 0,
+  bytesSent: 0,
+  timestamp: 0,
+  isFirstCall: true
 });
 
 const pollingInterval = ref<number | null>(null);
@@ -23,6 +31,7 @@ const pollingInterval = ref<number | null>(null);
     fill: boolean;
   }[];
 };
+
 const chartData = ref<CustomChartData>({
   labels: [],
   datasets: [
@@ -43,17 +52,58 @@ const chartData = ref<CustomChartData>({
   ]
 });
 
+// Function to format bytes/s to appropriate unit
+const formatSpeed = (bytesPerSecond: number): string => {
+  if (bytesPerSecond < 0) return '0 B/s';
+  if (bytesPerSecond < 1024) {
+    return `${bytesPerSecond.toFixed(1)} B/s`;
+  } else if (bytesPerSecond < 1024 * 1024) {
+    return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
+  } else {
+    return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
+  }
+};
+
 const fetchWanData = async () => {
   try {
     const response = await getWanInfo();
+    const currentTime = Date.now();
+
+    // Skip rate calculation on first call
+    if (previousData.value.isFirstCall) {
+      previousData.value = {
+        bytesReceived: response.BytesReceived,
+        bytesSent: response.BytesSent,
+        timestamp: currentTime,
+        isFirstCall: false
+      };
+      return;
+    }
+
+    const timeDiff = (currentTime - previousData.value.timestamp) / 1000; // Convert to seconds
+
+    // Calculate rates
+    const rxRate = (response.BytesReceived - previousData.value.bytesReceived) / timeDiff;
+    const txRate = (response.BytesSent - previousData.value.bytesSent) / timeDiff;
+
+    // Update display data with rates
     wanData.value = {
-      bytesReceived: `${(response.BytesReceived / 1024).toFixed(2)} kB`,
-      bytesSent: `${(response.BytesSent / 1024).toFixed(2)} kB`,
-      packetsReceived: `${(response.PacketsReceived / 1024).toFixed(2)} kB`,
-      packetsSent: `${(response.PacketsSent / 1024).toFixed(2)} kB`,
+      bytesReceived: formatSpeed(rxRate),
+      bytesSent: formatSpeed(txRate),
+      packetsReceived: `${(response.PacketsReceived / 1024).toFixed(2)} kP`,
+      packetsSent: `${(response.PacketsSent / 1024).toFixed(2)} kP`,
     };
 
-    updateChartData(response.BytesReceived/1024, response.BytesSent/1024);
+    // Update chart with rates in KB/s
+    updateChartData(rxRate / 1024, txRate / 1024);
+
+    // Store current values for next calculation
+    previousData.value = {
+      bytesReceived: response.BytesReceived,
+      bytesSent: response.BytesSent,
+      timestamp: currentTime,
+      isFirstCall: false
+    };
   } catch (error) {
     console.error('Error fetching WAN data:', error);
   }

@@ -8,14 +8,12 @@ const route = useRoute();
 const { t } = useI18n();
 const activeMenu = ref('Dashboard');
 const activeSubItem = ref('');
-const expandedMenus = ref<string[]>(['Status']); // Track expanded state
+const expandedMenus = ref<string[]>([]); // Changed from initial value to empty array
 const isMobileMenuOpen = ref(false);
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
-
-
 
 const menuItems = [
   { name: 'Dashboard', icon: '⌂', path: '/dashboard', translationKey: 'menu.dashboard' },
@@ -61,12 +59,8 @@ const menuItems = [
 ];
 
 const toggleMenu = (menuName: string) => {
-  const index = expandedMenus.value.indexOf(menuName);
-  if (index === -1) {
-    expandedMenus.value.push(menuName);
-  } else {
-    expandedMenus.value.splice(index, 1);
-  }
+  // Clear all expanded menus and only expand the clicked one
+  expandedMenus.value = expandedMenus.value.includes(menuName) ? [] : [menuName];
 };
 
 const handleMenuClick = (menuName: string, path?: string) => {
@@ -90,7 +84,6 @@ const isMenuExpanded = (menuName: string): boolean => {
 
 // Watch for route changes to update active states
 watch(() => route.path, (newPath) => {
-  // Find the menu item that matches the current path
   let found = false;
   for (const item of menuItems) {
     if (item.path === newPath) {
@@ -104,25 +97,31 @@ watch(() => route.path, (newPath) => {
       if (subItem) {
         activeMenu.value = item.name;
         activeSubItem.value = subItem.name;
+        // Expand only the active menu
+        expandedMenus.value = [item.name];
         found = true;
         break;
       }
     }
   }
   
-  // If no match found (e.g., on dashboard), reset submenu selection
   if (!found) {
     activeSubItem.value = '';
+    expandedMenus.value = []; // Close all submenus if no match found
   }
 }, { immediate: true });
 </script>
 
 <template>
-  <aside class="sidebar" :class="{ 'mobile-open': isMobileMenuOpen }">
+  <div class="mobile-top-header">
     <button class="mobile-menu-toggle" @click="toggleMobileMenu">
-      <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+        <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
     </button>
-    <div class="logo">
+        <span class="mobile-logo">Gemtek</span>
+      </div>
+  
+  <aside class="sidebar" :class="{ 'mobile-open': isMobileMenuOpen }">
+    <div class="logo desktop-only">
       <span class="logo-text">Gemtek</span>
     </div>
     <nav class="menu">
@@ -165,6 +164,42 @@ watch(() => route.path, (newPath) => {
 </template>
 
 <style scoped>
+.mobile-top-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background-color: #0070BB;
+  display: none;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 1002;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  margin: -0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-menu-toggle .material-icons {
+  font-size: 24px;
+}
+
+.mobile-logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-left: 1rem;
+  color: white;
+}
+
 .sidebar {
   width: var(--sidebar-width);
   min-height: 100vh;
@@ -176,48 +211,8 @@ watch(() => route.path, (newPath) => {
   transition: transform 0.3s ease;
 }
 
-.mobile-menu-toggle {
-  display: none;
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1000;
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 0.5rem;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 999;
-    transform: translateX(-100%);
-  }
-
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
-
-  .mobile-menu-toggle {
-    display: block;
-  }
-
-  .menu {
-    padding-top: 4rem;
-  }
-
-  .submenu-item {
-    padding: 1rem 2rem;
-  }
-}
-
 .logo {
-  height: 50px;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
@@ -230,13 +225,43 @@ watch(() => route.path, (newPath) => {
   font-size: 1.25rem;
   font-weight: bold;
 }
+@media (max-width: 768px) {
+  .mobile-top-header {
+    display: flex;
+  }
 
-.menu {
-  margin-top: 0.5rem;
-}
+  .desktop-only {
+    display: none;
+  }
 
-.menu-item {
-  margin-bottom: 0.25rem;
+  .sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    z-index: 1001;
+    transform: translateX(-100%);
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .menu {
+    height: calc(100vh - var(--header-height));
+    padding-top: 0;
+    overflow-y: auto;
+  }
+
+  .menu-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .submenu-item {
+    padding: 1rem 2.5rem;
+  }
 }
 
 .menu-header {

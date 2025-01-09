@@ -23,12 +23,13 @@ const fetchCpuData = async () => {
       );
 
       if (cpuInfo && cpuInfo.parameters) {
+        const cpuUsage = Math.min(cpuInfo.parameters.CPUUsage, 100);
         cpuData.value = {
-          usage: cpuInfo.parameters.CPUUsage,
+          usage: cpuUsage,
           processes: cpuInfo.parameters.ProcessNumberOfEntries || 0
         };
         
-        usageHistory.value.push(cpuInfo.parameters.CPUUsage);
+        usageHistory.value.push(cpuUsage);
         if (usageHistory.value.length > maxHistoryPoints) {
           usageHistory.value.shift();
         }
