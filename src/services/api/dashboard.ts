@@ -1,3 +1,4 @@
+import { callApi } from '../apiClient';
 import {
   getSystemMockData,
   getCpuMockData,
@@ -9,44 +10,58 @@ import {
 
 const isDevelopment = import.meta.env.DEV;
 
+interface WanParameters {
+  WANMode?: string;
+  Alias?: string;
+  IPv4Reference?: string;
+}
+
+interface WanResponse {
+  path: string;
+  parameters: WanParameters;
+}
+
+interface WanStats {
+  parameters: {
+    PacketsSent: number;
+    PacketsReceived: number;
+    BytesSent: number;
+    BytesReceived: number;
+  };
+  path: string;
+}
+
 export const getSystemInfo = async () => {
   if (isDevelopment) {
     return getSystemMockData();
   }
-  const response = await fetch('/serviceElements/Device.DeviceInfo.');
-  return response.json();
+  return callApi('/serviceElements/Device.DeviceInfo.');
 };
 
 export const getCpuInfo = async () => {
   if (isDevelopment) {
     return getCpuMockData();
   }
-  const response = await fetch('/serviceElements/Device.DeviceInfo.');
-  return response.json();
+  return callApi('/serviceElements/Device.DeviceInfo.');
 };
 
 export const getMemoryInfo = async () => {
   if (isDevelopment) {
     return getMemoryMockData();
   }
-  const response = await fetch('/serviceElements/Device.DeviceInfo.');
-  return response.json();
+  return callApi('/serviceElements/Device.DeviceInfo.');
 };
 
-
 export const getWanList = async () => {
-  const response = await fetch('/serviceElements/Device.X_PRPL-COM_WANManager.');
-  return response.json();
+  return callApi<WanResponse[]>('/serviceElements/Device.X_PRPL-COM_WANManager.');
 };
 
 export const getWanDetails = async (path: string) => {
-  const response = await fetch(`/serviceElements/${path}`);
-  return response.json();
+  return callApi<WanResponse[]>(`/serviceElements/${path}`);
 };
 
 export const getWanStats = async (statsPath: string) => {
-  const response = await fetch(`/serviceElements/${statsPath}`);
-  return response.json();
+  return callApi<WanStats[]>(`/serviceElements/${statsPath}`);
 };
 
 export const getWanInfo = async () => {
@@ -57,12 +72,12 @@ export const getWanInfo = async () => {
       const wanList = await getWanList();
 
       const wanManager = wanList.find(
-        (item: any) => item.path === 'Device.X_PRPL-COM_WANManager.'
+        (item) => item.path === 'Device.X_PRPL-COM_WANManager.'
       );
       const wanMode = wanManager?.parameters?.WANMode || 'default';
 
       const targetWan = wanList.find(
-        (wan: any) =>
+        (wan) =>
           wan.parameters.Alias === wanMode && wan.path.includes('WAN.')
       );
 
@@ -71,7 +86,7 @@ export const getWanInfo = async () => {
       }
 
       const wanDetails = await getWanDetails(targetWan.path);
-      const intf = wanDetails.find((i: any) => i.path.includes('Intf.1.'));
+      const intf = wanDetails.find((i) => i.path.includes('Intf.1.'));
 
       if (!intf || !intf.parameters?.IPv4Reference) {
         throw new Error('No matching WAN interface or IPv4Reference found.');
@@ -89,10 +104,10 @@ export const getWanInfo = async () => {
       }
 
       return {
-        PacketsSent: wanStats.parameters.PacketsSent || 0,
-        PacketsReceived: wanStats.parameters.PacketsReceived || 0,
-        BytesSent: wanStats.parameters.BytesSent || 0,
-        BytesReceived: wanStats.parameters.BytesReceived || 0
+        PacketsSent: wanStats?.parameters.PacketsSent || 0,
+        PacketsReceived: wanStats?.parameters.PacketsReceived || 0,
+        BytesSent: wanStats?.parameters.BytesSent || 0,
+        BytesReceived: wanStats?.parameters.BytesReceived || 0
       };
       
     } catch (error) {
@@ -112,14 +127,12 @@ export const getWifiInfo = async () => {
   if (isDevelopment) {
     return getWifiMockData();
   }
-  const response = await fetch('/serviceElements/Device.WiFi.');
-  return response.json();
+  return callApi('/serviceElements/Device.WiFi.');
 };
 
 export const getEthernetInfo = async () => {
   if (isDevelopment) {
     return getEthernetMockData();
   }
-  const response = await fetch('/API/info?list=EthernetStatus');
-  return response.json();
+  return callApi('/API/info?list=EthernetStatus');
 };

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { AuthService } from '../services/auth';
 
 const router = useRouter();
 const { t, locale } = useI18n();
 
 const handleLogout = () => {
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('username');
+  AuthService.getInstance().clearSession();
   router.push('/login');
 };
 

@@ -1,31 +1,34 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getEthernetInfo } from '../../services/api/dashboard';
 
-const { t } = useI18n();
-const ports = ref<any[]>([]);
-const pollingInterval = ref<number | null>(null);
+interface EthernetPort {
+  Port: string;
+  Role: string;
+  Status: string;
+  Speed: string;
+  Duplex: string;
+  MACAddress: string;
+}
 
-const fetchEthernetStatus = async () => {
+interface EthernetResponse {
+  EthernetStatus: EthernetPort[];
+}
+
+const { t } = useI18n();
+const ports = ref<EthernetPort[]>([]);
+
+const fetchEthernetInfo = async () => {
   try {
-    const response = await getEthernetInfo();
+    const response = await getEthernetInfo() as EthernetResponse;
     ports.value = response.EthernetStatus;
   } catch (error) {
-    console.error('Error fetching Ethernet status:', error);
+    console.error('Error fetching ethernet info:', error);
   }
 };
 
-onMounted(() => {
-  fetchEthernetStatus();
-  pollingInterval.value = window.setInterval(fetchEthernetStatus, 5000);
-});
-
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
-});
+onMounted(fetchEthernetInfo);
 </script>
 
 <template>

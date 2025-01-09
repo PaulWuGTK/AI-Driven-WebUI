@@ -3,36 +3,28 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getSystemInfo } from '../../services/api/dashboard';
 
-const { t } = useI18n();
-
-interface SystemInfo {
-  ModelName: string;
-  SerialNumber: string;
-  SoftwareVersion: string;
-  Description: string;
-}
-
-// 定義 SystemInfoItem，表示回傳的 API 資料結構
 interface SystemInfoItem {
-  parameters: Partial<SystemInfo>;
+  parameters: {
+    ModelName?: string;
+    SerialNumber?: string;
+    SoftwareVersion?: string;
+    Description?: string;
+  };
   path: string;
 }
 
-// 使用 Partial 確保部分屬性是可選的
-const systemData = ref<Partial<SystemInfo>>({});
+const { t } = useI18n();
+const systemData = ref<Partial<SystemInfoItem['parameters']>>({});
 
 const fetchSystemInfo = async () => {
   try {
-    const response: SystemInfoItem[] = await getSystemInfo();
+    const response = await getSystemInfo() as SystemInfoItem[];
+    const systemInfo = response.find(item => 
+      item.path === "Device.DeviceInfo." && item.parameters
+    );
     
-    // 尋找 path 為 "DeviceInfo." 的資料
-    const systemInfo = response.find((item) => item.path === "Device.DeviceInfo.");
-    
-    if (systemInfo && systemInfo.parameters) {
-      systemData.value = {
-        ...systemData.value,
-        ...systemInfo.parameters
-      };
+    if (systemInfo) {
+      systemData.value = systemInfo.parameters;
     }
   } catch (error) {
     console.error('Error fetching system info:', error);

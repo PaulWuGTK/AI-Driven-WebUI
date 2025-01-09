@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { AuthService } from '../services/auth';
 import WanStatus from '../views/status/WanStatus.vue';
 import LanStatus from '../views/status/LanStatus.vue';
 import WlanStatus from '../views/status/WlanStatus.vue';
@@ -16,8 +17,8 @@ import Login from '../views/Login.vue';
 
 // Auth guard
 const requireAuth = (to: any, from: any, next: any) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-  if (!isAuthenticated && to.path !== '/login') {
+  const auth = AuthService.getInstance();
+  if (!auth.isAuthenticated() && to.path !== '/login') {
     next('/login');
   } else {
     next();

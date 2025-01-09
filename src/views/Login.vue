@@ -1,19 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { AuthService } from '../services/auth';
 
 const router = useRouter();
 const username = ref('');
 const password = ref('');
 const error = ref('');
+const loading = ref(false);
 
-const handleLogin = () => {
-  if (username.value === 'admin' && password.value === 'admin') {
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('username', username.value);
-    router.push('/dashboard');
-  } else {
-    error.value = 'Invalid username or password';
+const handleLogin = async () => {
+  if (loading.value) return;
+  
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const auth = AuthService.getInstance();
+    await auth.login(username.value, password.value);
+      router.push('/dashboard');
+  } catch (err) {
+    console.error('Login error:', err);
+    error.value = err instanceof Error ? err.message : 'Login failed. Please try again.';
+  } finally {
+    loading.value = false;
   }
 };
 </script>
@@ -31,6 +41,7 @@ const handleLogin = () => {
             type="text"
             required
             placeholder="Enter username"
+            :disabled="loading"
           />
         </div>
         <div class="form-group">
@@ -41,10 +52,13 @@ const handleLogin = () => {
             type="password"
             required
             placeholder="Enter password"
+            :disabled="loading"
           />
         </div>
         <div v-if="error" class="error-message">{{ error }}</div>
-        <button type="submit" class="login-button">Login</button>
+        <button type="submit" class="login-button" :disabled="loading">
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
       </form>
     </div>
   </div>
@@ -107,6 +121,11 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(12, 120, 190, 0.1);
 }
 
+input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
 .login-button {
   background: #0c78be;
   color: white;
@@ -119,8 +138,13 @@ input:focus {
   margin-top: 1rem;
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
   background: #0a66a3;
+}
+
+.login-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .error-message {

@@ -1,7 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWifiInfo } from '../../services/api/dashboard';
+
+interface WifiParameters {
+  BytesReceived?: number;
+  BytesSent?: number;
+  PacketsReceived?: number;
+  PacketsSent?: number;
+  Enable?: number;
+  ActiveAssociatedDeviceNumberOfEntries?: number;
+}
+
+interface WifiResponse {
+  parameters: WifiParameters;
+  path: string;
+}
 
 const { t } = useI18n();
 const wifiData = ref({
@@ -24,7 +38,6 @@ const wifiData = ref({
     txBytes: '0'
   }
 });
-const pollingInterval = ref<number | null>(null);
 
 const formatBytes = (bytes: number): string => {
   if (bytes === 0) return '0 B';
@@ -36,25 +49,31 @@ const formatBytes = (bytes: number): string => {
 
 const fetchWifiData = async () => {
   try {
-    const response = await getWifiInfo();
+    const response = await getWifiInfo() as WifiResponse[];
 
-    // 獲取 2.4GHz 和 5GHz 的流量數據
-    const wlan0 = response.find((item: any) => 
-      item.path === 'Device.WiFi.SSID.1.Stats.')?.parameters;  // 修正 path
-    const wlan1 = response.find((item: any) => 
-      item.path === 'Device.WiFi.SSID.4.Stats.')?.parameters;
-    const wlan2 = response.find((item: any) => 
-      item.path === 'Device.WiFi.SSID.7.Stats.')?.parameters;
+    // Get 2.4GHz and 5GHz traffic data
+    const wlan0 = response.find((item) => 
+      item.path === 'Device.WiFi.SSID.1.Stats.'
+    )?.parameters;
+    const wlan1 = response.find((item) => 
+      item.path === 'Device.WiFi.SSID.4.Stats.'
+    )?.parameters;
+    const wlan2 = response.find((item) => 
+      item.path === 'Device.WiFi.SSID.7.Stats.'
+    )?.parameters;
 
-    // 獲取 clients 數量 (通過 AccessPoint 提取)
-    const ap0 = response.find((item: any) =>
-      item.path === 'Device.WiFi.AccessPoint.1.')?.parameters;
-    const ap1 = response.find((item: any) =>
-      item.path === 'Device.WiFi.AccessPoint.3.')?.parameters;
-    const ap2 = response.find((item: any) =>
-      item.path === 'Device.WiFi.AccessPoint.5.')?.parameters;
+    // Get clients count (via AccessPoint)
+    const ap0 = response.find((item) =>
+      item.path === 'Device.WiFi.AccessPoint.1.'
+    )?.parameters;
+    const ap1 = response.find((item) =>
+      item.path === 'Device.WiFi.AccessPoint.3.'
+    )?.parameters;
+    const ap2 = response.find((item) =>
+      item.path === 'Device.WiFi.AccessPoint.5.'
+    )?.parameters;
 
-    // 更新 2.4GHz WiFi 狀態
+    // Update 2.4GHz WiFi status
     if (wlan0) {
       wifiData.value.wlan0 = {
         status: ap0?.Enable ? 'Up' : 'Down',
@@ -64,7 +83,7 @@ const fetchWifiData = async () => {
       };
     }
 
-    // 更新 5GHz WiFi 狀態
+    // Update 5GHz WiFi status
     if (wlan1) {
       wifiData.value.wlan1 = {
         status: ap1?.Enable ? 'Up' : 'Down',
@@ -74,7 +93,7 @@ const fetchWifiData = async () => {
       };
     }
 
-    // 更新 6GHz WiFi 狀態
+    // Update 6GHz WiFi status
     if (wlan2) {
       wifiData.value.wlan2 = {
         status: ap2?.Enable ? 'Up' : 'Down',
@@ -88,16 +107,7 @@ const fetchWifiData = async () => {
   }
 };
 
-onMounted(() => {
-  fetchWifiData();
-  pollingInterval.value = window.setInterval(fetchWifiData, 5000);
-});
-
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
-});
+onMounted(fetchWifiData);
 </script>
 
 <template>
@@ -153,7 +163,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-
+      
       <!-- 6Hz WiFi 狀態 -->
       <div class="wifi-band">
         <h3 class="band-title">6 GHz</h3>
