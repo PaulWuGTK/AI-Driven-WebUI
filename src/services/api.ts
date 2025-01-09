@@ -13,6 +13,7 @@ import { timezoneData } from './mockData/timezoneData';
 import { ddnsData } from './mockData/ddnsData';
 import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/sshData';
 import { handleApiResponse } from '../utils/apiUtils';
+import { callApi } from './apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
@@ -123,8 +124,7 @@ export async function getLcmStatus(): Promise<LcmApiResponse> {
       }
     ];
   }
-  const response = await fetch('/serviceElements/Device.SoftwareModules.');
-  return handleApiResponse<LcmApiResponse>(response);
+  return callApi<LcmApiResponse>('/serviceElements/Device.SoftwareModules.');
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {
