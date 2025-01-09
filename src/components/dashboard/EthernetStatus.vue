@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getEthernetInfo } from '../../services/api/dashboard';
 
@@ -18,8 +18,9 @@ interface EthernetResponse {
 
 const { t } = useI18n();
 const ports = ref<EthernetPort[]>([]);
+const refreshInterval = ref<number | null>(null);
 
-const fetchEthernetInfo = async () => {
+const fetchEthernetData = async () => {
   try {
     const response = await getEthernetInfo() as EthernetResponse;
     ports.value = response.EthernetStatus;
@@ -28,7 +29,16 @@ const fetchEthernetInfo = async () => {
   }
 };
 
-onMounted(fetchEthernetInfo);
+onMounted(() => {
+  fetchEthernetData();
+  refreshInterval.value = window.setInterval(fetchEthernetData, 5000);
+});
+
+onUnmounted(() => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value);
+  }
+});
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWifiInfo } from '../../services/api/dashboard';
 
@@ -18,6 +18,8 @@ interface WifiResponse {
 }
 
 const { t } = useI18n();
+const refreshInterval = ref<number | null>(null);
+
 const wifiData = ref({
   wlan0: {
     status: 'Down',
@@ -107,7 +109,16 @@ const fetchWifiData = async () => {
   }
 };
 
-onMounted(fetchWifiData);
+onMounted(() => {
+  fetchWifiData();
+  refreshInterval.value = window.setInterval(fetchWifiData, 5000);
+});
+
+onUnmounted(() => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value);
+  }
+});
 </script>
 
 <template>
