@@ -2,108 +2,141 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWifiInfo } from '../../services/api/dashboard';
-
-interface WifiParameters {
-  BytesReceived?: number;
-  BytesSent?: number;
-  PacketsReceived?: number;
-  PacketsSent?: number;
-  Enable?: number;
-  ActiveAssociatedDeviceNumberOfEntries?: number;
-}
-
-interface WifiResponse {
-  parameters: WifiParameters;
-  path: string;
-}
+import LineChart from '../LineChart.vue';
 
 const { t } = useI18n();
-const refreshInterval = ref<number | null>(null);
 
-const wifiData = ref({
-  wlan0: {
-    status: 'Down',
-    clients: 0,
-    rxBytes: '0',
-    txBytes: '0'
-  },
-  wlan1: {
-    status: 'Down',
-    clients: 0,
-    rxBytes: '0',
-    txBytes: '0'
-  },
-  wlan2: {
-    status: 'Down',
-    clients: 0,
-    rxBytes: '0',
-    txBytes: '0'
-  }
+interface BandData {
+  bytesReceived: number;
+  bytesSent: number;
+  rxRate: number;
+  txRate: number;
+  lastTimestamp: number;
+}
+
+interface ChartDataset {
+  label: string;
+  data: number[];
+  borderColor: string;
+  backgroundColor: string;
+  fill: boolean;
+}
+
+interface ChartData {
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
+const wifiData = ref<{ [key: string]: BandData }>({
+  '2.4GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 },
+  '5GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 },
+  '6GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 }
 });
 
-const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+const pollingInterval = ref<number | null>(null);
+
+const chartData = ref<ChartData>({
+  labels: [],
+  datasets: [
+    {
+      label: t('dashboard.received'),
+      data: [],
+      borderColor: '#42A5F5',
+      backgroundColor: 'rgba(66, 165, 245, 0.2)',
+      fill: true
+    },
+    {
+      label: t('dashboard.sent'),
+      data: [],
+      borderColor: '#FFA726',
+      backgroundColor: 'rgba(255, 167, 38, 0.2)',
+      fill: true
+    }
+  ]
+});
+
+const formatSpeed = (bytesPerSecond: number): string => {
+  if (bytesPerSecond < 0) return '0 B/s';
+  if (bytesPerSecond < 1024) {
+    return `${bytesPerSecond.toFixed(1)} B/s`;
+  } else if (bytesPerSecond < 1024 * 1024) {
+    return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
+  } else {
+    return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
+  }
 };
+
+const calculateRate = (currentBytes: number, lastBytes: number, timeDiff: number): number => {
+  return timeDiff > 0 ? (currentBytes - lastBytes) / timeDiff : 0;
+};
+
+const updateChartData = (totalRx: number, totalTx: number) => {
+  const currentTime = new Date().toLocaleTimeString();
+  
+  chartData.value = {
+    labels: [...chartData.value.labels, currentTime].slice(-10),
+    datasets: [
+      {
+        ...chartData.value.datasets[0],
+        data: [...chartData.value.datasets[0].data, totalRx / 1024].slice(-10)
+      },
+      {
+        ...chartData.value.datasets[1],
+        data: [...chartData.value.datasets[1].data, totalTx / 1024].slice(-10)
+      }
+    ]
+  };
+};
+
+interface WifiResponse {
+  parameters: {
+    OperatingFrequencyBand?: string;
+    BytesReceived?: number;
+    BytesSent?: number;
+  };
+  path: string;
+}
 
 const fetchWifiData = async () => {
   try {
     const response = await getWifiInfo() as WifiResponse[];
+    
+    const currentTime = Date.now() / 1000;
 
-    // Get 2.4GHz and 5GHz traffic data
-    const wlan0 = response.find((item) => 
-      item.path === 'Device.WiFi.SSID.1.Stats.'
-    )?.parameters;
-    const wlan1 = response.find((item) => 
-      item.path === 'Device.WiFi.SSID.4.Stats.'
-    )?.parameters;
-    const wlan2 = response.find((item) => 
-      item.path === 'Device.WiFi.SSID.7.Stats.'
-    )?.parameters;
+    let totalRxRate = 0;
+    let totalTxRate = 0;
 
-    // Get clients count (via AccessPoint)
-    const ap0 = response.find((item) =>
-      item.path === 'Device.WiFi.AccessPoint.1.'
-    )?.parameters;
-    const ap1 = response.find((item) =>
-      item.path === 'Device.WiFi.AccessPoint.3.'
-    )?.parameters;
-    const ap2 = response.find((item) =>
-      item.path === 'Device.WiFi.AccessPoint.5.'
-    )?.parameters;
+    response.forEach((item: WifiResponse) => {
+      if (item.parameters?.OperatingFrequencyBand) {
+        const band = item.parameters.OperatingFrequencyBand;
+        const statsPath = item.path.replace(/(^Device\.WiFi\.Radio\.\d+)/, '$1.Stats');
+        const stats = response.find(s => s.path === statsPath);
+        if (stats?.parameters) {
+          const currentRx = stats.parameters.BytesReceived || 0;
+          const currentTx = stats.parameters.BytesSent || 0;
+          const lastData = wifiData.value[band];
+          
+          if (lastData) {
+            const timeDiff = currentTime - lastData.lastTimestamp;
+            const rxRate = calculateRate(currentRx, lastData.bytesReceived, timeDiff);
+            const txRate = calculateRate(currentTx, lastData.bytesSent, timeDiff);
 
-    // Update 2.4GHz WiFi status
-    if (wlan0) {
-      wifiData.value.wlan0 = {
-        status: ap0?.Enable ? 'Up' : 'Down',
-        clients: ap0?.ActiveAssociatedDeviceNumberOfEntries || 0,
-        rxBytes: formatBytes(wlan0.BytesReceived || 0),
-        txBytes: formatBytes(wlan0.BytesSent || 0)
-      };
-    }
+            wifiData.value[band] = {
+              bytesReceived: currentRx,
+              bytesSent: currentTx,
+              rxRate,
+              txRate,
+              lastTimestamp: currentTime
+            };
 
-    // Update 5GHz WiFi status
-    if (wlan1) {
-      wifiData.value.wlan1 = {
-        status: ap1?.Enable ? 'Up' : 'Down',
-        clients: ap1?.ActiveAssociatedDeviceNumberOfEntries || 0,
-        rxBytes: formatBytes(wlan1.BytesReceived || 0),
-        txBytes: formatBytes(wlan1.BytesSent || 0)
-      };
-    }
+            totalRxRate += rxRate;
+            totalTxRate += txRate;
+          }
+        }
+      }
+    });
 
-    // Update 6GHz WiFi status
-    if (wlan2) {
-      wifiData.value.wlan2 = {
-        status: ap2?.Enable ? 'Up' : 'Down',
-        clients: ap2?.ActiveAssociatedDeviceNumberOfEntries || 0,
-        rxBytes: formatBytes(wlan2.BytesReceived || 0),
-        txBytes: formatBytes(wlan2.BytesSent || 0)
-      };
-    }
+    updateChartData(totalRxRate, totalTxRate);
   } catch (error) {
     console.error('Error fetching WiFi data:', error);
   }
@@ -111,12 +144,12 @@ const fetchWifiData = async () => {
 
 onMounted(() => {
   fetchWifiData();
-  refreshInterval.value = window.setInterval(fetchWifiData, 5000);
+  pollingInterval.value = window.setInterval(fetchWifiData, 5000);
 });
 
 onUnmounted(() => {
-  if (refreshInterval.value) {
-    clearInterval(refreshInterval.value);
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
   }
 });
 </script>
@@ -125,79 +158,23 @@ onUnmounted(() => {
   <div class="wifi-status">
     <h2 class="card-title">{{ t('dashboard.wifi') }}</h2>
     <div class="wifi-container">
-      <!-- 2.4GHz WiFi 狀態 -->
-      <div class="wifi-band">
-        <h3 class="band-title">2.4 GHz</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.status') }}</span>
-            <span class="status-badge" :class="{ active: wifiData.wlan0.status === 'Up' }">
-              {{ wifiData.wlan0.status }}
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.clients') }}</span>
-            <span class="value">{{ wifiData.wlan0.clients }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.received') }}</span>
-            <span class="value">{{ wifiData.wlan0.rxBytes }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.sent') }}</span>
-            <span class="value">{{ wifiData.wlan0.txBytes }}</span>
+      <div class="wifi-info">
+        <div v-for="(data, band) in wifiData" :key="band" class="band-info">
+          <div class="band-title">{{ band }}</div>
+          <div class="traffic-info">
+            <div class="traffic-item">
+              <span class="label">{{ t('dashboard.received') }}</span>
+              <span class="value">{{ formatSpeed(data.rxRate) }}</span>
+            </div>
+            <div class="traffic-item">
+              <span class="label">{{ t('dashboard.sent') }}</span>
+              <span class="value">{{ formatSpeed(data.txRate) }}</span>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- 5GHz WiFi 狀態 -->
-      <div class="wifi-band">
-        <h3 class="band-title">5 GHz</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.status') }}</span>
-            <span class="status-badge" :class="{ active: wifiData.wlan1.status === 'Up' }">
-              {{ wifiData.wlan1.status }}
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.clients') }}</span>
-            <span class="value">{{ wifiData.wlan1.clients }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.received') }}</span>
-            <span class="value">{{ wifiData.wlan1.rxBytes }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.sent') }}</span>
-            <span class="value">{{ wifiData.wlan1.txBytes }}</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 6Hz WiFi 狀態 -->
-      <div class="wifi-band">
-        <h3 class="band-title">6 GHz</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.status') }}</span>
-            <span class="status-badge" :class="{ active: wifiData.wlan2.status === 'Up' }">
-              {{ wifiData.wlan2.status }}
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.clients') }}</span>
-            <span class="value">{{ wifiData.wlan2.clients }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.received') }}</span>
-            <span class="value">{{ wifiData.wlan2.rxBytes }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">{{ t('dashboard.sent') }}</span>
-            <span class="value">{{ wifiData.wlan2.txBytes }}</span>
-          </div>
-        </div>
+      <div class="chart-container">
+        <LineChart :chart-data="chartData" />
       </div>
     </div>
   </div>
@@ -205,27 +182,34 @@ onUnmounted(() => {
 
 <style scoped>
 .wifi-container {
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.wifi-band {
+.wifi-info {
   display: grid;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.band-info {
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-radius: 4px;
 }
 
 .band-title {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
-.info-grid {
+.traffic-info {
   display: grid;
   gap: 0.5rem;
 }
 
-.info-item {
+.traffic-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -233,6 +217,7 @@ onUnmounted(() => {
 
 .label {
   color: #666;
+  font-size: 0.9rem;
 }
 
 .value {
@@ -240,16 +225,9 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-.status-badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  background-color: #f44336;
-  color: white;
-}
-
-.status-badge.active {
-  background-color: #4caf50;
+.chart-container {
+  margin-top: 1rem;
+  height: 200px;
 }
 
 .card-title {

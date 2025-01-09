@@ -1,39 +1,71 @@
-export const getWifiMockData = () => {
-  const generateStats = () => ({
-    BytesReceived: Math.floor(Math.random() * 1000000),
-    BytesSent: Math.floor(Math.random() * 1000000),
-    PacketsReceived: Math.floor(Math.random() * 1000),
-    PacketsSent: Math.floor(Math.random() * 1000)
+interface BandData {
+  bytesReceived: number;
+  bytesSent: number;
+  lastTimestamp: number;
+}
+
+interface LastValues {
+  '2.4GHz': BandData;
+  '5GHz': BandData;
+  '6GHz': BandData;
+}
+
+interface WifiResponse {
+  parameters: {
+    OperatingFrequencyBand?: string;
+    BytesReceived?: number;
+    BytesSent?: number;
+  };
+  path: string;
+}
+
+let lastValues: LastValues = {
+  '2.4GHz': {
+    bytesReceived: 1000000,
+    bytesSent: 800000,
+    lastTimestamp: Date.now() / 1000
+  },
+  '5GHz': {
+    bytesReceived: 2000000,
+    bytesSent: 1500000,
+    lastTimestamp: Date.now() / 1000
+  },
+  '6GHz': {
+    bytesReceived: 1500000,
+    bytesSent: 1200000,
+    lastTimestamp: Date.now() / 1000
+  }
+};
+
+export const getWifiMockData = (): WifiResponse[] => {
+  const now = Date.now() / 1000;
+  const response: WifiResponse[] = [];
+  
+  (Object.keys(lastValues) as Array<keyof LastValues>).forEach((band, index) => {
+    response.push({
+      parameters: {
+        OperatingFrequencyBand: band
+      },
+      path: `Device.WiFi.Radio.${index + 1}.`
+    });
+
+    const rxIncrement = Math.floor(Math.random() * 1900 + 100) * 1024;
+    const txIncrement = Math.floor(Math.random() * 1900 + 100) * 1024;
+    
+    const timeDiff = now - lastValues[band].lastTimestamp;
+    
+    lastValues[band].bytesReceived += rxIncrement * timeDiff;
+    lastValues[band].bytesSent += txIncrement * timeDiff;
+    lastValues[band].lastTimestamp = now;
+
+    response.push({
+      parameters: {
+        BytesReceived: Math.floor(lastValues[band].bytesReceived),
+        BytesSent: Math.floor(lastValues[band].bytesSent)
+      },
+      path: `Device.WiFi.Radio.${index + 1}.Stats.`
+    });
   });
 
-  const generateAccessPoint = (clients: number) => ({
-    Enable: Math.random() > 0.5 ? 1 : 0,  // 1 表示啟用，0 表示禁用
-    ActiveAssociatedDeviceNumberOfEntries: clients
-  });
-
-  return [
-    {
-      parameters: generateStats(),
-      path: "Device.WiFi.SSID.1.Stats."
-    },
-    {
-      parameters: generateStats(),
-      path: "Device.WiFi.SSID.4.Stats."
-    },{
-      parameters: generateStats(),
-      path: "Device.WiFi.SSID.7.Stats."
-    },
-    {
-      parameters: generateAccessPoint(Math.floor(Math.random() * 5)),  // 模擬連線裝置數
-      path: "Device.WiFi.AccessPoint.1."
-    },
-    {
-      parameters: generateAccessPoint(Math.floor(Math.random() * 3)),  // 模擬連線裝置數
-      path: "Device.WiFi.AccessPoint.3."
-    },
-    {
-      parameters: generateAccessPoint(Math.floor(Math.random() * 3)),  // 模擬連線裝置數
-      path: "Device.WiFi.AccessPoint.5."
-    }
-  ];
+  return response;
 };
