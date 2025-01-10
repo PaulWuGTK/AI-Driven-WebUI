@@ -14,7 +14,11 @@ const nodePositions = ref(new Map<string, { x: number, y: number }>());
 
 const LEVEL_HEIGHT = 120;
 const NODE_RADIUS = 15;
-const ICON_SIZE = 20;
+const ICON_SIZE = 40;
+
+const controllerIcon = new Image();
+const agentIcon = new Image();
+const clientIcon = new Image();
 
 const calculateNodePositions = () => {
   if (!canvas.value) return;
@@ -91,21 +95,25 @@ const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: numbe
     }
   }
 
-  // Draw node circle
-  ctx.beginPath();
-  ctx.fillStyle = node.Mode === 'Controller' ? '#0070BB' : 
-                 node.Mode === 'Agent' ? '#4CAF50' : '#FFA000';
-  ctx.arc(pos.x, pos.y, NODE_RADIUS, 0, Math.PI * 2);
-  ctx.fill();
+  // 绘制图标
+  const icon =
+    node.Mode === 'Controller' ? controllerIcon :
+    node.Mode === 'Agent' ? agentIcon : clientIcon;
 
-  // Draw icon
-  ctx.fillStyle = 'white';
-  ctx.font = `${ICON_SIZE}px Material Icons`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const icon = node.Mode === 'Controller' ? 'router' :
-              node.Mode === 'Agent' ? 'wifi' : 'devices';
-  ctx.fillText(icon, pos.x, pos.y);
+  const iconSize = ICON_SIZE;
+  const x = pos.x - iconSize / 2;
+  const y = pos.y - iconSize / 2;
+
+  if (icon.complete) {
+    ctx.drawImage(icon, x, y, iconSize, iconSize);
+  } else {
+    // 如果图标未加载，绘制默认圆形
+    ctx.beginPath();
+    ctx.fillStyle = node.Mode === 'Controller' ? '#0070BB' : 
+                   node.Mode === 'Agent' ? '#4CAF50' : '#FFA000';
+    ctx.arc(pos.x, pos.y, NODE_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+  }
 };
 
 const drawMap = () => {
@@ -165,10 +173,23 @@ const handleResize = () => {
 
 watch(() => props.nodes, drawMap, { deep: true });
 
+import controllerIconPath from '../../assets/icons/controller.png';
+import agentIconPath from '../../assets/icons/agent.png';
+import clientIconPath from '../../assets/icons/client.png';
+
 onMounted(() => {
+  controllerIcon.src = controllerIconPath;
+  agentIcon.src = agentIconPath;
+  clientIcon.src = clientIconPath;
+
+  controllerIcon.onload = drawMap;
+  agentIcon.onload = drawMap;
+  clientIcon.onload = drawMap;
+
   if (canvas.value) {
     canvas.value.width = canvas.value.offsetWidth;
     canvas.value.height = canvas.value.offsetHeight;
+    console.log(`Canvas initialized with size: ${canvas.value.width}x${canvas.value.height}`);
     drawMap();
     window.addEventListener('resize', handleResize);
   }
