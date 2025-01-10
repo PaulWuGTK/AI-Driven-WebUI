@@ -71,7 +71,7 @@ const handleLogin = async () => {
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #0c78be 0%, #60ccf6 100%);
+  background: linear-gradient(to bottom, #002060 0%, #3660AB 100%);
 }
 
 .login-box {

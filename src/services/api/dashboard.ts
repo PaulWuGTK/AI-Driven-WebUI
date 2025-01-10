@@ -31,6 +31,19 @@ interface WanStats {
   path: string;
 }
 
+interface EthernetPort {
+  Port: string;
+  Role: string;
+  Status: string;
+  Speed: string;
+  Duplex: string;
+  MACAddress: string;
+}
+
+interface EthernetStatusResponse {
+  EthernetStatus: EthernetPort[];
+}
+
 export const getSystemInfo = async () => {
   if (isDevelopment) {
     return getSystemMockData();
@@ -132,7 +145,27 @@ export const getWifiInfo = async () => {
 
 export const getEthernetInfo = async () => {
   if (isDevelopment) {
-    return getEthernetMockData();
+    const mockData = getEthernetMockData();
+    mockData.EthernetStatus.sort((a, b) => {
+      const portA = parseInt(a.Port.replace('Port', ''));
+      const portB = parseInt(b.Port.replace('Port', ''));
+      return portA - portB;
+    });
+    return mockData;
   }
-  return callApi('/API/info?list=EthernetStatus');
+
+  try {
+    const response = await callApi<EthernetStatusResponse>('/API/info?list=EthernetStatus');
+    if (response && response.EthernetStatus) {
+      response.EthernetStatus.sort((a, b) => {
+        const portA = parseInt(a.Port.replace('Port', ''));
+        const portB = parseInt(b.Port.replace('Port', ''));
+        return portA - portB;
+      });
+    }
+    return response;
+  } catch (error) {
+    console.error('Error fetching Ethernet status:', error);
+    throw error;
+  }
 };

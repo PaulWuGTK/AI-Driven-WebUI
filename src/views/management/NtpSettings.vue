@@ -114,22 +114,28 @@ onMounted(fetchNtpSettings);
         </div>
 
         <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="daylightSaving"
-            >
-            {{ t('ntp.automaticDaylight') }}
+          <label class="switch-label">
+            <span>{{ t('ntp.automaticDaylight') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                v-model="daylightSaving"
+              >
+              <span class="slider"></span>
+            </label>
           </label>
         </div>
 
         <div class="form-group">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              v-model="ntpEnabled"
-            >
-            {{ t('ntp.enableNtp') }}
+          <label class="switch-label">
+            <span>{{ t('ntp.enableNtp') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                v-model="ntpEnabled"
+              >
+              <span class="slider"></span>
+            </label>
           </label>
         </div>
 
@@ -256,11 +262,55 @@ input[type="text"] {
   font-size: 0.9rem;
 }
 
-.checkbox-label {
+.switch-label {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
   cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0070BB;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 
 .button-group {
@@ -284,14 +334,14 @@ input[type="text"] {
   opacity: 0.6;
 }
 
-.btn-cancel {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
 .btn-apply {
   background-color: #0070BB;
   color: white;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #666;
 }
 
 .btn:not(:disabled):hover {
