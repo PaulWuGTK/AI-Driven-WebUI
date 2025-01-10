@@ -194,12 +194,14 @@ onMounted(fetchMeshData);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.header h2 {
+.mesh-title {
   font-size: 1rem;
   color: #333;
-  margin: 0;
 }
 
 .actions {
@@ -230,5 +232,26 @@ onMounted(fetchMeshData);
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* 響應式設計 */
+@media (max-width: 767px) {
+  .mesh-content {
+    padding: 1rem;
+  }
+
+  .header {
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

@@ -52,18 +52,40 @@ onUnmounted(() => {
       <!-- Summary Section -->
       <div class="status-section">
         <div class="section-title">{{ t('lcm.status') }}</div>
-        <div class="summary-grid" v-if="moduleParameters">
-          <div class="summary-item">
-            <span class="label">{{ t('lcm.execEnv') }}</span>
-            <span class="value">{{ moduleParameters.ExecEnvNumberOfEntries }}</span>
+        
+        <!-- PC版表格 -->
+        <div class="table-wrapper" v-if="moduleParameters">
+          <table>
+            <tbody>
+              <tr>
+                <td>{{ t('lcm.execEnv') }}</td>
+                <td>{{ moduleParameters.ExecEnvNumberOfEntries }}</td>
+              </tr>
+              <tr>
+                <td>{{ t('lcm.execUnits') }}</td>
+                <td>{{ moduleParameters.ExecutionUnitNumberOfEntries }}</td>
+              </tr>
+              <tr>
+                <td>{{ t('lcm.deployUnits') }}</td>
+                <td>{{ moduleParameters.DeploymentUnitNumberOfEntries }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 手機版卡片 -->
+        <div class="mobile-cards" v-if="moduleParameters">
+          <div class="card-row">
+            <span class="card-label">{{ t('lcm.execEnv') }}</span>
+            <span class="card-value">{{ moduleParameters.ExecEnvNumberOfEntries }}</span>
           </div>
-          <div class="summary-item">
-            <span class="label">{{ t('lcm.execUnits') }}</span>
-            <span class="value">{{ moduleParameters.ExecutionUnitNumberOfEntries }}</span>
+          <div class="card-row">
+            <span class="card-label">{{ t('lcm.execUnits') }}</span>
+            <span class="card-value">{{ moduleParameters.ExecutionUnitNumberOfEntries }}</span>
           </div>
-          <div class="summary-item">
-            <span class="label">{{ t('lcm.deployUnits') }}</span>
-            <span class="value">{{ moduleParameters.DeploymentUnitNumberOfEntries }}</span>
+          <div class="card-row">
+            <span class="card-label">{{ t('lcm.deployUnits') }}</span>
+            <span class="card-value">{{ moduleParameters.DeploymentUnitNumberOfEntries }}</span>
           </div>
         </div>
       </div>
@@ -71,7 +93,9 @@ onUnmounted(() => {
       <!-- Deployment Units Section -->
       <div class="status-section" v-if="deploymentUnits.length > 0">
         <div class="section-title">{{ t('lcm.deploymentUnits') }}</div>
-        <div class="table-container">
+        
+        <!-- PC版表格 -->
+        <div class="table-wrapper">
           <table>
             <thead>
               <tr>
@@ -95,6 +119,36 @@ onUnmounted(() => {
             </tbody>
           </table>
         </div>
+
+        <!-- 手機版卡片 -->
+        <div class="mobile-cards">
+          <div class="table-card" v-for="unit in deploymentUnits" :key="unit.UUID">
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.name') }}</span>
+              <span class="card-value">{{ unit.Name }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.status') }}</span>
+              <span class="card-value">{{ unit.Status }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.url') }}</span>
+              <span class="card-value">{{ unit.URL }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.uuid') }}</span>
+              <span class="card-value">{{ unit.UUID }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.vendor') }}</span>
+              <span class="card-value">{{ unit.Vendor }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('lcm.version') }}</span>
+              <span class="card-value">{{ unit.Version }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -105,17 +159,6 @@ onUnmounted(() => {
   flex: 1;
   background-color: #f5f5f5;
   min-height: 100%;
-}
-
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .status-content {
@@ -140,43 +183,95 @@ onUnmounted(() => {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  padding: 1.5rem;
-}
-
-.summary-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.value {
-  color: #333;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.table-container {
+.table-wrapper {
   padding: 1.5rem;
   overflow-x: auto;
 }
 
-.url-cell {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* 手機版卡片樣式 */
+.mobile-cards {
+  display: none;
+  padding: 1rem;
+  gap: 1rem;
 }
 
-tr:hover td {
-  background-color: #f5f5f5;
+.table-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-value {
+  color: #333;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* 響應式設計 */
+@media (min-width: 768px) {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background-color: #f8f8f8;
+    font-weight: 500;
+    color: #333;
+  }
+
+  td {
+    color: #666;
+  }
+
+  /* 特殊欄位樣式 */
+  .url-cell {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-cards {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .status-content {
+    padding: 1rem;
+  }
+
+  .table-wrapper {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
 }
 </style>

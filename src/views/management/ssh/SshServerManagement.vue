@@ -93,39 +93,80 @@ onMounted(fetchServers);
     </div>
 
     <div v-if="!isEditing" class="server-list">
-      <table>
-        <thead>
-          <tr>
-            <th>{{ t('ssh.id') }}</th>
-            <th>{{ t('ssh.interface') }}</th>
-            <th>{{ t('ssh.status') }}</th>
-            <th>{{ t('ssh.loginWithPassword') }}</th>
-            <th>{{ t('ssh.rootLogin') }}</th>
-            <th>{{ t('ssh.rootLoginWithPassword') }}</th>
-            <th>{{ t('ssh.action') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="server in servers" :key="server.ID">
-            <td>{{ server.ID }}</td>
-            <td>{{ server.Interface }}</td>
-            <td>{{ server.Status }}</td>
-            <td>{{ server.AllowPasswordLogin ? '1' : '0' }}</td>
-            <td>{{ server.AllowRootLogin ? '1' : '0' }}</td>
-            <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
-            <td>
-              <div class="action-buttons">
-      <button class="icon-btn" @click="handleEdit(server)" title="Edit">
-        <span class="material-icons">edit</span>
-                </button>
-      <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
-        <span class="material-icons">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- PC版表格 -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('ssh.id') }}</th>
+              <th>{{ t('ssh.interface') }}</th>
+              <th>{{ t('ssh.status') }}</th>
+              <th>{{ t('ssh.loginWithPassword') }}</th>
+              <th>{{ t('ssh.rootLogin') }}</th>
+              <th>{{ t('ssh.rootLoginWithPassword') }}</th>
+              <th>{{ t('ssh.action') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="server in servers" :key="server.ID">
+              <td>{{ server.ID }}</td>
+              <td>{{ server.Interface }}</td>
+              <td>{{ server.Status }}</td>
+              <td>{{ server.AllowPasswordLogin ? '1' : '0' }}</td>
+              <td>{{ server.AllowRootLogin ? '1' : '0' }}</td>
+              <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="icon-btn" @click="handleEdit(server)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 手機版卡片 -->
+      <div class="mobile-cards">
+        <div class="table-card" v-for="server in servers" :key="server.ID">
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.id') }}</span>
+            <span class="card-value">{{ server.ID }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.interface') }}</span>
+            <span class="card-value">{{ server.Interface }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.status') }}</span>
+            <span class="card-value">{{ server.Status }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.loginWithPassword') }}</span>
+            <span class="card-value">{{ server.AllowPasswordLogin ? '1' : '0' }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.rootLogin') }}</span>
+            <span class="card-value">{{ server.AllowRootLogin ? '1' : '0' }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.rootLoginWithPassword') }}</span>
+            <span class="card-value">{{ server.AllowRootPasswordLogin ? '1' : '0' }}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" @click="handleEdit(server)">
+              {{ t('common.edit') }}
+            </button>
+            <button class="btn btn-danger" @click="handleDelete(server.ID)">
+              {{ t('common.delete') }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <SshServerEditForm
@@ -141,20 +182,33 @@ onMounted(fetchServers);
 </template>
 
 <style scoped>
-.server-list {
-  padding: 1.5rem;
-}
 .server-management {
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
-  
+
+.header_btn {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 .ssh-title {
   font-size: 1rem;
   color: #333;
-  text-align: left;
-  background-color: #f8f8f8;
+}
+
+.server-list {
+  padding: 1.5rem;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .action-buttons {
@@ -174,41 +228,116 @@ onMounted(fetchServers);
   color: #333;
 }
 
-.server-edit {
-  padding: 1.5rem;
+/* 手機版卡片樣式 */
+.mobile-cards {
+  display: none;
+  gap: 1rem;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-input, select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+.table-card {
+  background: white;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: #666;
   font-size: 0.9rem;
 }
 
-.checkbox-label {
+.card-value {
+  color: #333;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.card-actions {
+  margin-top: 1rem;
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
-.checkbox-label input[type="checkbox"] {
-  width: auto;
+.btn-primary {
+  background-color: #0070BB;
+  color: white;
 }
 
-.btn-edit,
-.btn-delete {
-  display: none;
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* 響應式設計 */
+@media (min-width: 768px) {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #f8f8f8;
+    font-weight: 500;
+    color: #333;
+  }
+
+  td {
+    color: #666;
+  }
+
+  .mobile-cards {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .header_btn {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .server-list {
+    padding: 1rem;
+  }
+
+  .table-wrapper {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

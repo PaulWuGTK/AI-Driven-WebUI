@@ -42,6 +42,8 @@ onMounted(() => {
         <!-- IPv4 Section -->
         <div class="ip-section">
           <div class="ip-header">{{ t('lan.ipv4') }}</div>
+          
+          <!-- PC版表格 -->
           <table>
             <thead>
               <tr>
@@ -60,11 +62,35 @@ onMounted(() => {
               </tr>
             </tbody>
           </table>
+
+          <!-- 手機版卡片 -->
+          <div class="mobile-cards">
+            <div class="table-card" v-for="ip in iface.ipv4" :key="ip.Name">
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.name') }}</span>
+                <span class="card-value">{{ ip.Name }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.ipAddress') }}</span>
+                <span class="card-value">{{ ip.IPv4Address }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.netmask') }}</span>
+                <span class="card-value">{{ ip.IPv4Netmask }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.status') }}</span>
+                <span class="card-value">{{ ip.Status }}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- IPv6 Section -->
         <div class="ip-section" v-if="iface.ipv6.length > 0">
           <div class="ip-header">{{ t('lan.ipv6') }}</div>
+          
+          <!-- PC版表格 -->
           <table>
             <thead>
               <tr>
@@ -81,6 +107,24 @@ onMounted(() => {
               </tr>
             </tbody>
           </table>
+
+          <!-- 手機版卡片 -->
+          <div class="mobile-cards">
+            <div class="table-card" v-for="ip in iface.ipv6" :key="ip.Name">
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.name') }}</span>
+                <span class="card-value">{{ ip.Name }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.ipAddress') }}</span>
+                <span class="card-value">{{ ip.IPv6Address }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('lan.status') }}</span>
+                <span class="card-value">{{ ip.Status }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -142,4 +186,90 @@ onMounted(() => {
   font-size: 1rem;
 }
 
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 手機版卡片樣式 */
+.mobile-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-value {
+  color: #333;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* 響應式設計 */
+@media (min-width: 768px) {
+  /* PC版表格樣式 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  th {
+    background-color: #f8f8f8;
+    font-weight: 500;
+    color: #333;
+  }
+
+  td {
+    color: #666;
+  }
+
+  /* 設置各欄位的寬度比例 */
+  th:nth-child(1), td:nth-child(1) { width: 15%; }
+  th:nth-child(2), td:nth-child(2) { width: 35%; }
+  th:nth-child(3), td:nth-child(3) { width: 35%; }
+  th:nth-child(4), td:nth-child(4) { width: 15%; }
+
+  /* 隱藏手機版卡片 */
+  .mobile-cards {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* 隱藏PC版表格 */
+  table {
+    display: none;
+  }
+}
 </style>

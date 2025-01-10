@@ -77,35 +77,62 @@ onMounted(fetchKeys);
     </div>
 
     <div class="key-list">
-      <table>
-        <thead>
-          <tr>
-            <th>{{ t('ssh.comment') }}</th>
-            <th>{{ t('ssh.publicKey') }}</th>
-            <th>{{ t('ssh.select') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="key in keys" :key="key.Key">
-            <td>{{ extractKeyComment(key.Key) }}</td>
-            <td>
-              <button class="btn btn-view" @click="handleViewKey(key)">
-                {{ t('ssh.clickToView') }}
-              </button>
-            </td>
-            <td>
-              <button class="icon-btn" @click="handleDelete(key)" title="Delete">
-                <span class="material-icons">delete</span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- PC版表格 -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('ssh.comment') }}</th>
+              <th>{{ t('ssh.algorithm') }}</th>
+              <th>{{ t('ssh.publicKey') }}</th>
+              <th>{{ t('ssh.action') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="key in keys" :key="key.Key">
+              <td>{{ extractKeyComment(key.Key) }}</td>
+              <td>{{ key.Key.split(' ')[0] }}</td>
+              <td>
+                <button class="btn btn-view" @click="handleViewKey(key)">
+                  {{ t('ssh.clickToView') }}
+                </button>
+              </td>
+              <td>
+                <button class="icon-btn" @click="handleDelete(key)" title="Delete">
+                  <span class="material-icons">delete</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 手機版卡片 -->
+      <div class="mobile-cards">
+        <div class="table-card" v-for="key in keys" :key="key.Key">
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.comment') }}</span>
+            <span class="card-value">{{ extractKeyComment(key.Key) }}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-label">{{ t('ssh.algorithm') }}</span>
+            <span class="card-value">{{ key.Key.split(' ')[0] }}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" @click="handleViewKey(key)">
+              {{ t('ssh.viewKey') }}
+            </button>
+            <button class="btn btn-danger" @click="handleDelete(key)">
+              {{ t('common.delete') }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="add-key-section">
       <div class="header">
-      <div class="ssh-title">{{ t('ssh.newSshKey') }}</div>
+        <div class="ssh-title">{{ t('ssh.newSshKey') }}</div>
       </div>
       <div class="form-group">
         <textarea
@@ -125,39 +152,12 @@ onMounted(fetchKeys);
       </div>
     </div>
 
-    <!-- Key View Modal -->
-    <div v-if="showKeyModal" class="modal-overlay">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>{{ t('ssh.publicKey') }}</h3>
-          <button class="close-btn" @click="showKeyModal = false">×</button>
-        </div>
-        <div class="modal-content">
-          <div class="key-details">
-            <div class="form-group">
-              <label>{{ t('ssh.comment') }}</label>
-              <div class="value">{{ selectedKey ? extractKeyComment(selectedKey.Key) : '' }}</div>
-            </div>
-            <div class="form-group">
-              <label>{{ t('ssh.key') }}</label>
-              <div class="value key-text">{{ selectedKey?.Key }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" @click="showKeyModal = false">
-            {{ t('common.close') }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <SshPublicKeyViewer
+      v-if="showKeyModal && selectedKey"
+      :public-key="selectedKey"
+      :on-close="handleCloseViewer"
+    />
   </div>
-
-  <SshPublicKeyViewer
-    v-if="showKeyModal && selectedKey"
-    :public-key="selectedKey"
-    :on-close="handleCloseViewer"
-  />
 </template>
 
 <style scoped>
@@ -166,25 +166,28 @@ onMounted(fetchKeys);
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
-  
-.ssh-title {
-  font-size: 1rem;
-  color: #333;
-  text-align: left;
-  background-color: #f8f8f8;
-}
 
-.header {
+.header_btn {
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
   background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ssh-title {
+  font-size: 1rem;
+  color: #333;
 }
 
 .key-list {
   padding: 1.5rem;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .btn-view {
@@ -205,8 +208,56 @@ onMounted(fetchKeys);
   color: #666;
 }
 
+/* 手機版卡片樣式 */
+.mobile-cards {
+  display: none;
+  gap: 1rem;
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-value {
+  color: #333;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.card-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
 .add-key-section {
   border-top: 1px solid #e0e0e0;
+}
+
+.header {
+  padding: 0.5rem 2rem;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .form-group {
@@ -220,74 +271,13 @@ textarea {
   border-radius: 4px;
   font-size: 0.9rem;
   font-family: monospace;
+  resize: vertical;
 }
 
 .error-message {
   color: #dc3545;
   font-size: 0.9rem;
   margin-top: 0.5rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background-color: white;
-  border-radius: 4px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-content {
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.modal-footer {
-  padding: 1rem;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-}
-
-.key-details .value {
-  padding: 0.5rem;
-  background-color: #f8f8f8;
-  border-radius: 4px;
-}
-
-.key-text {
-  font-family: monospace;
-  word-break: break-all;
 }
 
 .button-group {
@@ -305,12 +295,77 @@ textarea {
   font-size: 0.9rem;
 }
 
+.btn-primary {
+  background-color: #0070BB;
+  color: white;
+}
+
 .btn-secondary {
   background-color: #f0f0f0;
   color: #666;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* 響應式設計 */
+@media (min-width: 768px) {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #f8f8f8;
+    font-weight: 500;
+    color: #333;
+  }
+
+  td {
+    color: #666;
+  }
+
+  .mobile-cards {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .key-list {
+    padding: 1rem;
+  }
+
+  .table-wrapper {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+
+  .form-group {
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 120px;
+  }
 }
 </style>

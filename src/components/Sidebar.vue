@@ -170,7 +170,7 @@ watch(() => route.path, (newPath) => {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: #0070BB;
+  background-color: #3660AB;
   display: none;
   align-items: center;
   padding: 0 1rem;
