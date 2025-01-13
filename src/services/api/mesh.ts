@@ -33,6 +33,15 @@ const mockMeshData: MeshMapResponse = {
       SupportedBand: "5G/6G"
     },
     {
+      Name: "Device-5d04",
+      Mode: "Agent",
+      ipv4: "192.168.1.5",
+      MACAddress: "76:e2:f9:a5:5d:04",
+      MediaType: "Wi-Fi",
+      Upstream: "76:e2:f9:a5:5d:03",
+      SupportedBand: "5G/6G"
+    },
+    {
       Name: "Device-5da1",
       Mode: "Client",
       ipv4: "192.168.1.101",
@@ -47,6 +56,14 @@ const mockMeshData: MeshMapResponse = {
       MACAddress: "76:e2:f9:a5:5d:a2",
       MediaType: "Ethernet",
       Upstream: "76:e2:f9:a5:5d:02"
+    },
+    {
+      Name: "Device-5da3",
+      Mode: "Client",
+      ipv4: "192.168.1.103",
+      MACAddress: "76:e2:f9:a5:5d:a3",
+      MediaType: "Wi-Fi",
+      Upstream: "76:e2:f9:a5:5d:04"
     }
   ]
 };
