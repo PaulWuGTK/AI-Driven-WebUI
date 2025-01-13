@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { defineProps } from 'vue';
 import type { MeshNode } from '../../types/mesh';
 
@@ -16,11 +16,27 @@ const LEVEL_HEIGHT = 120;
 const NODE_RADIUS = 15;
 const ICON_SIZE = 40;
 
+let isDragging = false; // 是否正在拖动
+let lastMouseX = 0; // 上一次鼠标的 X 坐标
+let lastMouseY = 0; // 上一次鼠标的 Y 坐标
+let offsetX = 0; // 画布 X 偏移
+let offsetY = 0; // 画布 Y 偏移
+
 const controllerIcon = new Image();
 const agentIcon = new Image();
 const clientIcon = new Image();
 
 let flowPoints: Map<string, number> = new Map(); // 存储每条线上的点位置
+
+const handleMouseDown = (event: MouseEvent) => {
+  isDragging = true;
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+};
+
+const handleMouseUp = () => {
+  isDragging = false;
+};
 
 const drawConnectionWithFlow = (
   ctx: CanvasRenderingContext2D,
@@ -176,11 +192,21 @@ const adjustCanvasSize = () => {
 };
 
 const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: number, y: number }) => {
+  const adjustedPos = {
+    x: pos.x + offsetX,
+    y: pos.y + offsetY,
+  };
+
+  // 绘制连接线
   if (node.Upstream !== '-') {
     const upstreamPos = nodePositions.value.get(node.Upstream);
     if (upstreamPos) {
+      const adjustedUpstreamPos = {
+        x: upstreamPos.x + offsetX,
+        y: upstreamPos.y + offsetY,
+      };
       const flowKey = `${node.Upstream}->${node.MACAddress}`;
-      drawConnectionWithFlow(ctx, upstreamPos, pos, flowKey, node.MediaType);
+      drawConnectionWithFlow(ctx, adjustedUpstreamPos, adjustedPos, flowKey, node.MediaType);
     }
   }
 
@@ -188,12 +214,12 @@ const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: numbe
   const icon = node.Mode === 'Controller' ? controllerIcon :
                node.Mode === 'Agent' ? agentIcon : clientIcon;
   if (icon.complete) {
-    ctx.drawImage(icon, pos.x - ICON_SIZE / 2, pos.y - ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
+    ctx.drawImage(icon, adjustedPos.x - ICON_SIZE / 2, adjustedPos.y - ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
   } else {
     ctx.beginPath();
     ctx.fillStyle = node.Mode === 'Controller' ? '#0070BB' :
                    node.Mode === 'Agent' ? '#4CAF50' : '#FFA000';
-    ctx.arc(pos.x, pos.y, NODE_RADIUS, 0, Math.PI * 2);
+    ctx.arc(adjustedPos.x, adjustedPos.y, NODE_RADIUS, 0, Math.PI * 2);
     ctx.fill();
   }
 };
@@ -215,7 +241,7 @@ const drawMap = () => {
   });
 };
 
-const handleMouseMove = (event: MouseEvent) => {
+const handleMouseMoveOver = (event: MouseEvent) => {
   if (!canvas.value) return;
 
   const rect = canvas.value.getBoundingClientRect();
@@ -240,6 +266,25 @@ const handleMouseMove = (event: MouseEvent) => {
   if (!found) {
     hoveredNode.value = null;
   }
+};
+
+const handleMouseMove = (event: MouseEvent) => {
+  if (!isDragging) return;
+
+  // 计算拖动距离
+  const dx = event.clientX - lastMouseX;
+  const dy = event.clientY - lastMouseY;
+
+  // 更新偏移量
+  offsetX += dx;
+  offsetY += dy;
+
+  // 更新鼠标位置
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+
+  // 重绘画布
+  drawMap();
 };
 
 const handleResize = () => {
@@ -274,6 +319,10 @@ onMounted(() => {
     canvas.value.width = canvas.value.offsetWidth;
     canvas.value.height = canvas.value.offsetHeight;
 
+    canvas.value.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
     // 初次计算节点位置并初始化流动点
     calculateNodePositions();
     ensureMinimumDistance(nodePositions.value, 60);
@@ -294,13 +343,21 @@ onMounted(() => {
     window.addEventListener("resize", handleResize);
   }
 });
+
+onUnmounted(() => {
+  if (canvas.value) {
+    canvas.value.removeEventListener("mousedown", handleMouseDown);
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  }
+});
 </script>
 
 <template>
   <div class="topology-map">
     <canvas 
       ref="canvas"
-      @mousemove="handleMouseMove"
+      @mousemove="handleMouseMoveOver"
       @mouseleave="hoveredNode = null"
     ></canvas>
 

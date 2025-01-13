@@ -9,12 +9,14 @@ import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
 import { statisticsMockData } from './mockData/statisticsMockData';
 import { ntpMockData } from './mockData/ntpMockData';
+import { getMeshMockData } from './mockData/dashboard/meshMock';
 
 export const getMockWanStatus = (): WanStatusResponse => wanMockData;
 export const getMockLanStatus = (): LanStatusResponse => lanMockData;
 export const getMockWlanStatus = (): WlanStatusResponse => wlanMockData;
 export const getMockStatistics = (): StatisticsResponse => statisticsMockData;
 export const getMockNtp = (): NtpResponse => ntpMockData;
+export const getMockMeshMap = () => ({ MeshMap: getMeshMockData() });
 
 export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
   const servers = data.Ntp.NtpServers.split(',').map(s => s.trim());

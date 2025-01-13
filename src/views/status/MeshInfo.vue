@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
 import { getMeshMap, applySteeringControl } from '../../services/api/mesh'; 
@@ -14,6 +14,7 @@ const showMap = ref(false);
 const selectedClient = ref<MeshNode | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const refreshInterval = ref<number | null>(null);
 
 const nodes = computed(() => 
   meshData.value.filter(node => node.Mode !== 'Client')
@@ -22,6 +23,29 @@ const nodes = computed(() =>
 const clients = computed(() => 
   meshData.value.filter(node => node.Mode === 'Client')
 );
+
+// Function to check if mesh data has changed
+const hasMeshDataChanged = (newData: MeshNode[], oldData: MeshNode[]): boolean => {
+  if (newData.length !== oldData.length) return true;
+  
+  // Create maps for faster lookup
+  const oldDataMap = new Map(oldData.map(node => [node.MACAddress, node]));
+  
+  // Check if any nodes are different
+  return newData.some(newNode => {
+    const oldNode = oldDataMap.get(newNode.MACAddress);
+    if (!oldNode) return true;
+    
+    // Compare relevant properties
+    return (
+      newNode.Mode !== oldNode.Mode ||
+      newNode.ipv4 !== oldNode.ipv4 ||
+      newNode.MediaType !== oldNode.MediaType ||
+      newNode.Upstream !== oldNode.Upstream ||
+      newNode.SupportedBand !== oldNode.SupportedBand
+    );
+  });
+};
 
 const fetchMeshData = async () => {
   loading.value = true;
@@ -32,7 +56,10 @@ const fetchMeshData = async () => {
       error.value = 'Mesh is disabled';
       meshData.value = [];
     } else {
-      meshData.value = response.MeshMap;
+      // Only update if data has changed
+      if (hasMeshDataChanged(response.MeshMap, meshData.value)) {
+        meshData.value = response.MeshMap;
+      }
     }
   } catch (err: unknown) {
     console.error('Error fetching mesh data:', err);
@@ -72,7 +99,17 @@ const getPossibleDestinations = () => {
   );
 };
 
-onMounted(fetchMeshData);
+onMounted(() => {
+  fetchMeshData();
+  // Set up auto-refresh every 5 seconds
+  refreshInterval.value = window.setInterval(fetchMeshData, 5000);
+});
+
+onUnmounted(() => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value);
+  }
+});
 </script>
 
 <template>

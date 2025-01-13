@@ -4,3 +4,4 @@ export * from './memoryMock';
 export * from './wanMock';
 export * from './wifiMock';
 export * from './ethernetMock';
+export * from './meshMock';
