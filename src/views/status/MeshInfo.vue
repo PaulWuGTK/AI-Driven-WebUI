@@ -102,7 +102,7 @@ const getPossibleDestinations = () => {
 onMounted(() => {
   fetchMeshData();
   // Set up auto-refresh every 5 seconds
-  refreshInterval.value = window.setInterval(fetchMeshData, 5000);
+  // refreshInterval.value = window.setInterval(fetchMeshData, 5000);
 });
 
 onUnmounted(() => {
