@@ -13,20 +13,20 @@ const hoverPosition = ref({ x: 0, y: 0 });
 const nodePositions = ref(new Map<string, { x: number, y: number }>());
 
 const LEVEL_HEIGHT = 120;
-const NODE_RADIUS = 15;
-const ICON_SIZE = 40;
+const ICON_SIZE = 32;
+const NODE_RADIUS = ICON_SIZE / 2;
 
-let isDragging = false; // 是否正在拖动
-let lastMouseX = 0; // 上一次鼠标的 X 坐标
-let lastMouseY = 0; // 上一次鼠标的 Y 坐标
-let offsetX = 0; // 画布 X 偏移
-let offsetY = 0; // 画布 Y 偏移
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let offsetX = 0;
+let offsetY = 0;
 
 const controllerIcon = new Image();
 const agentIcon = new Image();
 const clientIcon = new Image();
 
-let flowPoints: Map<string, number> = new Map(); // 存储每条线上的点位置
+let flowPoints: Map<string, number> = new Map();
 
 const handleMouseDown = (event: MouseEvent) => {
   isDragging = true;
@@ -36,6 +36,18 @@ const handleMouseDown = (event: MouseEvent) => {
 
 const handleMouseUp = () => {
   isDragging = false;
+};
+
+const setCanvasSize = () => {
+  if (canvas.value) {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.value.width = canvas.value.offsetWidth * ratio;
+    canvas.value.height = 600; // 始终强制设置为 600
+    const ctx = canvas.value.getContext("2d");
+    if (ctx) {
+      ctx.scale(ratio, ratio); // 缩放逻辑坐标
+    }
+  }
 };
 
 const drawConnectionWithFlow = (
@@ -49,34 +61,86 @@ const drawConnectionWithFlow = (
     Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)
   );
   const progress = flowPoints.get(flowKey) || 0;
-  const flowSpeed = 2; // 数据流动速度
+  const flowSpeed = 2;
   const nextProgress = (progress + flowSpeed) % distance;
   flowPoints.set(flowKey, nextProgress);
 
-  // 设置连线样式
   ctx.beginPath();
   if (mediaType === "Wi-Fi") {
-    ctx.strokeStyle = "#4CAF50"; // 绿色
-    ctx.setLineDash([5, 5]); // 虚线
+    ctx.strokeStyle = "#4CAF50";
+    ctx.setLineDash([5, 5]);
   } else if (mediaType === "Ethernet") {
-    ctx.strokeStyle = "#2196F3"; // 蓝色
-    ctx.setLineDash([]); // 实线
+    ctx.strokeStyle = "#2196F3";
+    ctx.setLineDash([]);
   }
   ctx.moveTo(start.x, start.y);
   ctx.lineTo(end.x, end.y);
   ctx.stroke();
-  ctx.setLineDash([]); // 重置虚线样式
+  ctx.setLineDash([]);
 
-  // 绘制流动点
   const flowRatio = nextProgress / distance;
   const flowX = start.x + (end.x - start.x) * flowRatio;
   const flowY = start.y + (end.y - start.y) * flowRatio;
   ctx.beginPath();
-  ctx.fillStyle = "#000"; // 小黑点
+  ctx.fillStyle = "#000";
   ctx.arc(flowX, flowY, 3, 0, Math.PI * 2);
   ctx.fill();
 };
 
+const handleMouseMoveOver = (event: MouseEvent) => {
+  if (!canvas.value) return;
+
+  // 实时获取画布的边界
+  const rect = canvas.value.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+
+  const x = (event.clientX - rect.left) * ratio - offsetX;
+  const y = (event.clientY - rect.top) * ratio - offsetY;
+
+  let found = false;
+  for (const [mac, pos] of nodePositions.value.entries()) {
+    const distance = Math.sqrt(
+      Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2)
+    );
+
+    if (distance <= ICON_SIZE / 2) {
+      const node = props.nodes.find(n => n.MACAddress === mac);
+      if (node) {
+        hoveredNode.value = node;
+        hoverPosition.value = { x: event.clientX, y: event.clientY };
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (!found) {
+    hoveredNode.value = null;
+  }
+};
+
+const handleMouseMove = (event: MouseEvent) => {
+  if (!isDragging) return;
+
+  const dx = event.clientX - lastMouseX;
+  const dy = event.clientY - lastMouseY;
+
+  offsetX += dx;
+  offsetY += dy;
+
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+
+  drawMap();
+};
+
+const handleResize = () => {
+  if (canvas.value) {
+    canvas.value.width = canvas.value.offsetWidth;
+    canvas.value.height = canvas.value.offsetHeight;
+    drawMap();
+  }
+};
 
 const ensureMinimumDistance = (positions: Map<string, { x: number, y: number }>, minDistance = 50) => {
   const nodesArray = Array.from(positions.values());
@@ -106,22 +170,18 @@ const calculateNodePositions = () => {
   const positions = new Map<string, { x: number, y: number }>();
   const width = canvas.value.width;
   
-  // Find controller
   const controller = props.nodes.find(n => n.Mode === 'Controller');
   if (!controller) return;
 
-  // Position controller at top center
   positions.set(controller.MACAddress, {
     x: width / 2,
     y: LEVEL_HEIGHT
   });
 
-  // Find direct agents (connected to controller)
   const directAgents = props.nodes.filter(n => 
     n.Mode === 'Agent' && n.Upstream === controller.MACAddress
   );
 
-  // Position direct agents
   const agentWidth = width / (directAgents.length + 1);
   directAgents.forEach((agent, index) => {
     positions.set(agent.MACAddress, {
@@ -130,7 +190,6 @@ const calculateNodePositions = () => {
     });
   });
 
-  // Position other agents
   const otherAgents = props.nodes.filter(n =>
     n.Mode === 'Agent' && !directAgents.includes(n)
   );
@@ -145,7 +204,6 @@ const calculateNodePositions = () => {
     }
   });
 
-  // Position clients
   const clients = props.nodes.filter(n => n.Mode === 'Client');
   clients.forEach(client => {
     const upstreamPos = positions.get(client.Upstream);
@@ -163,14 +221,12 @@ const calculateNodePositions = () => {
 const adjustVerticalSpacing = (positions: Map<string, { x: number, y: number }>) => {
   const levels = new Map<number, string[]>();
 
-  // 根据 Y 坐标分层
   positions.forEach((pos, mac) => {
     const level = Math.round(pos.y / LEVEL_HEIGHT);
     if (!levels.has(level)) levels.set(level, []);
     levels.get(level)?.push(mac);
   });
 
-  // 水平调整以避免重叠
   levels.forEach((macAddresses, level) => {
     const step = canvas.value!.width / (macAddresses.length + 1);
     macAddresses.forEach((mac, index) => {
@@ -183,11 +239,16 @@ const adjustVerticalSpacing = (positions: Map<string, { x: number, y: number }>)
 };
 
 const adjustCanvasSize = () => {
-  if (canvas.value) {
-    const nodeCount = props.nodes.length;
-    const newHeight = Math.max(600, nodeCount * 100); // 每个节点占据一定高度
-    canvas.value.height = newHeight;
-    drawMap();
+  // 移除动态高度计算，确保始终为 600
+  if (canvas.value && canvas.value.height !== 600) {
+    canvas.value.height = 600;
+    drawMap(); // 重绘画布
+  }
+};
+
+const handleVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    setCanvasSize();
   }
 };
 
@@ -197,7 +258,6 @@ const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: numbe
     y: pos.y + offsetY,
   };
 
-  // 绘制连接线
   if (node.Upstream !== '-') {
     const upstreamPos = nodePositions.value.get(node.Upstream);
     if (upstreamPos) {
@@ -210,7 +270,6 @@ const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: numbe
     }
   }
 
-  // 绘制节点图标或圆
   const icon = node.Mode === 'Controller' ? controllerIcon :
                node.Mode === 'Agent' ? agentIcon : clientIcon;
   if (icon.complete) {
@@ -229,10 +288,8 @@ const drawMap = () => {
   const ctx = canvas.value.getContext("2d");
   if (!ctx) return;
 
-  // 清空画布
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
 
-  // 遍历每个节点，绘制节点和连接
   props.nodes.forEach((node) => {
     const pos = nodePositions.value.get(node.MACAddress);
     if (pos) {
@@ -241,58 +298,9 @@ const drawMap = () => {
   });
 };
 
-const handleMouseMoveOver = (event: MouseEvent) => {
-  if (!canvas.value) return;
-
-  const rect = canvas.value.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  // Check if mouse is over any node
-  let found = false;
-  for (const [mac, pos] of nodePositions.value.entries()) {
-    const distance = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
-    if (distance <= NODE_RADIUS) {
-      const node = props.nodes.find(n => n.MACAddress === mac);
-      if (node) {
-        hoveredNode.value = node;
-        hoverPosition.value = { x: event.clientX, y: event.clientY };
-        found = true;
-        break;
-      }
-    }
-  }
-
-  if (!found) {
-    hoveredNode.value = null;
-  }
-};
-
-const handleMouseMove = (event: MouseEvent) => {
-  if (!isDragging) return;
-
-  // 计算拖动距离
-  const dx = event.clientX - lastMouseX;
-  const dy = event.clientY - lastMouseY;
-
-  // 更新偏移量
-  offsetX += dx;
-  offsetY += dy;
-
-  // 更新鼠标位置
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
-
-  // 重绘画布
+const animateFlow = () => {
   drawMap();
-};
-
-const handleResize = () => {
-  if (canvas.value) {
-    canvas.value.width = canvas.value.offsetWidth;
-    canvas.value.height = canvas.value.offsetHeight;
-    drawMap();
-  }
+  requestAnimationFrame(animateFlow);
 };
 
 watch(() => props.nodes, drawMap, { deep: true });
@@ -301,54 +309,57 @@ import controllerIconPath from '../../assets/icons/controller.png';
 import agentIconPath from '../../assets/icons/agent.png';
 import clientIconPath from '../../assets/icons/client.png';
 
-const animateFlow = () => {
-  drawMap(); // 重绘整个画布
-  requestAnimationFrame(animateFlow); // 下一帧
-};
-
 onMounted(() => {
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  if (document.visibilityState === "visible" && canvas.value) {
+      setCanvasSize();
+    }
   controllerIcon.src = controllerIconPath;
   agentIcon.src = agentIconPath;
   clientIcon.src = clientIconPath;
 
-  controllerIcon.onload = drawMap;
-  agentIcon.onload = drawMap;
-  clientIcon.onload = drawMap;
+  Promise.all([
+    new Promise(resolve => { controllerIcon.onload = resolve; }),
+    new Promise(resolve => { agentIcon.onload = resolve; }),
+    new Promise(resolve => { clientIcon.onload = resolve; })
+  ]).then(() => {
+    if (canvas.value) {
+      setCanvasSize();
+      canvas.value.width = canvas.value.offsetWidth;
+      canvas.value.height = canvas.value.offsetHeight;
+      
+      calculateNodePositions();
+      ensureMinimumDistance(nodePositions.value, 60);
+
+      flowPoints = new Map();
+      props.nodes.forEach(node => {
+        if (node.Upstream && node.Upstream !== '-') {
+          const flowKey = `${node.Upstream}->${node.MACAddress}`;
+          flowPoints.set(flowKey, 0);
+        }
+      });
+
+      adjustCanvasSize();
+      drawMap();
+      animateFlow();
+    }
+  });
 
   if (canvas.value) {
-    canvas.value.width = canvas.value.offsetWidth;
-    canvas.value.height = canvas.value.offsetHeight;
-
     canvas.value.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-
-    // 初次计算节点位置并初始化流动点
-    calculateNodePositions();
-    ensureMinimumDistance(nodePositions.value, 60);
-
-    // 初始化 flowPoints
-    flowPoints = new Map();
-    props.nodes.forEach(node => {
-      if (node.Upstream && node.Upstream !== '-') {
-        const flowKey = `${node.Upstream}->${node.MACAddress}`;
-        flowPoints.set(flowKey, 0);
-      }
-    });
-
-    adjustCanvasSize();
-    drawMap(); // 初次绘制
-
-    animateFlow(); // 启动动画
     window.addEventListener("resize", handleResize);
   }
 });
 
 onUnmounted(() => {
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
   if (canvas.value) {
     canvas.value.removeEventListener("mousedown", handleMouseDown);
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
+    window.removeEventListener("resize", handleResize);
   }
 });
 </script>
