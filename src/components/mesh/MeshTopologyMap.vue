@@ -42,7 +42,7 @@ const setCanvasSize = () => {
   if (canvas.value) {
     const ratio = window.devicePixelRatio || 1;
     canvas.value.width = canvas.value.offsetWidth * ratio;
-    canvas.value.height = 600; // 始终强制设置为 600
+    canvas.value.height = 600 * ratio;
     const ctx = canvas.value.getContext("2d");
     if (ctx) {
       ctx.scale(ratio, ratio); // 缩放逻辑坐标
@@ -92,10 +92,9 @@ const handleMouseMoveOver = (event: MouseEvent) => {
 
   // 实时获取画布的边界
   const rect = canvas.value.getBoundingClientRect();
-  const ratio = window.devicePixelRatio || 1;
 
-  const x = (event.clientX - rect.left) * ratio - offsetX;
-  const y = (event.clientY - rect.top) * ratio - offsetY;
+  const x = (event.clientX - rect.left) - offsetX;
+  const y = (event.clientY - rect.top) - offsetY;
 
   let found = false;
   for (const [mac, pos] of nodePositions.value.entries()) {
