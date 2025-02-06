@@ -1,160 +1,136 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { defineProps, computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { DashboardWAN } from '../../types/dashboard';
 import LineChart from '../LineChart.vue';
-import { getWanInfo } from '../../services/api/dashboard';
 
 const { t } = useI18n();
-const wanData = ref({
-  bytesReceived: '0 B/s',
-  bytesSent: '0 B/s',
-  packetsReceived: '0',
-  packetsSent: '0'
-});
 
-// Add state for rate calculation
-const previousData = ref({
-  bytesReceived: 0,
-  bytesSent: 0,
-  timestamp: 0,
-  isFirstCall: true
-});
+const props = defineProps<{
+  wanInfo?: DashboardWAN;
+}>();
 
-const pollingInterval = ref<number | null>(null);
-  type CustomChartData = {
-  labels: string[];
-  datasets: {
-    label: string;
-    data: number[];
-    borderColor: string;
-    backgroundColor: string;
-    fill: boolean;
-  }[];
-};
+// Store previous values and timestamps
+const previousValues = ref<{
+  bytesReceived: number;
+  bytesSent: number;
+  timestamp: number;
+  isFirstCall: boolean;
+} | null>(null);
 
-const chartData = ref<CustomChartData>({
-  labels: [],
-  datasets: [
-    {
-      label: t('dashboard.received'),
-      data: [],
-      borderColor: '#42A5F5',
-      fill: true,
-      backgroundColor: 'rgba(66, 165, 245, 0.2)'
-    },
-    {
-      label: t('dashboard.sent'),
-      data: [],
-      borderColor: '#FFA726',
-      fill: true,
-      backgroundColor: 'rgba(255, 167, 38, 0.2)'
-    }
-  ]
-});
+// Keep track of rates for the chart
+const receivedRates = ref<number[]>([]);
+const sentRates = ref<number[]>([]);
+const timeLabels = ref<string[]>([]);
+const maxDataPoints = 10;
 
-// Function to format bytes/s to appropriate unit
-const formatSpeed = (bytesPerSecond: number): string => {
-  if (bytesPerSecond < 0) return '0 B/s';
-  if (bytesPerSecond < 1024) {
-    return `${bytesPerSecond.toFixed(1)} B/s`;
-  } else if (bytesPerSecond < 1024 * 1024) {
-    return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
-  } else {
-    return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
-  }
-};
+// Watch for changes in wanInfo and calculate rates
+watch(() => props.wanInfo, (newInfo) => {
+  if (!newInfo) return;
 
-const fetchWanData = async () => {
-  try {
-    const response = await getWanInfo();
-    const currentTime = Date.now();
+  const currentTime = Date.now();
 
-    // Skip rate calculation on first call
-    if (previousData.value.isFirstCall) {
-      previousData.value = {
-        bytesReceived: response.BytesReceived,
-        bytesSent: response.BytesSent,
-        timestamp: currentTime,
-        isFirstCall: false
-      };
-      return;
-    }
-
-    const timeDiff = (currentTime - previousData.value.timestamp) / 1000; // Convert to seconds
-
-    // Calculate rates
-    const rxRate = (response.BytesReceived - previousData.value.bytesReceived) / timeDiff;
-    const txRate = (response.BytesSent - previousData.value.bytesSent) / timeDiff;
-
-    // Update display data with rates
-    wanData.value = {
-      bytesReceived: formatSpeed(rxRate),
-      bytesSent: formatSpeed(txRate),
-      packetsReceived: `${(response.PacketsReceived / 1024).toFixed(2)} kP`,
-      packetsSent: `${(response.PacketsSent / 1024).toFixed(2)} kP`,
+  if (!previousValues.value) {
+    previousValues.value = {
+      bytesReceived: newInfo.BytesReceived,
+      bytesSent: newInfo.BytesSent,
+      timestamp: currentTime,
+      isFirstCall: true
     };
+    return;
+  }
 
-    // Update chart with rates in KB/s
-    updateChartData(rxRate / 1024, txRate / 1024);
+  const timeDiff = Math.max((currentTime - previousValues.value.timestamp) / 1000, 0.001);
+  const receivedDiff = newInfo.BytesReceived - previousValues.value.bytesReceived;
+  const sentDiff = newInfo.BytesSent - previousValues.value.bytesSent;
 
-    // Store current values for next calculation
-    previousData.value = {
-      bytesReceived: response.BytesReceived,
-      bytesSent: response.BytesSent,
+
+  if (receivedDiff > 0 || sentDiff > 0) {
+    receivedRates.value.push(receivedDiff / timeDiff);
+    sentRates.value.push(sentDiff / timeDiff);
+    timeLabels.value.push(new Date().toLocaleTimeString());
+
+    if (receivedRates.value.length > maxDataPoints) {
+      receivedRates.value.shift();
+      sentRates.value.shift();
+      timeLabels.value.shift();
+    }
+
+    // **只在數據變動時更新 previousValues，減少不必要的變動**
+    previousValues.value = {
+      bytesReceived: newInfo.BytesReceived,
+      bytesSent: newInfo.BytesSent,
       timestamp: currentTime,
       isFirstCall: false
     };
-  } catch (error) {
-    console.error('Error fetching WAN data:', error);
   }
+}, { immediate: true });
+
+const chartData = computed(() => ({
+  labels: timeLabels.value,
+  datasets: [
+    {
+      label: t('dashboard.received'),
+      data: receivedRates.value.map(rate => Math.max(0, rate / (1024 * 1024))), // Convert to MB/s
+      borderColor: '#42A5F5',
+      backgroundColor: 'rgba(66, 165, 245, 0.2)',
+      fill: true
+    },
+    {
+      label: t('dashboard.sent'),
+      data: sentRates.value.map(rate => Math.max(0, rate / (1024 * 1024))), // Convert to MB/s
+      borderColor: '#FFA726',
+      backgroundColor: 'rgba(255, 167, 38, 0.2)',
+      fill: true
+    }
+  ]
+}));
+
+const formatRate = (bytesPerSecond: number): string => {
+  if (!isFinite(bytesPerSecond) || bytesPerSecond < 0) return '0 B/s';
+  if (bytesPerSecond < 1024) return `${bytesPerSecond.toFixed(1)} B/s`;
+  if (bytesPerSecond < 1024 * 1024) return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
+  return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
 };
 
-const updateChartData = (received: number, sent: number) => {
-  const currentTime = new Date().toLocaleTimeString();
+const currentRates = computed(() => {
+  if (!previousValues.value || !props.wanInfo || previousValues.value.isFirstCall) {
+    return { received: 0, sent: 0 };
+  }
 
-  chartData.value = {
-    labels: [...chartData.value.labels, currentTime].slice(-10),
-    datasets: [
-      {
-        ...chartData.value.datasets[0],
-        label: t('dashboard.received'),
-        data: [...chartData.value.datasets[0].data, received].slice(-10)
-      },
-      {
-        ...chartData.value.datasets[1],
-        label: t('dashboard.sent'),
-        data: [...chartData.value.datasets[1].data, sent].slice(-10)
-      }
-    ]
+
+  const timeDiff = Math.max((Date.now() - previousValues.value.timestamp) / 1000, 0.001);
+
+  const receivedDiff = props.wanInfo.BytesReceived - previousValues.value.bytesReceived;
+  const sentDiff = props.wanInfo.BytesSent - previousValues.value.bytesSent;
+
+
+  // **如果 diff = 0，則維持上一個速率，避免瞬間變 0**
+  if (receivedDiff === 0 && receivedRates.value.length > 0) {
+    return {
+      received: receivedRates.value[receivedRates.value.length - 1], // 保留上一個數據
+      sent: sentRates.value[sentRates.value.length - 1]
+    };
+  }
+
+  return {
+    received: Math.max(0, receivedDiff / timeDiff),
+    sent: Math.max(0, sentDiff / timeDiff)
   };
-};
-
-onMounted(() => {
-  if (!pollingInterval.value) {
-    fetchWanData();
-    pollingInterval.value = window.setInterval(fetchWanData, 5000);
-  }
-});
-
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-    pollingInterval.value = null;
-  }
 });
 </script>
 
 <template>
-  <div class="wan-status">
+  <div class="wan-status" v-if="wanInfo">
     <h2 class="card-title">{{ t('dashboard.wan') }} {{ t('dashboard.status') }}</h2>
     <div class="info-grid">
       <div class="info-item">
         <span class="label">{{ t('dashboard.received') }}</span>
-        <span class="value">{{ wanData.bytesReceived }}</span>
+        <span class="value">{{ formatRate(currentRates.received) }}</span>
       </div>
       <div class="info-item">
         <span class="label">{{ t('dashboard.sent') }}</span>
-        <span class="value">{{ wanData.bytesSent }}</span>
+        <span class="value">{{ formatRate(currentRates.sent) }}</span>
       </div>
     </div>
     <div class="chart-container">
@@ -186,6 +162,7 @@ onUnmounted(() => {
 
 .chart-container {
   margin-top: 2rem;
+  height: 200px;
 }
 
 .card-title {

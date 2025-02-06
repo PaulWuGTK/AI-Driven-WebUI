@@ -1,65 +1,32 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getMemoryInfo } from '../../services/api/dashboard';
+import type { DashboardMemory } from '../../types/dashboard';
 
 const { t } = useI18n();
-const memoryData = ref({
-  total: 0,
-  free: 0
-});
-const pollingInterval = ref<number | null>(null);
+
+const props = defineProps<{
+  memoryInfo?: DashboardMemory;
+}>();
 
 const usedMemory = computed(() => {
-  return memoryData.value.total - memoryData.value.free;
+  if (!props.memoryInfo) return 0;
+  return props.memoryInfo.Total - props.memoryInfo.Free;
 });
 
 const usedPercentage = computed(() => {
-  return memoryData.value.total
-    ? ((usedMemory.value / memoryData.value.total) * 100).toFixed(1)
-    : '0.0';
+  if (!props.memoryInfo?.Total) return 0;
+  return ((usedMemory.value / props.memoryInfo.Total) * 100).toFixed(1);
 });
 
-const formatBytes = (kbytes: number) => {
-  const mb = kbytes / (1024);
+const formatBytes = (bytes: number) => {
+  const mb = bytes / 1024;
   return `${mb.toFixed(2)} MB`;
 };
-
-// 調整 fetchMemoryData，處理回傳陣列
-const fetchMemoryData = async () => {
-  try {
-    const response = await getMemoryInfo();
-    
-    // 檢查是否為陣列，並篩選出 path 符合的項目
-    const memoryInfo = Array.isArray(response)
-      ? response.find(item => item.path === "Device.DeviceInfo.MemoryStatus.")
-      : null;
-
-    if (memoryInfo && memoryInfo.parameters) {
-      const { Total = 0, Free = 0 } = memoryInfo.parameters;
-      memoryData.value = { total: Total, free: Free };
-    }
-  } catch (error) {
-    console.error('Error fetching memory data:', error);
-  }
-};
-
-// 啟動後自動輪詢，每 5 秒獲取資料
-onMounted(() => {
-  fetchMemoryData();
-  pollingInterval.value = window.setInterval(fetchMemoryData, 5000);
-});
-
-// 組件卸載時清除輪詢
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
-});
 </script>
 
 <template>
-  <div class="memory-status">
+  <div class="memory-status" v-if="memoryInfo">
     <h2 class="card-title">{{ t('dashboard.memory') }}</h2>
     <div class="memory-container">
       <div class="donut-chart">
@@ -93,11 +60,11 @@ onUnmounted(() => {
       <div class="memory-details">
         <div class="detail-item">
           <span class="label">{{ t('dashboard.total') }}</span>
-          <span class="value">{{ formatBytes(memoryData.total) }}</span>
+          <span class="value">{{ formatBytes(memoryInfo.Total) }}</span>
         </div>
         <div class="detail-item">
           <span class="label">{{ t('dashboard.free') }}</span>
-          <span class="value">{{ formatBytes(memoryData.free) }}</span>
+          <span class="value">{{ formatBytes(memoryInfo.Free) }}</span>
         </div>
       </div>
     </div>

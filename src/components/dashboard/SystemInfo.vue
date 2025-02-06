@@ -1,50 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getSystemInfo } from '../../services/api/dashboard';
-
-interface SystemInfoItem {
-  parameters: {
-    ModelName?: string;
-    SerialNumber?: string;
-    SoftwareVersion?: string;
-    Description?: string;
-  };
-  path: string;
-}
+import type { DashboardSystem } from '../../types/dashboard';
 
 const { t } = useI18n();
-const systemData = ref<Partial<SystemInfoItem['parameters']>>({});
 
-const fetchSystemInfo = async () => {
-  try {
-    const response = await getSystemInfo() as SystemInfoItem[];
-    const systemInfo = response.find(item => 
-      item.path === "Device.DeviceInfo." && item.parameters
-    );
-    
-    if (systemInfo) {
-      systemData.value = systemInfo.parameters;
-    }
-  } catch (error) {
-    console.error('Error fetching system info:', error);
-  }
-};
-
-onMounted(fetchSystemInfo);
+defineProps<{
+  systemInfo?: DashboardSystem;
+}>();
 </script>
 
 <template>
-  <div class="system-info">
+  <div class="system-info" v-if="systemInfo">
     <h2 class="card-title">{{ t('dashboard.system') }}</h2>
     <div class="info-grid">
       <div class="info-item">
         <span class="label">{{ t('dashboard.model') }}</span>
-        <span class="value">{{ systemData.ModelName || '-' }}</span>
+        <span class="value">{{ systemInfo.ModelName }}</span>
       </div>
       <div class="info-item">
         <span class="label">{{ t('dashboard.serialNumber') }}</span>
-        <span class="value">{{ systemData.SerialNumber || '-' }}</span>
+        <span class="value">{{ systemInfo.SerialNumber }}</span>
       </div>
     </div>
   </div>

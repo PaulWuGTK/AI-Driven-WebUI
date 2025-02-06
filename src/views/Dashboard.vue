@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { DashboardResponse } from '../types/dashboard';
+import { getDashboardData } from '../services/api/dashboard';
 import SystemInfo from '../components/dashboard/SystemInfo.vue';
 import CpuUsage from '../components/dashboard/CpuUsage.vue';
 import MemoryStatus from '../components/dashboard/MemoryStatus.vue';
@@ -9,15 +11,27 @@ import WifiStatus from '../components/dashboard/WifiStatus.vue';
 import EthernetStatus from '../components/dashboard/EthernetStatus.vue';
 
 const { t } = useI18n();
+const dashboardData = ref<DashboardResponse | null>(null);
 const refreshInterval = ref<number | null>(null);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
 const fetchData = async () => {
-  // Data fetching will be handled by individual components
+  try {
+    const data = await getDashboardData();
+    dashboardData.value = data;
+    error.value = null;
+  } catch (err) {
+    console.error('Error fetching dashboard data:', err);
+    error.value = 'Failed to fetch dashboard data';
+  } finally {
+    loading.value = false;
+  }
 };
 
 onMounted(() => {
   fetchData();
-  refreshInterval.value = window.setInterval(fetchData, 10000);
+  refreshInterval.value = window.setInterval(fetchData, 3000); // Refresh every 3 seconds
 });
 
 onUnmounted(() => {
@@ -31,13 +45,41 @@ onUnmounted(() => {
   <div class="dashboard">
     <h1 class="page-title">{{ t('menu.dashboard') }}</h1>
     
-    <div class="dashboard-grid">
-      <SystemInfo class="dashboard-item" />
-      <CpuUsage class="dashboard-item" />
-      <MemoryStatus class="dashboard-item" />
-      <WanStatus class="dashboard-item" />
-      <WifiStatus class="dashboard-item" />
-      <EthernetStatus class="dashboard-item" />
+    <div v-if="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+
+    <div v-else-if="error" class="error-state">
+      <p>{{ error }}</p>
+      <button @click="fetchData" class="retry-button">Retry</button>
+    </div>
+    
+    <div v-else class="dashboard-grid">
+      <SystemInfo 
+        class="dashboard-item" 
+        :system-info="dashboardData?.Dashboard.System"
+      />
+      <CpuUsage 
+        class="dashboard-item"
+        :cpu-info="dashboardData?.Dashboard.CPU"
+      />
+      <MemoryStatus 
+        class="dashboard-item"
+        :memory-info="dashboardData?.Dashboard.Memory"
+      />
+      <WanStatus 
+        class="dashboard-item"
+        :wan-info="dashboardData?.Dashboard.WAN"
+      />
+      <WifiStatus 
+        class="dashboard-item"
+        :wifi-info="dashboardData?.Dashboard.WiFi"
+      />
+      <EthernetStatus 
+        class="dashboard-item"
+        :ethernet-info="dashboardData?.Dashboard.Ethernet"
+      />
     </div>
   </div>
 </template>
@@ -74,9 +116,58 @@ onUnmounted(() => {
   padding: 1.5rem;
 }
 
+.loading-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0070BB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.error-state {
+  color: #dc3545;
+}
+
+.retry-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #0070BB;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  background-color: #005a96;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media (min-width: 1200px) {
   .dashboard-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-grid {
+    padding: 1rem;
+    gap: 1rem;
   }
 }
 </style>

@@ -1,52 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getEthernetInfo } from '../../services/api/dashboard';
-
-interface EthernetPort {
-  Port: string;
-  Role: string;
-  Status: string;
-  Speed: string;
-  Duplex: string;
-  MACAddress: string;
-}
-
-interface EthernetResponse {
-  EthernetStatus: EthernetPort[];
-}
+import type { DashboardEthernetPort } from '../../types/dashboard';
 
 const { t } = useI18n();
-const ports = ref<EthernetPort[]>([]);
-const refreshInterval = ref<number | null>(null);
 
-const fetchEthernetData = async () => {
-  try {
-    const response = await getEthernetInfo() as EthernetResponse;
-    ports.value = response.EthernetStatus;
-  } catch (error) {
-    console.error('Error fetching ethernet info:', error);
-  }
-};
-
-onMounted(() => {
-  fetchEthernetData();
-  refreshInterval.value = window.setInterval(fetchEthernetData, 5000);
-});
-
-onUnmounted(() => {
-  if (refreshInterval.value) {
-    clearInterval(refreshInterval.value);
-  }
-});
+defineProps<{
+  ethernetInfo?: DashboardEthernetPort[];
+}>();
 </script>
 
 <template>
-  <div class="ethernet-status">
+  <div class="ethernet-status" v-if="ethernetInfo">
     <h2 class="card-title">{{ t('dashboard.ethernet') }}</h2>
     <div class="ports-grid">
       <div 
-        v-for="port in ports" 
+        v-for="port in ethernetInfo" 
         :key="port.Port"
         class="port-item"
       >

@@ -1,193 +1,230 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { defineProps, computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getWifiInfo } from '../../services/api/dashboard';
+import type { DashboardWiFi } from '../../types/dashboard';
 import LineChart from '../LineChart.vue';
 
 const { t } = useI18n();
 
-interface BandData {
-  bytesReceived: number;
-  bytesSent: number;
-  rxRate: number;
-  txRate: number;
-  lastTimestamp: number;
-}
+const props = defineProps<{
+  wifiInfo?: DashboardWiFi;
+}>();
 
-interface ChartDataset {
-  label: string;
-  data: number[];
-  borderColor: string;
-  backgroundColor: string;
-  fill: boolean;
-}
+// Store previous values and timestamps
+const previousValues = ref<{
+  '2_4GHz': { bytesReceived: number; bytesSent: number; };
+  '5GHz': { bytesReceived: number; bytesSent: number; };
+  '6GHz': { bytesReceived: number; bytesSent: number; };
+  timestamp: number;
+  isFirstCall: boolean;
+} | null>(null);
 
-interface ChartData {
-  labels: string[];
-  datasets: ChartDataset[];
-}
+// Keep track of rates for the chart
+const band24Rates = ref<number[]>([]);
+const band5Rates = ref<number[]>([]);
+const band6Rates = ref<number[]>([]);
+const band24SentRates = ref<number[]>([]);
+const band5SentRates = ref<number[]>([]);
+const band6SentRates = ref<number[]>([]);
+const timeLabels = ref<string[]>([]);
+const maxDataPoints = 10;
 
-const wifiData = ref<{ [key: string]: BandData }>({
-  '2.4GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 },
-  '5GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 },
-  '6GHz': { bytesReceived: 0, bytesSent: 0, rxRate: 0, txRate: 0, lastTimestamp: Date.now() / 1000 }
-});
+// Watch for changes in wifiInfo and calculate rates
+watch(() => props.wifiInfo, (newInfo) => {
+  if (!newInfo) return;
 
-const pollingInterval = ref<number | null>(null);
+  const currentTime = Date.now();
 
-const chartData = ref<ChartData>({
-  labels: [],
+  if (!previousValues.value) {
+    previousValues.value = {
+      '2_4GHz': { bytesReceived: newInfo['2_4GHz'].BytesReceived, bytesSent: newInfo['2_4GHz'].BytesSent },
+      '5GHz': { bytesReceived: newInfo['5GHz'].BytesReceived, bytesSent: newInfo['5GHz'].BytesSent },
+      '6GHz': { bytesReceived: newInfo['6GHz'].BytesReceived, bytesSent: newInfo['6GHz'].BytesSent },
+      timestamp: currentTime,
+      isFirstCall: true
+    };
+    return;
+  }
+
+  const timeDiff = Math.max((currentTime - previousValues.value.timestamp) / 1000, 0.001);
+
+    const diffs = {
+    '2_4GHz': {
+      received: newInfo['2_4GHz'].BytesReceived - previousValues.value['2_4GHz'].bytesReceived,
+      sent: newInfo['2_4GHz'].BytesSent - previousValues.value['2_4GHz'].bytesSent
+    },
+    '5GHz': {
+      received: newInfo['5GHz'].BytesReceived - previousValues.value['5GHz'].bytesReceived,
+      sent: newInfo['5GHz'].BytesSent - previousValues.value['5GHz'].bytesSent
+    },
+    '6GHz': {
+      received: newInfo['6GHz'].BytesReceived - previousValues.value['6GHz'].bytesReceived,
+      sent: newInfo['6GHz'].BytesSent - previousValues.value['6GHz'].bytesSent
+    }
+  };
+
+  // 更新速率，只在 diff > 0 時加入新數據
+  const wifiBands = ['2_4GHz', '5GHz', '6GHz'] as const;
+
+  wifiBands.forEach((band) => {
+    let receivedRate = diffs[band].received / timeDiff;
+    let sentRate = diffs[band].sent / timeDiff;
+
+    if (band === '2_4GHz') {
+      band24Rates.value.push(receivedRate);
+      band24SentRates.value.push(sentRate); // ✅ 獨立存 sent
+    }
+    if (band === '5GHz') {
+      band5Rates.value.push(receivedRate);
+      band5SentRates.value.push(sentRate);
+    }
+    if (band === '6GHz') {
+      band6Rates.value.push(receivedRate);
+      band6SentRates.value.push(sentRate);
+    }
+  });
+  
+
+  timeLabels.value.push(new Date().toLocaleTimeString());
+
+  if (band24Rates.value.length > maxDataPoints) {
+    band24Rates.value.shift();
+    band5Rates.value.shift();
+    band6Rates.value.shift();
+    timeLabels.value.shift();
+  }
+
+  // **只在數據真的變動時更新 previousValues**
+  if (Object.values(diffs).some(diff => diff.received > 0 || diff.sent > 0)) {
+    previousValues.value = {
+      '2_4GHz': { bytesReceived: newInfo['2_4GHz'].BytesReceived, bytesSent: newInfo['2_4GHz'].BytesSent },
+      '5GHz': { bytesReceived: newInfo['5GHz'].BytesReceived, bytesSent: newInfo['5GHz'].BytesSent },
+      '6GHz': { bytesReceived: newInfo['6GHz'].BytesReceived, bytesSent: newInfo['6GHz'].BytesSent },
+      timestamp: currentTime,
+      isFirstCall: false
+    };
+  }
+}, { immediate: true });
+
+
+
+const chartData = computed(() => ({
+  labels: timeLabels.value,
   datasets: [
     {
-      label: t('dashboard.received'),
-      data: [],
+      label: '2.4GHz',
+      data: band24Rates.value.map(rate => Math.max(0, rate / (1024 * 1024))),
       borderColor: '#42A5F5',
       backgroundColor: 'rgba(66, 165, 245, 0.2)',
       fill: true
     },
     {
-      label: t('dashboard.sent'),
-      data: [],
+      label: '5GHz',
+      data: band5Rates.value.map(rate => Math.max(0, rate / (1024 * 1024))),
       borderColor: '#FFA726',
       backgroundColor: 'rgba(255, 167, 38, 0.2)',
       fill: true
+    },
+    {
+      label: '6GHz',
+      data: band6Rates.value.map(rate => Math.max(0, rate / (1024 * 1024))),
+      borderColor: '#66BB6A',
+      backgroundColor: 'rgba(102, 187, 106, 0.2)',
+      fill: true
     }
   ]
-});
+}));
 
-const formatSpeed = (bytesPerSecond: number): string => {
-  if (bytesPerSecond < 0) return '0 B/s';
-  if (bytesPerSecond < 1024) {
-    return `${bytesPerSecond.toFixed(1)} B/s`;
-  } else if (bytesPerSecond < 1024 * 1024) {
-    return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
-  } else {
-    return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
+const formatRate = (bytesPerSecond: number): string => {
+  if (!isFinite(bytesPerSecond) || bytesPerSecond < 0) return '0 B/s';
+  if (bytesPerSecond < 1024) return `${bytesPerSecond.toFixed(1)} B/s`;
+  if (bytesPerSecond < 1024 * 1024) return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
+  return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
+};
+
+const getCurrentRates = (band: keyof DashboardWiFi) => {
+  if (!previousValues.value || !props.wifiInfo || previousValues.value.isFirstCall) {
+    return { received: 0, sent: 0 };
   }
-};
 
-const calculateRate = (currentBytes: number, lastBytes: number, timeDiff: number): number => {
-  return timeDiff > 0 ? (currentBytes - lastBytes) / timeDiff : 0;
-};
+  const timeDiff = Math.max((Date.now() - previousValues.value.timestamp) / 1000, 0.001);
+  const receivedDiff = props.wifiInfo[band].BytesReceived - previousValues.value[band].bytesReceived;
+  const sentDiff = props.wifiInfo[band].BytesSent - previousValues.value[band].bytesSent;
 
-const updateChartData = (totalRx: number, totalTx: number) => {
-  const currentTime = new Date().toLocaleTimeString();
-  
-  chartData.value = {
-    labels: [...chartData.value.labels, currentTime].slice(-10),
-    datasets: [
-      {
-        ...chartData.value.datasets[0],
-        data: [...chartData.value.datasets[0].data, totalRx / 1024].slice(-10)
-      },
-      {
-        ...chartData.value.datasets[1],
-        data: [...chartData.value.datasets[1].data, totalTx / 1024].slice(-10)
-      }
-    ]
+  let receivedRate = receivedDiff / timeDiff;
+  let sentRate = sentDiff / timeDiff;
+
+  // 確保不同頻段不共用數據
+  if (band === '2_4GHz' && band24Rates.value.length > 0) receivedRate = band24Rates.value[band24Rates.value.length - 1];
+  if (band === '2_4GHz' && band24SentRates.value.length > 0) sentRate = band24SentRates.value[band24SentRates.value.length - 1];
+
+  if (band === '5GHz' && band5Rates.value.length > 0) receivedRate = band5Rates.value[band5Rates.value.length - 1];
+  if (band === '5GHz' && band5SentRates.value.length > 0) sentRate = band5SentRates.value[band5SentRates.value.length - 1];
+
+  if (band === '6GHz' && band6Rates.value.length > 0) receivedRate = band6Rates.value[band6Rates.value.length - 1];
+  if (band === '6GHz' && band6SentRates.value.length > 0) sentRate = band6SentRates.value[band6SentRates.value.length - 1];
+
+  return {
+    received: Math.max(0, receivedRate),
+    sent: Math.max(0, sentRate)
   };
 };
 
-interface WifiResponse {
-  parameters: {
-    OperatingFrequencyBand?: string;
-    BytesReceived?: number;
-    BytesSent?: number;
-  };
-  path: string;
-}
 
-const fetchWifiData = async () => {
-  try {
-    const response = await getWifiInfo() as WifiResponse[];
-    
-    const currentTime = Date.now() / 1000;
-
-    let totalRxRate = 0;
-    let totalTxRate = 0;
-
-    response.forEach((item: WifiResponse) => {
-      if (item.parameters?.OperatingFrequencyBand) {
-        const band = item.parameters.OperatingFrequencyBand;
-        const statsPath = item.path.replace(/(^Device\.WiFi\.Radio\.\d+)/, '$1.Stats');
-        const stats = response.find(s => s.path === statsPath);
-        if (stats?.parameters) {
-          const currentRx = stats.parameters.BytesReceived || 0;
-          const currentTx = stats.parameters.BytesSent || 0;
-          const lastData = wifiData.value[band];
-          
-          if (lastData) {
-            const timeDiff = currentTime - lastData.lastTimestamp;
-            const rxRate = calculateRate(currentRx, lastData.bytesReceived, timeDiff);
-            const txRate = calculateRate(currentTx, lastData.bytesSent, timeDiff);
-
-            wifiData.value[band] = {
-              bytesReceived: currentRx,
-              bytesSent: currentTx,
-              rxRate,
-              txRate,
-              lastTimestamp: currentTime
-            };
-
-            totalRxRate += rxRate;
-            totalTxRate += txRate;
-          }
-        }
-      }
-    });
-
-    updateChartData(totalRxRate, totalTxRate);
-  } catch (error) {
-    console.error('Error fetching WiFi data:', error);
-  }
-};
-
-onMounted(() => {
-  fetchWifiData();
-  pollingInterval.value = window.setInterval(fetchWifiData, 5000);
-});
-
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
-});
 </script>
 
 <template>
-  <div class="wifi-status">
+  <div class="wifi-status" v-if="wifiInfo">
     <h2 class="card-title">{{ t('dashboard.wifi') }}</h2>
-    <div class="wifi-container">
-      <div class="wifi-info">
-        <div v-for="(data, band) in wifiData" :key="band" class="band-info">
-          <div class="band-title">{{ band }}</div>
-          <div class="traffic-info">
-            <div class="traffic-item">
-              <span class="label">{{ t('dashboard.received') }}</span>
-              <span class="value">{{ formatSpeed(data.rxRate) }}</span>
-            </div>
-            <div class="traffic-item">
-              <span class="label">{{ t('dashboard.sent') }}</span>
-              <span class="value">{{ formatSpeed(data.txRate) }}</span>
-            </div>
+    <div class="info-grid">
+      <div class="band-info">
+        <div class="band-title">2.4GHz</div>
+        <div class="traffic-info">
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.received') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('2_4GHz').received) }}</span>
+          </div>
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.sent') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('2_4GHz').sent) }}</span>
           </div>
         </div>
       </div>
-      <div class="chart-container">
-        <LineChart :chart-data="chartData" />
+      <div class="band-info">
+        <div class="band-title">5GHz</div>
+        <div class="traffic-info">
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.received') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('5GHz').received) }}</span>
+          </div>
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.sent') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('5GHz').sent) }}</span>
+          </div>
+        </div>
       </div>
+      <div class="band-info">
+        <div class="band-title">6GHz</div>
+        <div class="traffic-info">
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.received') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('6GHz').received) }}</span>
+          </div>
+          <div class="traffic-item">
+            <span class="label">{{ t('dashboard.sent') }}</span>
+            <span class="value">{{ formatRate(getCurrentRates('6GHz').sent) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <LineChart :chart-data="chartData" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.wifi-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.wifi-info {
+.info-grid {
   display: grid;
   gap: 1rem;
 }

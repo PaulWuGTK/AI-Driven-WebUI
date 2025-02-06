@@ -1,75 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getCpuInfo } from '../../services/api/dashboard';
+import type { DashboardCPU } from '../../types/dashboard';
 
 const { t } = useI18n();
-const cpuData = ref({
-  usage: 0,
-  processes: 0
-});
 
-const usageHistory = ref<number[]>([]);
-const maxHistoryPoints = 10;
-const pollingInterval = ref<number | null>(null);
-
-const fetchCpuData = async () => {
-  try {
-    const response = await getCpuInfo();
-
-    if (Array.isArray(response)) {
-      const cpuInfo = response.find(item => 
-        item.parameters?.CPUUsage !== undefined
-      );
-
-      if (cpuInfo && cpuInfo.parameters) {
-        const cpuUsage = Math.min(cpuInfo.parameters.CPUUsage, 100);
-        cpuData.value = {
-          usage: cpuUsage,
-          processes: cpuInfo.parameters.ProcessNumberOfEntries || 0
-        };
-        
-        usageHistory.value.push(cpuUsage);
-        if (usageHistory.value.length > maxHistoryPoints) {
-          usageHistory.value.shift();
-        }
-      } else {
-        console.warn("No CPUUsage data found in response.");
-      }
-    } else {
-      console.error("Unexpected response format:", response);
-    }
-  } catch (error) {
-    console.error('Error fetching CPU data:', error);
-  }
-};
-
-onMounted(() => {
-  fetchCpuData();
-  pollingInterval.value = window.setInterval(fetchCpuData, 5000);
-});
-
-onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
-});
+defineProps<{
+  cpuInfo?: DashboardCPU;
+}>();
 </script>
 
 <template>
-  <div class="cpu-usage">
+  <div class="cpu-usage" v-if="cpuInfo">
     <h2 class="card-title">{{ t('dashboard.cpu') }}</h2>
     <div class="usage-container">
       <div class="usage-info">
-        <div class="usage-value">{{ cpuData.usage }}%</div>
-        <div class="processes">{{ t('dashboard.processes') }}: {{ cpuData.processes }}</div>
+        <div class="usage-value">{{ cpuInfo.CPUUsage }}%</div>
       </div>
       <div class="usage-graph">
         <div 
-          v-for="(value, index) in usageHistory" 
-          :key="index"
           class="graph-bar"
-          :style="{ height: `${value}%` }"
+          :style="{ height: `${cpuInfo.CPUUsage}%` }"
         />
       </div>
     </div>
@@ -96,16 +47,10 @@ onUnmounted(() => {
   color: #0070BB;
 }
 
-.processes {
-  color: #666;
-  font-size: 0.9rem;
-}
-
 .usage-graph {
   flex: 1;
   display: flex;
   align-items: flex-end;
-  gap: 2px;
 }
 
 .graph-bar {

@@ -1,171 +1,198 @@
 import { callApi } from '../apiClient';
-import {
-  getSystemMockData,
-  getCpuMockData,
-  getMemoryMockData,
-  getWanMockData,
-  getWifiMockData,
-  getEthernetMockData
-} from '../mockData/dashboard';
+import type { DashboardResponse } from '../../types/dashboard';
 
 const isDevelopment = import.meta.env.DEV;
 
-interface WanParameters {
-  WANMode?: string;
-  Alias?: string;
-  IPv4Reference?: string;
-}
+// Store previous values for realistic fluctuations
+let previousValues = {
+  memory: {
+    free: 340448
+  },
+  cpu: {
+    usage: 45
+  },
+  network: {
+    wan: {
+      bytesSent: 15460119,
+      bytesReceived: 378986963,
+      packetsSent: 179645,
+      packetsReceived: 326093,
+      lastUpdate: Date.now()
+    },
+    wifi: {
+      '2_4GHz': {
+        bytesSent: 83058834,
+        bytesReceived: 15000000,
+        packetsSent: 166284,
+        packetsReceived: 35000,
+        lastUpdate: Date.now()
+      },
+      '5GHz': {
+        bytesSent: 83058242,
+        bytesReceived: 25000000,
+        packetsSent: 166281,
+        packetsReceived: 45000,
+        lastUpdate: Date.now()
+      },
+      '6GHz': {
+        bytesSent: 83058074,
+        bytesReceived: 20000000,
+        packetsSent: 166280,
+        packetsReceived: 40000,
+        lastUpdate: Date.now()
+      }
+    }
+  }
+};
 
-interface WanResponse {
-  path: string;
-  parameters: WanParameters;
-}
+// Helper function to generate random fluctuation
+const getFluctuation = (min: number, max: number) => {
+  return Math.random() * (max - min) + min;
+};
 
-interface WanStats {
-  parameters: {
-    PacketsSent: number;
-    PacketsReceived: number;
-    BytesSent: number;
-    BytesReceived: number;
+// Helper function to ensure value stays within bounds
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};
+
+// Helper function to generate realistic network traffic changes
+const updateNetworkStats = (previous: number, minRate: number, maxRate: number) => {
+  const now = Date.now();
+  const timeDiff = (now - previousValues.network.wan.lastUpdate) / 1000; // Convert to seconds
+  const bytesPerSecond = getFluctuation(minRate, maxRate);
+  const increase = Math.floor(bytesPerSecond * timeDiff);
+  return previous + increase;
+};
+
+// Generate mock data with realistic variations
+const generateMockData = (): DashboardResponse => {
+  const now = Date.now();
+  const timeDiff = (now - previousValues.network.wan.lastUpdate) / 1000;
+
+  // Update memory free space (fluctuate between 30-50% of total)
+  const totalMemory = 897980;
+  const minFree = totalMemory * 0.3;
+  const maxFree = totalMemory * 0.5;
+  const memoryFluctuation = getFluctuation(-10000, 10000);
+  previousValues.memory.free = clamp(
+    previousValues.memory.free + memoryFluctuation,
+    minFree,
+    maxFree
+  );
+
+  // Update CPU usage (gradual changes, avoid sudden spikes)
+  const cpuFluctuation = getFluctuation(-5, 5);
+  previousValues.cpu.usage = clamp(
+    previousValues.cpu.usage + cpuFluctuation,
+    10,
+    90
+  );
+
+  // Update WAN statistics with realistic rates
+  const wanStats = {
+    bytesSent: updateNetworkStats(previousValues.network.wan.bytesSent, 100000, 500000), // 100KB/s - 500KB/s
+    bytesReceived: updateNetworkStats(previousValues.network.wan.bytesReceived, 200000, 1000000), // 200KB/s - 1MB/s
+    packetsSent: Math.floor(updateNetworkStats(previousValues.network.wan.packetsSent, 100, 500)),
+    packetsReceived: Math.floor(updateNetworkStats(previousValues.network.wan.packetsReceived, 200, 1000))
   };
-  path: string;
-}
+  previousValues.network.wan = {
+    ...wanStats,
+    lastUpdate: now
+  };
 
-interface EthernetPort {
-  Port: string;
-  Role: string;
-  Status: string;
-  Speed: string;
-  Duplex: string;
-  MACAddress: string;
-}
+  // Update WiFi statistics for each band with realistic rates
+  const updateWiFiBand = (band: keyof typeof previousValues.network.wifi) => {
+    const stats = {
+      bytesSent: updateNetworkStats(previousValues.network.wifi[band].bytesSent, 50000, 2000000), // 50KB/s - 2000KB/s
+      bytesReceived: updateNetworkStats(previousValues.network.wifi[band].bytesReceived, 75000, 3000000), // 75KB/s - 3000KB/s
+      packetsSent: Math.floor(updateNetworkStats(previousValues.network.wifi[band].packetsSent, 50, 200)),
+      packetsReceived: Math.floor(updateNetworkStats(previousValues.network.wifi[band].packetsReceived, 75, 300))
+    };
+    previousValues.network.wifi[band] = {
+      ...stats,
+      lastUpdate: now
+    };
+    return stats;
+  };
 
-interface EthernetStatusResponse {
-  EthernetStatus: EthernetPort[];
-}
-
-export const getSystemInfo = async () => {
-  if (isDevelopment) {
-    return getSystemMockData();
-  }
-  return callApi('/serviceElements/Device.DeviceInfo.');
-};
-
-export const getCpuInfo = async () => {
-  if (isDevelopment) {
-    return getCpuMockData();
-  }
-  return callApi('/serviceElements/Device.DeviceInfo.');
-};
-
-export const getMemoryInfo = async () => {
-  if (isDevelopment) {
-    return getMemoryMockData();
-  }
-  return callApi('/serviceElements/Device.DeviceInfo.');
-};
-
-export const getWanList = async () => {
-  return callApi<WanResponse[]>('/serviceElements/Device.X_PRPL-COM_WANManager.');
-};
-
-export const getWanDetails = async (path: string) => {
-  return callApi<WanResponse[]>(`/serviceElements/${path}`);
-};
-
-export const getWanStats = async (statsPath: string) => {
-  return callApi<WanStats[]>(`/serviceElements/${statsPath}`);
-};
-
-export const getWanInfo = async () => {
-  if (isDevelopment) {
-    return getWanMockData();
-  } else {
-    try {
-      const wanList = await getWanList();
-
-      const wanManager = wanList.find(
-        (item) => item.path === 'Device.X_PRPL-COM_WANManager.'
-      );
-      const wanMode = wanManager?.parameters?.WANMode || 'default';
-
-      const targetWan = wanList.find(
-        (wan) =>
-          wan.parameters.Alias === wanMode && wan.path.includes('WAN.')
-      );
-
-      if (!targetWan) {
-        throw new Error(`No matching WAN interface found for mode: ${wanMode}`);
+  return {
+    Dashboard: {
+      Memory: {
+        Total: totalMemory,
+        Free: Math.floor(previousValues.memory.free)
+      },
+      Ethernet: [
+        {
+          Duplex: "Full",
+          Port: "Port0",
+          Speed: "1000",
+          Role: "wan",
+          Status: "Up"
+        },
+        {
+          Duplex: "Half",
+          Port: "Port1",
+          Speed: "100",
+          Role: "lan",
+          Status: Math.random() > 0.9 ? "Down" : "Up"
+        },
+        {
+          Duplex: "Full",
+          Port: "Port2",
+          Speed: "1000",
+          Role: "lan",
+          Status: "Up"
+        },
+        {
+          Duplex: "Full",
+          Port: "Port3",
+          Speed: "1000",
+          Role: "lan",
+          Status: Math.random() > 0.95 ? "Down" : "Up"
+        }
+      ],
+      WiFi: {
+        "2_4GHz": {
+          BytesSent: updateWiFiBand('2_4GHz').bytesSent,
+          PacketsSent: updateWiFiBand('2_4GHz').packetsSent,
+          BytesReceived: updateWiFiBand('2_4GHz').bytesReceived,
+          PacketsReceived: updateWiFiBand('2_4GHz').packetsReceived
+        },
+        "5GHz": {
+          BytesSent: updateWiFiBand('5GHz').bytesSent,
+          PacketsSent: updateWiFiBand('5GHz').packetsSent,
+          BytesReceived: updateWiFiBand('5GHz').bytesReceived,
+          PacketsReceived: updateWiFiBand('5GHz').packetsReceived
+        },
+        "6GHz": {
+          BytesSent: updateWiFiBand('6GHz').bytesSent,
+          PacketsSent: updateWiFiBand('6GHz').packetsSent,
+          BytesReceived: updateWiFiBand('6GHz').bytesReceived,
+          PacketsReceived: updateWiFiBand('6GHz').packetsReceived
+        }
+      },
+      WAN: {
+        BytesSent: wanStats.bytesSent,
+        PacketsSent: wanStats.packetsSent,
+        BytesReceived: wanStats.bytesReceived,
+        PacketsReceived: wanStats.packetsReceived
+      },
+      CPU: {
+        CPUUsage: Math.floor(previousValues.cpu.usage)
+      },
+      System: {
+        SoftwareVersion: "1.0.1",
+        SerialNumber: "SNAA0BA885FACD",
+        ModelName: "TB-372-PRPL"
       }
-
-      const wanDetails = await getWanDetails(targetWan.path);
-      const intf = wanDetails.find((i) => i.path.includes('Intf.1.'));
-
-      if (!intf || !intf.parameters?.IPv4Reference) {
-        throw new Error('No matching WAN interface or IPv4Reference found.');
-      }
-
-      const stats = await getWanStats(`${intf.parameters.IPv4Reference}Stats.`);
-      let wanStats = null;
-
-      if (Array.isArray(stats)) {
-        wanStats = stats.find(
-          (item) => item.path === 'Device.IP.Interface.2.Stats.'
-        );
-      } else {
-        console.error('stats is not an array:', stats);
-      }
-
-      return {
-        PacketsSent: wanStats?.parameters.PacketsSent || 0,
-        PacketsReceived: wanStats?.parameters.PacketsReceived || 0,
-        BytesSent: wanStats?.parameters.BytesSent || 0,
-        BytesReceived: wanStats?.parameters.BytesReceived || 0
-      };
-      
-    } catch (error) {
-      console.error('Error fetching WAN data:', error);
-
-      return {
-        PacketsSent: 0,
-        PacketsReceived: 0,
-        BytesSent: 0,
-        BytesReceived: 0
-      };
     }
-  }
+  };
 };
 
-export const getWifiInfo = async () => {
+export const getDashboardData = async (): Promise<DashboardResponse> => {
   if (isDevelopment) {
-    return getWifiMockData();
-  }
-  return callApi('/serviceElements/Device.WiFi.');
-};
-
-export const getEthernetInfo = async () => {
-  if (isDevelopment) {
-    const mockData = getEthernetMockData();
-    mockData.EthernetStatus.sort((a, b) => {
-      const portA = parseInt(a.Port.replace('Port', ''));
-      const portB = parseInt(b.Port.replace('Port', ''));
-      return portA - portB;
-    });
-    return mockData;
+    return generateMockData();
   }
 
-  try {
-    const response = await callApi<EthernetStatusResponse>('/API/info?list=EthernetStatus');
-    if (response && response.EthernetStatus) {
-      response.EthernetStatus.sort((a, b) => {
-        const portA = parseInt(a.Port.replace('Port', ''));
-        const portB = parseInt(b.Port.replace('Port', ''));
-        return portA - portB;
-      });
-    }
-    return response;
-  } catch (error) {
-    console.error('Error fetching Ethernet status:', error);
-    throw error;
-  }
+  return callApi<DashboardResponse>('/API/info?list=Dashboard');
 };
