@@ -1,26 +1,19 @@
-export interface SoftwareModuleParameters {
-  ExecEnvNumberOfEntries: number;
-  ExecutionUnitNumberOfEntries: number;
-  DeploymentUnitNumberOfEntries: number;
-}
-
-export interface DeploymentUnit {
+export interface LcmDeploymentUnit {
+  Name: string;
   URL: string;
   Status: string;
+  Version: string;
   Vendor: string;
   UUID: string;
-  Name: string;
-  Version: string;
+  Alias: string;
+  Resolved: number;
 }
 
-export interface LcmResponse {
-  parameters: SoftwareModuleParameters;
-  path: string;
+export interface StatusLcmResponse {
+  StatusLcm: {
+    ExecutionUnitNumberOfEntries: number;
+    ExecEnvNumberOfEntries: number;
+    DeploymentUnitNumberOfEntries: number;
+    DeploymentUnits: LcmDeploymentUnit[];
+  }
 }
-
-export interface DeploymentUnitResponse {
-  parameters: DeploymentUnit;
-  path: string;
-}
-
-export type LcmApiResponse = (LcmResponse | DeploymentUnitResponse)[];

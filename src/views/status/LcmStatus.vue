@@ -1,39 +1,31 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { LcmApiResponse, SoftwareModuleParameters, DeploymentUnit } from '../../types/lcm';
+import type { StatusLcmResponse } from '../../types/lcm';
 import { getLcmStatus } from '../../services/api';
 
 const { t } = useI18n();
-const moduleParameters = ref<SoftwareModuleParameters | null>(null);
-const deploymentUnits = ref<DeploymentUnit[]>([]);
+const lcmData = ref<StatusLcmResponse | null>(null);
+const loading = ref(false);
+const error = ref<string | null>(null);
 const refreshInterval = ref<number | null>(null);
 
 const fetchLcmStatus = async () => {
+  loading.value = true;
+  error.value = null;
   try {
-    const response = await getLcmStatus();
-    
-    // Find and set the main parameters
-    const mainModule = response.find(item => item.path === "Device.SoftwareModules.");
-    if (mainModule && 'parameters' in mainModule) {
-      moduleParameters.value = mainModule.parameters as SoftwareModuleParameters;
-    }
-
-    // Find and set deployment units
-    const units = response.filter(item => 
-      item.path.startsWith("Device.SoftwareModules.DeploymentUnit.") &&
-      'parameters' in item
-    ).map(item => item.parameters as DeploymentUnit);
-    
-    deploymentUnits.value = units;
-  } catch (error) {
-    console.error('Error fetching LCM status:', error);
+    lcmData.value = await getLcmStatus();
+  } catch (err) {
+    console.error('Error fetching LCM status:', err);
+    error.value = 'Failed to fetch LCM status';
+  } finally {
+    loading.value = false;
   }
 };
 
 onMounted(() => {
   fetchLcmStatus();
-  // Set up auto-refresh every 10 seconds
+  // Refresh every 10 seconds
   refreshInterval.value = window.setInterval(fetchLcmStatus, 10000);
 });
 
@@ -49,80 +41,77 @@ onUnmounted(() => {
     <div class="page-title">{{ t('lcm.title') }}</div>
 
     <div class="status-content">
+      <div v-if="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <span>Loading...</span>
+      </div>
+
+      <div v-else-if="error" class="error-state">
+        {{ error }}
+      </div>
+
+      <template v-else-if="lcmData">
       <!-- Summary Section -->
       <div class="status-section">
         <div class="section-title">{{ t('lcm.status') }}</div>
         
         <!-- PC版表格 -->
-        <div class="table-wrapper" v-if="moduleParameters">
+        <div class="table-wrapper">
           <table>
             <tbody>
               <tr>
                 <td>{{ t('lcm.execEnv') }}</td>
-                <td>{{ moduleParameters.ExecEnvNumberOfEntries }}</td>
+                  <td>{{ lcmData.StatusLcm.ExecEnvNumberOfEntries }}</td>
               </tr>
               <tr>
                 <td>{{ t('lcm.execUnits') }}</td>
-                <td>{{ moduleParameters.ExecutionUnitNumberOfEntries }}</td>
+                  <td>{{ lcmData.StatusLcm.ExecutionUnitNumberOfEntries }}</td>
               </tr>
               <tr>
                 <td>{{ t('lcm.deployUnits') }}</td>
-                <td>{{ moduleParameters.DeploymentUnitNumberOfEntries }}</td>
+                  <td>{{ lcmData.StatusLcm.DeploymentUnitNumberOfEntries }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <!-- 手機版卡片 -->
-        <div class="mobile-cards" v-if="moduleParameters">
+          <div class="mobile-cards">
           <div class="card-row">
             <span class="card-label">{{ t('lcm.execEnv') }}</span>
-            <span class="card-value">{{ moduleParameters.ExecEnvNumberOfEntries }}</span>
+              <span class="card-value">{{ lcmData.StatusLcm.ExecEnvNumberOfEntries }}</span>
           </div>
           <div class="card-row">
             <span class="card-label">{{ t('lcm.execUnits') }}</span>
-            <span class="card-value">{{ moduleParameters.ExecutionUnitNumberOfEntries }}</span>
+              <span class="card-value">{{ lcmData.StatusLcm.ExecutionUnitNumberOfEntries }}</span>
           </div>
           <div class="card-row">
             <span class="card-label">{{ t('lcm.deployUnits') }}</span>
-            <span class="card-value">{{ moduleParameters.DeploymentUnitNumberOfEntries }}</span>
+              <span class="card-value">{{ lcmData.StatusLcm.DeploymentUnitNumberOfEntries }}</span>
           </div>
         </div>
       </div>
 
       <!-- Deployment Units Section -->
-      <div class="status-section" v-if="deploymentUnits.length > 0">
+<div class="status-section" v-if="lcmData.StatusLcm.DeploymentUnits.length > 0">
         <div class="section-title">{{ t('lcm.deploymentUnits') }}</div>
         
-        <!-- PC版表格 -->
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>{{ t('lcm.name') }}</th>
-                <th>{{ t('lcm.status') }}</th>
-                <th>{{ t('lcm.url') }}</th>
-                <th>{{ t('lcm.uuid') }}</th>
-                <th>{{ t('lcm.vendor') }}</th>
-                <th>{{ t('lcm.version') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="unit in deploymentUnits" :key="unit.UUID">
-                <td>{{ unit.Name }}</td>
-                <td>{{ unit.Status }}</td>
-                <td class="url-cell">{{ unit.URL }}</td>
-                <td>{{ unit.UUID }}</td>
-                <td>{{ unit.Vendor }}</td>
-                <td>{{ unit.Version }}</td>
-              </tr>
-            </tbody>
-          </table>
+  <div class="cards-grid">
+    <div 
+      class="card" 
+      v-for="unit in lcmData.StatusLcm.DeploymentUnits" 
+      :key="unit.UUID"
+    >
+      <div class="card-header">
+        <div class="title-with-status">
+          <span 
+            class="status-dot"
+            :class="{ 'resolved': unit.Resolved === 1 }"
+          ></span>
+          <h3 class="card-title">{{ unit.Alias }}</h3>
         </div>
-
-        <!-- 手機版卡片 -->
-        <div class="mobile-cards">
-          <div class="table-card" v-for="unit in deploymentUnits" :key="unit.UUID">
+        </div>
+      <div class="card-content">
             <div class="card-row">
               <span class="card-label">{{ t('lcm.name') }}</span>
               <span class="card-value">{{ unit.Name }}</span>
@@ -150,6 +139,9 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
+    </div>
+
+      </template>
     </div>
   </div>
 </template>
@@ -274,4 +266,103 @@ onUnmounted(() => {
     display: block;
   }
 }
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #0070BB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.title-with-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #dc3545;
+}
+
+.status-dot.resolved {
+  background-color: #4caf50;
+}
+
+.card-content {
+  padding: 1rem;
+}
+.card-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-indicator.resolved {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-indicator.unresolved {
+  background-color: #dc3545;
+  color: white;
+}
+
 </style>

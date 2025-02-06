@@ -3,7 +3,7 @@ import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone'
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
 import type { SshServer, SshServerResponse, SshAuthorizedKey, SshAuthorizedKeyResponse, SshSession, SshSessionResponse } from '../types/ssh';
 import type { WifiNeighborScanResponse, WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
-import type { LcmApiResponse } from '../types/lcm';
+import type { StatusLcmResponse } from '../types/lcm';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
@@ -100,31 +100,30 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanR
   return handleApiResponse<WifiNeighborScanResponse>(response);
 }
 
-export async function getLcmStatus(): Promise<LcmApiResponse> {
+export async function getLcmStatus(): Promise<StatusLcmResponse> {
   if (isDevelopment) {
-    return [
-      {
-        parameters: {
+    return {
+      StatusLcm: {
+        ExecutionUnitNumberOfEntries: 1,
           ExecEnvNumberOfEntries: 1,
-          ExecutionUnitNumberOfEntries: 0,
-          DeploymentUnitNumberOfEntries: 1
-        },
-        path: "Device.SoftwareModules."
-      },
+        DeploymentUnitNumberOfEntries: 1,
+        DeploymentUnits: [
       {
-        parameters: {
-          URL: "docker://docker-prpl.sahrd.io/embedded-gui-hgw-generic-webui:2.0.0",
-          Status: "Installing",
-          Vendor: "docker",
-          UUID: "webui",
-          Name: "embedded-gui-hgw-generic-webui",
-          Version: "2.0.0"
-        },
-        path: "Device.SoftwareModules.DeploymentUnit.1."
+            Alias: "cpe-a47d1132-f667-5029-b94b-ca498da79729",
+            Resolved: 1,
+            Name: "arm32v7/lcm-webui-generic",
+            URL: "docker://10.5.163.2:5000/arm32v7/lcm-webui-generic:1.0.3",
+            Status: "Installed",
+            Version: "1.0.3",
+            Vendor: "Gemtek",
+            UUID: "99bdc305-b8ff-59cd-8b2d-b1010d2d69a5"
+          }
+        ]
       }
-    ];
+    };
   }
-  return callApi<LcmApiResponse>('/serviceElements/Device.SoftwareModules.');
+  const response = await fetch(`${API_BASE_URL}/info?list=StatusLcm`);
+  return handleApiResponse<StatusLcmResponse>(response);
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {

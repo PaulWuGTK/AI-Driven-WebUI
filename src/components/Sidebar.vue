@@ -203,7 +203,7 @@ watch(() => route.path, (newPath) => {
 .sidebar {
   width: var(--sidebar-width);
   min-height: 100vh;
-  background: linear-gradient(to bottom, #002060 0%, #3660AB 100%);
+  background: linear-gradient(to bottom, #006BC4 0%, #45B1E4 100%);
   color: white;
   padding: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -216,7 +216,7 @@ watch(() => route.path, (newPath) => {
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  background-color: #002060;
+  background-color: #006BC4;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
