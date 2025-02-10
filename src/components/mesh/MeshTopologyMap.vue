@@ -1,375 +1,255 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { defineProps } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
+import { select, Selection } from 'd3-selection';
+import { zoom } from 'd3-zoom';
+import { drag, DragBehavior } from 'd3-drag';
+import { 
+  forceSimulation, 
+  forceLink, 
+  forceManyBody, 
+  forceCenter,
+  forceX,
+  forceY,
+  Simulation,
+  SimulationNodeDatum,
+  SimulationLinkDatum
+} from 'd3-force';
+
+// Define custom node type that extends SimulationNodeDatum
+interface D3Node extends SimulationNodeDatum, MeshNode {
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+}
+
+// Define custom link type
+interface D3Link extends SimulationLinkDatum<D3Node> {
+  mediaType: string;
+}
+
+const { t } = useI18n();
 
 const props = defineProps<{
   nodes: MeshNode[];
 }>();
 
-const canvas = ref<HTMLCanvasElement | null>(null);
+const svgContainer = ref<HTMLDivElement | null>(null);
 const hoveredNode = ref<MeshNode | null>(null);
 const hoverPosition = ref({ x: 0, y: 0 });
-const nodePositions = ref(new Map<string, { x: number, y: number }>());
+const simulation = ref<Simulation<D3Node, D3Link> | null>(null);
 
-const LEVEL_HEIGHT = 120;
-const ICON_SIZE = 32;
-const NODE_RADIUS = ICON_SIZE / 2;
-
-let isDragging = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
-let offsetX = 0;
-let offsetY = 0;
-
-const controllerIcon = new Image();
-const agentIcon = new Image();
-const clientIcon = new Image();
-
-let flowPoints: Map<string, number> = new Map();
-
-const handleMouseDown = (event: MouseEvent) => {
-  isDragging = true;
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
+// Constants for node sizes and layout
+const NODE_SIZES = {
+  Controller: 60,
+  Agent: 48,
+  Client: 40
 };
 
-const handleMouseUp = () => {
-  isDragging = false;
-};
+// Load images
+const controllerIcon = new URL('/src/assets/icons/mesh_map/controller.png', import.meta.url).href;
+const agentIcon = new URL('/src/assets/icons/mesh_map/agent.png', import.meta.url).href;
+const clientIcon = new URL('/src/assets/icons/mesh_map/client.png', import.meta.url).href;
 
-const setCanvasSize = () => {
-  if (canvas.value) {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.value.width = canvas.value.offsetWidth * ratio;
-    canvas.value.height = 600 * ratio;
-    const ctx = canvas.value.getContext("2d");
-    if (ctx) {
-      ctx.scale(ratio, ratio); // 缩放逻辑坐标
-    }
+const getNodeIcon = (nodeType: string) => {
+  switch (nodeType) {
+    case 'Controller': return controllerIcon;
+    case 'Agent': return agentIcon;
+    case 'Client': return clientIcon;
+    default: return clientIcon;
   }
 };
 
-const drawConnectionWithFlow = (
-  ctx: CanvasRenderingContext2D,
-  start: { x: number, y: number },
-  end: { x: number, y: number },
-  flowKey: string,
-  mediaType: string
-) => {
-  const distance = Math.sqrt(
-    Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)
-  );
-  const progress = flowPoints.get(flowKey) || 0;
-  const flowSpeed = 2;
-  const nextProgress = (progress + flowSpeed) % distance;
-  flowPoints.set(flowKey, nextProgress);
-
-  ctx.beginPath();
-  if (mediaType === "Wi-Fi") {
-    ctx.strokeStyle = "#4CAF50";
-    ctx.setLineDash([5, 5]);
-  } else if (mediaType === "Ethernet") {
-    ctx.strokeStyle = "#2196F3";
-    ctx.setLineDash([]);
-  }
-  ctx.moveTo(start.x, start.y);
-  ctx.lineTo(end.x, end.y);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  const flowRatio = nextProgress / distance;
-  const flowX = start.x + (end.x - start.x) * flowRatio;
-  const flowY = start.y + (end.y - start.y) * flowRatio;
-  ctx.beginPath();
-  ctx.fillStyle = "#000";
-  ctx.arc(flowX, flowY, 3, 0, Math.PI * 2);
-  ctx.fill();
+const getNodeSize = (nodeType: string) => {
+  return NODE_SIZES[nodeType as keyof typeof NODE_SIZES] || NODE_SIZES.Client;
 };
 
-const handleMouseMoveOver = (event: MouseEvent) => {
-  if (!canvas.value) return;
-
-  // 实时获取画布的边界
-  const rect = canvas.value.getBoundingClientRect();
-
-  const x = (event.clientX - rect.left) - offsetX;
-  const y = (event.clientY - rect.top) - offsetY;
-
-  let found = false;
-  for (const [mac, pos] of nodePositions.value.entries()) {
-    const distance = Math.sqrt(
-      Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2)
-    );
-
-    if (distance <= ICON_SIZE / 2) {
-      const node = props.nodes.find(n => n.MACAddress === mac);
-      if (node) {
-        hoveredNode.value = node;
-        hoverPosition.value = { x: event.clientX, y: event.clientY };
-        found = true;
-        break;
-      }
-    }
-  }
-
-  if (!found) {
-    hoveredNode.value = null;
-  }
-};
-
-const handleMouseMove = (event: MouseEvent) => {
-  if (!isDragging) return;
-
-  const dx = event.clientX - lastMouseX;
-  const dy = event.clientY - lastMouseY;
-
-  offsetX += dx;
-  offsetY += dy;
-
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
-
-  drawMap();
-};
-
-const handleResize = () => {
-  if (canvas.value) {
-    canvas.value.width = canvas.value.offsetWidth;
-    canvas.value.height = canvas.value.offsetHeight;
-    drawMap();
-  }
-};
-
-const ensureMinimumDistance = (positions: Map<string, { x: number, y: number }>, minDistance = 50) => {
-  const nodesArray = Array.from(positions.values());
-  for (let i = 0; i < nodesArray.length; i++) {
-    for (let j = i + 1; j < nodesArray.length; j++) {
-      const posA = nodesArray[i];
-      const posB = nodesArray[j];
-      const dx = posA.x - posB.x;
-      const dy = posA.y - posB.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < minDistance) {
-        const angle = Math.atan2(dy, dx);
-        const offset = (minDistance - distance) / 2;
-        posA.x += Math.cos(angle) * offset;
-        posA.y += Math.sin(angle) * offset;
-        posB.x -= Math.cos(angle) * offset;
-        posB.y -= Math.sin(angle) * offset;
-      }
-    }
-  }
-};
-
-const calculateNodePositions = () => {
-  if (!canvas.value) return;
-
-  const positions = new Map<string, { x: number, y: number }>();
-  const width = canvas.value.width;
+// Prepare nodes and links for D3
+const prepareNodesAndLinks = () => {
+  // Create a map of nodes for quick lookup
+  const nodeMap = new Map<string, D3Node>();
   
-  const controller = props.nodes.find(n => n.Mode === 'Controller');
-  if (!controller) return;
-
-  positions.set(controller.MACAddress, {
-    x: width / 2,
-    y: LEVEL_HEIGHT
+  // First create all nodes with D3Node interface
+  props.nodes.forEach(node => {
+    nodeMap.set(node.MACAddress, { ...node });
   });
 
-  const directAgents = props.nodes.filter(n => 
-    n.Mode === 'Agent' && n.Upstream === controller.MACAddress
-  );
+  // Create links array ensuring both source and target nodes exist
+  const links: D3Link[] = props.nodes
+    .filter(node => node.Upstream !== '-' && nodeMap.has(node.Upstream))
+    .map(node => ({
+      source: nodeMap.get(node.Upstream)!,
+      target: nodeMap.get(node.MACAddress)!,
+      mediaType: node.MediaType
+    }));
 
-  const agentWidth = width / (directAgents.length + 1);
-  directAgents.forEach((agent, index) => {
-    positions.set(agent.MACAddress, {
-      x: agentWidth * (index + 1),
-      y: LEVEL_HEIGHT * 2
-    });
-  });
-
-  const otherAgents = props.nodes.filter(n =>
-    n.Mode === 'Agent' && !directAgents.includes(n)
-  );
-
-  otherAgents.forEach(agent => {
-    const upstreamPos = positions.get(agent.Upstream);
-    if (upstreamPos) {
-      positions.set(agent.MACAddress, {
-        x: upstreamPos.x + (Math.random() * 100 - 50),
-        y: upstreamPos.y + LEVEL_HEIGHT
-      });
-    }
-  });
-
-  const clients = props.nodes.filter(n => n.Mode === 'Client');
-  clients.forEach(client => {
-    const upstreamPos = positions.get(client.Upstream);
-    if (upstreamPos) {
-      positions.set(client.MACAddress, {
-        x: upstreamPos.x + (Math.random() * 80 - 40),
-        y: upstreamPos.y + LEVEL_HEIGHT
-      });
-    }
-  });
-
-  nodePositions.value = positions;
+  return { nodes: Array.from(nodeMap.values()), links };
 };
 
-const adjustVerticalSpacing = (positions: Map<string, { x: number, y: number }>) => {
-  const levels = new Map<number, string[]>();
+const createSimulation = (width: number, height: number) => {
+  const { nodes, links } = prepareNodesAndLinks();
 
-  positions.forEach((pos, mac) => {
-    const level = Math.round(pos.y / LEVEL_HEIGHT);
-    if (!levels.has(level)) levels.set(level, []);
-    levels.get(level)?.push(mac);
-  });
+  // Create simulation with proper typing
+  const sim = forceSimulation<D3Node>()
+    .nodes(nodes)
+    .force('link', forceLink<D3Node, D3Link>(links)
+      .id(d => d.MACAddress)
+      .distance(90))
+    .force('charge', forceManyBody().strength(-700))
+    .force('center', forceCenter(width / 2, height / 2))
+    .force('y', forceY().strength(0.1))
+    .force('x', forceX().strength(0.1));
 
-  levels.forEach((macAddresses, level) => {
-    const step = canvas.value!.width / (macAddresses.length + 1);
-    macAddresses.forEach((mac, index) => {
-      const pos = positions.get(mac);
-      if (pos) {
-        pos.x = step * (index + 1);
+  return { simulation: sim, nodes, links };
+};
+
+// Create drag behavior with proper typing
+const createDragBehavior = () => {
+  return drag<SVGGElement, D3Node>()
+    .on('start', (event: any, d: D3Node) => {
+      if (!event.active && simulation.value) {
+        simulation.value.alphaTarget(0.3).restart();
       }
+      d.fx = d.x;
+      d.fy = d.y;
+    })
+    .on('drag', (event: any, d: D3Node) => {
+      d.fx = event.x;
+      d.fy = event.y;
+    })
+    .on('end', (event: any, d: D3Node) => {
+      if (!event.active && simulation.value) {
+        simulation.value.alphaTarget(0);
+      }
+      d.fx = null;
+      d.fy = null;
     });
+};
+
+const renderChart = () => {
+  if (!svgContainer.value) return;
+
+  // Stop any existing simulation
+  if (simulation.value) {
+    simulation.value.stop();
+  }
+
+  // Clear previous content
+  select(svgContainer.value).selectAll('*').remove();
+
+  const containerWidth = svgContainer.value.clientWidth;
+  const containerHeight = svgContainer.value.clientHeight;
+
+  // Create SVG
+  const svg = select(svgContainer.value)
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', [0, 0, containerWidth, containerHeight]);
+
+  // Create container group for zoom
+  const g = svg.append('g');
+
+  // Add zoom behavior
+  const zoomBehavior = zoom()
+    .scaleExtent([0.1, 4])
+    .on('zoom', (event) => {
+      g.attr('transform', event.transform);
+    });
+
+  svg.call(zoomBehavior as any);
+
+  // Create simulation and get prepared nodes and links
+  const { simulation: sim, nodes, links } = createSimulation(containerWidth, containerHeight);
+  simulation.value = sim;
+
+  // Create links
+  const link = g.selectAll('.link')
+    .data(links)
+    .join('line')
+    .attr('class', 'link')
+    .style('stroke', d => d.mediaType === 'Wi-Fi' ? '#4CAF50' : '#2196F3')
+    .style('stroke-width', 2)
+    .style('stroke-dasharray', d => d.mediaType === 'Wi-Fi' ? '5,5' : '');
+
+  // Create node groups with properly typed drag behavior
+  const dragBehavior = createDragBehavior();
+  const node = g.selectAll<SVGGElement, D3Node>('.node')
+    .data(nodes)
+    .join('g')
+    .attr('class', 'node')
+    .call(dragBehavior as any);
+
+  // Add images to nodes
+  node.append('image')
+    .attr('xlink:href', d => getNodeIcon(d.Mode))
+    .attr('width', d => getNodeSize(d.Mode))
+    .attr('height', d => getNodeSize(d.Mode))
+    .attr('x', d => -getNodeSize(d.Mode) / 2)
+    .attr('y', d => -getNodeSize(d.Mode) / 2);
+
+  // Add labels
+  node.append('text')
+    .text(d => d.Name)
+    .attr('text-anchor', 'middle')
+    .attr('dy', d => getNodeSize(d.Mode) / 2 + 20)
+    .style('font-size', '12px')
+    .style('fill', '#333');
+
+  // Add hover events
+  node.on('mouseover', (event, d) => {
+    hoveredNode.value = d;
+    const rect = (event.target as HTMLElement).getBoundingClientRect();
+    hoverPosition.value = {
+      x: rect.left + window.scrollX,
+      y: rect.top + window.scrollY
+    };
+  })
+  .on('mouseout', () => {
+    hoveredNode.value = null;
+  });
+
+  // Update positions on tick
+  sim.on('tick', () => {
+    link
+      .attr('x1', d => (d.source as D3Node).x!)
+      .attr('y1', d => (d.source as D3Node).y!)
+      .attr('x2', d => (d.target as D3Node).x!)
+      .attr('y2', d => (d.target as D3Node).y!);
+
+    node
+      .attr('transform', d => `translate(${d.x},${d.y})`);
   });
 };
 
-const adjustCanvasSize = () => {
-  // 移除动态高度计算，确保始终为 600
-  if (canvas.value && canvas.value.height !== 600) {
-    canvas.value.height = 600;
-    drawMap(); // 重绘画布
-  }
+// Watch for changes in nodes
+watch(() => props.nodes, () => {
+  renderChart();
+}, { deep: true });
+
+// Handle window resize
+const handleResize = () => {
+  renderChart();
 };
-
-const handleVisibilityChange = () => {
-  if (document.visibilityState === "visible") {
-    setCanvasSize();
-  }
-};
-
-const drawNode = (ctx: CanvasRenderingContext2D, node: MeshNode, pos: { x: number, y: number }) => {
-  const adjustedPos = {
-    x: pos.x + offsetX,
-    y: pos.y + offsetY,
-  };
-
-  if (node.Upstream !== '-') {
-    const upstreamPos = nodePositions.value.get(node.Upstream);
-    if (upstreamPos) {
-      const adjustedUpstreamPos = {
-        x: upstreamPos.x + offsetX,
-        y: upstreamPos.y + offsetY,
-      };
-      const flowKey = `${node.Upstream}->${node.MACAddress}`;
-      drawConnectionWithFlow(ctx, adjustedUpstreamPos, adjustedPos, flowKey, node.MediaType);
-    }
-  }
-
-  const icon = node.Mode === 'Controller' ? controllerIcon :
-               node.Mode === 'Agent' ? agentIcon : clientIcon;
-  if (icon.complete) {
-    ctx.drawImage(icon, adjustedPos.x - ICON_SIZE / 2, adjustedPos.y - ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
-  } else {
-    ctx.beginPath();
-    ctx.fillStyle = node.Mode === 'Controller' ? '#0070BB' :
-                   node.Mode === 'Agent' ? '#4CAF50' : '#FFA000';
-    ctx.arc(adjustedPos.x, adjustedPos.y, NODE_RADIUS, 0, Math.PI * 2);
-    ctx.fill();
-  }
-};
-
-const drawMap = () => {
-  if (!canvas.value) return;
-  const ctx = canvas.value.getContext("2d");
-  if (!ctx) return;
-
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-
-  props.nodes.forEach((node) => {
-    const pos = nodePositions.value.get(node.MACAddress);
-    if (pos) {
-      drawNode(ctx, node, pos);
-    }
-  });
-};
-
-const animateFlow = () => {
-  drawMap();
-  requestAnimationFrame(animateFlow);
-};
-
-watch(() => props.nodes, drawMap, { deep: true });
-
-import controllerIconPath from '../../assets/icons/controller.png';
-import agentIconPath from '../../assets/icons/agent.png';
-import clientIconPath from '../../assets/icons/client.png';
 
 onMounted(() => {
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-  if (document.visibilityState === "visible" && canvas.value) {
-      setCanvasSize();
-    }
-  controllerIcon.src = controllerIconPath;
-  agentIcon.src = agentIconPath;
-  clientIcon.src = clientIconPath;
-
-  Promise.all([
-    new Promise(resolve => { controllerIcon.onload = resolve; }),
-    new Promise(resolve => { agentIcon.onload = resolve; }),
-    new Promise(resolve => { clientIcon.onload = resolve; })
-  ]).then(() => {
-    if (canvas.value) {
-      setCanvasSize();
-      canvas.value.width = canvas.value.offsetWidth;
-      canvas.value.height = canvas.value.offsetHeight;
-      
-      calculateNodePositions();
-      ensureMinimumDistance(nodePositions.value, 60);
-
-      flowPoints = new Map();
-      props.nodes.forEach(node => {
-        if (node.Upstream && node.Upstream !== '-') {
-          const flowKey = `${node.Upstream}->${node.MACAddress}`;
-          flowPoints.set(flowKey, 0);
-        }
-      });
-
-      adjustCanvasSize();
-      drawMap();
-      animateFlow();
-    }
-  });
-
-  if (canvas.value) {
-    canvas.value.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("resize", handleResize);
-  }
+  renderChart();
+  window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
-  document.removeEventListener("visibilitychange", handleVisibilityChange);
-  if (canvas.value) {
-    canvas.value.removeEventListener("mousedown", handleMouseDown);
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-    window.removeEventListener("resize", handleResize);
+  if (simulation.value) {
+    simulation.value.stop();
   }
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
 <template>
   <div class="topology-map">
-    <canvas 
-      ref="canvas"
-      @mousemove="handleMouseMoveOver"
-      @mouseleave="hoveredNode = null"
-    ></canvas>
+    <div ref="svgContainer" class="svg-container"></div>
 
     <div 
       v-if="hoveredNode"
@@ -402,7 +282,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-canvas {
+.svg-container {
   width: 100%;
   height: 100%;
 }
@@ -422,5 +302,17 @@ canvas {
 .tooltip-content {
   color: #333;
   line-height: 1.4;
+}
+
+:deep(.link) {
+  pointer-events: none;
+}
+
+:deep(.node) {
+  cursor: pointer;
+}
+
+:deep(.node text) {
+  pointer-events: none;
 }
 </style>

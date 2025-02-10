@@ -15,11 +15,22 @@ const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
+import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
+import statusIcon from '/src/assets/icons/icon-1/menu-status.svg';
+import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
+import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
+import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
+
 const menuItems = [
-  { name: 'Dashboard', icon: '⌂', path: '/dashboard', translationKey: 'menu.dashboard' },
+  {
+    name: 'Dashboard',
+    icon: homeIcon,
+    path: '/dashboard',
+    translationKey: 'menu.dashboard'
+  },
   { 
-    name: 'Status', 
-    icon: '📊',
+    name: 'Status',
+    icon: statusIcon,
     translationKey: 'menu.status',
     subItems: [
       { name: 'WAN', path: '/status/wan', translationKey: 'menu.wan' },
@@ -31,25 +42,25 @@ const menuItems = [
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' }
     ]
   },
-  { 
-    name: 'Basic Setting', 
-    icon: '⚙', 
+  {
+    name: 'Basic Setting',
+    icon: basicIcon,
     translationKey: 'menu.basicSetting',
     subItems: [
       { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
     ]
   },
-  { 
-    name: 'Advanced', 
-    icon: '⚡', 
+  {
+    name: 'Advanced',
+    icon: advancedIcon,
     translationKey: 'menu.advanced',
     subItems: [
-      { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' },
+      { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' }
     ]
   },
   { 
-    name: 'Management', 
-    icon: '🔧', 
+    name: 'Management',
+    icon: managementIcon,
     translationKey: 'menu.management',
     subItems: [
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
@@ -135,7 +146,9 @@ watch(() => route.path, (newPath) => {
           class="menu-header"
           @click="handleMenuClick(item.name, item.path)"
         >
-          <span class="icon">{{ item.icon }}</span>
+        <span class="icon">
+          <img :src="item.icon" alt="icon" />
+        </span>
           {{ t(item.translationKey) }}
           <span 
             v-if="item.subItems" 
@@ -170,7 +183,7 @@ watch(() => route.path, (newPath) => {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: #3660AB;
+  background-color: #006BC4;
   display: none;
   align-items: center;
   padding: 0 1rem;
@@ -203,7 +216,7 @@ watch(() => route.path, (newPath) => {
 .sidebar {
   width: var(--sidebar-width);
   min-height: 100vh;
-  background: linear-gradient(to bottom, #006BC4 0%, #45B1E4 100%);
+  background: linear-gradient(to bottom, #006BC4 8%, #45B1E4 100%);
   color: white;
   padding: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -217,7 +230,7 @@ watch(() => route.path, (newPath) => {
   align-items: center;
   padding: 0 1.5rem;
   background-color: #006BC4;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /*border-bottom: 1px solid rgba(255, 255, 255, 0.1);*/
 }
 
 .logo-text {
@@ -326,7 +339,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .submenu-item.active {
-  background-color: #1976d2; /* Highlight color for active submenu item */
+  background-color: #409FD5; /* Highlight color for active submenu item */
   color: #ffffff;
   font-weight: 500;
 }
