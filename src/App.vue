@@ -73,16 +73,6 @@ body {
   }
 }
 
-.page-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
 .page-enter-active, .page-leave-active {
   transition: opacity 0.5s;
 }

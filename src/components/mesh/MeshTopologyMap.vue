@@ -2,23 +2,10 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
-import { select, Selection } from 'd3-selection';
-import { zoom } from 'd3-zoom';
-import { drag, DragBehavior } from 'd3-drag';
-import { 
-  forceSimulation, 
-  forceLink, 
-  forceManyBody, 
-  forceCenter,
-  forceX,
-  forceY,
-  Simulation,
-  SimulationNodeDatum,
-  SimulationLinkDatum
-} from 'd3-force';
+import * as d3 from 'd3';
 
 // Define custom node type that extends SimulationNodeDatum
-interface D3Node extends SimulationNodeDatum, MeshNode {
+interface D3Node extends d3.SimulationNodeDatum, MeshNode {
   x?: number;
   y?: number;
   fx?: number | null;
@@ -26,7 +13,7 @@ interface D3Node extends SimulationNodeDatum, MeshNode {
 }
 
 // Define custom link type
-interface D3Link extends SimulationLinkDatum<D3Node> {
+interface D3Link extends d3.SimulationLinkDatum<D3Node> {
   mediaType: string;
 }
 
@@ -39,7 +26,7 @@ const props = defineProps<{
 const svgContainer = ref<HTMLDivElement | null>(null);
 const hoveredNode = ref<MeshNode | null>(null);
 const hoverPosition = ref({ x: 0, y: 0 });
-const simulation = ref<Simulation<D3Node, D3Link> | null>(null);
+const simulation = ref<d3.Simulation<D3Node, D3Link> | null>(null);
 
 // Constants for node sizes and layout
 const NODE_SIZES = {
@@ -92,40 +79,17 @@ const createSimulation = (width: number, height: number) => {
   const { nodes, links } = prepareNodesAndLinks();
 
   // Create simulation with proper typing
-  const sim = forceSimulation<D3Node>()
+  const sim = d3.forceSimulation<D3Node>()
     .nodes(nodes)
-    .force('link', forceLink<D3Node, D3Link>(links)
+    .force('link', d3.forceLink<D3Node, D3Link>(links)
       .id(d => d.MACAddress)
       .distance(90))
-    .force('charge', forceManyBody().strength(-700))
-    .force('center', forceCenter(width / 2, height / 2))
-    .force('y', forceY().strength(0.1))
-    .force('x', forceX().strength(0.1));
+    .force('charge', d3.forceManyBody().strength(-700))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('y', d3.forceY().strength(0.1))
+    .force('x', d3.forceX().strength(0.1));
 
   return { simulation: sim, nodes, links };
-};
-
-// Create drag behavior with proper typing
-const createDragBehavior = () => {
-  return drag<SVGGElement, D3Node>()
-    .on('start', (event: any, d: D3Node) => {
-      if (!event.active && simulation.value) {
-        simulation.value.alphaTarget(0.3).restart();
-      }
-      d.fx = d.x;
-      d.fy = d.y;
-    })
-    .on('drag', (event: any, d: D3Node) => {
-      d.fx = event.x;
-      d.fy = event.y;
-    })
-    .on('end', (event: any, d: D3Node) => {
-      if (!event.active && simulation.value) {
-        simulation.value.alphaTarget(0);
-      }
-      d.fx = null;
-      d.fy = null;
-    });
 };
 
 const renderChart = () => {
@@ -137,13 +101,13 @@ const renderChart = () => {
   }
 
   // Clear previous content
-  select(svgContainer.value).selectAll('*').remove();
+  d3.select(svgContainer.value).selectAll('*').remove();
 
   const containerWidth = svgContainer.value.clientWidth;
   const containerHeight = svgContainer.value.clientHeight;
 
   // Create SVG
-  const svg = select(svgContainer.value)
+  const svg = d3.select(svgContainer.value)
     .append('svg')
     .attr('width', '100%')
     .attr('height', '100%')
@@ -153,7 +117,7 @@ const renderChart = () => {
   const g = svg.append('g');
 
   // Add zoom behavior
-  const zoomBehavior = zoom()
+  const zoomBehavior = d3.zoom()
     .scaleExtent([0.1, 4])
     .on('zoom', (event) => {
       g.attr('transform', event.transform);
@@ -174,13 +138,30 @@ const renderChart = () => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', d => d.mediaType === 'Wi-Fi' ? '5,5' : '');
 
-  // Create node groups with properly typed drag behavior
-  const dragBehavior = createDragBehavior();
+  // Create node groups
   const node = g.selectAll<SVGGElement, D3Node>('.node')
     .data(nodes)
     .join('g')
     .attr('class', 'node')
-    .call(dragBehavior as any);
+    .call(d3.drag<SVGGElement, D3Node>()
+      .on('start', (event: any, d: D3Node) => {
+        if (!event.active && simulation.value) {
+          simulation.value.alphaTarget(0.3).restart();
+        }
+        d.fx = d.x;
+        d.fy = d.y;
+      })
+      .on('drag', (event: any, d: D3Node) => {
+        d.fx = event.x;
+        d.fy = event.y;
+      })
+      .on('end', (event: any, d: D3Node) => {
+        if (!event.active && simulation.value) {
+          simulation.value.alphaTarget(0);
+        }
+        d.fx = null;
+        d.fy = null;
+      }));
 
   // Add images to nodes
   node.append('image')

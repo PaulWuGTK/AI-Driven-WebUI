@@ -1,19 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { AuthService } from '../services/auth';
-import WanStatus from '../views/status/WanStatus.vue';
-import LanStatus from '../views/status/LanStatus.vue';
-import WlanStatus from '../views/status/WlanStatus.vue';
-import Statistics from '../views/status/Statistics.vue';
-import WifiNeighbor from '../views/status/WifiNeighbor.vue';
-import MeshInfo from '../views/status/MeshInfo.vue';
-import LcmStatus from '../views/status/LcmStatus.vue';
-import Dashboard from '../views/Dashboard.vue';
-import Settings from '../views/Settings.vue';
-import Management from '../views/Management.vue';
-import DdnsSettings from '../views/advanced/DdnsSettings.vue';
-import NtpSettings from '../views/management/NtpSettings.vue';
-import SshManagement from '../views/management/ssh/SshManagement.vue';
-import Login from '../views/Login.vue';
 
 // Auth guard
 const requireAuth = (to: any, from: any, next: any) => {
@@ -30,7 +16,7 @@ const router = createRouter({
   routes: [
     {
       path: '/login',
-      component: Login
+      component: () => import('../views/Login.vue')
     },
     {
       path: '/',
@@ -39,47 +25,47 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      component: Dashboard,
+      component: () => import('../views/Dashboard.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/status',
+      redirect: '/status/wan',
       beforeEnter: requireAuth
     },
     {
       path: '/status/wan',
-      component: WanStatus,
+      component: () => import('../views/status/WanStatus.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/lan',
-      component: LanStatus,
+      component: () => import('../views/status/LanStatus.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/wlan',
-      component: WlanStatus,
+      component: () => import('../views/status/WlanStatus.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/statistics',
-      component: Statistics,
+      component: () => import('../views/status/Statistics.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/wifi-neighbor',
-      component: WifiNeighbor,
+      component: () => import('../views/status/WifiNeighbor.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/mesh',
-      component: MeshInfo,
+      component: () => import('../views/status/MeshInfo.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status/lcm',
-      component: LcmStatus,
-      beforeEnter: requireAuth
-    },
-    {
-      path: '/settings',
-      component: Settings,
+      component: () => import('../views/status/LcmStatus.vue'),
       beforeEnter: requireAuth
     },
     {
@@ -89,22 +75,17 @@ const router = createRouter({
     },
     {
       path: '/advanced/ddns',
-      component: DdnsSettings,
-      beforeEnter: requireAuth
-    },
-    {
-      path: '/management',
-      component: Management,
+      component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/management/ntp',
-      component: NtpSettings,
+      component: () => import('../views/management/NtpSettings.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/management/ssh',
-      component: SshManagement,
+      component: () => import('../views/management/ssh/SshManagement.vue'),
       beforeEnter: requireAuth
     }
   ]

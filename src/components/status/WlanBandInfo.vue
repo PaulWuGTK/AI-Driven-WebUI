@@ -12,16 +12,16 @@ defineProps<{
   <div class="band-info">
     <div class="info-grid">
       <div class="info-row">
-        <span class="label">{{ t('wlan.channel') }}</span>
-        <span class="value">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
+        <span class="info-label">{{ t('wlan.channel') }}</span>
+        <span class="info-value">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
       </div>
       <div class="info-row">
-        <span class="label">{{ t('wlan.bandwidth') }}</span>
-        <span class="value">{{ band.Bandwidth }}</span>
+        <span class="info-label">{{ t('wlan.bandwidth') }}</span>
+        <span class="info-value">{{ band.Bandwidth }}</span>
       </div>
       <div class="info-row">
-        <span class="label">{{ t('wlan.macAddress') }}</span>
-        <span class="value">{{ band.MACAddress }}</span>
+        <span class="info-label">{{ t('wlan.macAddress') }}</span>
+        <span class="info-value">{{ band.MACAddress }}</span>
       </div>
     </div>
   </div>
@@ -29,13 +29,12 @@ defineProps<{
 
 <style scoped>
 .band-info {
-  padding: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .info-grid {
   display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .info-row {
@@ -44,11 +43,23 @@ defineProps<{
   align-items: center;
 }
 
-.label {
-  color: #666;
+.info-label {
+  color: var(--text-secondary);
 }
 
-.value {
-  color: #333;
+.info-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .info-label {
+    font-size: 0.9rem;
+  }
 }
 </style>

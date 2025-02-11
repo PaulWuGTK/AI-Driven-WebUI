@@ -113,59 +113,117 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="mesh-info">
+  <div class="page-container">
     <h1 class="page-title">{{ t('mesh.title') }}</h1>
 
-    <div class="mesh-content">
+    <div class="status-content">
       <!-- Loading State -->
-      <div v-if="loading" class="status-message loading">
+      <div v-if="loading" class="loading-state">
         <div class="loading-spinner"></div>
         Loading...
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="status-message error">
+      <div v-else-if="error" class="error-state">
         {{ error }}
       </div>
 
       <!-- Content State -->
       <template v-else>
-        <div class="header">
-          <div class="mesh-title">{{ t('mesh.networkInformation') }}</div>
-          <button 
-            class="btn btn-primary"
-            @click="showMap = !showMap"
-          >
-            {{ showMap ? t('mesh.list') : t('mesh.map') }}
-          </button>
-        </div>
+        <!-- Network Information Section -->
+        <div class="panel-section">
+          <div class="header-row">
+            <div class="section-title">{{ t('mesh.networkInformation') }}</div>
+            <button 
+              class="btn btn-map"
+              @click="showMap = !showMap"
+            >
+              <span class="material-icons">{{ showMap ? 'list' : 'map' }}</span>
+              {{ showMap ? t('mesh.list') : t('mesh.map') }}
+            </button>
+          </div>
 
-        <template v-if="!showMap">
-          <MeshNodeTable :nodes="nodes" />
-          <MeshClientTable 
-            :clients="clients"
-            @action="handleAction"
-          />
-        </template>
-        <template v-else>
-          <MeshTopologyMap :nodes="meshData" />
-        </template>
+          <div class="card-content">
+            <template v-if="!showMap">
+              <!-- Node List Section -->
+              <div class="list-section">
+                <div class="list-title">{{ t('mesh.nodeList') }}</div>
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ t('mesh.name') }}</th>
+                        <th>{{ t('mesh.mode') }}</th>
+                        <th>{{ t('mesh.ipAddress') }}</th>
+                        <th>{{ t('mesh.macAddress') }}</th>
+                        <th>{{ t('mesh.mediaType') }}</th>
+                        <th>{{ t('mesh.supportedBand') }}</th>
+                        <th>{{ t('mesh.upstream') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="node in nodes" :key="node.MACAddress">
+                        <td>{{ node.Name }}</td>
+                        <td>{{ node.Mode }}</td>
+                        <td>{{ node.ipv4 }}</td>
+                        <td>{{ node.MACAddress }}</td>
+                        <td>{{ node.MediaType }}</td>
+                        <td>{{ node.SupportedBand || '-' }}</td>
+                        <td>{{ node.Upstream === '-' ? '-' : node.Upstream }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-        <div class="actions">
-          <button 
-            v-if="showMap"
-            class="btn btn-secondary" 
-            @click="showMap = false"
-          >
-            {{ t('mesh.back') }}
-          </button>
-          <button 
-            class="btn btn-secondary" 
-            @click="fetchMeshData"
-            :disabled="loading"
-          >
-            {{ t('common.refresh') }}
-          </button>
+              <!-- Client List Section -->
+              <div class="list-section">
+                <div class="list-title">{{ t('mesh.clientList') }}</div>
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ t('mesh.name') }}</th>
+                        <th>{{ t('mesh.ipAddress') }}</th>
+                        <th>{{ t('mesh.macAddress') }}</th>
+                        <th>{{ t('mesh.mediaType') }}</th>
+                        <th>{{ t('mesh.upstream') }}</th>
+                        <th>{{ t('mesh.action') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="client in clients" :key="client.MACAddress">
+                        <td>{{ client.Name }}</td>
+                        <td>{{ client.ipv4 }}</td>
+                        <td>{{ client.MACAddress }}</td>
+                        <td>{{ client.MediaType }}</td>
+                        <td>{{ client.Upstream }}</td>
+                        <td>
+                          <button class="btn-action" @click="handleAction(client)">
+                            <span class="material-icons">settings</span>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <MeshTopologyMap :nodes="meshData" />
+            </template>
+
+            <div class="button-group">
+              <button 
+                class="btn btn-refresh" 
+                @click="fetchMeshData"
+                :disabled="loading"
+              >
+                <span class="material-icons">refresh</span>
+                {{ t('common.refresh') }}
+              </button>
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -181,114 +239,162 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.mesh-info {
-  flex: 1;
-  background-color: #f5f5f5;
-  min-height: 100%;
-}
-
-.mesh-content {
-  padding: 1.5rem;
-}
-
-.status-message {
-  background-color: white;
-  padding: 2rem;
-  text-align: center;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.status-message.error {
-  color: #dc3545;
-}
-
-.status-message.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  color: #666;
-}
-
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #0070BB;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.header {
-  background-color: #FFF;
-  padding: 0.5rem 2rem;
+.header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1.5rem;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.mesh-title {
-  font-size: 1rem;
-  color: #333;
-}
-
-.actions {
-  margin-top: 1rem;
+.btn-map {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #0070BB;
+  color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
+.btn-map:hover {
+  background-color: #005a96;
 }
 
-.btn-secondary {
-  background-color: #f0f0f0;
+.list-section {
+  margin-bottom: 2rem;
+}
+
+.list-section:last-child {
+  margin-bottom: 0;
+}
+
+.list-title {
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #f8f8f8;
+  font-weight: 500;
+  color: #333;
+}
+
+td {
   color: #666;
 }
 
-.btn:disabled {
-  opacity: 0.5;
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}
+
+.btn-action:hover {
+  color: #333;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.btn-refresh {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #0070BB;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background-color: #005a96;
+}
+
+.btn-refresh:disabled {
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* 響應式設計 */
-@media (max-width: 767px) {
-  .mesh-content {
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: #666;
+}
+
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .header-row {
+    flex-direction: column;
+    gap: 1rem;
     padding: 1rem;
   }
 
-  .header {
-    padding: 0.5rem 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .actions {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .btn {
+  .btn-map {
     width: 100%;
+    justify-content: center;
+  }
+
+  .list-title {
+    padding: 0.75rem 1rem;
+  }
+
+  .table-wrapper {
+    border: none;
+    background: none;
+  }
+
+  .button-group {
+    padding: 0 1rem;
+  }
+
+  .btn-refresh {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

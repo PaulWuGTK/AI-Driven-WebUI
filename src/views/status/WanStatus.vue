@@ -24,55 +24,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="wan-status">
+  <div class="page-container">
     <h1 class="page-title">{{ t('wan.title') }}</h1>
 
     <div class="status-content" v-if="wanData?.StatusWan">
       <div class="panel-section">
         <WanStatusSummary :status="wanData.StatusWan" />
       </div>
+      
       <div class="panel-section">
         <WanModeConfig :config="wanData.StatusWan.WANModeConfig" />
       </div>
-      <div class="panel-section">
-        <WanInterface 
-          v-for="iface in wanData.StatusWan.WANModeConfig.Interfaces" 
-          :key="iface.Name"
-          :interface="iface"
-        />
+      
+      <div class="panel-section" v-for="iface in wanData.StatusWan.WANModeConfig.Interfaces" :key="iface.Name">
+        <WanInterface :interface="iface" />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.wan-status {
-  flex: 1;
-  background-color: #f5f5f5;
-  min-height: 100%;
-}
 
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.status-content {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-@media (max-width: 767px) {
-  .status-content {
-    padding: 1rem;
-  }
-}
 </style>
