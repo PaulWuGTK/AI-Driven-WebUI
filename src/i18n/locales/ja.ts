@@ -176,7 +176,7 @@ export default {
     wpsPinConnect: 'WPS PINコード接続',
     wpsPinConnectDesc: 'クライアントデバイスで生成されたPINコードを入力し、「デバイスを接続」ボタンをクリックしてWiFi接続を確立します',
     generatePinCode: 'PINコード生成',
-    devicePinDesc: 'このデバイスをネットワークに追加するためのPIN',
+    devicePinDesc: 'Wi-Fiに接続するには、ルーターで生成されたPINコードをデバイスに入力してください',
     enterPin: 'PINコードを入力してください',
     connect: 'デバイスを接続',
     vapInformation: 'VAP情報',
@@ -185,7 +185,14 @@ export default {
     encryption: '暗号化',
     wpsStatus: 'WPS状態',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: '共通SSID設定'
+    commonSsidConfig: '共通SSID設定',
+    pushButtonTitle: 'プッシュボタンで新しいデバイスを接続',
+    pinConnectTitle: 'PINコードで新しいデバイスを接続',
+    devicePinTitle: 'このデバイスをネットワークに追加するためのPINコード',
+    pushButton: 'WPSプッシュボタン',
+    pinCode: 'PINコード',
+    pinCodeOfClient: 'クライアントデバイスのPINコード',
+    noPublicKeys: '公開鍵が追加されていません'
   },
   ddns: {
     title: 'DDNS設定',

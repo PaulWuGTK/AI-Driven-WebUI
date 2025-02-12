@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -40,7 +41,7 @@ onMounted(fetchWpsConfig);
 <template>
   <div class="wireless-wps-config">
     <div class="wps-enable">
-      <label class="switch-label">
+      <div class="switch-label">
         <span>{{ t('wireless.wpsConfiguration') }}</span>
         <label class="switch">
           <input
@@ -50,7 +51,7 @@ onMounted(fetchWpsConfig);
           >
           <span class="slider"></span>
         </label>
-      </label>
+      </div>
     </div>
 
     <template v-if="wpsData?.WlanWps.Enable === 1">
@@ -67,22 +68,18 @@ onMounted(fetchWpsConfig);
 
 <style scoped>
 .wireless-wps-config {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
 }
 
 .wps-enable {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .switch-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .switch {
@@ -90,6 +87,7 @@ onMounted(fetchWpsConfig);
   display: inline-block;
   width: 60px;
   height: 34px;
+  flex-shrink: 0;
 }
 
 .switch input {
@@ -123,10 +121,17 @@ onMounted(fetchWpsConfig);
 }
 
 input:checked + .slider {
-  background-color: #0070BB;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+
+@media (max-width: 768px) {
+  .wireless-wps-config {
+    padding: 1rem;
+  }
+}
 </style>
+```

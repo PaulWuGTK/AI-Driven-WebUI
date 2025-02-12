@@ -176,7 +176,7 @@ export default {
     wpsPinConnect: 'Connexion par code PIN WPS',
     wpsPinConnectDesc: 'Entrez le code PIN généré par l\'appareil client, puis cliquez sur le bouton "Connecter l\'appareil" pour établir la connexion WiFi.',
     generatePinCode: 'Générer code PIN',
-    devicePinDesc: 'PIN pour ajouter cet appareil à un réseau',
+    devicePinDesc: 'Entrez le code PIN généré par le routeur sur l\'appareil pour vous connecter au Wi-Fi',
     enterPin: 'Veuillez entrer le code PIN',
     connect: 'Connecter l\'appareil',
     vapInformation: 'Informations VAP',
@@ -185,7 +185,14 @@ export default {
     encryption: 'Chiffrement',
     wpsStatus: 'État WPS',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: 'Configuration SSID commune'
+    commonSsidConfig: 'Configuration SSID commune',
+    pushButtonTitle: 'Connecter un nouvel appareil par bouton-poussoir',
+    pinConnectTitle: 'Connecter un nouvel appareil par code PIN',
+    devicePinTitle: 'Code PIN pour ajouter cet appareil à un réseau',
+    pushButton: 'Bouton WPS',
+    pinCode: 'Code PIN',
+    pinCodeOfClient: 'Code PIN de l\'appareil client',
+    noPublicKeys: 'Aucune clé publique ajoutée'
   },
   ddns: {
     title: 'Paramètres DDNS',

@@ -11,6 +11,7 @@ export default {
     meshInfo: 'Mesh-Informationen',
     lcm: 'LCM',
     basicSetting: 'Grundeinstellung',
+    wireless: 'Drahtlos',
     management: 'Management',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -155,7 +156,7 @@ export default {
     uuid: "UUID",
     vendor: "Anbieter",
     version: "Version"
-  },  
+  },
   wireless: {
     title: 'WLAN-Einstellungen',
     basicConfig: 'Grundkonfiguration',
@@ -173,9 +174,9 @@ export default {
     wpsPushButton: 'WPS-Drucktaste',
     wpsPushButtonDesc: 'Klicken Sie auf "WPS-Drucktaste" und drücken Sie dann innerhalb von zwei Minuten die WPS-Taste am Gerät, das Sie verbinden möchten',
     wpsPinConnect: 'WPS PIN-Code Verbindung',
-    wpsPinConnectDesc: 'Geben Sie den vom Client-Gerät generierten PIN-Code ein und klicken Sie dann auf die Schaltfläche "Gerät verbinden", um eine WLAN-Verbindung herzustellen.',
+    wpsPinConnectDesc: 'Geben Sie den vom Client-Gerät generierten PIN-Code ein und klicken Sie dann auf die Schaltfläche "Gerät verbinden", um eine WLAN-Verbindung herzustellen',
     generatePinCode: 'PIN-Code generieren',
-    devicePinDesc: 'PIN zum Hinzufügen dieses Geräts zu einem Netzwerk',
+    devicePinDesc: 'Geben Sie den vom Router generierten PIN-Code auf dem Gerät ein, um eine WLAN-Verbindung herzustellen',
     enterPin: 'Bitte PIN-Code eingeben',
     connect: 'Gerät verbinden',
     vapInformation: 'VAP-Informationen',
@@ -184,8 +185,15 @@ export default {
     encryption: 'Verschlüsselung',
     wpsStatus: 'WPS-Status',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: 'Gemeinsame SSID-Konfiguration'
-  },
+    commonSsidConfig: 'Gemeinsame SSID-Konfiguration',
+    pushButtonTitle: 'Neues Gerät per Tastendruck verbinden',
+    pinConnectTitle: 'Neues Gerät per PIN-Code verbinden',
+    devicePinTitle: 'PIN-Code zum Hinzufügen dieses Geräts zu einem Netzwerk',
+    pushButton: 'WPS-Taste',
+    pinCode: 'PIN-Code',
+    pinCodeOfClient: 'PIN-Code des Client-Geräts',
+    noPublicKeys: 'Keine öffentlichen Schlüssel hinzugefügt'
+  }, 
   ddns: {
     title: 'DDNS-Einstellungen',
     management: 'DDNS-Verwaltung',

@@ -145,6 +145,13 @@ export interface Translations {
     wpsStatus: string;
     easyMesh: string;
     commonSsidConfig: string;
+    pushButtonTitle: string,
+    pinConnectTitle: string,
+    devicePinTitle: string,
+    pushButton: string,
+    pinCode: string,
+    pinCodeOfClient: string,
+    noPublicKeys: string
   };
   ddns: {
     title: string;

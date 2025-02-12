@@ -185,7 +185,14 @@ export default {
     encryption: '加密',
     wpsStatus: 'WPS狀態',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: '通用SSID設定'
+    commonSsidConfig: '通用SSID設定',
+      pushButtonTitle: '透過按鈕連接新裝置',
+      pinConnectTitle: '透過 PIN 碼連接新裝置',
+      devicePinTitle: '將此裝置加入網路的 PIN 碼',
+      pushButton: 'WPS 按鈕',
+      pinCode: 'PIN 碼',
+      pinCodeOfClient: '用戶端裝置的 PIN 碼',
+      noPublicKeys: '尚未新增公開金鑰'
   },
   ddns: {
     title: 'DDNS設定',

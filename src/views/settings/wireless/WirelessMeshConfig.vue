@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -8,13 +9,16 @@ const { t } = useI18n();
 const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
+const error = ref<string | null>(null);
 
 const fetchMeshConfig = async () => {
   loading.value = true;
+  error.value = null;
   try {
     meshData.value = await getWlanMesh();
-  } catch (error) {
-    console.error('Error fetching mesh config:', error);
+  } catch (err) {
+    console.error('Error fetching mesh config:', err);
+    error.value = 'Failed to fetch mesh config';
   } finally {
     loading.value = false;
   }
@@ -39,9 +43,10 @@ const handleSubmit = async () => {
       }
     });
     showSuccessMessage();
-    await fetchMeshConfig(); // Refresh data after successful update
-  } catch (error) {
-    console.error('Error updating mesh config:', error);
+    await fetchMeshConfig();
+  } catch (err) {
+    console.error('Error updating mesh config:', err);
+    error.value = 'Failed to update mesh config';
   } finally {
     loading.value = false;
   }
@@ -51,121 +56,71 @@ onMounted(fetchMeshConfig);
 </script>
 
 <template>
-  <div class="wireless-mesh-config">
-    <form @submit.prevent="handleSubmit" v-if="meshData" :class="{ 'loading': loading }">
-      <div v-if="loading" class="loading-overlay">
-        <div class="loading-spinner"></div>
-      </div>
+  <div class="mesh-config">
+    <div v-if="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <span>Loading...</span>
+    </div>
 
-      <div v-if="showSuccess" class="success-message">
-        {{ t('common.apply') }} successful
-      </div>
+    <div v-else-if="error" class="error-state">
+      {{ error }}
+    </div>
 
-      <div class="mesh-enable">
-        <label class="switch-label">
-          <span>{{ t('wireless.easyMesh') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :checked="meshData.WlanMesh.MeshEnable === 1"
-              @change="meshData.WlanMesh.MeshEnable = ($event.target as HTMLInputElement).checked ? 1 : 0"
-              :disabled="loading"
-            >
-            <span class="slider"></span>
-          </label>
+    <template v-else-if="meshData">
+      <div class="switch-label">
+        <span>EasyMesh</span>
+        <label class="switch">
+          <input
+            type="checkbox"
+            v-model="meshData.WlanMesh.MeshEnable"
+            :true-value="1"
+            :false-value="0"
+          >
+          <span class="slider"></span>
         </label>
       </div>
 
       <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1">
-        <h3>{{ t('wireless.commonSsidConfig') }}</h3>
-        <div class="form-group">
-          <label>{{ t('wireless.ssid') }}</label>
-          <input
-            type="text"
-            v-model="meshData.WlanMesh.CommonSSID"
-            required
-            :disabled="loading"
-          />
+        <div class="section-title">{{ t('wireless.commonSsidConfig') }}</div>
+        <div class="ssid-content">
+          <div class="form-group">
+            <label>SSID</label>
+            <input
+              type="text"
+              v-model="meshData.WlanMesh.CommonSSID"
+              required
+            />
+          </div>
         </div>
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
+        <button class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
-    </form>
+    </template>
+
+    <div v-if="showSuccess" class="success-message">
+      {{ t('common.apply') }} successful
+    </div>
   </div>
 </template>
 
 <style scoped>
-.wireless-mesh-config {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.mesh-config {
   padding: 1.5rem;
-  position: relative;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0070BB;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
-.mesh-enable {
-  margin-bottom: 2rem;
 }
 
 .switch-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
 }
 
 .switch {
@@ -173,6 +128,7 @@ onMounted(fetchMeshConfig);
   display: inline-block;
   width: 60px;
   height: 34px;
+  flex-shrink: 0;
 }
 
 .switch input {
@@ -206,7 +162,7 @@ onMounted(fetchMeshConfig);
 }
 
 input:checked + .slider {
-  background-color: #0070BB;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
@@ -214,36 +170,36 @@ input:checked + .slider:before {
 }
 
 .common-ssid {
-  margin-bottom: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
 }
 
-h3 {
-  font-size: 1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
+.ssid-content {
+  padding: 1.5rem;
 }
 
 .form-group {
   margin-bottom: 1.5rem;
 }
 
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
-}
-
-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
 }
 
 .button-group {
@@ -253,31 +209,61 @@ input:disabled {
   margin-top: 2rem;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-}
-
-.btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.btn-primary {
-  background-color: #0070BB;
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
   color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
 }
 
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
-.btn:not(:disabled):hover {
-  opacity: 0.9;
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+  .mesh-config {
+    padding: 1rem;
+  }
+
+  .ssid-content {
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
 }
 </style>
+```

@@ -175,7 +175,7 @@ export default {
     wpsPinConnect: 'WPS PIN 코드 연결',
     wpsPinConnectDesc: '클라이언트 장치에서 생성된 PIN 코드를 입력한 후 "장치 연결" 버튼을 클릭하여 WiFi 연결을 설정하세요.',
     generatePinCode: 'PIN 코드 생성',
-    devicePinDesc: '이 장치를 네트워크에 추가하기 위한 PIN',
+    devicePinDesc: 'Wi-Fi에 연결하려면 라우터에서 생성된 PIN 코드를 장치에 입력하세요',
     enterPin: 'PIN 코드를 입력하세요',
     connect: '장치 연결',
     vapInformation: 'VAP 정보',
@@ -184,7 +184,14 @@ export default {
     encryption: '암호화',
     wpsStatus: 'WPS 상태',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: '공통 SSID 설정'
+    commonSsidConfig: '공통 SSID 설정',
+    pushButtonTitle: '버튼으로 새 장치 연결',
+    pinConnectTitle: 'PIN 코드로 새 장치 연결',
+    devicePinTitle: '이 장치를 네트워크에 추가하기 위한 PIN 코드',
+    pushButton: 'WPS 버튼',
+    pinCode: 'PIN 코드',
+    pinCodeOfClient: '클라이언트 장치의 PIN 코드',
+    noPublicKeys: '추가된 공개 키 없음'
   },
   ddns: {
     title: 'DDNS 설정',

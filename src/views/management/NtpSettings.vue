@@ -15,9 +15,11 @@ const ntpEnabled = ref(true);
 const ntpServers = ref<string[]>(['', '', '', '', '']);
 const loading = ref(false);
 const showSuccess = ref(false);
+const error = ref<string | null>(null);
 
 const fetchNtpSettings = async () => {
   loading.value = true;
+  error.value = null;
   try {
     ntpData.value = await getNtpSettings();
     if (ntpData.value) {
@@ -26,8 +28,9 @@ const fetchNtpSettings = async () => {
       ntpEnabled.value = ntpData.value.Ntp.NtpEnable === 1;
       ntpServers.value = [...ntpData.value.Ntp.NtpServers];
     }
-  } catch (error) {
-    console.error('Error fetching NTP settings:', error);
+  } catch (err) {
+    console.error('Error fetching NTP settings:', err);
+    error.value = 'Failed to fetch NTP settings';
   } finally {
     loading.value = false;
   }
@@ -76,8 +79,9 @@ const handleSubmit = async () => {
     ntpData.value = response;
     showSuccessMessage();
     await fetchNtpSettings(); // Refresh data after successful update
-  } catch (error) {
-    console.error('Error updating NTP settings:', error);
+  } catch (err) {
+    console.error('Error updating NTP settings:', err);
+    error.value = 'Failed to update NTP settings';
   } finally {
     loading.value = false;
   }
@@ -87,154 +91,95 @@ onMounted(fetchNtpSettings);
 </script>
 
 <template>
-  <div class="ntp-settings">
+  <div class="page-container">
     <h1 class="page-title">{{ t('ntp.title') }}</h1>
 
-    <div class="settings-content">
-      <div class="settings-section" :class="{ 'loading': loading }">
-        <div v-if="loading" class="loading-overlay">
-          <div class="loading-spinner"></div>
-        </div>
+    <div class="status-content">
+      <div v-if="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <span>Loading...</span>
+      </div>
 
-        <div v-if="showSuccess" class="success-message">
-          {{ t('common.apply') }} successful
-        </div>
+      <div v-else-if="error" class="error-state">
+        {{ error }}
+      </div>
 
-        <div class="form-group">
-          <label>{{ t('ntp.currentTime') }}</label>
-          <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime }}</div>
-        </div>
+      <template v-else>
+        <div class="panel-section">
+          <div class="card-content">
+            <div class="form-group">
+              <label>{{ t('ntp.currentTime') }}</label>
+              <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime }}</div>
+            </div>
 
-        <div class="form-group">
-          <label>{{ t('ntp.timeZoneSelect') }}</label>
-          <TimeZoneSelect 
-            v-model="timeZone" 
-            @timezone-change="handleTimezoneChange"
-          />
-        </div>
+            <div class="form-group">
+              <label>{{ t('ntp.timeZoneSelect') }}</label>
+              <TimeZoneSelect 
+                v-model="timeZone" 
+                @timezone-change="handleTimezoneChange"
+              />
+            </div>
 
-        <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
-          <label class="switch-label">
-            <span>{{ t('ntp.automaticDaylight') }}</span>
-            <label class="switch">
+            <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
+              <div class="switch-label">
+                {{ t('ntp.automaticDaylight') }}
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    v-model="daylightSaving"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="switch-label">
+                {{ t('ntp.enableNtp') }}
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    v-model="ntpEnabled"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div v-for="(server, index) in ntpServers" :key="index" class="form-group">
+              <label>{{ t('ntp.ntpServer') }}{{ index + 1 }}</label>
               <input
-                type="checkbox"
-                v-model="daylightSaving"
+                type="text"
+                v-model="ntpServers[index]"
+                :placeholder="t('ntp.placeholder')"
               >
-              <span class="slider"></span>
-            </label>
-          </label>
-        </div>
+            </div>
 
-        <div class="form-group">
-          <label class="switch-label">
-            <span>{{ t('ntp.enableNtp') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                v-model="ntpEnabled"
-              >
-              <span class="slider"></span>
-            </label>
-          </label>
+            <div class="button-group">
+              <button class="btn btn-secondary" @click="fetchNtpSettings" :disabled="loading">
+                {{ t('ntp.cancel') }}
+              </button>
+              <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
+                {{ t('ntp.apply') }}
+              </button>
+            </div>
+          </div>
         </div>
+      </template>
 
-        <div v-for="(server, index) in ntpServers" :key="index" class="form-group">
-          <label>{{ t('ntp.ntpServer') }}{{ index + 1 }}</label>
-          <input
-            type="text"
-            v-model="ntpServers[index]"
-            :placeholder="t('ntp.placeholder')"
-          >
-        </div>
-
-        <div class="button-group">
-          <button class="btn btn-cancel" @click="fetchNtpSettings" :disabled="loading">
-            {{ t('ntp.cancel') }}
-          </button>
-          <button class="btn btn-apply" @click="handleSubmit" :disabled="loading">
-            {{ t('ntp.apply') }}
-          </button>
-        </div>
+      <div v-if="showSuccess" class="success-message">
+        {{ t('common.apply') }} successful
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.ntp-settings {
-  flex: 1;
-  background-color: #f5f5f5;
-  min-height: 100%;
-}
-
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.settings-content {
-  padding: 1.5rem;
-}
-
-.settings-section {
-  background-color: white;
-  border: 1px solid #e0e0e0;
+.current-time {
+  padding: 0.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 1.5rem;
-  position: relative;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0070BB;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 .form-group {
@@ -244,20 +189,13 @@ onMounted(fetchNtpSettings);
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
-.current-time {
-  padding: 0.5rem;
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-input[type="text"] {
+input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
 }
@@ -266,6 +204,7 @@ input[type="text"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: var(--text-primary);
 }
 
 .switch {
@@ -273,6 +212,8 @@ input[type="text"] {
   display: inline-block;
   width: 60px;
   height: 34px;
+  margin-left: 1rem;
+  flex-shrink: 0;
 }
 
 .switch input {
@@ -306,7 +247,7 @@ input[type="text"] {
 }
 
 input:checked + .slider {
-  background-color: #0070BB;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
@@ -320,31 +261,52 @@ input:checked + .slider:before {
   margin-top: 2rem;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-}
-
-.btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.btn-apply {
-  background-color: #0070BB;
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
   color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
 }
 
-.btn-cancel {
-  background-color: #f0f0f0;
-  color: #666;
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
-.btn:not(:disabled):hover {
-  opacity: 0.9;
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
 }
 </style>

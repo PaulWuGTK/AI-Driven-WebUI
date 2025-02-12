@@ -15,6 +15,7 @@ const newKey = ref('');
 const error = ref('');
 
 const fetchKeys = async () => {
+  loading.value = true;
   try {
     const response = await getSshAuthorizedKeys();
     keys.value = response.SshAuthorizedKey;
@@ -72,13 +73,18 @@ onMounted(fetchKeys);
 
 <template>
   <div class="key-management">
-    <div class="header_btn">
-      <div class="ssh-title">{{ t('ssh.publicKeyManagement') }}</div>
+    <div class="header-row">
+      <div class="section-title-sp">{{ t('ssh.publicKeyManagement') }}</div>
     </div>
 
-    <div class="key-list">
+    <div v-if="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <span>Loading...</span>
+    </div>
+
+    <div v-else class="key-list">
       <!-- PC版表格 -->
-      <div class="table-wrapper">
+      <div class="table-container">
         <table>
           <thead>
             <tr>
@@ -98,10 +104,13 @@ onMounted(fetchKeys);
                 </button>
               </td>
               <td>
-                <button class="icon-btn" @click="handleDelete(key)" title="Delete">
+                <button class="btn-action" @click="handleDelete(key)" title="Delete">
                   <span class="material-icons">delete</span>
                 </button>
               </td>
+            </tr>
+            <tr v-if="keys.length === 0">
+              <td colspan="4" class="no-data">No public keys added</td>
             </tr>
           </tbody>
         </table>
@@ -109,7 +118,10 @@ onMounted(fetchKeys);
 
       <!-- 手機版卡片 -->
       <div class="mobile-cards">
-        <div class="table-card" v-for="key in keys" :key="key.Key">
+        <div v-if="keys.length === 0" class="no-data-mobile">
+          No public keys added
+        </div>
+        <div class="table-card" v-else v-for="key in keys" :key="key.Key">
           <div class="card-row">
             <span class="card-label">{{ t('ssh.comment') }}</span>
             <span class="card-value">{{ extractKeyComment(key.Key) }}</span>
@@ -119,36 +131,35 @@ onMounted(fetchKeys);
             <span class="card-value">{{ key.Key.split(' ')[0] }}</span>
           </div>
           <div class="card-actions">
-            <button class="btn btn-primary" @click="handleViewKey(key)">
-              {{ t('ssh.viewKey') }}
+            <button class="btn btn-view" @click="handleViewKey(key)">
+              {{ t('ssh.clickToView') }}
             </button>
-            <button class="btn btn-danger" @click="handleDelete(key)">
-              {{ t('common.delete') }}
+            <button class="btn-action" @click="handleDelete(key)" title="Delete">
+              <span class="material-icons">delete</span>
             </button>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="add-key-section">
-      <div class="header">
-        <div class="ssh-title">{{ t('ssh.newSshKey') }}</div>
-      </div>
-      <div class="form-group">
-        <textarea
-          v-model="newKey"
-          :placeholder="t('ssh.enterNewSshKey')"
-          rows="4"
-        ></textarea>
-        <div v-if="error" class="error-message">{{ error }}</div>
-      </div>
-      <div class="button-group">
-        <button class="btn btn-secondary" @click="newKey = ''">
-          {{ t('common.cancel') }}
-        </button>
-        <button class="btn btn-primary" @click="handleAddKey">
-          {{ t('common.create') }}
-        </button>
+      <!-- Add New Key Section -->
+      <div class="add-key-section">
+        <div class="section-title">{{ t('ssh.newSshKey') }}</div>
+        <div class="form-group">
+          <textarea
+            v-model="newKey"
+            :placeholder="t('ssh.enterNewSshKey')"
+            rows="4"
+          ></textarea>
+          <div v-if="error" class="error-message">{{ error }}</div>
+        </div>
+        <div class="button-group">
+          <button class="btn btn-secondary" @click="newKey = ''">
+            {{ t('common.cancel') }}
+          </button>
+          <button class="btn btn-primary" @click="handleAddKey">
+            {{ t('common.create') }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -167,110 +178,84 @@ onMounted(fetchKeys);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.header_btn {
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.ssh-title {
+.section-title-sp {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
+  padding: 0.5rem 0;
 }
 
 .key-list {
   padding: 1.5rem;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .btn-view {
-  background-color: #0070BB;
-  color: white;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  background-color: var(--primary-color);
+  color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 
-.icon-btn {
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
   background: none;
   border: none;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.25rem;
-  color: #666;
-}
-
-/* 手機版卡片樣式 */
-.mobile-cards {
-  display: none;
-  gap: 1rem;
-}
-
-.table-card {
-  background: white;
-  border: 1px solid #e0e0e0;
   border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
 }
 
-.card-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.card-row:last-child {
-  border-bottom: none;
-}
-
-.card-label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.card-value {
-  color: #333;
-  font-weight: 500;
-  word-break: break-all;
-}
-
-.card-actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
+.btn-action:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .add-key-section {
-  border-top: 1px solid #e0e0e0;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
 }
 
-.header {
-  padding: 0.5rem 2rem;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
+.section-title {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
 }
 
 .form-group {
-  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-size: 0.9rem;
   font-family: monospace;
+  font-size: 0.9rem;
   resize: vertical;
 }
 
@@ -281,70 +266,50 @@ textarea {
 }
 
 .button-group {
-  padding: 1rem;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.no-data-mobile {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
   border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
 }
 
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-/* 響應式設計 */
-@media (min-width: 768px) {
-  table {
-    width: 100%;
-    border-collapse: collapse;
+@media (max-width: 768px) {
+  .header-row {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
   }
 
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-    white-space: nowrap;
+  .section-title-sp {
+    padding: 0;
   }
 
-  th {
-    background-color: #f8f8f8;
-    font-weight: 500;
-    color: #333;
-  }
-
-  td {
-    color: #666;
-  }
-
-  .mobile-cards {
-    display: none;
-  }
-}
-
-@media (max-width: 767px) {
   .key-list {
     padding: 1rem;
   }
 
-  .table-wrapper {
+  .loading-state {
+    padding: 1rem;
+  }
+
+  .table-container {
     display: none;
   }
 
@@ -352,8 +317,13 @@ textarea {
     display: block;
   }
 
-  .form-group {
-    padding: 1rem;
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
   }
 
   .button-group {

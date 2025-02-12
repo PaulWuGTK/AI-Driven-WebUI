@@ -11,6 +11,7 @@
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
   --sidebar-width: 260px;
   --header-height: 50px;
+  --th-color : #080C11;
   
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -35,8 +36,8 @@
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
-  overflow: hidden; /* 改为 hidden */
-  position: relative; /* 添加 position: relative */
+  overflow: hidden;
+  position: relative;
 }
 
 /* Layout */
@@ -46,16 +47,15 @@
   flex-direction: column;
   background-color: var(--bg-primary);
   width: 100%;
-  height: 100%; /* 添加 height: 100% */
+  height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
 
-/* 修改 .status-content 样式 */
 .status-content {
-  flex: 1 0 auto; /* 修改为 flex: 1 0 auto */
-  padding: 1.5rem;
+  flex: 1 0 auto;
+  padding: 0.1rem 1.5rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -65,21 +65,20 @@
 /* Headers */
 .page-title {
   color: var(--primary-color);
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: bold;
   margin: 0;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid var(--border-color);
-  position: relative; /* 添加这行 */
-  z-index: 1; /* 添加这行 */
-  width: 100%; /* 添加这行 */
+  padding: 1rem 0 1rem 2rem;
+  background-color: var(--bg-secondary);
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
 .section-title {
+  padding: 1rem 1.5rem;
   font-size: 1rem;
   color: var(--text-primary);
-  padding: 0.5rem 2rem;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
 }
@@ -88,7 +87,7 @@
 .panel-section {
   background-color: white;
   border-radius: 4px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
@@ -118,36 +117,66 @@
   font-weight: 500;
 }
 
-/* Forms */
-.form-group {
+/* Tables */
+.table-container {
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+}
+
+th {
+  background-color: white;
+  font-weight: 500;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--th-color);
+}
+
+td {
+  color: var(--text-secondary);
+}
+
+/* Mobile Cards */
+.mobile-cards {
+  display: none;
+}
+
+.table-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1rem;
   margin-bottom: 1rem;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: var(--text-secondary);
   font-size: 0.9rem;
-  background-color: white;
+}
+
+.card-value {
   color: var(--text-primary);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(0, 112, 187, 0.1);
-}
-
-.form-control:disabled {
-  background-color: var(--bg-secondary);
-  cursor: not-allowed;
+  font-weight: 500;
+  word-break: break-all;
 }
 
 /* Buttons */
@@ -179,129 +208,61 @@
   opacity: 0.9;
 }
 
-/* Tables */
-.table-container {
-  overflow-x: auto;
-  margin-bottom: 1rem;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-th {
-  background-color: var(--bg-secondary);
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-td {
-  color: var(--text-secondary);
-}
-
-/* Mobile Cards */
-.mobile-cards {
-  display: none;
-}
-
-.card-row {
+/* Tab Navigation Styles */
+.tab-navigation {
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
+  gap: 1px;
+  background-color: white;
   border-bottom: 1px solid var(--border-color);
 }
 
-.card-row:last-child {
-  border-bottom: none;
-}
-
-.card-label {
+.tab-button {
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
   color: var(--text-secondary);
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-.card-value {
-  color: var(--text-primary);
-  font-weight: 500;
-  word-break: break-all;
+.tab-button:hover {
+  color: var(--primary-color);
 }
 
-/* Loading States */
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--secondary-color);
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Switches */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
+.tab-content {
   background-color: white;
-  transition: .4s;
-  border-radius: 50%;
 }
 
-input:checked + .slider {
-  background-color: var(--primary-color);
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
 }
 
-input:checked + .slider:before {
-  transform: translateX(26px);
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1.5rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
 }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {
-    height: calc(100vh - var(--header-height)); /* 添加这行 */
+    height: calc(100vh - var(--header-height));
   }
   
   .page-container {
-    height: 100%; /* 确保在移动端也是100%高度 */
+    height: 100%;
   }
 
   .status-content {
@@ -336,5 +297,23 @@ input:checked + .slider:before {
 
   .info-label {
     font-size: 0.9rem;
+  }
+
+  .tab-navigation {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .tab-button {
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tab-button.active {
+    border-bottom-color: var(--border-color);
+    background-color: var(--primary-color);
+    color: white;
   }
 }

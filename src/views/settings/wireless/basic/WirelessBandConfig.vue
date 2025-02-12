@@ -16,7 +16,7 @@ const emit = defineEmits<{
 const showPassword = ref(false);
 
 const securityModes = computed(() => 
-  props.modelValue.SecurityModeAvailable.split(',')  // Changed from SecurityModeSupport
+  props.modelValue.SecurityModeAvailable.split(',')
 );
 
 const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
@@ -29,61 +29,64 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
 
 <template>
   <div class="band-config">
-    <h2 class="band-title">{{ title }} {{ t('wireless.settings') }}</h2>
-    
-    <!-- Added Enable toggle -->
-    <div class="form-group">
-      <label class="switch-label">
-        <span>{{ t('common.enable') }}</span>
-        <label class="switch">
-          <input
-            type="checkbox"
-            :checked="modelValue.Enable === 1"
-            @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-          >
-          <span class="slider"></span>
-        </label>
-      </label>
+    <div class="band-header">
+      <div class="section-title-sp">{{ title }} {{ t('wireless.settings') }}</div>
     </div>
 
-    <div class="form-group">
-      <label>{{ t('wireless.ssid') }}</label>
-      <input
-        type="text"
-        :value="modelValue.SSID"
-        @input="updateConfig('SSID', ($event.target as HTMLInputElement).value)"
-      />
-    </div>
+    <div class="band-content">
+      <div class="form-group">
+        <div class="switch-label">
+          <span>{{ t('common.enable') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :checked="modelValue.Enable === 1"
+              @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+            >
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label>{{ t('wireless.authentication') }}</label>
-      <select
-        :value="modelValue.SecurityMode"
-        @change="updateConfig('SecurityMode', ($event.target as HTMLSelectElement).value)"
-      >
-        <option v-for="mode in securityModes" :key="mode" :value="mode">
-          {{ mode }}
-        </option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>{{ t('wireless.password') }}</label>
-      <div class="password-input">
+      <div class="form-group">
+        <label>{{ t('wireless.ssid') }}</label>
         <input
-          :type="showPassword ? 'text' : 'password'"
-          :value="modelValue.Password"
-          @input="updateConfig('Password', ($event.target as HTMLInputElement).value)"
+          type="text"
+          :value="modelValue.SSID"
+          @input="updateConfig('SSID', ($event.target as HTMLInputElement).value)"
         />
-        <button 
-          type="button" 
-          class="toggle-password"
-          @click="showPassword = !showPassword"
+      </div>
+
+      <div class="form-group">
+        <label>{{ t('wireless.authentication') }}</label>
+        <select
+          :value="modelValue.SecurityMode"
+          @change="updateConfig('SecurityMode', ($event.target as HTMLSelectElement).value)"
         >
-          <span class="material-icons">
-            {{ showPassword ? 'visibility_off' : 'visibility' }}
-          </span>
-        </button>
+          <option v-for="mode in securityModes" :key="mode" :value="mode">
+            {{ mode }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>{{ t('wireless.password') }}</label>
+        <div class="password-input">
+          <input
+            :type="showPassword ? 'text' : 'password'"
+            :value="modelValue.Password"
+            @input="updateConfig('Password', ($event.target as HTMLInputElement).value)"
+          />
+          <button 
+            type="button" 
+            class="toggle-password"
+            @click="showPassword = !showPassword"
+          >
+            <span class="material-icons">
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -91,22 +94,54 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
 
 <style scoped>
 .band-config {
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
+  background-color: white;
   border-radius: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.band-config:last-child {
+  margin-bottom: 0;
+}
+
+.band-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1.5rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.section-title-sp {
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.5rem 0rem;
+  background-color: white;
+}
+
+.band-content {
   padding: 1.5rem;
 }
 
-.band-title {
-  font-size: 1rem;
-  color: #333;
-  margin: 0 0 1.5rem 0;
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 input, select {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
 }
@@ -127,20 +162,19 @@ input, select {
   background: none;
   border: none;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   padding: 0.25rem;
 }
 
 .toggle-password:hover {
-  color: #333;
+  color: var(--text-primary);
 }
 
-/* Add styles for the switch */
 .switch-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  color: var(--text-primary);
 }
 
 .switch {
@@ -148,6 +182,7 @@ input, select {
   display: inline-block;
   width: 60px;
   height: 34px;
+  flex-shrink: 0;
 }
 
 .switch input {
@@ -181,10 +216,24 @@ input, select {
 }
 
 input:checked + .slider {
-  background-color: #0070BB;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+
+@media (max-width: 768px) {
+  .band-header {
+    padding: 1rem;
+  }
+
+  .band-content {
+    padding: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
 }
 </style>

@@ -13,6 +13,7 @@ const editingServer = ref<SshServer | null>(null);
 const loading = ref(true);
 
 const fetchServers = async () => {
+  loading.value = true;
   try {
     const response = await getSshServers();
     servers.value = response.SshServer.SshServers;
@@ -85,16 +86,22 @@ onMounted(fetchServers);
 
 <template>
   <div class="server-management">
-    <div class="header_btn">
-      <div class="ssh-title">{{ t('ssh.serverManagement') }}</div>
+    <div class="header-row">
+      <div class="section-title-sp">{{ t('ssh.serverManagement') }}</div>
       <button v-if="!isEditing" class="btn btn-primary" @click="handleAdd">
+        <span class="material-icons">add</span>
         {{ t('ssh.addServer') }}
       </button>
     </div>
 
-    <div v-if="!isEditing" class="server-list">
+    <div v-if="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <span>Loading...</span>
+    </div>
+
+    <div v-else-if="!isEditing" class="server-list">
       <!-- PC版表格 -->
-      <div class="table-wrapper">
+      <div class="table-container">
         <table>
           <thead>
             <tr>
@@ -112,19 +119,22 @@ onMounted(fetchServers);
               <td>{{ server.ID }}</td>
               <td>{{ server.Interface }}</td>
               <td>{{ server.Status }}</td>
-              <td>{{ server.AllowPasswordLogin ? '1' : '0' }}</td>
-              <td>{{ server.AllowRootLogin ? '1' : '0' }}</td>
-              <td>{{ server.AllowRootPasswordLogin ? '1' : '0' }}</td>
+              <td>{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
+              <td>{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
+              <td>{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="icon-btn" @click="handleEdit(server)" title="Edit">
+                  <button class="btn-action" @click="handleEdit(server)" title="Edit">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="icon-btn" @click="handleDelete(server.ID)" title="Delete">
+                  <button class="btn-action" @click="handleDelete(server.ID)" title="Delete">
                     <span class="material-icons">delete</span>
                   </button>
                 </div>
               </td>
+            </tr>
+            <tr v-if="servers.length === 0">
+              <td colspan="7" class="no-data">No servers configured</td>
             </tr>
           </tbody>
         </table>
@@ -132,7 +142,10 @@ onMounted(fetchServers);
 
       <!-- 手機版卡片 -->
       <div class="mobile-cards">
-        <div class="table-card" v-for="server in servers" :key="server.ID">
+        <div v-if="servers.length === 0" class="no-data-mobile">
+          No servers configured
+        </div>
+        <div class="table-card" v-else v-for="server in servers" :key="server.ID">
           <div class="card-row">
             <span class="card-label">{{ t('ssh.id') }}</span>
             <span class="card-value">{{ server.ID }}</span>
@@ -147,22 +160,22 @@ onMounted(fetchServers);
           </div>
           <div class="card-row">
             <span class="card-label">{{ t('ssh.loginWithPassword') }}</span>
-            <span class="card-value">{{ server.AllowPasswordLogin ? '1' : '0' }}</span>
+            <span class="card-value">{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-row">
             <span class="card-label">{{ t('ssh.rootLogin') }}</span>
-            <span class="card-value">{{ server.AllowRootLogin ? '1' : '0' }}</span>
+            <span class="card-value">{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-row">
             <span class="card-label">{{ t('ssh.rootLoginWithPassword') }}</span>
-            <span class="card-value">{{ server.AllowRootPasswordLogin ? '1' : '0' }}</span>
+            <span class="card-value">{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-actions">
-            <button class="btn btn-primary" @click="handleEdit(server)">
-              {{ t('common.edit') }}
+            <button class="btn-action" @click="handleEdit(server)" title="Edit">
+              <span class="material-icons">edit</span>
             </button>
-            <button class="btn btn-danger" @click="handleDelete(server.ID)">
-              {{ t('common.delete') }}
+            <button class="btn-action" @click="handleDelete(server.ID)" title="Delete">
+              <span class="material-icons">delete</span>
             </button>
           </div>
         </div>
@@ -188,147 +201,100 @@ onMounted(fetchServers);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.header_btn {
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.ssh-title {
+.section-title-sp {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
+  padding: 0.5rem 0;
 }
 
 .server-list {
   padding: 1.5rem;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.action-buttons {
+.loading-state {
   display: flex;
-  gap: 0.5rem;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  color: #666;
-}
-
-.icon-btn:hover {
-  color: #333;
-}
-
-/* 手機版卡片樣式 */
-.mobile-cards {
-  display: none;
+  align-items: center;
+  justify-content: center;
   gap: 1rem;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
 
-.table-card {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.card-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.card-row:last-child {
-  border-bottom: none;
-}
-
-.card-label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.card-value {
-  color: #333;
-  font-weight: 500;
-  word-break: break-all;
-}
-
-.card-actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.5rem;
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn .material-icons {
+  font-size: 1.25rem;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: none;
   border: none;
+  color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.9rem;
+  border-radius: 4px;
 }
 
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
+.btn-action:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
 
-/* 響應式設計 */
-@media (min-width: 768px) {
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-    white-space: nowrap;
-  }
-
-  th {
-    background-color: #f8f8f8;
-    font-weight: 500;
-    color: #333;
-  }
-
-  td {
-    color: #666;
-  }
-
-  .mobile-cards {
-    display: none;
-  }
+.no-data-mobile {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
 }
 
-@media (max-width: 767px) {
-  .header_btn {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+
+  .section-title-sp {
+    padding: 0;
   }
 
   .server-list {
     padding: 1rem;
   }
 
-  .table-wrapper {
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .loading-state {
+    padding: 1rem;
+  }
+
+  .table-container {
     display: none;
   }
 
@@ -336,8 +302,13 @@ onMounted(fetchServers);
     display: block;
   }
 
-  .btn {
-    width: 100%;
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
   }
 }
 </style>

@@ -54,45 +54,60 @@ const handlePinConnect = async () => {
 
 <template>
   <div class="wps-actions">
-    <!-- Push Button Section -->
-    <div class="action-section">
-      <h3>{{ t('wireless.wpsPushButton') }}</h3>
-      <p>{{ t('wireless.wpsPushButtonDesc') }}</p>
-      <button 
-        class="btn btn-primary"
-        @click="handlePushButton"
-        :disabled="loading"
-      >
-        {{ t('wireless.wpsPushButton') }}
-      </button>
-    </div>
-
-    <!-- PIN Code Connect Section -->
-    <div class="action-section">
-      <h3>{{ t('wireless.wpsPinConnect') }}</h3>
-      <p>{{ t('wireless.wpsPinConnectDesc') }}</p>
-      <div class="pin-input">
-        <input
-          type="text"
-          v-model="clientPin"
-          :placeholder="t('wireless.enterPin')"
-        />
+    <!-- WPS Push Button Section -->
+    <div class="wps-section">
+      <div class="section-title-sp">{{ t('wireless.wpsPushButton') }}</div>
+      <div class="action-section">
+        <div class="description-title">{{ t('wireless.pushButtonTitle') }}</div>
+        <p>{{ t('wireless.wpsPushButtonDesc') }}</p>
         <button 
           class="btn btn-primary"
-          @click="handlePinConnect"
-          :disabled="loading || !clientPin"
+          @click="handlePushButton"
+          :disabled="loading"
         >
-          {{ t('wireless.connect') }}
+          {{ t('wireless.pushButton') }}
         </button>
       </div>
     </div>
 
-    <!-- Generated PIN Section -->
-    <div class="action-section">
-      <h3>{{ t('wireless.generatePinCode') }}</h3>
-      <p>{{ t('wireless.devicePinDesc') }}</p>
-      <div class="pin-display">
-        {{ props.pinCode }}
+    <!-- WPS PIN Code Connect Section -->
+    <div class="wps-section">
+      <div class="section-title-sp">{{ t('wireless.wpsPinConnect') }}</div>
+      <div class="action-section">
+        <div class="description-title">{{ t('wireless.pinConnectTitle') }}</div>
+        <p>{{ t('wireless.wpsPinConnectDesc') }}</p>
+        <div class="pin-section">
+          <div class="pin-label">{{ t('wireless.pinCodeOfClient') }}</div>
+          <div class="pin-input">
+            <input
+              type="text"
+              v-model="clientPin"
+              :placeholder="t('wireless.enterPin')"
+            />
+            <button 
+              class="btn btn-primary"
+              @click="handlePinConnect"
+              :disabled="loading || !clientPin"
+            >
+              {{ t('wireless.connect') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate PIN Code Section -->
+    <div class="wps-section">
+      <div class="section-title-sp">{{ t('wireless.generatePinCode') }}</div>
+      <div class="action-section">
+        <div class="description-title">{{ t('wireless.devicePinTitle') }}</div>
+        <p>{{ t('wireless.devicePinDesc') }}</p>
+        <div class="pin-section">
+          <div class="pin-label">{{ t('wireless.pinCode') }}</div>
+          <div class="pin-display">
+            {{ props.pinCode }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -101,47 +116,79 @@ const handlePinConnect = async () => {
 <style scoped>
 .wps-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin-bottom: 2rem;
+}
+
+.wps-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title-sp {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 0.75rem 0rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .action-section {
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
+  background-color: white;
   border-radius: 4px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
   padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-h3 {
+.description-title {
+  padding: 0.75rem 0;
   font-size: 1rem;
-  color: #333;
-  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
 }
 
 p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+  flex: 1;
+}
+
+.pin-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pin-label {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
 }
 
 .pin-input {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 input {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
 }
 
 .pin-display {
   padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-family: monospace;
   font-size: 1.1rem;
@@ -149,24 +196,31 @@ input {
 }
 
 .btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
+  padding: 0.5rem 1rem;
   font-size: 0.9rem;
+  min-width: 80px;
 }
 
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
+@media (max-width: 1024px) {
+  .wps-actions {
+    grid-template-columns: 1fr;
+  }
 
-.btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+  .action-section {
+    padding: 1rem;
+  }
 
-.btn:hover:not(:disabled) {
-  opacity: 0.9;
+  .pin-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pin-input .btn {
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>

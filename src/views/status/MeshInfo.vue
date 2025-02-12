@@ -133,9 +133,9 @@ onUnmounted(() => {
         <!-- Network Information Section -->
         <div class="panel-section">
           <div class="header-row">
-            <div class="section-title">{{ t('mesh.networkInformation') }}</div>
+            <div class="section-title-sp">{{ t('mesh.networkInformation') }}</div>
             <button 
-              class="btn btn-map"
+              class="btn btn-primary"
               @click="showMap = !showMap"
             >
               <span class="material-icons">{{ showMap ? 'list' : 'map' }}</span>
@@ -145,69 +145,11 @@ onUnmounted(() => {
 
           <div class="card-content">
             <template v-if="!showMap">
-              <!-- Node List Section -->
-              <div class="list-section">
-                <div class="list-title">{{ t('mesh.nodeList') }}</div>
-                <div class="table-wrapper">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>{{ t('mesh.name') }}</th>
-                        <th>{{ t('mesh.mode') }}</th>
-                        <th>{{ t('mesh.ipAddress') }}</th>
-                        <th>{{ t('mesh.macAddress') }}</th>
-                        <th>{{ t('mesh.mediaType') }}</th>
-                        <th>{{ t('mesh.supportedBand') }}</th>
-                        <th>{{ t('mesh.upstream') }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="node in nodes" :key="node.MACAddress">
-                        <td>{{ node.Name }}</td>
-                        <td>{{ node.Mode }}</td>
-                        <td>{{ node.ipv4 }}</td>
-                        <td>{{ node.MACAddress }}</td>
-                        <td>{{ node.MediaType }}</td>
-                        <td>{{ node.SupportedBand || '-' }}</td>
-                        <td>{{ node.Upstream === '-' ? '-' : node.Upstream }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Client List Section -->
-              <div class="list-section">
-                <div class="list-title">{{ t('mesh.clientList') }}</div>
-                <div class="table-wrapper">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>{{ t('mesh.name') }}</th>
-                        <th>{{ t('mesh.ipAddress') }}</th>
-                        <th>{{ t('mesh.macAddress') }}</th>
-                        <th>{{ t('mesh.mediaType') }}</th>
-                        <th>{{ t('mesh.upstream') }}</th>
-                        <th>{{ t('mesh.action') }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="client in clients" :key="client.MACAddress">
-                        <td>{{ client.Name }}</td>
-                        <td>{{ client.ipv4 }}</td>
-                        <td>{{ client.MACAddress }}</td>
-                        <td>{{ client.MediaType }}</td>
-                        <td>{{ client.Upstream }}</td>
-                        <td>
-                          <button class="btn-action" @click="handleAction(client)">
-                            <span class="material-icons">settings</span>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <MeshNodeTable :nodes="nodes" />
+              <MeshClientTable 
+                :clients="clients"
+                @action="handleAction"
+              />
             </template>
             <template v-else>
               <MeshTopologyMap :nodes="meshData" />
@@ -215,7 +157,7 @@ onUnmounted(() => {
 
             <div class="button-group">
               <button 
-                class="btn btn-refresh" 
+                class="btn btn-primary" 
                 @click="fetchMeshData"
                 :disabled="loading"
               >
@@ -239,89 +181,11 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.btn-map {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #0070BB;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-map:hover {
-  background-color: #005a96;
-}
-
-.list-section {
-  margin-bottom: 2rem;
-}
-
-.list-section:last-child {
-  margin-bottom: 0;
-}
-
-.list-title {
-  padding: 0.75rem 0;
+.section-title-sp {
   font-size: 1rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
+  color: var(--text-primary);
+  padding: 0.5rem 0rem;
   background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  background-color: #f8f8f8;
-  font-weight: 500;
-  color: #333;
-}
-
-td {
-  color: #666;
-}
-
-.btn-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem;
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-}
-
-.btn-action:hover {
-  color: #333;
 }
 
 .button-group {
@@ -330,26 +194,10 @@ td {
   margin-top: 1.5rem;
 }
 
-.btn-refresh {
+.btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.5rem;
-  background-color: #0070BB;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-refresh:hover:not(:disabled) {
-  background-color: #005a96;
-}
-
-.btn-refresh:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 .loading-state {
@@ -358,7 +206,7 @@ td {
   justify-content: center;
   gap: 1rem;
   padding: 2rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .error-state {
@@ -374,25 +222,7 @@ td {
     padding: 1rem;
   }
 
-  .btn-map {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .list-title {
-    padding: 0.75rem 1rem;
-  }
-
-  .table-wrapper {
-    border: none;
-    background: none;
-  }
-
-  .button-group {
-    padding: 0 1rem;
-  }
-
-  .btn-refresh {
+  .btn {
     width: 100%;
     justify-content: center;
   }

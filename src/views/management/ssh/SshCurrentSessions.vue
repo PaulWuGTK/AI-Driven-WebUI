@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -25,63 +26,77 @@ onMounted(fetchSessions);
 
 <template>
   <div class="sessions-management">
-    <div class="header_btn">
-      <div class="ssh-title">{{ t('ssh.currentSessions') }}</div>
-      <button class="btn btn-refresh" @click="fetchSessions" :disabled="loading">
+    <div class="header-row">
+      <div class="section-title-sp">{{ t('ssh.currentSessions') }}</div>
+      <button class="btn btn-primary" @click="fetchSessions" :disabled="loading">
+        <span class="material-icons">refresh</span>
         {{ t('common.refresh') }}
       </button>
     </div>
 
     <div class="sessions-list">
-      <!-- PC版表格 -->
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>{{ t('ssh.user') }}</th>
-              <th>{{ t('ssh.clientAddress') }}</th>
-              <th>{{ t('ssh.clientPort') }}</th>
-              <th>{{ t('ssh.serverId') }}</th>
-              <th>{{ t('ssh.serverPort') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(session, index) in sessions" :key="index">
-              <td>{{ session.User }}</td>
-              <td>{{ session.ClientIP }}</td>
-              <td>{{ session.ClientPort }}</td>
-              <td>{{ session.ServerID }}</td>
-              <td>{{ session.ServerPort }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-if="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <span>Loading...</span>
       </div>
 
-      <!-- 手機版卡片 -->
-      <div class="mobile-cards">
-        <div class="table-card" v-for="(session, index) in sessions" :key="index">
-          <div class="card-row">
-            <span class="card-label">{{ t('ssh.user') }}</span>
-            <span class="card-value">{{ session.User }}</span>
+      <template v-else>
+        <!-- PC版表格 -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ t('ssh.user') }}</th>
+                <th>{{ t('ssh.clientAddress') }}</th>
+                <th>{{ t('ssh.clientPort') }}</th>
+                <th>{{ t('ssh.serverId') }}</th>
+                <th>{{ t('ssh.serverPort') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(session, index) in sessions" :key="index">
+                <td>{{ session.User }}</td>
+                <td>{{ session.ClientIP }}</td>
+                <td>{{ session.ClientPort }}</td>
+                <td>{{ session.ServerID }}</td>
+                <td>{{ session.ServerPort }}</td>
+              </tr>
+              <tr v-if="sessions.length === 0">
+                <td colspan="5" class="no-data">No active sessions</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 手機版卡片 -->
+        <div class="mobile-cards">
+          <div v-if="sessions.length === 0" class="no-data-mobile">
+            No active sessions
           </div>
-          <div class="card-row">
-            <span class="card-label">{{ t('ssh.clientAddress') }}</span>
-            <span class="card-value">{{ session.ClientIP }}</span>
-          </div>
-          <div class="card-row">
-            <span class="card-label">{{ t('ssh.clientPort') }}</span>
-            <span class="card-value">{{ session.ClientPort }}</span>
-          </div>
-          <div class="card-row">
-            <span class="card-label">{{ t('ssh.serverId') }}</span>
-            <span class="card-value">{{ session.ServerID }}</span>
-          </div>
-          <div class="card-row">
-            <span class="card-label">{{ t('ssh.serverPort') }}</span>
-            <span class="card-value">{{ session.ServerPort }}</span>
+          <div class="table-card" v-else v-for="(session, index) in sessions" :key="index">
+            <div class="card-row">
+              <span class="card-label">{{ t('ssh.user') }}</span>
+              <span class="card-value">{{ session.User }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('ssh.clientAddress') }}</span>
+              <span class="card-value">{{ session.ClientIP }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('ssh.clientPort') }}</span>
+              <span class="card-value">{{ session.ClientPort }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('ssh.serverId') }}</span>
+              <span class="card-value">{{ session.ServerID }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('ssh.serverPort') }}</span>
+              <span class="card-value">{{ session.ServerPort }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -93,134 +108,86 @@ onMounted(fetchSessions);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.header_btn {
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.ssh-title {
+.section-title-sp {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
+  padding: 0.5rem 0;
 }
 
 .sessions-list {
   padding: 1.5rem;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.btn-refresh {
-  background-color: #0070BB;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-refresh:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.btn-refresh:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-/* 手機版卡片樣式 */
-.mobile-cards {
-  display: none;
-  gap: 1rem;
-}
-
-.table-card {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.card-row {
+.loading-state {
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
 
-.card-row:last-child {
-  border-bottom: none;
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.card-label {
-  color: #666;
-  font-size: 0.9rem;
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.card-value {
-  color: #333;
-  font-weight: 500;
-  word-break: break-all;
+.btn .material-icons {
+  font-size: 1.25rem;
 }
 
-/* 響應式設計 */
-@media (min-width: 768px) {
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-    white-space: nowrap;
-  }
-
-  th {
-    background-color: #f8f8f8;
-    font-weight: 500;
-    color: #333;
-  }
-
-  td {
-    color: #666;
-  }
-
-  .mobile-cards {
-    display: none;
-  }
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
 
-@media (max-width: 767px) {
-  .header_btn {
+.no-data-mobile {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .header-row {
     flex-direction: column;
     gap: 1rem;
-    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .section-title-sp {
+    padding: 0;
   }
 
   .sessions-list {
     padding: 1rem;
   }
 
-  .table-wrapper {
-    display: none;
-  }
-
-  .mobile-cards {
-    display: block;
-  }
-
-  .btn-refresh {
+  .btn {
     width: 100%;
+    justify-content: center;
+  }
+
+  .loading-state {
+    padding: 1rem;
   }
 }
 </style>
+```

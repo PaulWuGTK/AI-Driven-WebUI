@@ -185,7 +185,14 @@ export default {
     encryption: '加密',
     wpsStatus: 'WPS状态',
     easyMesh: 'EasyMesh',
-    commonSsidConfig: '通用SSID配置'
+    commonSsidConfig: '通用SSID配置',
+    pushButtonTitle: '通过按钮连接新设备',
+    pinConnectTitle: '通过 PIN 码连接新设备',
+    devicePinTitle: '将此设备添加到网络的 PIN 码',
+    pushButton: 'WPS 按钮',
+    pinCode: 'PIN 码',
+    pinCodeOfClient: '客户端设备的 PIN 码',
+    noPublicKeys: '尚未添加公钥'
   },
   ddns: {
     title: 'DDNS设置',
