@@ -16,7 +16,8 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Avancé',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: 'Mise à jour du firmware'
   },
   header: {
     account: 'Compte',
@@ -267,6 +268,24 @@ export default {
     serverId: 'ID serveur',
     serverPort: 'Port serveur',
     algorithm : 'Algorithme'
+  },
+  firmware: {
+    title: 'Mise à jour du firmware',
+    firmwareBank: 'Banque de firmware',
+    status: 'État',
+    firmwareVersion: 'Version du firmware',
+    action: 'Action',
+    activate: 'Activer',
+    uploadFirmware: 'Télécharger le firmware',
+    chooseFile: 'Choisir un fichier',
+    noFileSelected: 'Aucun fichier sélectionné',
+    dragAndDrop: 'Glissez et déposez les fichiers ici',
+    autoActivate: 'Activation automatique',
+    updateFirmware: 'Mettre à jour le firmware',
+    selectFromComputer: 'Ou sélectionnez un fichier depuis votre ordinateur',
+    processing: 'Traitement en cours...',
+    upgrading: 'Mise à jour du firmware en cours...',
+    powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.'
   },
   login: {
     title: 'Connexion',

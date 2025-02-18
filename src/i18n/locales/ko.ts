@@ -16,7 +16,8 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '고급 설정',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: '펌웨어 업그레이드'
   },
   header: {
     account: '계정',
@@ -266,6 +267,24 @@ export default {
     serverId: '서버 ID',
     serverPort: '서버 포트',
     algorithm : '알고리즘'
+  },
+  firmware: {
+    title: '펌웨어 업그레이드',
+    firmwareBank: '펌웨어 뱅크',
+    status: '상태',
+    firmwareVersion: '펌웨어 버전',
+    action: '작업',
+    activate: '활성화',
+    uploadFirmware: '펌웨어 업로드',
+    chooseFile: '파일 선택',
+    noFileSelected: '선택된 파일 없음',
+    dragAndDrop: '파일을 여기에 끌어다 놓으세요',
+    autoActivate: '자동 활성화',
+    updateFirmware: '펌웨어 업데이트',
+    selectFromComputer: '또는 컴퓨터에서 파일 선택',
+    processing: '처리 중...',
+    upgrading: '펌웨어 업그레이드 중...',
+    powerOffWarning: '전원을 끄지 마세요.'
   },
   login: {
     title: '로그인',

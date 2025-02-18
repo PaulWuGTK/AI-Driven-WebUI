@@ -283,7 +283,10 @@ const translations: Translations = {
     dragAndDrop: 'Drag and Drop files here',
     autoActivate: 'Auto Activate',
     updateFirmware: 'Update Firmware',
-    selectFromComputer: '(or) Select file from your computer'
+    selectFromComputer: '(or) Select file from your computer',
+    processing: 'Processing...',
+    upgrading: 'Firmware Upgrading...',
+    powerOffWarning: 'Please do not power off the device.'
   },
   login: {
     title: 'Login',

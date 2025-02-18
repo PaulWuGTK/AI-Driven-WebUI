@@ -16,7 +16,8 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '詳細設定',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: 'ファームウェアアップグレード'
   },
   header: {
     account: 'アカウント',
@@ -267,6 +268,24 @@ export default {
     serverId: 'サーバーID',
     serverPort: 'サーバーポート',
     algorithm : 'アルゴリズム'
+  },
+  firmware: {
+    title: 'ファームウェアアップグレード',
+    firmwareBank: 'ファームウェアバンク',
+    status: '状態',
+    firmwareVersion: 'ファームウェアバージョン',
+    action: 'アクション',
+    activate: '有効化',
+    uploadFirmware: 'ファームウェアのアップロード',
+    chooseFile: 'ファイルを選択',
+    noFileSelected: 'ファイルが選択されていません',
+    dragAndDrop: 'ファイルをここにドラッグ＆ドロップ',
+    autoActivate: '自動有効化',
+    updateFirmware: 'ファームウェアの更新',
+    selectFromComputer: 'またはコンピュータからファイルを選択',
+    processing: '処理中...',
+    upgrading: 'ファームウェアをアップグレード中...',
+    powerOffWarning: '電源を切らないでください。'
   },
   login: {
     title: 'ログイン',

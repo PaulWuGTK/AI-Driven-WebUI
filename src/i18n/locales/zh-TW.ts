@@ -16,7 +16,8 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '進階設定',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: '韌體升級'
   },
   header: {
     account: '帳號',
@@ -267,6 +268,24 @@ export default {
     serverId: '伺服器ID',
     serverPort: '伺服器連接埠',
     algorithm : '演算法'
+  },
+  firmware: {
+    title: '韌體升級',
+    firmwareBank: '韌體庫',
+    status: '狀態',
+    firmwareVersion: '韌體版本',
+    action: '動作',
+    activate: '啟用',
+    uploadFirmware: '上傳韌體',
+    chooseFile: '選擇檔案',
+    noFileSelected: '未選擇檔案',
+    dragAndDrop: '將檔案拖放至此',
+    autoActivate: '自動啟用',
+    updateFirmware: '更新韌體',
+    selectFromComputer: '或從電腦選擇檔案',
+    processing: '處理中...',
+    upgrading: '韌體升級中...',
+    powerOffWarning: '請勿關閉電源。'
   },
   login: {
     title: '登入',

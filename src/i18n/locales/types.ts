@@ -242,6 +242,9 @@ export interface Translations {
     autoActivate: string;
     updateFirmware: string;
     selectFromComputer: string;
+    processing: string;
+    upgrading: string;
+    powerOffWarning: string;
   };
   login: {
     title: string;

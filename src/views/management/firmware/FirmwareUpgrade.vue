@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../types/firmware';
 import { getFirmwareStatus, uploadFirmware, upgradeFirmware } from '../../../services/api/firmware';
 
 const { t } = useI18n();
+const router = useRouter();
 const selectedFile = ref<File | null>(null);
-const autoActivate = ref(true);
+const autoActivate = ref(false); // Set to false and disabled
 const loading = ref(false);
 const error = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 const firmwareBanks = ref<FirmwareBank[]>([]);
 const uploadedFileName = ref<string | null>(null);
+const isUpgrading = ref(false);
+const countdown = ref(120);
+const countdownTimer = ref<number | null>(null);
 
 const fetchFirmwareStatus = async () => {
   try {
@@ -28,7 +33,7 @@ const handleFileSelect = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files.length > 0) {
     selectedFile.value = input.files[0];
-    uploadedFileName.value = null; // Reset uploaded file name when new file is selected
+    uploadedFileName.value = null;
   }
 };
 
@@ -37,7 +42,7 @@ const handleDrop = (event: DragEvent) => {
   isDragging.value = false;
   if (event.dataTransfer?.files.length) {
     selectedFile.value = event.dataTransfer.files[0];
-    uploadedFileName.value = null; // Reset uploaded file name when new file is selected
+    uploadedFileName.value = null;
   }
 };
 
@@ -49,6 +54,34 @@ const handleDragOver = (event: DragEvent) => {
 const handleDragLeave = (event: DragEvent) => {
   event.preventDefault();
   isDragging.value = false;
+};
+
+const startUpgradeCountdown = () => {
+  isUpgrading.value = true;
+  countdown.value = 120;
+  
+  countdownTimer.value = window.setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      if (countdownTimer.value) {
+        clearInterval(countdownTimer.value);
+      }
+      router.push('/login');
+    }
+  }, 1000);
+};
+
+const clearUpgradeState = () => {
+  isUpgrading.value = false;
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+    countdownTimer.value = null;
+  }
+};
+
+const handleActivate = async (bank: FirmwareBank) => {
+  // This function will be implemented later
+  console.log('Activate bank:', bank);
 };
 
 const handleUpgrade = async () => {
@@ -70,11 +103,15 @@ const handleUpgrade = async () => {
     selectedFile.value = null;
     uploadedFileName.value = null;
     
+    // Start countdown and show upgrade overlay
+    startUpgradeCountdown();
+    
     // Refresh firmware status
     await fetchFirmwareStatus();
   } catch (err) {
     console.error('Error processing firmware:', err);
     error.value = err instanceof Error ? err.message : 'Failed to process firmware';
+    clearUpgradeState();
   } finally {
     loading.value = false;
   }
@@ -101,6 +138,7 @@ onMounted(fetchFirmwareStatus);
                   <th>{{ t('firmware.firmwareBank') }}</th>
                   <th>{{ t('firmware.status') }}</th>
                   <th>{{ t('firmware.firmwareVersion') }}</th>
+                  <th>{{ t('firmware.action') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,6 +154,17 @@ onMounted(fetchFirmwareStatus);
                     </div>
                   </td>
                   <td>{{ bank.Version || 'N/A' }}</td>
+                  <td>
+                    <button 
+                      v-if="bank.Status !== 'Active'"
+                      class="btn btn-primary btn-activate"
+                      @click="handleActivate(bank)"
+                      disabled
+                    >
+                      {{ t('firmware.activate') }}
+                    </button>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -143,6 +192,15 @@ onMounted(fetchFirmwareStatus);
               <div class="card-row">
                 <span class="card-label">{{ t('firmware.firmwareVersion') }}</span>
                 <span class="card-value">{{ bank.Version || 'N/A' }}</span>
+              </div>
+              <div class="card-actions" v-if="bank.Status !== 'Active'">
+                <button 
+                  class="btn btn-primary btn-activate"
+                  @click="handleActivate(bank)"
+                  disabled
+                >
+                  {{ t('firmware.activate') }}
+                </button>
               </div>
             </div>
           </div>
@@ -199,8 +257,9 @@ onMounted(fetchFirmwareStatus);
                   <input
                     type="checkbox"
                     v-model="autoActivate"
+                    disabled
                   >
-                  <span class="slider"></span>
+                  <span class="slider disabled"></span>
                 </label>
               </label>
             </div>
@@ -216,11 +275,21 @@ onMounted(fetchFirmwareStatus);
                 :disabled="!selectedFile || loading"
               >
                 <span class="material-icons" v-if="loading">sync</span>
-                <span>{{ loading ? 'Processing...' : t('firmware.updateFirmware') }}</span>
+                <span>{{ loading ? t('firmware.processing') : t('firmware.updateFirmware') }}</span>
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Upgrade Overlay -->
+    <div v-if="isUpgrading" class="upgrade-overlay">
+      <div class="upgrade-content">
+        <div class="spinner"></div>
+        <h2>{{ t('firmware.upgrading') }}</h2>
+        <p>{{ t('firmware.powerOffWarning') }}</p>
+        <div class="countdown">{{ countdown }}s</div>
       </div>
     </div>
   </div>
@@ -361,6 +430,11 @@ onMounted(fetchFirmwareStatus);
   border-radius: 34px;
 }
 
+.slider.disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
 .slider:before {
   position: absolute;
   content: "";
@@ -392,10 +466,6 @@ input:checked + .slider:before {
   gap: 0.5rem;
 }
 
-.button-group .material-icons {
-  animation: spin 1s linear infinite;
-}
-
 .error-message {
   color: #dc3545;
   margin: 1rem 0;
@@ -403,6 +473,51 @@ input:checked + .slider:before {
   background-color: rgba(220, 53, 69, 0.1);
   border-radius: 4px;
   text-align: center;
+}
+
+.btn-activate {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Upgrade Overlay Styles */
+.upgrade-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.upgrade-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+.countdown {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 1rem;
 }
 
 @keyframes spin {

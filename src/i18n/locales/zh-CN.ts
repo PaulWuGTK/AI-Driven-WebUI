@@ -16,7 +16,8 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '高级设置',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: '固件升级'
   },
   header: {
     account: '帐户',
@@ -267,6 +268,24 @@ export default {
     serverId: '服务器ID',
     serverPort: '服务器端口',
     algorithm : '算法'
+  },
+  firmware: {
+    title: '固件升级',
+    firmwareBank: '固件库',
+    status: '状态',
+    firmwareVersion: '固件版本',
+    action: '操作',
+    activate: '启用',
+    uploadFirmware: '上传固件',
+    chooseFile: '选择文件',
+    noFileSelected: '未选择文件',
+    dragAndDrop: '将文件拖放至此',
+    autoActivate: '自动启用',
+    updateFirmware: '更新固件',
+    selectFromComputer: '或从计算机选择文件',
+    processing: '处理中...',
+    upgrading: '固件升级中...',
+    powerOffWarning: '请勿关闭电源。'
   },
   login: {
     title: '登录',
