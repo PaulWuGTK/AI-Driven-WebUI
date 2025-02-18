@@ -18,7 +18,8 @@ const translations: Translations = {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Advanced',
-    ddns: 'DDNS'
+    ddns: 'DDNS',
+    firmware: 'Upgrade Firmware'
   },
   header: {
     account: 'Account',
@@ -269,6 +270,21 @@ const translations: Translations = {
     serverPort: 'Server Port',
     algorithm : 'Algorithm'
   },
+  firmware: {
+    title: 'Upgrade Firmware',
+    firmwareBank: 'Firmware Bank',
+    status: 'Status',
+    firmwareVersion: 'Firmware Version',
+    action: 'Action',
+    activate: 'Activate',
+    uploadFirmware: 'Upload Firmware',
+    chooseFile: 'Choose File',
+    noFileSelected: 'No file selected',
+    dragAndDrop: 'Drag and Drop files here',
+    autoActivate: 'Auto Activate',
+    updateFirmware: 'Update Firmware',
+    selectFromComputer: '(or) Select file from your computer'
+  },
   login: {
     title: 'Login',
     username: 'Username',
@@ -285,8 +301,8 @@ const translations: Translations = {
     apply: 'Apply',
     edit: 'Edit',
     delete: 'Delete',
-    enable: 'Enable',
-  },
+    enable: 'Enable'
+  }
 };
 
 export default translations;

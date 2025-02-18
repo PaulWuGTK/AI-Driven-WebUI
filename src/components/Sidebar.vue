@@ -64,7 +64,8 @@ const menuItems = [
     translationKey: 'menu.management',
     subItems: [
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
-      { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' }
+      { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' },
+      { name: 'Upgrade Firmware', path: '/upgrade', translationKey: 'menu.firmware' }
     ]
   }
 ];
@@ -126,10 +127,10 @@ watch(() => route.path, (newPath) => {
 <template>
   <div class="mobile-top-header">
     <button class="mobile-menu-toggle" @click="toggleMobileMenu">
-        <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+      <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
     </button>
-        <span class="mobile-logo">Gemtek</span>
-      </div>
+    <span class="mobile-logo">Gemtek</span>
+  </div>
   
   <aside class="sidebar" :class="{ 'mobile-open': isMobileMenuOpen }">
     <div class="logo desktop-only">
@@ -146,9 +147,9 @@ watch(() => route.path, (newPath) => {
           class="menu-header"
           @click="handleMenuClick(item.name, item.path)"
         >
-        <span class="icon">
-          <img :src="item.icon" alt="icon" />
-        </span>
+          <span class="icon">
+            <img :src="item.icon" alt="icon" />
+          </span>
           {{ t(item.translationKey) }}
           <span 
             v-if="item.subItems" 
@@ -230,51 +231,12 @@ watch(() => route.path, (newPath) => {
   align-items: center;
   padding: 0 1.5rem;
   background-color: #006BC4;
-  /*border-bottom: 1px solid rgba(255, 255, 255, 0.1);*/
 }
 
 .logo-text {
   color: #ffffff;
   font-size: 1.25rem;
   font-weight: bold;
-}
-@media (max-width: 768px) {
-  .mobile-top-header {
-    display: flex;
-  }
-
-  .desktop-only {
-    display: none;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    bottom: 0;
-    z-index: 1001;
-    transform: translateX(-100%);
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
-
-  .menu {
-    height: calc(100vh - var(--header-height));
-    padding-top: 0;
-    overflow-y: auto;
-  }
-
-  .menu-header {
-    padding: 1rem 1.5rem;
-  }
-
-  .submenu-item {
-    padding: 1rem 2.5rem;
-  }
 }
 
 .menu-header {
@@ -322,7 +284,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .submenu.expanded {
-  max-height: 500px; /* Adjust based on your needs */
+  max-height: 500px;
 }
 
 .submenu-item {
@@ -339,8 +301,47 @@ watch(() => route.path, (newPath) => {
 }
 
 .submenu-item.active {
-  background-color: #409FD5; /* Highlight color for active submenu item */
+  background-color: #409FD5;
   color: #ffffff;
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .mobile-top-header {
+    display: flex;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    z-index: 1001;
+    transform: translateX(-100%);
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .menu {
+    height: calc(100vh - var(--header-height));
+    padding-top: 0;
+    overflow-y: auto;
+  }
+
+  .menu-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .submenu-item {
+    padding: 1rem 2.5rem;
+  }
 }
 </style>

@@ -18,6 +18,7 @@ export interface Translations {
     ssh: string;
     advanced: string;
     ddns: string;
+    firmware: string;
   };
   header: {
     account: string;
@@ -226,6 +227,21 @@ export interface Translations {
     serverId: string;
     serverPort: string;
     algorithm : string;
+  };
+  firmware: {
+    title: string;
+    firmwareBank: string;
+    status: string;
+    firmwareVersion: string;
+    action: string;
+    activate: string;
+    uploadFirmware: string;
+    chooseFile: string;
+    noFileSelected: string;
+    dragAndDrop: string;
+    autoActivate: string;
+    updateFirmware: string;
+    selectFromComputer: string;
   };
   login: {
     title: string;

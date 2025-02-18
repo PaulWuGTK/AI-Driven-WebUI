@@ -87,6 +87,11 @@ const router = createRouter({
       path: '/management/ssh',
       component: () => import('../views/management/ssh/SshManagement.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/upgrade',
+      component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
+      beforeEnter: requireAuth
     }
   ]
 });
