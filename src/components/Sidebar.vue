@@ -65,6 +65,8 @@ const menuItems = [
     subItems: [
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
       { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' },
+      { name: 'Diagnostics', path: '/management/diagnostics', translationKey: 'menu.diagnostics' },
+      { name: 'Device Management', path: '/management/device', translationKey: 'menu.device' },
       { name: 'Upgrade Firmware', path: '/upgrade', translationKey: 'menu.firmware' }
     ]
   }

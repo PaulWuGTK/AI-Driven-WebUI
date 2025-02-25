@@ -18,6 +18,8 @@ export interface Translations {
     ssh: string;
     advanced: string;
     ddns: string;
+    device: string;
+    diagnostics: string;
     firmware: string;
   };
   header: {
@@ -228,6 +230,59 @@ export interface Translations {
     serverPort: string;
     algorithm : string;
   };
+  device: {
+    title: string;
+    tr069Config: string;
+    tr369Config: string;
+    enableCWMP: string;
+    acsUrl: string;
+    connectionRequestUrl: string;
+    acsCredentials: string;
+    connectionRequestCredentials: string;
+    username: string;
+    password: string;
+    enablePeriodicInform: string;
+    periodicInformInterval: string;
+    sendInform: string;
+  };
+  diagnostics: {
+    title: string;
+    ping: string;
+    traceRoute: string;
+    dnsLookup: string;
+    interface: string;
+    protocol: string;
+    targetHost: string;
+    repeatTimes: string;
+    start: string;
+    results: string;
+    hostAddress: string;
+    packetsInfo: string;
+    sent: string;
+    received: string;
+    lost: string;
+    minRoundTrip: string;
+    maxRoundTrip: string;
+    avgRoundTrip: string;
+    hop: string;
+    host: string;
+    address: string;
+    rtt: string;
+    dnsServer: string;
+    status: string;
+    answerType: string;
+    hostname: string;
+    ipAddresses: string;
+    responseTime: string;
+    dnsServerIp: string;
+    processing: string;
+    errorState: string;
+    errorTimeout: string;
+    errorInternal: string;
+    errorNetwork: string;
+    errorInvalidHost: string;
+    errorResolveFailed: string;
+  };
   firmware: {
     title: string;
     firmwareBank: string;
@@ -244,7 +299,9 @@ export interface Translations {
     selectFromComputer: string;
     processing: string;
     upgrading: string;
+    activating: string;
     powerOffWarning: string;
+    rebootWarning: string;
   };
   login: {
     title: string;

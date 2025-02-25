@@ -54,9 +54,9 @@ export async function uploadFirmware(file: File): Promise<string> {
     method: 'POST',
     headers: {
       'Authorization': `bearer ${sessionId}`,
-      'Accept': 'application/json,text/javascript', // ✅ 和 Ember.js 一致
+      'Accept': 'application/json,text/javascript',
     },
-    body: file // ✅ 不要設置 Content-Type，讓瀏覽器自動處理
+    body: file
   });
 
   if (response.status !== 202) {
@@ -66,6 +66,47 @@ export async function uploadFirmware(file: File): Promise<string> {
   return file.name;
 }
 
+export async function activateFirmware(bankNumber: number): Promise<void> {
+  if (isDevelopment) {
+    console.log('Mock firmware activation for bank:', bankNumber);
+    return;
+  }
+
+  const auth = AuthService.getInstance();
+  const sessionId = auth.getSessionId();
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+
+  const payload = {
+    command: `DeviceInfo.FirmwareImage.${bankNumber}.Activate()`,
+    commandKey: "",
+    sendresp: true,
+    inputArgs: {
+      Start: "1",
+      End: "1",
+      Mode: "Immediately"
+    }
+  };
+
+  const response = await fetch('/commands', {
+    method: 'POST',
+    headers: {
+      'Authorization': `bearer ${sessionId}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error('Firmware activation failed');
+  }
+
+  const result = await response.json();
+  if (result[0]?.failure?.errcode) {
+    throw new Error(`Firmware activation failed: ${result[0].failure.errcode}`);
+  }
+}
 
 export async function upgradeFirmware(firmwareFile: string, autoActivate: boolean): Promise<void> {
   if (isDevelopment) {

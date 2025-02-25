@@ -19,6 +19,8 @@ const translations: Translations = {
     ssh: 'SSH',
     advanced: 'Advanced',
     ddns: 'DDNS',
+    device: 'Device Management',
+    diagnostics : 'Diagnostics',
     firmware: 'Upgrade Firmware'
   },
   header: {
@@ -123,7 +125,8 @@ const translations: Translations = {
     wirelessMode: 'Wireless Mode',
     scan: 'SCAN',
     scanning: 'Scanning...'
-  },mesh: {
+  },
+  mesh: {
     title: 'Mesh Information',
     networkInformation: 'Mesh Network Information',
     nodeList: 'Mesh Node List',
@@ -270,6 +273,59 @@ const translations: Translations = {
     serverPort: 'Server Port',
     algorithm : 'Algorithm'
   },
+  device: {
+    title: 'Device Management',
+    tr069Config: 'TR-069 Configuration',
+    tr369Config: 'TR-369 Configuration',
+    enableCWMP: 'Enable CWMP',
+    acsUrl: 'ACS URL',
+    connectionRequestUrl: 'Connection Request URL',
+    acsCredentials: 'ACS Credentials',
+    connectionRequestCredentials: 'Connection Request Credentials',
+    username: 'Username',
+    password: 'Password',
+    enablePeriodicInform: 'Enable Periodic Inform',
+    periodicInformInterval: 'Periodic Inform Interval',
+    sendInform: 'Send Inform To ACS Server'
+  },
+  diagnostics: {
+    title: 'Diagnostics Tools',
+    ping: 'Ping',
+    traceRoute: 'Trace Route',
+    dnsLookup: 'DNS Lookup',
+    interface: 'Interface',
+    protocol: 'Protocol',
+    targetHost: 'Target IP Address/Domain',
+    repeatTimes: 'Repeat Times',
+    start: 'Start',
+    results: 'Results',
+    hostAddress: 'Host IP Address',
+    packetsInfo: 'Packets Information',
+    sent: 'Sent',
+    received: 'Received',
+    lost: 'Lost',
+    minRoundTrip: 'Minimum Round-trip Times',
+    maxRoundTrip: 'Maximum Round-trip Times',
+    avgRoundTrip: 'Average Round-trip Times',
+    hop: 'Hop',
+    host: 'Host',
+    address: 'Address',
+    rtt: 'RTT (ms)',
+    dnsServer: 'DNS Server Name/DNS IP Address',
+    status: 'Status',
+    answerType: 'Answer Type',
+    hostname: 'Hostname',
+    ipAddresses: 'IP Addresses',
+    responseTime: 'Response Time',
+    dnsServerIp: 'DNS Server IP',
+    processing: 'Processing...',
+    errorState: 'Error: {state}',
+    errorTimeout: 'Request timed out',
+    errorInternal: 'Internal error occurred',
+    errorNetwork: 'Network error occurred',
+    errorInvalidHost: 'Invalid host specified',
+    errorResolveFailed: 'Failed to resolve hostname'
+  },
   firmware: {
     title: 'Upgrade Firmware',
     firmwareBank: 'Firmware Bank',
@@ -286,7 +342,9 @@ const translations: Translations = {
     selectFromComputer: '(or) Select file from your computer',
     processing: 'Processing...',
     upgrading: 'Firmware Upgrading...',
-    powerOffWarning: 'Please do not power off the device.'
+    activating: 'Activating Firmware...',
+    powerOffWarning: 'Please do not power off the device.',
+    rebootWarning: 'Device will reboot after activation.'
   },
   login: {
     title: 'Login',

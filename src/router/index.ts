@@ -89,6 +89,16 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/management/diagnostics',
+      component: () => import('../views/management/diagnostics/DiagnosticsTools.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/device',
+      component: () => import('../views/management/device/DeviceManagement.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/upgrade',
       component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
       beforeEnter: requireAuth

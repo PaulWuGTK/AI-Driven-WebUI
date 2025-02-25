@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import type { DashboardResponse } from '../types/dashboard';
 import { getDashboardData } from '../services/api/dashboard';
 import SystemInfo from '../components/dashboard/SystemInfo.vue';
@@ -11,6 +12,7 @@ import WifiStatus from '../components/dashboard/WifiStatus.vue';
 import EthernetStatus from '../components/dashboard/EthernetStatus.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const dashboardData = ref<DashboardResponse | null>(null);
 const refreshInterval = ref<number | null>(null);
 const loading = ref(true);
@@ -24,6 +26,9 @@ const fetchData = async () => {
   } catch (err) {
     console.error('Error fetching dashboard data:', err);
     error.value = 'Failed to fetch dashboard data';
+    if (err instanceof Error && (err.message.includes('401')||err.message.includes('403'))) {
+      router.push('/login');
+    }
   } finally {
     loading.value = false;
   }

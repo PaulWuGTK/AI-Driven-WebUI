@@ -3,12 +3,12 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../types/firmware';
-import { getFirmwareStatus, uploadFirmware, upgradeFirmware } from '../../../services/api/firmware';
+import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } from '../../../services/api/firmware';
 
 const { t } = useI18n();
 const router = useRouter();
 const selectedFile = ref<File | null>(null);
-const autoActivate = ref(false); // Set to false and disabled
+const autoActivate = ref(false);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -18,6 +18,7 @@ const uploadedFileName = ref<string | null>(null);
 const isUpgrading = ref(false);
 const countdown = ref(120);
 const countdownTimer = ref<number | null>(null);
+const isActivating = ref(false);
 
 const fetchFirmwareStatus = async () => {
   try {
@@ -73,6 +74,7 @@ const startUpgradeCountdown = () => {
 
 const clearUpgradeState = () => {
   isUpgrading.value = false;
+  isActivating.value = false;
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
     countdownTimer.value = null;
@@ -80,8 +82,32 @@ const clearUpgradeState = () => {
 };
 
 const handleActivate = async (bank: FirmwareBank) => {
-  // This function will be implemented later
-  console.log('Activate bank:', bank);
+  if (bank.Status === 'Active') return;
+
+  loading.value = true;
+  error.value = null;
+  isActivating.value = true;
+  
+  try {
+    const bankNumber = Object.entries(firmwareBanks.value).find(
+      ([_, b]) => b === bank
+    )?.[0];
+
+    if (!bankNumber) {
+      throw new Error('Invalid firmware bank');
+    }
+
+    await activateFirmware(parseInt(bankNumber));
+    
+    startUpgradeCountdown();
+    await fetchFirmwareStatus();
+  } catch (err) {
+    console.error('Error activating firmware:', err);
+    error.value = err instanceof Error ? err.message : 'Failed to activate firmware';
+    clearUpgradeState();
+  } finally {
+    loading.value = false;
+  }
 };
 
 const handleUpgrade = async () => {
@@ -89,6 +115,7 @@ const handleUpgrade = async () => {
   
   loading.value = true;
   error.value = null;
+  isActivating.value = false;
   
   try {
     // First upload the firmware file
@@ -283,12 +310,13 @@ onMounted(fetchFirmwareStatus);
       </div>
     </div>
 
-    <!-- Upgrade Overlay -->
+    <!-- Upgrade/Activation Overlay -->
     <div v-if="isUpgrading" class="upgrade-overlay">
       <div class="upgrade-content">
         <div class="spinner"></div>
-        <h2>{{ t('firmware.upgrading') }}</h2>
+        <h2>{{ isActivating ? t('firmware.activating') : t('firmware.upgrading') }}</h2>
         <p>{{ t('firmware.powerOffWarning') }}</p>
+        <p v-if="isActivating">{{ t('firmware.rebootWarning') }}</p>
         <div class="countdown">{{ countdown }}s</div>
       </div>
     </div>
