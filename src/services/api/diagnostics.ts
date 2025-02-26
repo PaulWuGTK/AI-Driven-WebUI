@@ -14,7 +14,7 @@ export const getDiagnostics = async (): Promise<DiagnosticsResponse> => {
     return diagnosticsMockData;
   }
 
-  const response = await fetch('/API/info?list=SetNSubscribe');
+  const response = await fetch('/API/info?list=ManagementDiagnostic');
   if (!response.ok) {
     throw new Error('Failed to fetch diagnostics data');
   }
