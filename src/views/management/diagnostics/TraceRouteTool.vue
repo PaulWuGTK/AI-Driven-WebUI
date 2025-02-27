@@ -11,15 +11,15 @@ const protocolVersion = ref('IPv4');
 const targetHost = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
-const results = ref<DiagnosticsResponse['TraceRoute'] | null>(null);
+const results = ref<DiagnosticsResponse['ManagementDiagnostic']['TraceRoute'] | null>(null);
 
 const fetchInterfaces = async () => {
   loading.value = true;
   error.value = null;
   try {
     const data = await getDiagnostics();
-    interfaces.value = data.Interfaces;
-    results.value = data.TraceRoute;
+    interfaces.value = data.ManagementDiagnostic.Interfaces;
+    results.value = data.ManagementDiagnostic.TraceRoute;
     if (interfaces.value.length > 0) {
       selectedInterface.value = interfaces.value[0].Interface;
     }
@@ -55,11 +55,16 @@ const handleTraceRoute = async () => {
     };
 
     await startTraceRoute(request);
-    await fetchInterfaces(); // Refresh to get results
+    
+    // Add a 1-second delay before fetching results
+    setTimeout(async () => {
+      await fetchInterfaces(); // Refresh to get results
+      loading.value = false;
+    }, 1000);
+    
   } catch (err) {
     console.error('Error starting trace route:', err);
     error.value = 'Failed to start trace route';
-  } finally {
     loading.value = false;
   }
 };

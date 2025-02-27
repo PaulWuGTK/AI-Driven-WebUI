@@ -67,10 +67,12 @@ export interface DNSLookupConfig {
 }
 
 export interface DiagnosticsResponse {
-  IPPing: IPPingConfig;
-  TraceRoute: TraceRouteConfig;
-  DNSLookup: DNSLookupConfig;
-  Interfaces: Interface[];
+  ManagementDiagnostic: {
+    IPPing: IPPingConfig;
+    TraceRoute: TraceRouteConfig;
+    DNSLookup: DNSLookupConfig;
+    Interfaces: Interface[];
+  }
 }
 
 // Request types

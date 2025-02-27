@@ -11,15 +11,15 @@ const dnsServer = ref('8.8.8.8');
 const targetHost = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
-const results = ref<DiagnosticsResponse['DNSLookup'] | null>(null);
+const results = ref<DiagnosticsResponse['ManagementDiagnostic']['DNSLookup'] | null>(null);
 
 const fetchInterfaces = async () => {
   loading.value = true;
   error.value = null;
   try {
     const data = await getDiagnostics();
-    interfaces.value = data.Interfaces;
-    results.value = data.DNSLookup;
+    interfaces.value = data.ManagementDiagnostic.Interfaces;
+    results.value = data.ManagementDiagnostic.DNSLookup;
     if (interfaces.value.length > 0) {
       selectedInterface.value = interfaces.value[0].Interface;
     }
@@ -53,11 +53,16 @@ const handleDNSLookup = async () => {
     };
 
     await startDNSLookup(request);
-    await fetchInterfaces(); // Refresh to get results
+    
+    // Add a 1-second delay before fetching results
+    setTimeout(async () => {
+      await fetchInterfaces(); // Refresh to get results
+      loading.value = false;
+    }, 1000);
+    
   } catch (err) {
     console.error('Error starting DNS lookup:', err);
     error.value = 'Failed to start DNS lookup';
-  } finally {
     loading.value = false;
   }
 };

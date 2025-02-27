@@ -12,15 +12,15 @@ const targetHost = ref('');
 const repeatTimes = ref(3);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const results = ref<DiagnosticsResponse['IPPing'] | null>(null);
+const results = ref<DiagnosticsResponse['ManagementDiagnostic']['IPPing'] | null>(null);
 
 const fetchInterfaces = async () => {
   loading.value = true;
   error.value = null;
   try {
     const data = await getDiagnostics();
-    interfaces.value = data.Interfaces;
-    results.value = data.IPPing;
+    interfaces.value = data.ManagementDiagnostic.Interfaces;
+    results.value = data.ManagementDiagnostic.IPPing;
     if (interfaces.value.length > 0) {
       selectedInterface.value = interfaces.value[0].Interface;  // 使用完整路徑
     }
@@ -55,11 +55,16 @@ const handlePing = async () => {
     };
 
     await startPing(request);
-    await fetchInterfaces(); // Refresh to get results
+    
+    // Add a 1-second delay before fetching results
+    setTimeout(async () => {
+      await fetchInterfaces(); // Refresh to get results
+      loading.value = false;
+    }, 1000);
+    
   } catch (err) {
     console.error('Error starting ping:', err);
     error.value = 'Failed to start ping';
-  } finally {
     loading.value = false;
   }
 };
