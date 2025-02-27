@@ -48,7 +48,7 @@ const handlePing = async () => {
           ProtocolVersion: protocolVersion.value,
           NumberOfRepetitions: repeatTimes.value,
           Host: targetHost.value,
-          Timeout: 10,
+          Timeout: 10000,
           DataBlockSize: 16
         }
       }
