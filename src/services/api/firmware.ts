@@ -126,7 +126,7 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     sendresp: true,
     inputArgs: {
       URL: `file:///tmp/upload/${firmwareFile}`,
-      AutoActivate: autoActivate
+      AutoActivate: true
     }
   };
 
