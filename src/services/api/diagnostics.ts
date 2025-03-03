@@ -30,7 +30,7 @@ export const startPing = async (params: PingRequest): Promise<{ SetNSubscribe: s
   if (!sessionId) {
     throw new Error('No active session');
   }
-  const response = await fetch('/API/info?list=SetNSubscribe', {
+  const response = await fetch('/API/info?list=ManagementDiagnostic', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

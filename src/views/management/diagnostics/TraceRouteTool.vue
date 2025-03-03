@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DiagnosticsResponse, Interface, TraceRouteRequest } from '../../../types/diagnostics';
 import { getDiagnostics, startTraceRoute } from '../../../services/api/diagnostics';
@@ -12,6 +12,7 @@ const targetHost = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
 const results = ref<DiagnosticsResponse['ManagementDiagnostic']['TraceRoute'] | null>(null);
+const pollingInterval = ref<number | null>(null);
 
 const fetchInterfaces = async () => {
   loading.value = true;
@@ -31,14 +32,44 @@ const fetchInterfaces = async () => {
   }
 };
 
+const pollTraceRouteStatus = async () => {
+  try {
+    const data = await getDiagnostics();
+    results.value = data.ManagementDiagnostic.TraceRoute;
+    
+    // If state is no longer "Not_Complete", stop polling
+    if (results.value.DiagnosticsState !== 'Not_Complete') {
+      if (pollingInterval.value) {
+        clearInterval(pollingInterval.value);
+        pollingInterval.value = null;
+      }
+      loading.value = false;
+    }
+  } catch (err) {
+    console.error('Error polling trace route status:', err);
+    // Stop polling on error
+    if (pollingInterval.value) {
+      clearInterval(pollingInterval.value);
+      pollingInterval.value = null;
+    }
+    loading.value = false;
+  }
+};
+
 const handleTraceRoute = async () => {
   if (!selectedInterface.value || !targetHost.value) return;
+
+  // Clear any existing polling interval
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+    pollingInterval.value = null;
+  }
 
   loading.value = true;
   error.value = null;
   try {
     const request: TraceRouteRequest = {
-      SetNSubscribe: {
+      ManagementDiagnostic: {
         DM: "Device.IP.Diagnostics.TraceRoute.",
         filter: "notification in ['dm:object-changed'] and (parameters.DiagnosticsState.from == 'Not_Complete')",
         Parameters: {
@@ -56,10 +87,16 @@ const handleTraceRoute = async () => {
 
     await startTraceRoute(request);
     
-    // Add a 1-second delay before fetching results
+    // Add a 1-second delay before starting to poll
     setTimeout(async () => {
-      await fetchInterfaces(); // Refresh to get results
+      await pollTraceRouteStatus();
+      
+      // Start polling every 3 seconds if state is "Not_Complete"
+      if (results.value?.DiagnosticsState === 'Not_Complete') {
+        pollingInterval.value = window.setInterval(pollTraceRouteStatus, 3000);
+      } else {
       loading.value = false;
+      }
     }, 1000);
     
   } catch (err) {
@@ -68,6 +105,14 @@ const handleTraceRoute = async () => {
     loading.value = false;
   }
 };
+
+// Clean up interval when component is unmounted
+onUnmounted(() => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value);
+    pollingInterval.value = null;
+  }
+});
 
 onMounted(fetchInterfaces);
 </script>
@@ -116,6 +161,12 @@ onMounted(fetchInterfaces);
         {{ t('diagnostics.errorState', { state: results.DiagnosticsState }) }}
       </div>
 
+      <!-- Show processing state -->
+      <div v-else-if="results.DiagnosticsState === 'Not_Complete'" class="processing-state">
+        <div class="loading-spinner"></div>
+        <span>{{ t('diagnostics.processing') }}</span>
+      </div>
+
       <!-- Show results only if Complete -->
       <div v-else-if="results.DiagnosticsState === 'Complete'" class="trace-results">
         <div class="trace-header">
@@ -131,12 +182,6 @@ onMounted(fetchInterfaces);
           <div class="address">{{ hop.HostAddress }}</div>
           <div class="rtt">{{ hop.RTTimes }}</div>
         </div>
-      </div>
-
-      <!-- Show processing state -->
-      <div v-else class="processing-state">
-        <div class="loading-spinner"></div>
-        <span>{{ t('diagnostics.processing') }}</span>
       </div>
     </div>
   </div>

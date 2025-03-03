@@ -93,7 +93,7 @@ export interface PingRequest {
 }
 
 export interface TraceRouteRequest {
-  SetNSubscribe: {
+  ManagementDiagnostic: {
     DM: string;
     filter: string;
     Parameters: {
