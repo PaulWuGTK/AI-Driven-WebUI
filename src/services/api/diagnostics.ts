@@ -30,7 +30,7 @@ export const startPing = async (params: PingRequest): Promise<{ SetNSubscribe: s
   if (!sessionId) {
     throw new Error('No active session');
   }
-  const response = await fetch('/API/info?list=ManagementDiagnostic', {
+  const response = await fetch('/API/info?list=SetNSubscribe', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -44,16 +44,16 @@ export const startPing = async (params: PingRequest): Promise<{ SetNSubscribe: s
   return response.json();
 };
 
-export const startTraceRoute = async (params: TraceRouteRequest): Promise<{ SetNSubscribe: string }> => {
+export const startTraceRoute = async (params: TraceRouteRequest): Promise<{ ManagementDiagnostic: string }> => {
   if (isDevelopment) {
-    return { SetNSubscribe: 'OK' };
+    return { ManagementDiagnostic: 'OK' };
   }
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
   if (!sessionId) {
     throw new Error('No active session');
   }
-  const response = await fetch('/API/info?list=SetNSubscribe', {
+  const response = await fetch('/API/info?list=ManagementDiagnostic', {
     method: 'POST',
     headers: {
       'Authorization': `bearer ${sessionId}`,

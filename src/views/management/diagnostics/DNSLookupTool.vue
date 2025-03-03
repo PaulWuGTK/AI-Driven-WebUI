@@ -21,7 +21,11 @@ const fetchInterfaces = async () => {
     interfaces.value = data.ManagementDiagnostic.Interfaces;
     results.value = data.ManagementDiagnostic.DNSLookup;
     if (interfaces.value.length > 0) {
-      selectedInterface.value = interfaces.value[0].Interface;
+      if (results.value && results.value.Interface) {
+        selectedInterface.value = results.value.Interface; // 選擇 TraceRoute 目前的 Interface
+      } else {
+        selectedInterface.value = interfaces.value[0].Interface; // 預設選擇第一個 Interface
+      }
     }
   } catch (err) {
     console.error('Error fetching interfaces:', err);
