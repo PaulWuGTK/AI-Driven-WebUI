@@ -123,32 +123,39 @@ const generateMockData = (): DashboardResponse => {
       },
       Ethernet: [
         {
-          Duplex: "Full",
-          Port: "Port0",
-          Speed: "1000",
-          Role: "wan",
-          Status: "Up"
-        },
-        {
-          Duplex: "Half",
           Port: "Port1",
-          Speed: "100",
-          Role: "lan",
-          Status: Math.random() > 0.9 ? "Down" : "Up"
-        },
-        {
-          Duplex: "Full",
-          Port: "Port2",
+          Role: "wan",
+          Status: Math.random() > 0.5 ? "Up" : "Down",
           Speed: "1000",
-          Role: "lan",
-          Status: "Up"
+          Duplex: "Full"
         },
         {
-          Duplex: "Full",
+          Port: "Port0",
+          Role: "lan",
+          Status: "Up",
+          Speed: "1000",
+          Duplex: "Full"
+        },
+        {
           Port: "Port3",
-          Speed: "1000",
           Role: "lan",
-          Status: Math.random() > 0.95 ? "Down" : "Up"
+          Status: "Up",
+          Speed: "1000",
+          Duplex: "Full"
+        },
+        {
+          Port: "Port2",
+          Role: "lan",
+          Status: "Up",
+          Speed: "1000",
+          Duplex: "Full"
+        },
+        {
+          Port: "Port4",
+          Role: "lan",
+          Status: Math.random() > 0.5 ? "Up" : "Down",
+          Speed: "1000",
+          Duplex: "Full"
         }
       ],
       WiFi: {

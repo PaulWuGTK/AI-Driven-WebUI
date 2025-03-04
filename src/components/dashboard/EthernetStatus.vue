@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps,computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardEthernetPort } from '../../types/dashboard';
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
   ethernetInfo?: DashboardEthernetPort[];
 }>();
+
+const sortedEthernet = computed(() => {
+  return props.ethernetInfo
+    ? [...props.ethernetInfo].sort((a, b) => a.Port.localeCompare(b.Port)) // 依照 Port 名稱排序
+    : [];
+});
 </script>
 
 <template>
-  <div class="ethernet-status" v-if="ethernetInfo">
+  <div class="ethernet-status" v-if="sortedEthernet.length">
     <h2 class="card-title">{{ t('dashboard.ethernet') }}</h2>
     <div class="ports-grid">
       <div 
-        v-for="port in ethernetInfo" 
+        v-for="port in sortedEthernet" 
         :key="port.Port"
         class="port-item"
       >
@@ -28,7 +34,7 @@ defineProps<{
         </div>
       </div>
     </div>
-  </div>
+</div>
 </template>
 
 <style scoped>
