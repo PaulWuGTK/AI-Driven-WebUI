@@ -99,6 +99,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/management/reset',
+      component: () => import('../views/management/reset/DeviceReset.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/upgrade',
       component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
       beforeEnter: requireAuth

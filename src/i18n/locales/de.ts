@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: 'Geräteverwaltung',
     diagnostics: 'Diagnose',
-    firmware: 'Firmware-Upgrade'
+    firmware: 'Firmware-Upgrade',
+    reset: 'Gerät zurücksetzen'
   },
   header: {
     account: 'Konto',
@@ -343,6 +344,19 @@ export default {
     activating: 'Firmware wird aktiviert...',
     powerOffWarning: 'Bitte schalten Sie das Gerät nicht aus.',
     rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.'
+  },
+  reset: {
+    title: 'Gerät zurücksetzen',
+    restartTitle: 'Gerät neu starten',
+    restartDescription: 'Starten Sie das Gerät neu. Dies trennt vorübergehend alle Benutzer und Verbindungen. Das Gerät ist während des Neustarts nicht verfügbar.',
+    restartButton: 'Neu starten',
+    restartConfirm: 'Sind Sie sicher, dass Sie das Gerät neu starten möchten?',
+    factoryTitle: 'Werkseinstellungen',
+    factoryDescription: 'Setzen Sie das Gerät auf die Werkseinstellungen zurück. Dadurch werden alle Konfigurationseinstellungen gelöscht und das Gerät in seinen ursprünglichen Zustand zurückversetzt.',
+    factoryButton: 'Werkseinstellungen',
+    factoryConfirm: 'Sind Sie sicher, dass Sie das Gerät auf Werkseinstellungen zurücksetzen möchten? Alle Konfigurationen gehen verloren.',
+    countdown: 'Das Gerät wird in {seconds} Sekunden neu gestartet...',
+    success: 'Befehl erfolgreich gesendet'
   },
   login: {
     title: 'Login',

@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: 'デバイス管理',
     diagnostics: '診断ツール',
-    firmware: 'ファームウェアアップグレード'
+    firmware: 'ファームウェアアップグレード',
+    reset: 'デバイスリセット'
   },
   header: {
     account: 'アカウント',
@@ -343,6 +344,19 @@ export default {
     activating: 'ファームウェアを有効化中...',
     powerOffWarning: '電源を切らないでください。',
     rebootWarning: '有効化後、デバイスが再起動します。'
+  },
+  reset: {
+    title: 'デバイスリセット',
+    restartTitle: 'デバイス再起動',
+    restartDescription: 'デバイスを再起動します。これにより、すべてのユーザーと接続が一時的に切断されます。再起動プロセス中はデバイスを使用できません。',
+    restartButton: '再起動',
+    restartConfirm: 'デバイスを再起動してもよろしいですか？',
+    factoryTitle: '工場出荷時設定',
+    factoryDescription: 'デバイスを工場出荷時の設定にリセットします。これにより、すべての設定が消去され、デバイスが元の状態に復元されます。',
+    factoryButton: '工場出荷時設定',
+    factoryConfirm: 'デバイスを工場出荷時の設定にリセットしてもよろしいですか？すべての設定が失われます。',
+    countdown: 'デバイスは{seconds}秒後に再起動します...',
+    success: 'コマンドが正常に送信されました'
   },
   login: {
     title: 'ログイン',

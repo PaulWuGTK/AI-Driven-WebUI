@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: '设备管理',
     diagnostics: '诊断工具',
-    firmware: '固件升级'
+    firmware: '固件升级',
+    reset: '设备重置'
   },
   header: {
     account: '帐户',
@@ -343,6 +344,19 @@ export default {
     activating: '固件激活中...',
     powerOffWarning: '请勿关闭电源。',
     rebootWarning: '激活后设备将重新启动。'
+  },
+  reset: {
+    title: '设备重置',
+    restartTitle: '重启设备',
+    restartDescription: '重启设备。这将暂时断开所有用户和连接。在重启过程中，设备将不可用。',
+    restartButton: '重启',
+    restartConfirm: '您确定要重启设备吗？',
+    factoryTitle: '恢复出厂设置',
+    factoryDescription: '将设备重置为出厂默认设置。这将清除所有配置设置并将设备恢复到原始状态。',
+    factoryButton: '恢复出厂设置',
+    factoryConfirm: '您确定要将设备重置为出厂设置吗？所有配置都将丢失。',
+    countdown: '设备将在 {seconds} 秒后重启...',
+    success: '命令发送成功'
   },
   login: {
     title: '登录',

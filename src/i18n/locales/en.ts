@@ -21,7 +21,8 @@ const translations: Translations = {
     ddns: 'DDNS',
     device: 'Device Management',
     diagnostics : 'Diagnostics',
-    firmware: 'Upgrade Firmware'
+    firmware: 'Upgrade Firmware',
+    reset: 'Device Reset'
   },
   header: {
     account: 'Account',
@@ -100,7 +101,7 @@ const translations: Translations = {
     enable: 'Enable',
     disable: 'Disable'
   },
-    statistics: {
+  statistics: {
     title: 'Statistics',
     ethernet: 'Statistics - Ethernet',
     wlan: 'Statistics - WLAN',
@@ -271,7 +272,7 @@ const translations: Translations = {
     clientPort: 'Client Port',
     serverId: 'Server ID',
     serverPort: 'Server Port',
-    algorithm : 'Algorithm'
+    algorithm: 'Algorithm'
   },
   device: {
     title: 'Device Management',
@@ -345,6 +346,19 @@ const translations: Translations = {
     activating: 'Activating Firmware...',
     powerOffWarning: 'Please do not power off the device.',
     rebootWarning: 'Device will reboot after activation.'
+  },
+  reset: {
+    title: 'Device Reset',
+    restartTitle: 'Restart Device',
+    restartDescription: 'Restart the device. This will temporarily disconnect all users and connections. The device will be unavailable during the restart process.',
+    restartButton: 'Restart',
+    restartConfirm: 'Are you sure you want to restart the device?',
+    factoryTitle: 'Factory Reset',
+    factoryDescription: 'Reset the device to factory default settings. This will erase all configuration settings and restore the device to its original state.',
+    factoryButton: 'Factory Reset',
+    factoryConfirm: 'Are you sure you want to reset the device to factory settings? All configuration will be lost.',
+    countdown: 'Device will restart in {seconds} seconds...',
+    success: 'Command sent successfully'
   },
   login: {
     title: 'Login',

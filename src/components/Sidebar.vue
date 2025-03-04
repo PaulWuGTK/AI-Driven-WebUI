@@ -67,6 +67,7 @@ const menuItems = [
       { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' },
       { name: 'Diagnostics', path: '/management/diagnostics', translationKey: 'menu.diagnostics' },
       { name: 'Device Management', path: '/management/device', translationKey: 'menu.device' },
+      { name: 'Device Reset', path: '/management/reset', translationKey: 'menu.reset' },
       { name: 'Upgrade Firmware', path: '/upgrade', translationKey: 'menu.firmware' }
     ]
   }

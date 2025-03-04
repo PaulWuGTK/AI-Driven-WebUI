@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: '장치 관리',
     diagnostics: '진단 도구',
-    firmware: '펌웨어 업그레이드'
+    firmware: '펌웨어 업그레이드',
+    reset: '장치 초기화'
   },
   header: {
     account: '계정',
@@ -342,6 +343,19 @@ export default {
     activating: '펌웨어 활성화 중...',
     powerOffWarning: '전원을 끄지 마세요.',
     rebootWarning: '활성화 후 장치가 재부팅됩니다.'
+  },
+  reset: {
+    title: '장치 초기화',
+    restartTitle: '장치 재시작',
+    restartDescription: '장치를 재시작합니다. 이로 인해 모든 사용자와 연결이 일시적으로 끊어집니다. 재시작 과정 중에는 장치를 사용할 수 없습니다.',
+    restartButton: '재시작',
+    restartConfirm: '장치를 재시작하시겠습니까?',
+    factoryTitle: '공장 초기화',
+    factoryDescription: '장치를 공장 기본 설정으로 초기화합니다. 이로 인해 모든 구성 설정이 지워지고 장치가 원래 상태로 복원됩니다.',
+    factoryButton: '공장 초기화',
+    factoryConfirm: '장치를 공장 설정으로 초기화하시겠습니까? 모든 구성이 손실됩니다.',
+    countdown: '장치가 {seconds}초 후에 재시작됩니다...',
+    success: '명령이 성공적으로 전송되었습니다'
   },
   login: {
     title: '로그인',

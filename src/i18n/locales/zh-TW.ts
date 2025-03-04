@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: '裝置管理',
     diagnostics: '診斷工具',
-    firmware: '韌體升級'
+    firmware: '韌體升級',
+    reset: '裝置重置'
   },
   header: {
     account: '帳號',
@@ -343,6 +344,19 @@ export default {
     activating: '韌體啟用中...',
     powerOffWarning: '請勿關閉電源。',
     rebootWarning: '啟用後裝置將重新啟動。'
+  },
+  reset: {
+    title: '裝置重置',
+    restartTitle: '重新啟動裝置',
+    restartDescription: '重新啟動裝置。這將暫時中斷所有使用者和連線。在重新啟動過程中，裝置將無法使用。',
+    restartButton: '重新啟動',
+    restartConfirm: '您確定要重新啟動裝置嗎？',
+    factoryTitle: '恢復出廠設定',
+    factoryDescription: '將裝置重置為出廠預設設定。這將清除所有設定並將裝置恢復到原始狀態。',
+    factoryButton: '恢復出廠設定',
+    factoryConfirm: '您確定要將裝置重置為出廠設定嗎？所有設定都將遺失。',
+    countdown: '裝置將在 {seconds} 秒後重新啟動...',
+    success: '命令已成功傳送'
   },
   login: {
     title: '登入',

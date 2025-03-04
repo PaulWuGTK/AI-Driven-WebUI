@@ -19,7 +19,8 @@ export default {
     ddns: 'DDNS',
     device: 'Gestion des appareils',
     diagnostics: 'Outils de diagnostic',
-    firmware: 'Mise à jour du firmware'
+    firmware: 'Mise à jour du firmware',
+    reset: 'Réinitialisation de l\'appareil'
   },
   header: {
     account: 'Compte',
@@ -343,6 +344,19 @@ export default {
     activating: 'Activation du firmware en cours...',
     powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.',
     rebootWarning: 'L\'appareil redémarrera après l\'activation.'
+  },
+  reset: {
+    title: 'Réinitialisation de l\'appareil',
+    restartTitle: 'Redémarrer l\'appareil',
+    restartDescription: 'Redémarrez l\'appareil. Cela déconnectera temporairement tous les utilisateurs et connexions. L\'appareil ne sera pas disponible pendant le processus de redémarrage.',
+    restartButton: 'Redémarrer',
+    restartConfirm: 'Êtes-vous sûr de vouloir redémarrer l\'appareil ?',
+    factoryTitle: 'Réinitialisation d\'usine',
+    factoryDescription: 'Réinitialisez l\'appareil aux paramètres d\'usine par défaut. Cela effacera tous les paramètres de configuration et restaurera l\'appareil à son état d\'origine.',
+    factoryButton: 'Réinitialisation d\'usine',
+    factoryConfirm: 'Êtes-vous sûr de vouloir réinitialiser l\'appareil aux paramètres d\'usine ? Toute la configuration sera perdue.',
+    countdown: 'L\'appareil redémarrera dans {seconds} secondes...',
+    success: 'Commande envoyée avec succès'
   },
   login: {
     title: 'Connexion',

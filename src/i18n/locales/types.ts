@@ -21,6 +21,7 @@ export interface Translations {
     device: string;
     diagnostics: string;
     firmware: string;
+    reset: string;
   };
   header: {
     account: string;
@@ -105,6 +106,29 @@ export interface Translations {
     wirelessMode: string;
     scan: string;
     scanning: string;
+  };
+  mesh: {
+    title: string;
+    networkInformation: string;
+    nodeList: string;
+    clientList: string;
+    name: string;
+    mode: string;
+    ipAddress: string;
+    macAddress: string;
+    mediaType: string;
+    supportedBand: string;
+    upstream: string;
+    action: string;
+    map: string;
+    list: string;
+    back: string;
+    steeringControl: string;
+    selectedNode: string;
+    destination: string;
+    selectDestination: string;
+    band: string;
+    selectBand: string;
   };
   lcm: {
     title: string;
@@ -302,6 +326,19 @@ export interface Translations {
     activating: string;
     powerOffWarning: string;
     rebootWarning: string;
+  };
+  reset: {
+    title: string;
+    restartTitle: string;
+    restartDescription: string;
+    restartButton: string;
+    restartConfirm: string;
+    factoryTitle: string;
+    factoryDescription: string;
+    factoryButton: string;
+    factoryConfirm: string;
+    countdown: string;
+    success: string;
   };
   login: {
     title: string;
