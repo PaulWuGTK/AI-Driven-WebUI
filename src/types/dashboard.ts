@@ -37,6 +37,7 @@ export interface DashboardCPU {
 
 export interface DashboardSystem {
   SoftwareVersion: string;
+  HardwareVersion: string;
   SerialNumber: string;
   ModelName: string;
 }

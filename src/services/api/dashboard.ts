@@ -181,7 +181,8 @@ const generateMockData = (): DashboardResponse => {
         CPUUsage: Math.floor(previousValues.cpu.usage)
       },
       System: {
-        SoftwareVersion: "1.0.1",
+        SoftwareVersion: "1.0.2",
+        HardwareVersion: "V03",
         SerialNumber: "SNAA0BA885FACD",
         ModelName: "TB-372-PRPL"
       }

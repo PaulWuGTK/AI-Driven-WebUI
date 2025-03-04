@@ -15,6 +15,14 @@ defineProps<{
     <h2 class="card-title">{{ t('dashboard.system') }}</h2>
     <div class="info-grid">
       <div class="info-item">
+        <span class="label">{{ t('dashboard.softwareVersion') }}</span>
+        <span class="value">{{ systemInfo.SoftwareVersion }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">{{ t('dashboard.hardwareVersion') }}</span>
+        <span class="value">{{ systemInfo.HardwareVersion }}</span>
+      </div>
+      <div class="info-item">
         <span class="label">{{ t('dashboard.model') }}</span>
         <span class="value">{{ systemInfo.ModelName }}</span>
       </div>

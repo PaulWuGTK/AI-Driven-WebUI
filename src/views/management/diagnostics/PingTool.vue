@@ -141,15 +141,15 @@ onMounted(fetchInterfaces);
         </div>
         <div class="result-item">
           <span class="label">{{ t('diagnostics.minRoundTrip') }}</span>
-          <span class="value">{{ results.MinimumResponseTimeDetailed }} ms</span>
+          <span class="value">{{ results.MinimumResponseTimeDetailed / 1000 }} ms</span>
         </div>
         <div class="result-item">
           <span class="label">{{ t('diagnostics.maxRoundTrip') }}</span>
-          <span class="value">{{ results.MaximumResponseTimeDetailed }} ms</span>
+          <span class="value">{{ results.MaximumResponseTimeDetailed / 1000 }} ms</span>
         </div>
         <div class="result-item">
           <span class="label">{{ t('diagnostics.avgRoundTrip') }}</span>
-          <span class="value">{{ results.AverageResponseTimeDetailed }} ms</span>
+          <span class="value">{{ results.AverageResponseTimeDetailed / 1000 }} ms</span>
         </div>
       </div>
 

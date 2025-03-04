@@ -28,6 +28,8 @@ export default {
   },
   dashboard: {
     system: 'Système',
+    softwareVersion: 'Version du logiciel',
+    hardwareVersion: 'Version matérielle',
     model: 'Modèle',
     serialNumber: 'Numéro de série',
     cpu: 'CPU',

@@ -8,14 +8,14 @@ export interface Interface {
 
 // Ping types
 export interface IPPingConfig {
-  AverageResponseTimeDetailed: string;
+  AverageResponseTimeDetailed: number;
   DataBlockSize: string;
   DiagnosticsState: string;
   FailureCount: string;
   Host: string;
   Interface: string;
-  MaximumResponseTimeDetailed: string;
-  MinimumResponseTimeDetailed: string;
+  MaximumResponseTimeDetailed: number;
+  MinimumResponseTimeDetailed: number;
   NumberOfRepetitions: string;
   ProtocolVersion: string;
   SuccessCount: string;

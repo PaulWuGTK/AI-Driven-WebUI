@@ -3,14 +3,14 @@ import type { DiagnosticsResponse } from '../../types/diagnostics';
 export const diagnosticsMockData: DiagnosticsResponse = {
   ManagementDiagnostic: {
     IPPing: {
-      AverageResponseTimeDetailed: "20",
+      AverageResponseTimeDetailed: 2000,
       DataBlockSize: "64",
       DiagnosticsState: "Complete",
       FailureCount: "0",
       Host: "8.8.8.8",
       Interface: "eth0",
-      MaximumResponseTimeDetailed: "30",
-      MinimumResponseTimeDetailed: "10",
+      MaximumResponseTimeDetailed: 3000,
+      MinimumResponseTimeDetailed: 1000,
       NumberOfRepetitions: "5",
       ProtocolVersion: "IPv4",
       SuccessCount: "5",

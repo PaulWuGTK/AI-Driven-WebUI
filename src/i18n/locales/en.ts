@@ -30,6 +30,8 @@ const translations: Translations = {
   },
   dashboard: {
     system: 'System',
+    softwareVersion: 'SoftwareVersion',
+    hardwareVersion: 'HardwareVersion',
     model: 'Model',
     serialNumber: 'Serial Number',
     cpu: 'CPU',

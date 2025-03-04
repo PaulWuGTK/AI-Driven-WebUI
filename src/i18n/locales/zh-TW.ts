@@ -28,6 +28,8 @@ export default {
   },
   dashboard: {
     system: '系統',
+    softwareVersion: '軟體版本',
+    hardwareVersion: '硬體版本',
     model: '型號',
     serialNumber: '序號',
     cpu: 'CPU',
