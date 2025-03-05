@@ -53,7 +53,7 @@ const handleFactoryReset = async () => {
 
 const startCountdown = () => {
   showCountdown.value = true;
-  countdown.value = 60;
+  countdown.value = 90;
   
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);

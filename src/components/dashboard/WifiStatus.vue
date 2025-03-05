@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardWiFi } from '../../types/dashboard';
 import LineChart from '../LineChart.vue';
@@ -48,7 +48,7 @@ watch(() => props.wifiInfo, (newInfo) => {
 
   const timeDiff = Math.max((currentTime - previousValues.value.timestamp) / 1000, 0.001);
 
-    const diffs = {
+  const diffs = {
     '2_4GHz': {
       received: newInfo['2_4GHz'].BytesReceived - previousValues.value['2_4GHz'].bytesReceived,
       sent: newInfo['2_4GHz'].BytesSent - previousValues.value['2_4GHz'].bytesSent
@@ -63,7 +63,7 @@ watch(() => props.wifiInfo, (newInfo) => {
     }
   };
 
-  // 更新速率，只在 diff > 0 時加入新數據
+  // Update rates, only add new data when diff > 0
   const wifiBands = ['2_4GHz', '5GHz', '6GHz'] as const;
 
   wifiBands.forEach((band) => {
@@ -72,7 +72,7 @@ watch(() => props.wifiInfo, (newInfo) => {
 
     if (band === '2_4GHz') {
       band24Rates.value.push(receivedRate);
-      band24SentRates.value.push(sentRate); // ✅ 獨立存 sent
+      band24SentRates.value.push(sentRate);
     }
     if (band === '5GHz') {
       band5Rates.value.push(receivedRate);
@@ -83,9 +83,15 @@ watch(() => props.wifiInfo, (newInfo) => {
       band6SentRates.value.push(sentRate);
     }
   });
-  
 
-  timeLabels.value.push(new Date().toLocaleTimeString());
+  // Format time using 24-hour format
+  const timeLabel = new Date().toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+  timeLabels.value.push(timeLabel);
 
   if (band24Rates.value.length > maxDataPoints) {
     band24Rates.value.shift();
@@ -94,7 +100,7 @@ watch(() => props.wifiInfo, (newInfo) => {
     timeLabels.value.shift();
   }
 
-  // **只在數據真的變動時更新 previousValues**
+  // Only update previousValues when data actually changes
   if (Object.values(diffs).some(diff => diff.received > 0 || diff.sent > 0)) {
     previousValues.value = {
       '2_4GHz': { bytesReceived: newInfo['2_4GHz'].BytesReceived, bytesSent: newInfo['2_4GHz'].BytesSent },
@@ -105,8 +111,6 @@ watch(() => props.wifiInfo, (newInfo) => {
     };
   }
 }, { immediate: true });
-
-
 
 const chartData = computed(() => ({
   labels: timeLabels.value,
@@ -154,7 +158,7 @@ const getCurrentRates = (band: keyof DashboardWiFi) => {
   let receivedRate = receivedDiff / timeDiff;
   let sentRate = sentDiff / timeDiff;
 
-  // 確保不同頻段不共用數據
+  // Use stored rates for each band when there's no new data
   if (band === '2_4GHz' && band24Rates.value.length > 0) receivedRate = band24Rates.value[band24Rates.value.length - 1];
   if (band === '2_4GHz' && band24SentRates.value.length > 0) sentRate = band24SentRates.value[band24SentRates.value.length - 1];
 
@@ -169,8 +173,6 @@ const getCurrentRates = (band: keyof DashboardWiFi) => {
     sent: Math.max(0, sentRate)
   };
 };
-
-
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardWAN } from '../../types/dashboard';
 import LineChart from '../LineChart.vue';
@@ -44,11 +44,18 @@ watch(() => props.wanInfo, (newInfo) => {
   const receivedDiff = newInfo.BytesReceived - previousValues.value.bytesReceived;
   const sentDiff = newInfo.BytesSent - previousValues.value.bytesSent;
 
-
   if (receivedDiff > 0 || sentDiff > 0) {
     receivedRates.value.push(receivedDiff / timeDiff);
     sentRates.value.push(sentDiff / timeDiff);
-    timeLabels.value.push(new Date().toLocaleTimeString());
+    
+    // Format time using 24-hour format
+    const timeLabel = new Date().toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    timeLabels.value.push(timeLabel);
 
     if (receivedRates.value.length > maxDataPoints) {
       receivedRates.value.shift();
@@ -56,7 +63,6 @@ watch(() => props.wanInfo, (newInfo) => {
       timeLabels.value.shift();
     }
 
-    // **只在數據變動時更新 previousValues，減少不必要的變動**
     previousValues.value = {
       bytesReceived: newInfo.BytesReceived,
       bytesSent: newInfo.BytesSent,
@@ -98,17 +104,13 @@ const currentRates = computed(() => {
     return { received: 0, sent: 0 };
   }
 
-
   const timeDiff = Math.max((Date.now() - previousValues.value.timestamp) / 1000, 0.001);
-
   const receivedDiff = props.wanInfo.BytesReceived - previousValues.value.bytesReceived;
   const sentDiff = props.wanInfo.BytesSent - previousValues.value.bytesSent;
 
-
-  // **如果 diff = 0，則維持上一個速率，避免瞬間變 0**
   if (receivedDiff === 0 && receivedRates.value.length > 0) {
     return {
-      received: receivedRates.value[receivedRates.value.length - 1], // 保留上一個數據
+      received: receivedRates.value[receivedRates.value.length - 1],
       sent: sentRates.value[sentRates.value.length - 1]
     };
   }
@@ -124,13 +126,13 @@ const currentRates = computed(() => {
   <div class="wan-status" v-if="wanInfo">
     <h2 class="card-title">{{ t('dashboard.wan') }} {{ t('dashboard.status') }}</h2>
     <div class="info-grid">
-      <div class="info-item">
-        <span class="label">{{ t('dashboard.received') }}</span>
-        <span class="value">{{ formatRate(currentRates.received) }}</span>
+      <div class="info-row">
+        <span class="info-label">{{ t('dashboard.received') }}</span>
+        <span class="info-value">{{ formatRate(currentRates.received) }}</span>
       </div>
-      <div class="info-item">
-        <span class="label">{{ t('dashboard.sent') }}</span>
-        <span class="value">{{ formatRate(currentRates.sent) }}</span>
+      <div class="info-row">
+        <span class="info-label">{{ t('dashboard.sent') }}</span>
+        <span class="info-value">{{ formatRate(currentRates.sent) }}</span>
       </div>
     </div>
     <div class="chart-container">
@@ -145,18 +147,18 @@ const currentRates = computed(() => {
   gap: 1rem;
 }
 
-.info-item {
+.info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .label {
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .value {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
