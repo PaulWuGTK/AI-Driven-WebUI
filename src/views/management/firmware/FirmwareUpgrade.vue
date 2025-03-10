@@ -186,7 +186,6 @@ onMounted(fetchFirmwareStatus);
                       v-if="bank.Status !== 'Active'"
                       class="btn btn-primary btn-activate"
                       @click="handleActivate(bank)"
-                      disabled
                     >
                       {{ t('firmware.activate') }}
                     </button>
@@ -224,7 +223,6 @@ onMounted(fetchFirmwareStatus);
                 <button 
                   class="btn btn-primary btn-activate"
                   @click="handleActivate(bank)"
-                  disabled
                 >
                   {{ t('firmware.activate') }}
                 </button>
@@ -505,7 +503,6 @@ input:checked + .slider:before {
 
 .btn-activate {
   opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* Upgrade Overlay Styles */
