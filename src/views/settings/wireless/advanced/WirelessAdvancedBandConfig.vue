@@ -33,10 +33,25 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
     
     <div class="band-content">
       <div class="form-group">
+        <div class="switch-label">
+          <span>{{ t('common.enable') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :checked="modelValue.RadioEnable === 1"
+              @change="updateConfig('RadioEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+            >
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label>{{ t('wireless.mode') }}</label>
         <select
           :value="modelValue.Mode"
           @change="updateConfig('Mode', ($event.target as HTMLSelectElement).value)"
+          :disabled="modelValue.RadioEnable === 0"
         >
           <option v-for="mode in modes" :key="mode" :value="mode">
             {{ mode.toUpperCase() }}
@@ -49,6 +64,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
         <select
           :value="modelValue.ChannelBandwidth"
           @change="updateConfig('ChannelBandwidth', ($event.target as HTMLSelectElement).value)"
+          :disabled="modelValue.RadioEnable === 0"
         >
           <option v-for="bandwidth in bandwidths" :key="bandwidth" :value="bandwidth">
             {{ bandwidth }}
@@ -66,6 +82,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
                 type="checkbox"
                 :checked="modelValue.AutoChannelEnable === '1' || modelValue.AutoChannelEnable === 1"
                 @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? '1' : '0')"
+                :disabled="modelValue.RadioEnable === 0"
               />
               <span class="slider"></span>
             </label>
@@ -74,7 +91,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
         <select
           :value="modelValue.Channel"
           @change="updateConfig('Channel', ($event.target as HTMLSelectElement).value)"
-          :disabled="modelValue.AutoChannelEnable === '1' || modelValue.AutoChannelEnable === 1"
+          :disabled="modelValue.RadioEnable === 0 || modelValue.AutoChannelEnable === '1' || modelValue.AutoChannelEnable === 1"
         >
           <option v-for="channel in channels" :key="channel" :value="channel">
             {{ channel }}
@@ -140,8 +157,8 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 
 .switch-label {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
   color: var(--text-primary);
 }
 
@@ -151,6 +168,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
   width: 60px;
   height: 34px;
   flex-shrink: 0;
+  margin-left:10px;
 }
 
 .switch input {

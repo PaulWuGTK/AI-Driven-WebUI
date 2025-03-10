@@ -32,22 +32,24 @@ const handleSubmit = async () => {
   if (!advancedData.value) return;
   loading.value = true;
   try {
-    // Transform data to match required format
-    const postData = {
+    const postData: WlanAdvancedResponse = {
       WlanAdvanced: {
         wifi2g: {
+          RadioEnable: advancedData.value.WlanAdvanced.wifi2g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi2g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi2g.ChannelBandwidth,
           AutoChannelEnable: advancedData.value.WlanAdvanced.wifi2g.AutoChannelEnable.toString()
         },
         wifi5g: {
+          RadioEnable: advancedData.value.WlanAdvanced.wifi5g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi5g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi5g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi5g.ChannelBandwidth,
           AutoChannelEnable: advancedData.value.WlanAdvanced.wifi5g.AutoChannelEnable.toString()
         },
         wifi6g: {
+          RadioEnable: advancedData.value.WlanAdvanced.wifi6g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi6g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi6g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi6g.ChannelBandwidth,

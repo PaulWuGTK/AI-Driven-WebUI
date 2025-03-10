@@ -17,6 +17,7 @@ export interface WlanBasicResponse {
 
 // Advanced Config Types
 export interface WlanAdvancedConfig {
+  RadioEnable: number;
   Mode: string;
   Channel: string | number;
   ChannelBandwidth: string;

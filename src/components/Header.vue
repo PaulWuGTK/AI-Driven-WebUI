@@ -27,17 +27,26 @@ const username = localStorage.getItem('username') || 'admin';
 <template>
   <header class="header">
     <div class="header-controls">
-      <select 
-        class="language-select" 
-        :value="locale" 
-        @change="locale = ($event.target as HTMLSelectElement).value"
-      >
-        <option v-for="lang in languages" :key="lang.code" :value="lang.code">
-          {{ lang.label }}
-        </option>
-      </select>
-      <button class="header-btn">{{ username }}</button>
-      <button class="header-btn" @click="handleLogout">{{ t('header.logout') }}</button>
+      <div class="language-select-container">
+        <span class="material-icons">language</span>
+        <select 
+          class="language-select" 
+          :value="locale" 
+          @change="locale = ($event.target as HTMLSelectElement).value"
+        >
+          <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+            {{ lang.label }}
+          </option>
+        </select>
+      </div>
+      <button class="header-btn">
+        <span class="material-icons">person</span>
+        {{ username }}
+      </button>
+      <button class="header-btn" @click="handleLogout">
+        <span class="material-icons">logout</span>
+        {{ t('header.logout') }}
+      </button>
     </div>
   </header>
 </template>
@@ -58,6 +67,13 @@ const username = localStorage.getItem('username') || 'admin';
   align-items: center;
 }
 
+.language-select-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+}
+
 .language-select {
   padding: 0.5rem;
   border: 1px solid #ddd;
@@ -73,9 +89,37 @@ const username = localStorage.getItem('username') || 'admin';
   border: none;
   cursor: pointer;
   color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .header-btn:hover {
   color: #333;
+  background-color: #f5f5f5;
+}
+
+.material-icons {
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .header-controls {
+    gap: 0.5rem;
+  }
+
+  .header-btn {
+    padding: 0.5rem;
+  }
+
+  .header-btn span:last-child {
+    display: none;
+  }
 }
 </style>

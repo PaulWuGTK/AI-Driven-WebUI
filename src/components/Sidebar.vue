@@ -47,6 +47,7 @@ const menuItems = [
     icon: basicIcon,
     translationKey: 'menu.basicSetting',
     subItems: [
+      { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
       { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
     ]
   },

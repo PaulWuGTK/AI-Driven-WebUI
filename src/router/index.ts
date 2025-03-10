@@ -74,6 +74,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/settings/wan',
+      component: () => import('../views/settings/WanSettings.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/ddns',
       component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth

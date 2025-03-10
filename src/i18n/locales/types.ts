@@ -13,6 +13,7 @@ export interface Translations {
     lcm: string;
     basicSetting: string;
     wireless: string;
+    wanSetting: string;
     management: string;
     ntp: string;
     ssh: string;
@@ -180,6 +181,45 @@ export interface Translations {
     pinCodeOfClient: string,
     noPublicKeys: string
   };
+  wanSetup: {
+    title: string
+    modeSetup: string
+    modeManagement: string
+    operationMode: string
+    wanMode: string
+    manual: string
+    auto: string
+  },
+  wanManagement: {
+    addMode: string;
+    editMode: string;
+    name: string;
+    interface: string;
+    ipv4Mode: string;
+    ipv6Mode: string;
+    status: string;
+    type: string;
+    action: string;
+    physicalType: string;
+    vlanType: string;
+    vlanId: string;
+    vlanPriority: string;
+    pppoeUsername: string;
+    pppoePassword: string;
+    staticIpv4: string;
+    staticIpv6: string;
+    ipv4Address: string;
+    ipv6Address: string;
+    defaultRouter: string;
+    subnetMask: string;
+    prefixLength: string;
+    dnsServers: string;
+    addInterface: string;
+    edit: string;
+    delete: string;
+    detail: string;
+    confirmDelete: string;
+  }
   ddns: {
     title: string;
     management: string;
