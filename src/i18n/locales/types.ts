@@ -87,14 +87,14 @@ export interface Translations {
     ethernet: string;
     wlan: string;
     port: string;
-    rxBytes: string;
-    rxPackets: string;
-    rxError: string;
-    rxDiscard: string;
-    txBytes: string;
-    txPackets: string;
-    txError: string;
-    txDiscard: string;
+    rxbytes: string;
+    rxpackets: string;
+    rxerror: string;
+    rxdiscard: string;
+    txbytes: string;
+    txpackets: string;
+    txerror: string;
+    txdiscard: string;
   };
   wifiNeighbor: {
     title: string;

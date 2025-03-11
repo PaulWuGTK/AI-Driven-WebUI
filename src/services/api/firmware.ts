@@ -22,7 +22,7 @@ export async function getFirmwareStatus(): Promise<FirmwareResponse> {
             BootFailureLog: "",
             Version: "",
             Alias: "inactive",
-            Status: "NoImage"
+            Status: "Available"
           }
         }
       }

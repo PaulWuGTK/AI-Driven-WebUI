@@ -107,14 +107,14 @@ export default {
     ethernet: 'Statistiques - Ethernet',
     wlan: 'Statistiques - WLAN',
     port: 'Port',
-    rxBytes: 'RxBytes',
-    rxPackets: 'Paquets Rx',
-    rxError: 'Erreur Rx',
-    rxDiscard: 'Paquets rejetés Rx',
-    txBytes: 'TxBytes',
-    txPackets: 'Paquets Tx',
-    txError: 'Erreur Tx',
-    txDiscard: 'Paquets rejetés Tx'
+    rxbytes: 'RxBytes',
+    rxpackets: 'Paquets Rx',
+    rxerror: 'Erreur Rx',
+    rxdiscard: 'Paquets rejetés Rx',
+    txbytes: 'TxBytes',
+    txpackets: 'Paquets Tx',
+    txerror: 'Erreur Tx',
+    txdiscard: 'Paquets rejetés Tx'
   },
   wifiNeighbor: {
     title: 'Appareils voisins WiFi',

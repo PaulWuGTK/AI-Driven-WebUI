@@ -107,14 +107,14 @@ export default {
     ethernet: '統計 - イーサネット',
     wlan: '統計 - WLAN',
     port: 'ポート',
-    rxBytes: '受信バイト',
-    rxPackets: '受信パケット',
-    rxError: '受信エラー',
-    rxDiscard: '受信破棄',
-    txBytes: '送信バイト',
-    txPackets: '送信パケット',
-    txError: '送信エラー',
-    txDiscard: '送信破棄'
+    rxbytes: '受信バイト',
+    rxpackets: '受信パケット',
+    rxerror: '受信エラー',
+    rxdiscard: '受信破棄',
+    txbytes: '送信バイト',
+    txpackets: '送信パケット',
+    txerror: '送信エラー',
+    txdiscard: '送信破棄'
   },
   wifiNeighbor: {
     title: 'WiFi ネイバー',

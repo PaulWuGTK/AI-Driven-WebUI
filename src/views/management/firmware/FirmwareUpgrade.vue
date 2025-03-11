@@ -183,7 +183,7 @@ onMounted(fetchFirmwareStatus);
                   <td>{{ bank.Version || 'N/A' }}</td>
                   <td>
                     <button 
-                      v-if="bank.Status !== 'Active'"
+                      v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'"
                       class="btn btn-primary btn-activate"
                       @click="handleActivate(bank)"
                     >
@@ -219,7 +219,7 @@ onMounted(fetchFirmwareStatus);
                 <span class="card-label">{{ t('firmware.firmwareVersion') }}</span>
                 <span class="card-value">{{ bank.Version || 'N/A' }}</span>
               </div>
-              <div class="card-actions" v-if="bank.Status !== 'Active'">
+              <div class="card-actions" v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'">
                 <button 
                   class="btn btn-primary btn-activate"
                   @click="handleActivate(bank)"

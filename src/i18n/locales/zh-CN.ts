@@ -107,14 +107,14 @@ export default {
     ethernet: '统计 - 以太网',
     wlan: '统计信息 - WLAN',
     port: '端口',
-    rxBytes: '接收字节数',
-    rxPackets: '接收数据包',
-    rxError: '接收错误',
-    rxDiscard: '接收丢弃',
-    txBytes: '发送字节数',
-    txPackets: '发送数据包',
-    txError: '发送错误',
-    txDiscard: '发送丢弃'
+    rxbytes: '接收字节数',
+    rxpackets: '接收数据包',
+    rxerror: '接收错误',
+    rxdiscard: '接收丢弃',
+    txbytes: '发送字节数',
+    txpackets: '发送数据包',
+    txerror: '发送错误',
+    txdiscard: '发送丢弃'
   },
   wifiNeighbor: {
     title: 'WiFi 邻近设备',

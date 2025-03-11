@@ -161,38 +161,38 @@ onMounted(() => {
               <div class="card-section">
                 <div class="section-subtitle">Rx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxBytes') }}</span>
+                  <span class="card-label">{{ t('statistics.rxytes') }}</span>
                   <span class="card-value">{{ entry.RxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxPackets') }}</span>
+                  <span class="card-label">{{ t('statistics.rxpackets') }}</span>
                   <span class="card-value">{{ entry.RxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxError') }}</span>
+                  <span class="card-label">{{ t('statistics.rxerror') }}</span>
                   <span class="card-value">{{ entry.RxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxDiscard') }}</span>
+                  <span class="card-label">{{ t('statistics.rxdiscard') }}</span>
                   <span class="card-value">{{ entry.RxDiscard }}</span>
                 </div>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Tx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txBytes') }}</span>
+                  <span class="card-label">{{ t('statistics.txbytes') }}</span>
                   <span class="card-value">{{ entry.TxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txPackets') }}</span>
+                  <span class="card-label">{{ t('statistics.txpackets') }}</span>
                   <span class="card-value">{{ entry.TxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txError') }}</span>
+                  <span class="card-label">{{ t('statistics.txerror') }}</span>
                   <span class="card-value">{{ entry.TxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txDiscard') }}</span>
+                  <span class="card-label">{{ t('statistics.txdiscard') }}</span>
                   <span class="card-value">{{ entry.TxDiscard }}</span>
                 </div>
               </div>
@@ -253,38 +253,38 @@ onMounted(() => {
               <div class="card-section">
                 <div class="section-subtitle">Rx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxBytes') }}</span>
+                  <span class="card-label">{{ t('statistics.rxbytes') }}</span>
                   <span class="card-value">{{ entry.RxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxPackets') }}</span>
+                  <span class="card-label">{{ t('statistics.rxpackets') }}</span>
                   <span class="card-value">{{ entry.RxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxError') }}</span>
+                  <span class="card-label">{{ t('statistics.rxerror') }}</span>
                   <span class="card-value">{{ entry.RxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxDiscard') }}</span>
+                  <span class="card-label">{{ t('statistics.rxdiscard') }}</span>
                   <span class="card-value">{{ entry.RxDiscard }}</span>
                 </div>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Tx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txBytes') }}</span>
+                  <span class="card-label">{{ t('statistics.txbytes') }}</span>
                   <span class="card-value">{{ entry.TxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txPackets') }}</span>
+                  <span class="card-label">{{ t('statistics.txpackets') }}</span>
                   <span class="card-value">{{ entry.TxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txError') }}</span>
+                  <span class="card-label">{{ t('statistics.txerror') }}</span>
                   <span class="card-value">{{ entry.TxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txDiscard') }}</span>
+                  <span class="card-label">{{ t('statistics.txdiscard') }}</span>
                   <span class="card-value">{{ entry.TxDiscard }}</span>
                 </div>
               </div>

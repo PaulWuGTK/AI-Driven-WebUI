@@ -107,14 +107,14 @@ export default {
     ethernet: '統計數據 - 乙太網路',
     wlan: '統計數據 - 無線網路',
     port: '連接埠',
-    rxBytes: '接收位元組數',
-    rxPackets: '接收封包數',
-    rxError: '接收錯誤',
-    rxDiscard: '接收丟棄',
-    txBytes: '傳送位元組數',
-    txPackets: '傳送封包數',
-    txError: '傳送錯誤',
-    txDiscard: '傳送丟棄'
+    rxbytes: '接收位元組數',
+    rxpackets: '接收封包數',
+    rxerror: '接收錯誤',
+    rxdiscard: '接收丟棄',
+    txbytes: '傳送位元組數',
+    txpackets: '傳送封包數',
+    txerror: '傳送錯誤',
+    txdiscard: '傳送丟棄'
   },
   wifiNeighbor: {
     title: 'Wi-Fi 鄰近設備',

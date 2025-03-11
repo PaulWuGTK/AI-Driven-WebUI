@@ -106,14 +106,14 @@ export default {
     ethernet: '통계 - 이더넷',
     wlan: '통계 - WLAN',
     port: '포트',
-    rxBytes: '수신 바이트',
-    rxPackets: '수신 패킷',
-    rxError: '수신 오류',
-    rxDiscard: '수신 폐기',
-    txBytes: '송신 바이트',
-    txPackets: '송신 패킷',
-    txError: '송신 오류',
-    txDiscard: '송신 폐기'
+    rxbytes: '수신 바이트',
+    rxpackets: '수신 패킷',
+    rxerror: '수신 오류',
+    rxdiscard: '수신 폐기',
+    txbytes: '송신 바이트',
+    txpackets: '송신 패킷',
+    txerror: '송신 오류',
+    txdiscard: '송신 폐기'
   },
   wifiNeighbor: {
     title: 'WiFi 주변 기기',

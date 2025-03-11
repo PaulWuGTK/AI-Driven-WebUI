@@ -109,14 +109,14 @@ const translations: Translations = {
     ethernet: 'Statistics - Ethernet',
     wlan: 'Statistics - WLAN',
     port: 'Port',
-    rxBytes: 'RxBytes',
-    rxPackets: 'RxPackets',
-    rxError: 'RxError',
-    rxDiscard: 'RxDiscard',
-    txBytes: 'TxBytes',
-    txPackets: 'TxPackets',
-    txError: 'TxError',
-    txDiscard: 'TxDiscard'
+    rxbytes: 'RxBytes',
+    rxpackets: 'RxPackets',
+    rxerror: 'RxError',
+    rxdiscard: 'RxDiscard',
+    txbytes: 'TxBytes',
+    txpackets: 'TxPackets',
+    txerror: 'TxError',
+    txdiscard: 'TxDiscard'
   },
   wifiNeighbor: {
     title: 'WiFi Neighbor',
