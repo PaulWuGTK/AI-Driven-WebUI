@@ -71,40 +71,27 @@ export async function activateFirmware(bankNumber: number): Promise<void> {
     console.log('Mock firmware activation for bank:', bankNumber);
     return;
   }
-
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
   if (!sessionId) {
     throw new Error('No active session');
   }
 
-  const payload = {
-    command: `DeviceInfo.FirmwareImage.${bankNumber}.Activate()`,
-    commandKey: "",
-    sendresp: true,
-    inputArgs: {
-      Start: "1",
-      End: "1",
-      Mode: "Immediately"
-    }
-  };
-
-  const response = await fetch('/commands', {
+  const response = await fetch('/API/info?list=UpgradeFw', {
     method: 'POST',
     headers: {
       'Authorization': `bearer ${sessionId}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      UpgradeFw: {
+        BankNumber: bankNumber
+      }
+    })
   });
 
   if (!response.ok) {
     throw new Error('Firmware activation failed');
-  }
-
-  const result = await response.json();
-  if (result[0]?.failure?.errcode) {
-    throw new Error(`Firmware activation failed: ${result[0].failure.errcode}`);
   }
 }
 

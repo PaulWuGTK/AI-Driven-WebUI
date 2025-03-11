@@ -97,7 +97,7 @@ const handleActivate = async (bank: FirmwareBank) => {
       throw new Error('Invalid firmware bank');
     }
 
-    await activateFirmware(parseInt(bankNumber));
+    await activateFirmware(parseInt(bankNumber)+1);
     
     startUpgradeCountdown();
     await fetchFirmwareStatus();
