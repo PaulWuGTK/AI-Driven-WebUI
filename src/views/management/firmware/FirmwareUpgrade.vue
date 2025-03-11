@@ -502,7 +502,7 @@ input:checked + .slider:before {
 }
 
 .btn-activate {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 /* Upgrade Overlay Styles */
