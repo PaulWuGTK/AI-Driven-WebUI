@@ -55,7 +55,8 @@ const editingMode = ref<WanModeConfig>(props.mode ? {
   Interfaces: [{ ...defaultInterface }]
 });
 
-const physicalTypes = ['Ethernet', 'Bridge'];
+//const physicalTypes = ['Ethernet', 'Bridge'];
+const physicalTypes = ['Ethernet'];
 const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'];
 const ipv4Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
 const ipv6Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
