@@ -9,6 +9,30 @@ defineProps<{
   mode: WanModeConfig;
   onBack: () => void;
 }>();
+
+// Display mappings
+const ipv4ModeDisplay = {
+  'dhcp4': 'DHCP',
+  'ppp4': 'PPPoE',
+  'none': 'None',
+  'static': 'Static',
+  'dslite': 'DS-Lite',
+  'link': 'Link'
+};
+
+const ipv6ModeDisplay = {
+  'dhcp6': 'DHCP',
+  'ppp6': 'PPPoE',
+  'none': 'None',
+  'static': 'Static',
+  'link': 'Link'
+};
+
+const vlanTypeDisplay = {
+  'untagged': 'Untagged',
+  'vlan': 'VLAN',
+  'atm': 'ATM'
+};
 </script>
 
 <template>
@@ -43,11 +67,11 @@ defineProps<{
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.ipv4DnsMode') }}</span>
-                <span class="card-value">{{ mode.DNSMode }}</span>
+                <span class="card-value">{{ mode.DNSMode || 'None' }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.ipv6DnsMode') }}</span>
-                <span class="card-value">{{ mode.IPv6DNSMode }}</span>
+                <span class="card-value">{{ mode.IPv6DNSMode || 'None' }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.physicalType') }}</span>
@@ -59,35 +83,35 @@ defineProps<{
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.ipv4Mode') }}</span>
-                <span class="card-value">{{ iface.IPv4Mode }}</span>
+                <span class="card-value">{{ ipv4ModeDisplay[iface.IPv4Mode] }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.ipv6Mode') }}</span>
-                <span class="card-value">{{ iface.IPv6Mode }}</span>
+                <span class="card-value">{{ ipv6ModeDisplay[iface.IPv6Mode] }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('wanManagement.vlanType') }}</span>
-                <span class="card-value">{{ iface.VLANType }}</span>
+                <span class="card-value">{{ vlanTypeDisplay[iface.VLANType] }}</span>
               </div>
-              <div v-if="iface.VLANType === 'vlan'" class="card-row">
+              <div v-if="iface.VLANType !== 'untagged'" class="card-row">
                 <span class="card-label">{{ t('wanManagement.vlanId') }}</span>
                 <span class="card-value">{{ iface.VLANID }}</span>
               </div>
-              <div v-if="iface.VLANType === 'vlan'" class="card-row">
+              <div v-if="iface.VLANType !== 'untagged'" class="card-row">
                 <span class="card-label">{{ t('wanManagement.vlanPriority') }}</span>
                 <span class="card-value">{{ iface.VLANPriority }}</span>
               </div>
-              <div v-if="iface.IPv4Mode === 'PPPoE' || iface.IPv6Mode === 'PPPoE'" class="card-row">
+              <div v-if="iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'" class="card-row">
                 <span class="card-label">{{ t('wanManagement.pppoeUsername') }}</span>
                 <span class="card-value">{{ iface.PPPoEUserName }}</span>
               </div>
-              <div v-if="iface.IPv4Mode === 'PPPoE' || iface.IPv6Mode === 'PPPoE'" class="card-row">
+              <div v-if="iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'" class="card-row">
                 <span class="card-label">{{ t('wanManagement.pppoePassword') }}</span>
                 <span class="card-value">{{ iface.PPPoEPassword }}</span>
               </div>
 
               <!-- Static IPv4 Address Section -->
-              <template v-if="iface.IPv4Mode === 'Static' && iface.StaticIPv4Address">
+              <template v-if="iface.IPv4Mode === 'static' && iface.StaticIPv4Address">
                 <div class="section-divider">{{ t('wanManagement.staticIpv4') }}</div>
                 <div class="card-row">
                   <span class="card-label">{{ t('wanManagement.ipv4Address') }}</span>
@@ -108,7 +132,7 @@ defineProps<{
               </template>
 
               <!-- Static IPv6 Address Section -->
-              <template v-if="iface.IPv6Mode === 'Static' && iface.StaticIPv6Address">
+              <template v-if="iface.IPv6Mode === 'static' && iface.StaticIPv6Address">
                 <div class="section-divider">{{ t('wanManagement.staticIpv6') }}</div>
                 <div class="card-row">
                   <span class="card-label">{{ t('wanManagement.ipv6Address') }}</span>

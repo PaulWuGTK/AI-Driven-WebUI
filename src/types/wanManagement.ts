@@ -13,12 +13,12 @@ export interface StaticIPv6Address {
 }
 
 export interface WanInterface {
-  Interface: string;
-  IPv4Mode: string;
-  IPv6Mode: string;
+  Interface: "wan" | "voip" | "mgmt" | "iptv";
+  IPv4Mode: "dhcp4" | "ppp4" | "none" | "static" | "dslite" | "link";
+  IPv6Mode: "dhcp6" | "ppp6" | "none" | "static" | "link";
   PPPoEUserName: string;
   PPPoEPassword: string;
-  VLANType: string;
+  VLANType: "untagged" | "vlan" | "atm";
   VLANID: string;
   VLANPriority: string;
   StaticIPv4Address?: StaticIPv4Address;
@@ -28,10 +28,10 @@ export interface WanInterface {
 export interface WanModeConfig {
   WANMode: string;
   Status: string;
-  PhysicalType: string;
+  PhysicalType: "Ethernet" | "ADSL" | "VDSL" | "SFP" | "GPON" | "GFAST" | "Bridge" | "WWAN";
   EnableSensing: number;
-  DNSMode: string;
-  IPv6DNSMode: string;
+  DNSMode: "Static" | "Dynamic" | "";
+  IPv6DNSMode: "Static" | "Dynamic" | "";
   Interfaces: WanInterface[];
 }
 

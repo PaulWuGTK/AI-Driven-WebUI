@@ -12,8 +12,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
       Interfaces: [
         { 
           Interface: "wan",
-          IPv4Mode: "DHCP",
-          IPv6Mode: "DHCP",
+          IPv4Mode: "dhcp4",
+          IPv6Mode: "dhcp6",
           PPPoEUserName: "",
           PPPoEPassword: "",
           VLANType: "untagged",
@@ -32,8 +32,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
       Interfaces: [
         { 
           Interface: "wan",
-          IPv4Mode: "PPPoE",
-          IPv6Mode: "None",
+          IPv4Mode: "ppp4",
+          IPv6Mode: "none",
           PPPoEUserName: "username",
           PPPoEPassword: "password",
           VLANType: "untagged",
@@ -52,8 +52,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
       Interfaces: [
         { 
           Interface: "wan",
-          IPv4Mode: "Static",
-          IPv6Mode: "None",
+          IPv4Mode: "static",
+          IPv6Mode: "none",
           PPPoEUserName: "",
           PPPoEPassword: "",
           VLANType: "untagged",
@@ -71,6 +71,26 @@ export const wanManagementMockData: WanModeManagementResponse = {
             IPv6Address: "",
             PrefixLength: ""
           }
+        }
+      ]
+    },
+    {
+      WANMode: "demo_bridged",
+      Status: "Enabled", 
+      PhysicalType: "Bridge",
+      EnableSensing: 1,
+      DNSMode: "Dynamic",
+      IPv6DNSMode: "Dynamic",
+      Interfaces: [
+        {
+          Interface: "wan",
+          IPv4Mode: "none",
+          IPv6Mode: "none",
+          PPPoEUserName: "",
+          PPPoEPassword: "",
+          VLANType: "untagged",
+          VLANID: "100",
+          VLANPriority: "0"
         }
       ]
     }

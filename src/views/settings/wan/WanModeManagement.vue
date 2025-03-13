@@ -39,8 +39,8 @@ const handleAdd = () => {
     IPv6DNSMode: 'Dynamic',
     Interfaces: [{
       Interface: 'wan',
-      IPv4Mode: 'DHCP',
-      IPv6Mode: 'None',
+      IPv4Mode: 'dhcp4',
+      IPv6Mode: 'none',
       PPPoEUserName: '',
       PPPoEPassword: '',
       VLANType: 'untagged',
@@ -63,7 +63,6 @@ const handleDelete = async (mode: WanModeConfig) => {
     const updatedModes = managementData.value.filter(m => m.WANMode !== mode.WANMode);
     await updateWanModeManagement({
       WanModeManagement: updatedModes
-    
     });
     await fetchManagementData();
   } catch (err) {

@@ -29,12 +29,12 @@ const defaultStaticIPv6 = {
 };
 
 const defaultInterface: WanInterface = {
-  Interface: 'wan',
-  IPv4Mode: 'DHCP',
-  IPv6Mode: 'None',
+  Interface: "wan",
+  IPv4Mode: "dhcp4",
+  IPv6Mode: "none",
   PPPoEUserName: '',
   PPPoEPassword: '',
-  VLANType: 'untagged',
+  VLANType: "untagged",
   VLANID: '100',
   VLANPriority: '0',
   StaticIPv4Address: { ...defaultStaticIPv4 },
@@ -58,13 +58,12 @@ const editingMode = ref<WanModeConfig>(props.mode ? {
   Interfaces: [{ ...defaultInterface }]
 });
 
-//const physicalTypes = ['Ethernet', 'Bridge'];
-const physicalTypes = ['Ethernet'];
-const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'];
-const ipv4Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
-const ipv6Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
-const vlanTypes = ['untagged', 'vlan'];
-const dnsModes = ['Static', 'Dynamic'];
+const physicalTypes = ['Ethernet', 'ADSL', 'VDSL', 'SFP', 'GPON', 'GFAST', 'Bridge', 'WWAN'];
+const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'] as const;
+const ipv4Modes = ['dhcp4', 'ppp4', 'none', 'static', 'dslite', 'link'] as const;
+const ipv6Modes = ['dhcp6', 'ppp6', 'none', 'static', 'link'] as const;
+const vlanTypes = ['untagged', 'vlan', 'atm'] as const;
+const dnsModes = ['Static', 'Dynamic', ''] as const;
 
 // Compute available interfaces (excluding already selected ones)
 const availableInterfaces = computed(() => {
@@ -82,19 +81,19 @@ const getAvailableInterfaces = (currentInterface: string) => {
 };
 
 const showPPPoE = (iface: WanInterface) => {
-  return iface.IPv4Mode === 'PPPoE' || iface.IPv6Mode === 'PPPoE';
+  return iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6';
 };
 
 const showVLAN = (iface: WanInterface) => {
-  return iface.VLANType === 'vlan';
+  return iface.VLANType === 'vlan' || iface.VLANType === 'atm';
 };
 
 const showStaticIPv4 = (iface: WanInterface) => {
-  return iface.IPv4Mode === 'Static';
+  return iface.IPv4Mode === 'static';
 };
 
 const showStaticIPv6 = (iface: WanInterface) => {
-  return iface.IPv6Mode === 'Static';
+  return iface.IPv6Mode === 'static';
 };
 
 const handleSave = () => {
@@ -109,6 +108,19 @@ const addInterface = () => {
       VLANType: 'vlan'
     });
   }
+};
+
+const validatePPPoEInput = (value: string, field: 'username' | 'password') => {
+  if (value.length > 64) {
+    return value.slice(0, 64);
+  }
+  return value;
+};
+
+const validateVLANPriority = (value: string) => {
+  const num = parseInt(value);
+  if (isNaN(num)) return '0';
+  return Math.max(-1, Math.min(7, num)).toString();
 };
 </script>
 
@@ -147,7 +159,7 @@ const addInterface = () => {
         <label>{{ t('wanManagement.ipv4DnsMode') }}</label>
         <select v-model="editingMode.DNSMode">
           <option v-for="mode in dnsModes" :key="mode" :value="mode">
-            {{ mode }}
+            {{ mode || 'None' }}
           </option>
         </select>
       </div>
@@ -156,7 +168,7 @@ const addInterface = () => {
         <label>{{ t('wanManagement.ipv6DnsMode') }}</label>
         <select v-model="editingMode.IPv6DNSMode">
           <option v-for="mode in dnsModes" :key="mode" :value="mode">
-            {{ mode }}
+            {{ mode || 'None' }}
           </option>
         </select>
       </div>
@@ -218,9 +230,10 @@ const addInterface = () => {
             <div class="form-group">
               <label>{{ t('wanManagement.vlanId') }}</label>
               <input
-                type="text"
+                type="number"
                 v-model="iface.VLANID"
                 required
+                min="0"
               />
             </div>
 
@@ -229,9 +242,10 @@ const addInterface = () => {
               <input
                 type="number"
                 v-model="iface.VLANPriority"
+                required
                 min="-1"
                 max="7"
-                required
+                @input="iface.VLANPriority = validateVLANPriority(($event.target as HTMLInputElement).value)"
               />
             </div>
           </template>
@@ -243,6 +257,8 @@ const addInterface = () => {
                 type="text"
                 v-model="iface.PPPoEUserName"
                 required
+                maxlength="64"
+                @input="iface.PPPoEUserName = validatePPPoEInput(($event.target as HTMLInputElement).value, 'username')"
               />
             </div>
 
@@ -252,6 +268,8 @@ const addInterface = () => {
                 type="password"
                 v-model="iface.PPPoEPassword"
                 required
+                maxlength="64"
+                @input="iface.PPPoEPassword = validatePPPoEInput(($event.target as HTMLInputElement).value, 'password')"
               />
             </div>
           </template>
