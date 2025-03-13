@@ -238,7 +238,10 @@ export default {
     edit: '編集',
     delete: '削除',
     detail: '詳細',
-    confirmDelete: 'このWANモードを削除してもよろしいですか？'
+    confirmDelete: 'このWANモードを削除してもよろしいですか？',
+    enableSensing: 'センシング有効化',
+    ipv4DnsMode: 'IPv4 DNS モード',
+    ipv6DnsMode: 'IPv6 DNS モード'
   },
   ddns: {
     title: 'DDNS設定',

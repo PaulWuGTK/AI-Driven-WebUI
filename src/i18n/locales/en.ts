@@ -240,7 +240,10 @@ const translations: Translations = {
     edit: 'Edit',
     delete: 'Delete',
     detail: 'Detail',
-    confirmDelete: 'Are you sure you want to delete this WAN mode?'
+    confirmDelete: 'Are you sure you want to delete this WAN mode?',
+    enableSensing: 'Enable Sensing',
+    ipv4DnsMode: 'IPv4 DNS Mode',
+    ipv6DnsMode: 'IPv6 DNS Mode'
   },
   ddns: {
     title: 'DDNS Settings',

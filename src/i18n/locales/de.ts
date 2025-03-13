@@ -238,7 +238,10 @@ export default {
     edit: 'Bearbeiten',
     delete: 'Löschen',
     detail: 'Details',
-    confirmDelete: 'Möchten Sie diesen WAN-Modus wirklich löschen?'
+    confirmDelete: 'Möchten Sie diesen WAN-Modus wirklich löschen?',
+    enableSensing: 'Erkennung aktivieren',
+    ipv4DnsMode: 'IPv4-DNS-Modus',
+    ipv6DnsMode: 'IPv6-DNS-Modus'
   },
   ddns: {
     title: 'DDNS-Einstellungen',

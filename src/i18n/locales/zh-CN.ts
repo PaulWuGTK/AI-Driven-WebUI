@@ -238,7 +238,10 @@ export default {
     edit: '编辑',
     delete: '删除',
     detail: '详细信息',
-    confirmDelete: '确定要删除此 WAN 模式吗？'
+    confirmDelete: '确定要删除此 WAN 模式吗？',
+    enableSensing: '启用感知',
+    ipv4DnsMode: 'IPv4 DNS 模式',
+    ipv6DnsMode: 'IPv6 DNS 模式'
   },
   ddns: {
     title: 'DDNS设置',

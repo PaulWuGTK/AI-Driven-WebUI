@@ -29,6 +29,9 @@ export interface WanModeConfig {
   WANMode: string;
   Status: string;
   PhysicalType: string;
+  EnableSensing: number;
+  DNSMode: string;
+  IPv6DNSMode: string;
   Interfaces: WanInterface[];
 }
 
@@ -37,5 +40,5 @@ export interface WanModeManagementResponse {
 }
 
 export interface WanModeManagementUpdateRequest {
-  WanModeManagement: Omit<WanModeConfig, 'Status'>[];
+  WanModeManagement: WanModeConfig[];
 }

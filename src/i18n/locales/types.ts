@@ -219,6 +219,9 @@ export interface Translations {
     delete: string;
     detail: string;
     confirmDelete: string;
+    enableSensing: string;
+    ipv4DnsMode: string;
+    ipv6DnsMode: string;
   }
   ddns: {
     title: string;

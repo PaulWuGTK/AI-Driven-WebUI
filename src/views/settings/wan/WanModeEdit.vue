@@ -52,6 +52,9 @@ const editingMode = ref<WanModeConfig>(props.mode ? {
   WANMode: '',
   Status: 'Enabled',
   PhysicalType: 'Ethernet',
+  EnableSensing: 1,
+  DNSMode: 'Dynamic',
+  IPv6DNSMode: 'Dynamic',
   Interfaces: [{ ...defaultInterface }]
 });
 
@@ -61,6 +64,7 @@ const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'];
 const ipv4Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
 const ipv6Modes = ['DHCP', 'PPPoE', 'Static', 'None'];
 const vlanTypes = ['untagged', 'vlan'];
+const dnsModes = ['Static', 'Dynamic'];
 
 // Compute available interfaces (excluding already selected ones)
 const availableInterfaces = computed(() => {
@@ -122,6 +126,39 @@ const addInterface = () => {
           :readonly="!!mode"
           :class="{ 'readonly': !!mode }"
         />
+      </div>
+
+      <div class="form-group">
+        <div class="switch-label">
+          <span>{{ t('wanManagement.enableSensing') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              v-model="editingMode.EnableSensing"
+              :true-value="1"
+              :false-value="0"
+            >
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>{{ t('wanManagement.ipv4DnsMode') }}</label>
+        <select v-model="editingMode.DNSMode">
+          <option v-for="mode in dnsModes" :key="mode" :value="mode">
+            {{ mode }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>{{ t('wanManagement.ipv6DnsMode') }}</label>
+        <select v-model="editingMode.IPv6DNSMode">
+          <option v-for="mode in dnsModes" :key="mode" :value="mode">
+            {{ mode }}
+          </option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -392,6 +429,59 @@ input.readonly {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
+}
+
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 
 @media (max-width: 768px) {

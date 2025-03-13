@@ -34,6 +34,9 @@ const handleAdd = () => {
     WANMode: '',
     Status: 'Enabled',
     PhysicalType: 'Ethernet',
+    EnableSensing: 1,
+    DNSMode: 'Dynamic',
+    IPv6DNSMode: 'Dynamic',
     Interfaces: [{
       Interface: 'wan',
       IPv4Mode: 'DHCP',
@@ -49,7 +52,7 @@ const handleAdd = () => {
 };
 
 const handleEdit = (mode: WanModeConfig) => {
-  editingMode.value = JSON.parse(JSON.stringify(mode)); // Deep clone
+  editingMode.value = JSON.parse(JSON.stringify(mode));
   isEditing.value = true;
 };
 
@@ -59,7 +62,8 @@ const handleDelete = async (mode: WanModeConfig) => {
   try {
     const updatedModes = managementData.value.filter(m => m.WANMode !== mode.WANMode);
     await updateWanModeManagement({
-      WanModeManagement: updatedModes.map(({ Status, ...rest }) => rest)
+      WanModeManagement: updatedModes
+    
     });
     await fetchManagementData();
   } catch (err) {
@@ -79,7 +83,7 @@ const handleSave = async (mode: WanModeConfig) => {
       : [...managementData.value, mode];
 
     await updateWanModeManagement({
-      WanModeManagement: updatedModes.map(({ Status, ...rest }) => rest)
+      WanModeManagement: updatedModes
     });
     
     isEditing.value = false;
@@ -120,22 +124,22 @@ onMounted(fetchManagementData);
             <thead>
               <tr>
                 <th>{{ t('wanManagement.name') }}</th>
-                <th>{{ t('wanManagement.interface') }}</th>
-                <th>{{ t('wanManagement.ipv4Mode') }}</th>
-                <th>{{ t('wanManagement.ipv6Mode') }}</th>
+                <th>{{ t('wanManagement.enableSensing') }}</th>
+                <th>{{ t('wanManagement.ipv4DnsMode') }}</th>
+                <th>{{ t('wanManagement.ipv6DnsMode') }}</th>
+                <th>{{ t('wanManagement.physicalType') }}</th>
                 <th>{{ t('wanManagement.status') }}</th>
-                <th>{{ t('wanManagement.type') }}</th>
                 <th>{{ t('wanManagement.action') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="mode in managementData" :key="mode.WANMode">
                 <td>{{ mode.WANMode }}</td>
-                <td>{{ mode.Interfaces[0].Interface }}</td>
-                <td>{{ mode.Interfaces[0].IPv4Mode }}</td>
-                <td>{{ mode.Interfaces[0].IPv6Mode }}</td>
-                <td>{{ mode.Status }}</td>
+                <td>{{ mode.EnableSensing ? 'True' : 'False' }}</td>
+                <td>{{ mode.DNSMode }}</td>
+                <td>{{ mode.IPv6DNSMode }}</td>
                 <td>{{ mode.PhysicalType }}</td>
+                <td>{{ mode.Status }}</td>
                 <td>
                   <div class="action-buttons">
                     <button class="btn-action" @click="handleEdit(mode)" title="Edit">
@@ -161,24 +165,24 @@ onMounted(fetchManagementData);
               <span class="card-value">{{ mode.WANMode }}</span>
             </div>
             <div class="card-row">
-              <span class="card-label">{{ t('wanManagement.interface') }}</span>
-              <span class="card-value">{{ mode.Interfaces[0].Interface }}</span>
+              <span class="card-label">{{ t('wanManagement.enableSensing') }}</span>
+              <span class="card-value">{{ mode.EnableSensing ? 'True' : 'False' }}</span>
             </div>
             <div class="card-row">
-              <span class="card-label">{{ t('wanManagement.ipv4Mode') }}</span>
-              <span class="card-value">{{ mode.Interfaces[0].IPv4Mode }}</span>
+              <span class="card-label">{{ t('wanManagement.ipv4DnsMode') }}</span>
+              <span class="card-value">{{ mode.DNSMode }}</span>
             </div>
             <div class="card-row">
-              <span class="card-label">{{ t('wanManagement.ipv6Mode') }}</span>
-              <span class="card-value">{{ mode.Interfaces[0].IPv6Mode }}</span>
+              <span class="card-label">{{ t('wanManagement.ipv6DnsMode') }}</span>
+              <span class="card-value">{{ mode.IPv6DNSMode }}</span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">{{ t('wanManagement.physicalType') }}</span>
+              <span class="card-value">{{ mode.PhysicalType }}</span>
             </div>
             <div class="card-row">
               <span class="card-label">{{ t('wanManagement.status') }}</span>
               <span class="card-value">{{ mode.Status }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label">{{ t('wanManagement.type') }}</span>
-              <span class="card-value">{{ mode.PhysicalType }}</span>
             </div>
             <div class="card-actions">
               <button class="btn-action" @click="handleEdit(mode)" title="Edit">
@@ -212,15 +216,16 @@ onMounted(fetchManagementData);
 </template>
 
 <style scoped>
-
 .section-title-sp {
   font-size: 1rem;
   color: var(--text-primary);
   padding: 0.5rem 0;
 }
+
 .table-container{
   padding:1.5rem;
 }
+
 .btn {
   display: flex;
   align-items: center;
@@ -273,7 +278,6 @@ onMounted(fetchManagementData);
 }
 
 @media (max-width: 768px) {
-
   .header-row {
     flex-direction: column;
     gap: 1rem;

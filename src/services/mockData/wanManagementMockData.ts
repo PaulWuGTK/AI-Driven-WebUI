@@ -6,6 +6,9 @@ export const wanManagementMockData: WanModeManagementResponse = {
       WANMode: "demo_wanmode",
       Status: "Enabled",
       PhysicalType: "Ethernet",
+      EnableSensing: 1,
+      DNSMode: "Dynamic",
+      IPv6DNSMode: "Dynamic",
       Interfaces: [
         { 
           Interface: "wan",
@@ -23,6 +26,9 @@ export const wanManagementMockData: WanModeManagementResponse = {
       WANMode: "demo_ppp",
       Status: "Enabled",
       PhysicalType: "Ethernet",
+      EnableSensing: 1,
+      DNSMode: "Dynamic",
+      IPv6DNSMode: "Dynamic",
       Interfaces: [
         { 
           Interface: "wan",
@@ -40,6 +46,9 @@ export const wanManagementMockData: WanModeManagementResponse = {
       WANMode: "demo_static",
       Status: "Enabled",
       PhysicalType: "Ethernet",
+      EnableSensing: 1,
+      DNSMode: "Static",
+      IPv6DNSMode: "Dynamic",
       Interfaces: [
         { 
           Interface: "wan",

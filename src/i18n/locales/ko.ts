@@ -237,7 +237,10 @@ export default {
     edit: '수정',
     delete: '삭제',
     detail: '자세히 보기',
-    confirmDelete: '이 WAN 모드를 삭제하시겠습니까?'
+    confirmDelete: '이 WAN 모드를 삭제하시겠습니까?',
+    enableSensing: '감지 활성화',
+    ipv4DnsMode: 'IPv4 DNS 모드',
+    ipv6DnsMode: 'IPv6 DNS 모드'
   },
   ddns: {
     title: 'DDNS 설정',
