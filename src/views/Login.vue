@@ -17,8 +17,12 @@ const handleLogin = async () => {
 
   try {
     const auth = AuthService.getInstance();
-    await auth.login(username.value, password.value);
-      router.push('/dashboard');
+    const success = await auth.login(username.value, password.value);
+    if (success) {
+      await router.push('/dashboard');
+    } else {
+      error.value = 'Invalid username or password';
+    }
   } catch (err) {
     console.error('Login error:', err);
     error.value = err instanceof Error ? err.message : 'Login failed. Please try again.';

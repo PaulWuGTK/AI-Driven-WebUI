@@ -63,8 +63,7 @@ export class AuthService {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error('Invalid username or password');
       }
 
       const data = await response.json() as LoginResponse;
