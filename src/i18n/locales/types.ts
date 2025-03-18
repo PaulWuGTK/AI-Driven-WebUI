@@ -14,6 +14,7 @@ export interface Translations {
     basicSetting: string;
     wireless: string;
     wanSetting: string;
+    lanSetting: string;
     management: string;
     ntp: string;
     ssh: string;
@@ -189,7 +190,7 @@ export interface Translations {
     wanMode: string
     manual: string
     auto: string
-  },
+  };
   wanManagement: {
     addMode: string;
     editMode: string;
@@ -222,7 +223,31 @@ export interface Translations {
     enableSensing: string;
     ipv4DnsMode: string;
     ipv6DnsMode: string;
-  }
+  };
+  lanBasic: {
+    title: string;
+    ipv4Configuration: string;
+    deviceConnected: string;
+    lanIpSetting: string;
+    enable: string;
+    ipAddress: string;
+    subnetMask: string;
+    dhcpv4Setting: string;
+    enableDhcpServer: string;
+    dnsServer: string;
+    beginAddress: string;
+    endAddress: string;
+    leaseTime: string;
+    seconds: string;
+    ipAddressReservation: string;
+    add: string;
+    macAddress: string;
+    action: string;
+    hostName: string;
+    refresh: string;
+    apply: string;
+    cancel: string;
+  };
   ddns: {
     title: string;
     management: string;

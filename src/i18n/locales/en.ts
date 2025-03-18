@@ -23,7 +23,8 @@ const translations: Translations = {
     device: 'Device Management',
     diagnostics : 'Diagnostics',
     firmware: 'Upgrade Firmware',
-    reset: 'Device Reset'
+    reset: 'Device Reset',
+    lanSetting: 'LAN'
   },
   header: {
     account: 'Account',
@@ -244,6 +245,30 @@ const translations: Translations = {
     enableSensing: 'Enable Sensing',
     ipv4DnsMode: 'IPv4 DNS Mode',
     ipv6DnsMode: 'IPv6 DNS Mode'
+  },
+  lanBasic: {
+    title: 'LAN Settings',
+    ipv4Configuration: 'IPv4 Configuration',
+    deviceConnected: 'Device Connected',
+    lanIpSetting: 'LAN IP Setting',
+    enable: 'Enable',
+    ipAddress: 'IP Address',
+    subnetMask: 'Subnet Mask',
+    dhcpv4Setting: 'DHCPv4 Setting',
+    enableDhcpServer: 'Enable DHCP Server',
+    dnsServer: 'DNS Server',
+    beginAddress: 'Begin Address',
+    endAddress: 'End Address',
+    leaseTime: 'Lease Time',
+    seconds: 'Seconds',
+    ipAddressReservation: 'IP Address Reservation',
+    add: 'Add',
+    macAddress: 'MAC Address',
+    action: 'Action',
+    hostName: 'Host Name',
+    refresh: 'Refresh',
+    apply: 'Apply',
+    cancel: 'Cancel'
   },
   ddns: {
     title: 'DDNS Settings',

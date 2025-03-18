@@ -79,6 +79,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/settings/lan',
+      component: () => import('../views/settings/lan/LanSettings.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/ddns',
       component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth
