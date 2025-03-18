@@ -28,14 +28,6 @@ onMounted(fetchLanBasic);
 
 <template>
   <div class="device-connected">
-    <div class="header-row">
-      <div class="section-title-sp">{{ t('lanBasic.deviceConnected') }}</div>
-      <button class="btn btn-primary" @click="fetchLanBasic">
-        <span class="material-icons">refresh</span>
-        {{ t('lanBasic.refresh') }}
-      </button>
-    </div>
-
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
       <span>Loading...</span>
@@ -85,6 +77,13 @@ onMounted(fetchLanBasic);
           </div>
         </div>
       </div>
+
+      <div class="button-group">
+        <button class="btn btn-primary" @click="fetchLanBasic">
+          <span class="material-icons">refresh</span>
+          {{ t('lanBasic.refresh') }}
+        </button>
+      </div>
     </template>
   </div>
 </template>
@@ -92,12 +91,6 @@ onMounted(fetchLanBasic);
 <style scoped>
 .device-connected {
   padding: 1.5rem;
-}
-
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
 }
 
 .btn {
@@ -126,14 +119,15 @@ onMounted(fetchLanBasic);
   box-shadow: var(--shadow-sm);
 }
 
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 768px) {
   .device-connected {
     padding: 1rem;
-  }
-
-  .header-row {
-    flex-direction: column;
-    gap: 1rem;
   }
 
   .btn {

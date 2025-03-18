@@ -47,9 +47,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="dashboard">
+  <div class="page-container">
     <h1 class="page-title">{{ t('menu.dashboard') }}</h1>
     
+    <div class="status-content">
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Loading dashboard data...</p>
@@ -87,26 +88,10 @@ onUnmounted(() => {
       />
     </div>
   </div>
+  </div>
 </template>
 
 <style scoped>
-.dashboard {
-  flex: 1;
-  background-color: #f5f5f5;
-  min-height: 100%;
-}
-
-.page-title {
-  color: #0070BB;
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 1rem 2rem;
-  text-align: left;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -121,26 +106,19 @@ onUnmounted(() => {
   padding: 1.5rem;
 }
 
-.loading-state, .error-state {
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   padding: 2rem;
   text-align: center;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0070BB;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
 .error-state {
+  padding: 2rem;
+  text-align: center;
   color: #dc3545;
 }
 
@@ -156,11 +134,6 @@ onUnmounted(() => {
 
 .retry-button:hover {
   background-color: #005a96;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 @media (min-width: 1200px) {
