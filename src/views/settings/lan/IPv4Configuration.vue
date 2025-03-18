@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { LANBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
+import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
 
 const { t } = useI18n();
-const lanData = ref<LANBasicResponse | null>(null);
+const lanData = ref<LanBasicResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
@@ -25,7 +25,7 @@ const fetchLanBasic = async () => {
   try {
     const response = await getLanBasic();
     lanData.value = response;
-    reservations.value = [...response.LANBasic.IPAddressReservation];
+    reservations.value = [...response.LanBasic.IPAddressReservation];
   } catch (err) {
     console.error('Error fetching LAN basic:', err);
     error.value = 'Failed to fetch LAN settings';
@@ -70,9 +70,9 @@ const handleApply = async () => {
   loading.value = true;
   try {
     await updateLanBasic({
-      LANBasic: {
-        LANIPSetting: lanData.value.LANBasic.LANIPSetting,
-        DHCPv4Setting: lanData.value.LANBasic.DHCPv4Setting,
+      LanBasic: {
+        LANIPSetting: lanData.value.LanBasic.LANIPSetting,
+        DHCPv4Setting: lanData.value.LanBasic.DHCPv4Setting,
         IPAddressReservation: reservations.value
       }
     });
@@ -114,7 +114,7 @@ onMounted(fetchLanBasic);
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="lanData.LANBasic.LANIPSetting.Enable"
+                  v-model="lanData.LanBasic.LANIPSetting.Enable"
                   :true-value="1"
                   :false-value="0"
                 >
@@ -127,8 +127,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.ipAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.LANIPSetting.IPAddress"
-              :disabled="!lanData.LANBasic.LANIPSetting.Enable"
+              v-model="lanData.LanBasic.LANIPSetting.IPAddress"
+              :disabled="!lanData.LanBasic.LANIPSetting.Enable"
             />
           </div>
 
@@ -136,8 +136,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.subnetMask') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.LANIPSetting.SubnetMask"
-              :disabled="!lanData.LANBasic.LANIPSetting.Enable"
+              v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
+              :disabled="!lanData.LanBasic.LANIPSetting.Enable"
             />
           </div>
         </div>
@@ -153,7 +153,7 @@ onMounted(fetchLanBasic);
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="lanData.LANBasic.DHCPv4Setting.Enable"
+                  v-model="lanData.LanBasic.DHCPv4Setting.Enable"
                   :true-value="1"
                   :false-value="0"
                 >
@@ -166,8 +166,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.dnsServer') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.DHCPv4Setting.DNSServers"
-              :disabled="!lanData.LANBasic.DHCPv4Setting.Enable"
+              v-model="lanData.LanBasic.DHCPv4Setting.DNSServers"
+              :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
             />
           </div>
 
@@ -175,8 +175,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.beginAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.DHCPv4Setting.BeginAddress"
-              :disabled="!lanData.LANBasic.DHCPv4Setting.Enable"
+              v-model="lanData.LanBasic.DHCPv4Setting.BeginAddress"
+              :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
             />
           </div>
 
@@ -184,8 +184,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.endAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.DHCPv4Setting.EndAddress"
-              :disabled="!lanData.LANBasic.DHCPv4Setting.Enable"
+              v-model="lanData.LanBasic.DHCPv4Setting.EndAddress"
+              :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
             />
           </div>
 
@@ -193,8 +193,8 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.subnetMask') }}</label>
             <input
               type="text"
-              v-model="lanData.LANBasic.DHCPv4Setting.SubnetMask"
-              :disabled="!lanData.LANBasic.DHCPv4Setting.Enable"
+              v-model="lanData.LanBasic.DHCPv4Setting.SubnetMask"
+              :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
             />
           </div>
 
@@ -203,8 +203,8 @@ onMounted(fetchLanBasic);
             <div class="input-with-unit">
               <input
                 type="number"
-                v-model="lanData.LANBasic.DHCPv4Setting.LeaseTime"
-                :disabled="!lanData.LANBasic.DHCPv4Setting.Enable"
+                v-model="lanData.LanBasic.DHCPv4Setting.LeaseTime"
+                :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
               />
               <span class="unit">{{ t('lanBasic.seconds') }}</span>
             </div>

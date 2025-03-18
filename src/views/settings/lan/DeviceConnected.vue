@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { LANBasicResponse } from '../../../types/lanBasic';
+import type { LanBasicResponse } from '../../../types/lanBasic';
 import { getLanBasic } from '../../../services/api/lanBasic';
 
 const { t } = useI18n();
-const lanData = ref<LANBasicResponse | null>(null);
+const lanData = ref<LanBasicResponse | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
@@ -56,7 +56,7 @@ onMounted(fetchLanBasic);
             </tr>
           </thead>
           <tbody>
-            <tr v-for="device in lanData.LANBasic.DeviceConnected" :key="device.MACAddress">
+            <tr v-for="device in lanData.LanBasic.DeviceConnected" :key="device.MACAddress">
               <td>{{ device.Host }}</td>
               <td>{{ device.MACAddress }}</td>
               <td>{{ device.IPAddress }}</td>
@@ -68,7 +68,7 @@ onMounted(fetchLanBasic);
       <div class="mobile-cards">
         <div 
           class="table-card" 
-          v-for="device in lanData.LANBasic.DeviceConnected" 
+          v-for="device in lanData.LanBasic.DeviceConnected" 
           :key="device.MACAddress"
         >
           <div class="card-row">

@@ -1,12 +1,12 @@
-import type { LANBasicResponse, LANBasicUpdateRequest } from '../../types/lanBasic';
+import type { LanBasicResponse, LanBasicUpdateRequest } from '../../types/lanBasic';
 import { handleApiResponse } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
 
-export const getLanBasic = async (): Promise<LANBasicResponse> => {
+export const getLanBasic = async (): Promise<LanBasicResponse> => {
   if (isDevelopment) {
     return {
-      LANBasic: {
+      LanBasic: {
         LANIPSetting: {
           Enable: 1,
           IPAddress: "192.168.1.1",
@@ -39,10 +39,10 @@ export const getLanBasic = async (): Promise<LANBasicResponse> => {
   }
 
   const response = await fetch('/API/info?list=LanBasic');
-  return handleApiResponse<LANBasicResponse>(response);
+  return handleApiResponse<LanBasicResponse>(response);
 };
 
-export const updateLanBasic = async (data: LANBasicUpdateRequest): Promise<LANBasicResponse> => {
+export const updateLanBasic = async (data: LanBasicUpdateRequest): Promise<LanBasicResponse> => {
   if (isDevelopment) {
     console.log('Update LAN Basic:', data);
     return getLanBasic();
@@ -55,5 +55,5 @@ export const updateLanBasic = async (data: LANBasicUpdateRequest): Promise<LANBa
     },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<LANBasicResponse>(response);
+  return handleApiResponse<LanBasicResponse>(response);
 };

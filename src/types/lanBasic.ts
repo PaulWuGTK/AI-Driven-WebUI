@@ -25,8 +25,8 @@ export interface DeviceConnected {
   IPAddress: string;
 }
 
-export interface LANBasicResponse {
-  LANBasic: {
+export interface LanBasicResponse {
+  LanBasic: {
     LANIPSetting: LANIPSetting;
     DHCPv4Setting: DHCPv4Setting;
     IPAddressReservation: IPAddressReservation[];
@@ -34,8 +34,8 @@ export interface LANBasicResponse {
   }
 }
 
-export interface LANBasicUpdateRequest {
-  LANBasic: {
+export interface LanBasicUpdateRequest {
+  LanBasic: {
     LANIPSetting: LANIPSetting;
     DHCPv4Setting: DHCPv4Setting;
     IPAddressReservation: IPAddressReservation[];
