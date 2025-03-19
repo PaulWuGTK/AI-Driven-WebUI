@@ -13,13 +13,19 @@ const refreshInterval = ref<number | null>(null);
 const fetchLcmStatus = async () => {
   loading.value = true;
   error.value = null;
+  const scrollY = window.scrollY;
   try {
-    lcmData.value = await getLcmStatus();
+    const newData = await getLcmStatus();
+    // Only update if data has changed to prevent unnecessary re-renders
+    if (JSON.stringify(newData) !== JSON.stringify(lcmData.value)) {
+      lcmData.value = newData;
+    }
   } catch (err) {
     console.error('Error fetching LCM status:', err);
     error.value = 'Failed to fetch LCM status';
   } finally {
     loading.value = false;
+    requestAnimationFrame(() => window.scrollTo(0, scrollY));
   }
 };
 
@@ -41,7 +47,7 @@ onUnmounted(() => {
     <h1 class="page-title">{{ t('lcm.title') }}</h1>
 
     <div class="status-content">
-      <div v-if="loading" class="loading-state">
+      <div v-if="loading && !lcmData" class="loading-state">
         <div class="loading-spinner"></div>
         <span>Loading...</span>
       </div>
@@ -115,7 +121,7 @@ onUnmounted(() => {
                 <div class="card-content">
                   <div class="card-row">
                     <span class="card-label">{{ t('lcm.name') }}</span>
-                    <span class="card-value">{{ unit.Name }}</span>
+                    <span class="card-value text-ellipsis" :title="unit.Name">{{ unit.Name }}</span>
                   </div>
                   <div class="card-row">
                     <span class="card-label">{{ t('lcm.status') }}</span>
@@ -123,11 +129,11 @@ onUnmounted(() => {
                   </div>
                   <div class="card-row">
                     <span class="card-label">{{ t('lcm.url') }}</span>
-                    <span class="card-value">{{ unit.URL }}</span>
+                    <span class="card-value text-ellipsis" :title="unit.URL">{{ unit.URL }}</span>
                   </div>
                   <div class="card-row">
                     <span class="card-label">{{ t('lcm.uuid') }}</span>
-                    <span class="card-value">{{ unit.UUID }}</span>
+                    <span class="card-value text-ellipsis" :title="unit.UUID">{{ unit.UUID }}</span>
                   </div>
                   <div class="card-row">
                     <span class="card-label">{{ t('lcm.vendor') }}</span>
@@ -178,6 +184,7 @@ onUnmounted(() => {
   height: 12px;
   border-radius: 50%;
   background-color: #dc3545;
+  flex-shrink: 0;
 }
 
 .status-dot.resolved {
@@ -189,6 +196,40 @@ onUnmounted(() => {
   font-size: 1rem;
   color: var(--text-primary);
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-row:last-child {
+  border-bottom: none;
+}
+
+.card-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.card-value {
+  color: var(--text-primary);
+  text-align: right;
+  word-break: break-word;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loading-state {
@@ -222,6 +263,17 @@ onUnmounted(() => {
 
   .mobile-cards {
     display: block;
+  }
+
+  .card-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .card-value {
+    text-align: left;
+    width: 100%;
   }
 }
 </style>

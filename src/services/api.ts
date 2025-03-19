@@ -100,25 +100,40 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanR
   return handleApiResponse<WifiNeighborScanResponse>(response);
 }
 
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0; // 生成 0~15 的隨機數
+    const v = c === 'x' ? r : (r & 0x3) | 0x8; // 確保 UUID 格式正確
+    return v.toString(16);
+  });
+};
+
+const generateRandomDeploymentUnits = (count: number) => {
+  const statuses = ["Installed", "Pending", "Failed"];
+  const versions = ["1.0.1", "1.0.2", "1.0.3", "2.0.0"];
+  const vendors = ["Gemtek", "Qualcomm", "Broadcom"];
+  
+  return Array.from({ length: count }, () => ({
+    Alias: `cpe-${generateUUID().slice(0, 8)}`,  // 生成一個部分 UUID 作為 Alias
+    Resolved: Math.random() > 0.5 ? 1 : 0, // 隨機 0 或 1
+    Name: "arm32v7/lcm-webui-generic",
+    URL: `docker://10.5.163.2:5000/arm32v7/lcm-webui-generic:${versions[Math.floor(Math.random() * versions.length)]}`,
+    Status: statuses[Math.floor(Math.random() * statuses.length)],
+    Version: versions[Math.floor(Math.random() * versions.length)],
+    Vendor: vendors[Math.floor(Math.random() * vendors.length)],
+    UUID: generateUUID()  // 生成完整的 UUID
+  }));
+};
+
 export async function getLcmStatus(): Promise<StatusLcmResponse> {
   if (isDevelopment) {
+    const count = Math.floor(Math.random() * 15) + 1
     return {
       StatusLcm: {
         ExecutionUnitNumberOfEntries: 1,
           ExecEnvNumberOfEntries: 1,
-        DeploymentUnitNumberOfEntries: 1,
-        DeploymentUnits: [
-      {
-            Alias: "cpe-a47d1132-f667-5029-b94b-ca498da79729",
-            Resolved: 1,
-            Name: "arm32v7/lcm-webui-generic",
-            URL: "docker://10.5.163.2:5000/arm32v7/lcm-webui-generic:1.0.3",
-            Status: "Installed",
-            Version: "1.0.3",
-            Vendor: "Gemtek",
-            UUID: "99bdc305-b8ff-59cd-8b2d-b1010d2d69a5"
-          }
-        ]
+        DeploymentUnitNumberOfEntries: count,
+        DeploymentUnits: generateRandomDeploymentUnits(count)
       }
     };
   }

@@ -19,6 +19,65 @@ const tempReservation = ref<IPAddressReservation>({
   Enable: 1
 });
 
+// Validation functions
+const isValidIPv4 = (ip: string): boolean => {
+  const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+  if (!ipv4Regex.test(ip)) return false;
+  
+  const parts = ip.split('.');
+  return parts.every(part => {
+    const num = parseInt(part, 10);
+    return num >= 0 && num <= 255;
+  });
+};
+
+const isValidSubnetMask = (mask: string): boolean => {
+  const maskRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+  if (!maskRegex.test(mask)) return false;
+
+  const parts = mask.split('.').map(part => parseInt(part, 10));
+  let binary = '';
+  parts.forEach(num => {
+    binary += num.toString(2).padStart(8, '0');
+  });
+
+  // Valid subnet masks should have continuous 1s followed by continuous 0s
+  return /^1+0*$/.test(binary);
+};
+
+const isValidMACAddress = (mac: string): boolean => {
+  return /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(mac);
+};
+
+const isIPInRange = (ip: string, beginIp: string, endIp: string): boolean => {
+  const ipToNumber = (ip: string): number => {
+    const parts = ip.split('.').map(part => parseInt(part, 10));
+    return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+  };
+
+  const ipNum = ipToNumber(ip);
+  const beginNum = ipToNumber(beginIp);
+  const endNum = ipToNumber(endIp);
+
+  return ipNum >= beginNum && ipNum <= endNum;
+};
+
+const validateIPInput = (ip: string): string => {
+  if (!ip) return '';
+  const parts = ip.split('.');
+  return parts.map(part => {
+    const num = parseInt(part, 10);
+    if (isNaN(num)) return '0';
+    return Math.min(255, Math.max(0, num)).toString();
+  }).join('.');
+};
+
+const validateLeaseTime = (time: string): string => {
+  const num = parseInt(time, 10);
+  if (isNaN(num)) return '43200'; // Default to 12 hours
+  return Math.max(300, Math.min(604800, num)).toString(); // Between 5 minutes and 7 days
+};
+
 const fetchLanBasic = async () => {
   loading.value = true;
   error.value = null;
@@ -43,8 +102,35 @@ const handleAddReservation = () => {
   editingIndex.value = reservations.value.length - 1;
 };
 
+const validateReservation = (reservation: IPAddressReservation): boolean => {
+  if (!isValidMACAddress(reservation.MACAddress)) {
+    error.value = 'Invalid MAC address format';
+    return false;
+  }
+
+  if (!isValidIPv4(reservation.IPAddress)) {
+    error.value = 'Invalid IP address format';
+    return false;
+  }
+
+  if (lanData.value && lanData.value.LanBasic.DHCPv4Setting.Enable) {
+    const { BeginAddress, EndAddress } = lanData.value.LanBasic.DHCPv4Setting;
+    if (!isIPInRange(reservation.IPAddress, BeginAddress, EndAddress)) {
+      error.value = 'Reserved IP must be within DHCP range';
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const handleConfirmReservation = (index: number) => {
+  const reservation = reservations.value[index];
+  if (!validateReservation(reservation)) {
+    return;
+  }
   editingIndex.value = null;
+  error.value = null;
 };
 
 const handleCancelReservation = (index: number) => {
@@ -52,6 +138,7 @@ const handleCancelReservation = (index: number) => {
     reservations.value.splice(index, 1);
   }
   editingIndex.value = null;
+  error.value = null;
 };
 
 const handleEditReservation = (index: number) => {
@@ -64,15 +151,99 @@ const handleDeleteReservation = (index: number) => {
   editingIndex.value = null;
 };
 
+const validateLANSettings = (): boolean => {
+  if (!lanData.value) return false;
+
+  const { LANIPSetting, DHCPv4Setting } = lanData.value.LanBasic;
+
+  // Validate LAN IP
+  if (!isValidIPv4(LANIPSetting.IPAddress)) {
+    error.value = 'Invalid LAN IP address format';
+    return false;
+  }
+
+  if (!isValidSubnetMask(LANIPSetting.SubnetMask)) {
+    error.value = 'Invalid subnet mask format';
+    return false;
+  }
+
+  // Validate DHCP settings if enabled
+  if (DHCPv4Setting.Enable) {
+    if (!isValidIPv4(DHCPv4Setting.BeginAddress)) {
+      error.value = 'Invalid DHCP start address';
+      return false;
+    }
+
+    if (!isValidIPv4(DHCPv4Setting.EndAddress)) {
+      error.value = 'Invalid DHCP end address';
+      return false;
+    }
+
+    if (!isValidSubnetMask(DHCPv4Setting.SubnetMask)) {
+      error.value = 'Invalid DHCP subnet mask';
+      return false;
+    }
+
+    // Validate DHCP range is within LAN subnet
+    const ipToNumber = (ip: string): number => {
+      const parts = ip.split('.').map(part => parseInt(part, 10));
+      return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+    };
+
+    const maskToNumber = (mask: string): number => {
+      const parts = mask.split('.').map(part => parseInt(part, 10));
+      return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+    };
+
+    const lanIp = ipToNumber(LANIPSetting.IPAddress);
+    const lanMask = maskToNumber(LANIPSetting.SubnetMask);
+    const beginIp = ipToNumber(DHCPv4Setting.BeginAddress);
+    const endIp = ipToNumber(DHCPv4Setting.EndAddress);
+    const networkAddr = lanIp & lanMask;
+    const broadcastAddr = networkAddr | (~lanMask >>> 0);
+
+    if (beginIp < networkAddr || beginIp > broadcastAddr) {
+      error.value = 'DHCP start address must be within LAN subnet';
+      return false;
+    }
+
+    if (endIp < networkAddr || endIp > broadcastAddr) {
+      error.value = 'DHCP end address must be within LAN subnet';
+      return false;
+    }
+
+    if (beginIp >= endIp) {
+      error.value = 'DHCP start address must be lower than end address';
+      return false;
+    }
+
+    // Validate DNS server if provided
+    if (DHCPv4Setting.DNSServers && !DHCPv4Setting.DNSServers.split(',').every(ip => isValidIPv4(ip.trim()))) {
+      error.value = 'Invalid DNS server address';
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const handleApply = async () => {
   if (!lanData.value) return;
   
+  error.value = null;
+  if (!validateLANSettings()) {
+    return;
+  }
+
   loading.value = true;
   try {
     await updateLanBasic({
       LanBasic: {
         LANIPSetting: lanData.value.LanBasic.LANIPSetting,
-        DHCPv4Setting: lanData.value.LanBasic.DHCPv4Setting,
+        DHCPv4Setting: {
+          ...lanData.value.LanBasic.DHCPv4Setting,
+          LeaseTime: validateLeaseTime(lanData.value.LanBasic.DHCPv4Setting.LeaseTime.toString())
+        },
         IPAddressReservation: reservations.value
       }
     });
@@ -86,6 +257,23 @@ const handleApply = async () => {
     error.value = 'Failed to update LAN settings';
   } finally {
     loading.value = false;
+  }
+};
+
+const handleIPInput = (event: Event, field: string) => {
+  if (!lanData.value) return;
+  
+  const input = event.target as HTMLInputElement;
+  const validatedIP = validateIPInput(input.value);
+  
+  if (field === 'lanIP') {
+    lanData.value.LanBasic.LANIPSetting.IPAddress = validatedIP;
+  } else if (field === 'dnsServer') {
+    lanData.value.LanBasic.DHCPv4Setting.DNSServers = validatedIP;
+  } else if (field === 'beginAddress') {
+    lanData.value.LanBasic.DHCPv4Setting.BeginAddress = validatedIP;
+  } else if (field === 'endAddress') {
+    lanData.value.LanBasic.DHCPv4Setting.EndAddress = validatedIP;
   }
 };
 
@@ -127,8 +315,10 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.ipAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LanBasic.LANIPSetting.IPAddress"
+              :value="lanData.LanBasic.LANIPSetting.IPAddress"
+              @input="handleIPInput($event, 'lanIP')"
               :disabled="!lanData.LanBasic.LANIPSetting.Enable"
+              placeholder="192.168.1.1"
             />
           </div>
 
@@ -138,6 +328,7 @@ onMounted(fetchLanBasic);
               type="text"
               v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
               :disabled="!lanData.LanBasic.LANIPSetting.Enable"
+              placeholder="255.255.255.0"
             />
           </div>
         </div>
@@ -166,8 +357,10 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.dnsServer') }}</label>
             <input
               type="text"
-              v-model="lanData.LanBasic.DHCPv4Setting.DNSServers"
+              :value="lanData.LanBasic.DHCPv4Setting.DNSServers"
+              @input="handleIPInput($event, 'dnsServer')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+              placeholder="192.168.1.1"
             />
           </div>
 
@@ -175,8 +368,10 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.beginAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LanBasic.DHCPv4Setting.BeginAddress"
+              :value="lanData.LanBasic.DHCPv4Setting.BeginAddress"
+              @input="handleIPInput($event, 'beginAddress')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+              placeholder="192.168.1.2"
             />
           </div>
 
@@ -184,8 +379,10 @@ onMounted(fetchLanBasic);
             <label>{{ t('lanBasic.endAddress') }}</label>
             <input
               type="text"
-              v-model="lanData.LanBasic.DHCPv4Setting.EndAddress"
+              :value="lanData.LanBasic.DHCPv4Setting.EndAddress"
+              @input="handleIPInput($event, 'endAddress')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+              placeholder="192.168.1.254"
             />
           </div>
 
@@ -195,6 +392,7 @@ onMounted(fetchLanBasic);
               type="text"
               v-model="lanData.LanBasic.DHCPv4Setting.SubnetMask"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+              placeholder="255.255.255.0"
             />
           </div>
 
@@ -205,6 +403,8 @@ onMounted(fetchLanBasic);
                 type="number"
                 v-model="lanData.LanBasic.DHCPv4Setting.LeaseTime"
                 :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+                min="300"
+                max="604800"
               />
               <span class="unit">{{ t('lanBasic.seconds') }}</span>
             </div>
@@ -240,6 +440,7 @@ onMounted(fetchLanBasic);
                       v-if="editingIndex === index"
                       type="text"
                       v-model="reservation.MACAddress"
+                      placeholder="00:11:22:33:44:55"
                     />
                     <span v-else>{{ reservation.MACAddress }}</span>
                   </td>
@@ -248,6 +449,7 @@ onMounted(fetchLanBasic);
                       v-if="editingIndex === index"
                       type="text"
                       v-model="reservation.IPAddress"
+                      placeholder="192.168.1.100"
                     />
                     <span v-else>{{ reservation.IPAddress }}</span>
                   </td>
@@ -302,6 +504,7 @@ onMounted(fetchLanBasic);
                     v-if="editingIndex === index"
                     type="text"
                     v-model="reservation.MACAddress"
+                    placeholder="00:11:22:33:44:55"
                   />
                   <span v-else>{{ reservation.MACAddress }}</span>
                 </span>
@@ -313,6 +516,7 @@ onMounted(fetchLanBasic);
                     v-if="editingIndex === index"
                     type="text"
                     v-model="reservation.IPAddress"
+                    placeholder="192.168.1.100"
                   />
                   <span v-else>{{ reservation.IPAddress }}</span>
                 </span>
