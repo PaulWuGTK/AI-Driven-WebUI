@@ -18,7 +18,7 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
           BeginAddress: "192.168.1.2",
           EndAddress: "192.168.1.254",
           SubnetMask: "255.255.255.0",
-          LeaseTime: "43200"
+          LeaseTime: 43200
         },
         IPAddressReservation: [
           {

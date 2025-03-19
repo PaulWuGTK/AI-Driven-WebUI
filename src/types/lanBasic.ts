@@ -10,7 +10,7 @@ export interface DHCPv4Setting {
   BeginAddress: string;
   EndAddress: string;
   SubnetMask: string;
-  LeaseTime: string | number;
+  LeaseTime: number;
 }
 
 export interface IPAddressReservation {

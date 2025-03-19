@@ -72,10 +72,9 @@ const validateIPInput = (ip: string): string => {
   }).join('.');
 };
 
-const validateLeaseTime = (time: string): string => {
-  const num = parseInt(time, 10);
-  if (isNaN(num)) return '43200'; // Default to 12 hours
-  return Math.max(300, Math.min(604800, num)).toString(); // Between 5 minutes and 7 days
+const validateLeaseTime = (time: number): number => {
+  if (isNaN(time)) return 43200; // Default to 12 hours
+  return Math.max(300, Math.min(604800, time)); // Between 5 minutes and 7 days
 };
 
 const fetchLanBasic = async () => {
@@ -242,7 +241,7 @@ const handleApply = async () => {
         LANIPSetting: lanData.value.LanBasic.LANIPSetting,
         DHCPv4Setting: {
           ...lanData.value.LanBasic.DHCPv4Setting,
-          LeaseTime: validateLeaseTime(lanData.value.LanBasic.DHCPv4Setting.LeaseTime.toString())
+          LeaseTime: validateLeaseTime(lanData.value.LanBasic.DHCPv4Setting.LeaseTime)
         },
         IPAddressReservation: reservations.value
       }
