@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardCPU } from '../../types/dashboard';
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
   cpuInfo?: DashboardCPU;
 }>();
+
+const usageHistory = ref<number[]>([]);
+const maxHistoryPoints = 10;
+
+watch(() => props.cpuInfo?.CPUUsage, (newUsage) => {
+  if (newUsage !== undefined) {
+    usageHistory.value.push(Math.min(newUsage, 100));
+    if (usageHistory.value.length > maxHistoryPoints) {
+      usageHistory.value.shift();
+    }
+  }
+});
 </script>
 
 <template>
@@ -19,8 +31,10 @@ defineProps<{
       </div>
       <div class="usage-graph">
         <div 
+          v-for="(value, index) in usageHistory" 
+          :key="index"
           class="graph-bar"
-          :style="{ height: `${cpuInfo.CPUUsage}%` }"
+          :style="{ height: `${value}%` }"
         />
       </div>
     </div>
@@ -51,6 +65,7 @@ defineProps<{
   flex: 1;
   display: flex;
   align-items: flex-end;
+  gap: 2px;
 }
 
 .graph-bar {
