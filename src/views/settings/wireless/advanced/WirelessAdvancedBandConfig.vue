@@ -32,7 +32,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
     </div>
     
     <div class="band-content">
-      <div class="form-group" style="display:none">
+      <div class="form-group">
         <div class="switch-label">
           <span>{{ t('common.enable') }}</span>
           <label class="switch">

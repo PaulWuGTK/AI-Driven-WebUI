@@ -40,8 +40,9 @@ const sortedEthernet = computed(() => {
 <style scoped>
 .ports-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: 1fr; /* 強制單列排列 */
   gap: 1rem;
+  justify-items: center; /* 讓項目置中對齊 */
 }
 
 .port-item {
