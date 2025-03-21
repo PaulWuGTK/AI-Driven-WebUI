@@ -8,7 +8,6 @@ import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } 
 const { t } = useI18n();
 const router = useRouter();
 const selectedFile = ref<File | null>(null);
-const autoActivate = ref(false);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -123,8 +122,8 @@ const handleUpgrade = async () => {
       uploadedFileName.value = await uploadFirmware(selectedFile.value);
     }
 
-    // Then perform the upgrade
-    await upgradeFirmware(uploadedFileName.value, autoActivate.value);
+    // Then perform the upgrade with autoActivate always true
+    await upgradeFirmware(uploadedFileName.value, true);
     
     // Clear file selection after successful upgrade
     selectedFile.value = null;
@@ -275,20 +274,6 @@ onMounted(fetchFirmwareStatus);
               accept=".bin,.img,.fw"
             >
 
-            <div class="auto-activate">
-              <label class="switch-label">
-                <span>{{ t('firmware.autoActivate') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    v-model="autoActivate"
-                    disabled
-                  >
-                  <span class="slider disabled"></span>
-                </label>
-              </label>
-            </div>
-
             <div v-if="error" class="error-message">
               {{ error }}
             </div>
@@ -419,71 +404,10 @@ onMounted(fetchFirmwareStatus);
   color: var(--text-primary);
 }
 
-.auto-activate {
-  margin: 1.5rem 0;
-}
-
-.switch-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text-primary);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-
-.slider.disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color);
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
 .button-group {
   display: flex;
   justify-content: center;
+  margin-top: 1.5rem;
 }
 
 .button-group .btn {
