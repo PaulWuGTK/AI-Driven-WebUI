@@ -1,12 +1,8 @@
+import type { TR069Config } from './tr069';
+import type { TR369Config, TR369Controller } from './tr369';
 
-export interface TR069Config {
-  URL: string;
-  EnableCWMP: number;
-  ConnectionRequestUsername: string;
-  Password: string;
-  ConnectionRequestPassword: string;
-  PeriodicInformEnable: number;
-  PeriodicInformInterval: number;
-  Username: string;
-  ConnectionRequestURL: string;
-}
+export {
+  TR069Config,
+  TR369Config,
+  TR369Controller
+};

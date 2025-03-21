@@ -336,6 +336,25 @@ export interface Translations {
     enablePeriodicInform: string;
     periodicInformInterval: string;
     sendInform: string;
+    alias: string;
+    endpointId: string;
+    controllerTopic: string;
+    agentTopic: string;
+    brokerAddress: string;
+    brokerPort: string;
+    clientId: string;
+    status: string;
+    periodicNotify: string;
+    keepAliveTime: string;
+    protocolVersion: string;
+    transportProtocol: string;
+    addController: string;
+    editController: string;
+    confirmDelete: string;
+    action: string;
+    agentEndpointId: string;
+    maxControllersReached: string;
+    controller: string;
   };
   diagnostics: {
     title: string;

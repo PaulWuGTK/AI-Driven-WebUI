@@ -1,17 +1,16 @@
-```vue
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TR069Config from './TR069Config.vue';
+import TR369Config from './TR369Config.vue';
 
 const { t } = useI18n();
 const activeTab = ref('tr069');
 
-// Use computed to dynamically generate tabs for future expansion
+// Use computed to dynamically generate tabs
 const tabs = computed(() => [
-  { id: 'tr069', label: t('device.tr069Config') }
-  // TR-369 tab will be added later
-  // { id: 'tr369', label: t('device.tr369Config') }
+  { id: 'tr069', label: t('device.tr069Config') },
+  { id: 'tr369', label: t('device.tr369Config') }
 ]);
 </script>
 
@@ -35,9 +34,9 @@ const tabs = computed(() => [
 
         <div class="tab-content">
           <TR069Config v-if="activeTab === 'tr069'" />
+          <TR369Config v-if="activeTab === 'tr369'" />
         </div>
       </div>
     </div>
   </div>
 </template>
-```
