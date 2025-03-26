@@ -21,7 +21,8 @@ export default {
     device: '장치 관리',
     diagnostics: '진단 도구',
     firmware: '펌웨어 업그레이드',
-    reset: '장치 초기화'
+    reset: '장치 초기화',
+    backup: '백업'
   },
   header: {
     account: '계정',
@@ -444,6 +445,20 @@ export default {
     factoryConfirm: '장치를 공장 설정으로 초기화하시겠습니까? 모든 구성이 손실됩니다.',
     countdown: '장치가 {seconds}초 후에 재시작됩니다...',
     success: '명령이 성공적으로 전송되었습니다'
+  },
+  backup: {
+    title: '백업 및 복원',
+    backupTitle: '백업',
+    backupDescription: '현재 구성 파일을 로컬 컴퓨터에 백업합니다',
+    backupButton: '백업',
+    restoreTitle: '복원',
+    restoreDescription: '백업 파일에서 구성 복원',
+    dragAndDrop: '여기로 파일을 끌어다 놓기',
+    selectFromComputer: '(또는) 컴퓨터에서 파일 선택',
+    chooseFile: '파일 선택',
+    noFileSelected: '선택된 파일 없음',
+    restoreButton: '복원',
+    processing: '처리 중...'
   },
   login: {
     title: '로그인',

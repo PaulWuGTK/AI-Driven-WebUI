@@ -24,7 +24,8 @@ const translations: Translations = {
     diagnostics : 'Diagnostics',
     firmware: 'Upgrade Firmware',
     reset: 'Device Reset',
-    lanSetting: 'LAN'
+    lanSetting: 'LAN',
+    backup: 'Backup'
   },
   header: {
     account: 'Account',
@@ -448,6 +449,20 @@ const translations: Translations = {
     factoryConfirm: 'Are you sure you want to reset the device to factory settings? All configuration will be lost.',
     countdown: 'Device will restart in {seconds} seconds...',
     success: 'Command sent successfully'
+  },
+  backup: {
+    title: 'Backup & Restore',
+    backupTitle: 'Backup',
+    backupDescription: 'Back up current configuration file to your local machine',
+    backupButton: 'Backup',
+    restoreTitle: 'Restore',
+    restoreDescription: 'Restore configuration from backup file',
+    dragAndDrop: 'Drag and Drop files here',
+    selectFromComputer: '(or) Select file from your computer',
+    chooseFile: 'Choose File',
+    noFileSelected: 'No file selected',
+    restoreButton: 'Restore',
+    processing: 'Processing...'
   },
   login: {
     title: 'Login',

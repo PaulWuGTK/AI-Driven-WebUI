@@ -21,7 +21,8 @@ export default {
     device: '裝置管理',
     diagnostics: '診斷工具',
     firmware: '韌體升級',
-    reset: '裝置重置'
+    reset: '裝置重置',
+    backup: '備份'
   },
   header: {
     account: '帳號',
@@ -445,6 +446,20 @@ export default {
     factoryConfirm: '您確定要將裝置重置為出廠設定嗎？所有設定都將遺失。',
     countdown: '裝置將在 {seconds} 秒後重新啟動...',
     success: '命令已成功傳送'
+  },
+  backup: {
+    title: '備份與還原',
+    backupTitle: '備份',
+    backupDescription: '將目前的設定檔備份至本機',
+    backupButton: '備份',
+    restoreTitle: '還原',
+    restoreDescription: '從備份檔案還原設定',
+    dragAndDrop: '拖曳檔案至此',
+    selectFromComputer: '（或）從電腦選擇檔案',
+    chooseFile: '選擇檔案',
+    noFileSelected: '尚未選擇檔案',
+    restoreButton: '還原',
+    processing: '處理中...'
   },
   login: {
     title: '登入',

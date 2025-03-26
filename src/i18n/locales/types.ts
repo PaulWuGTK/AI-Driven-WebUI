@@ -24,6 +24,7 @@ export interface Translations {
     diagnostics: string;
     firmware: string;
     reset: string;
+    backup: string;
   };
   header: {
     account: string;
@@ -426,6 +427,20 @@ export interface Translations {
     factoryConfirm: string;
     countdown: string;
     success: string;
+  };
+  backup: {
+    title: string;
+    backupTitle: string;
+    backupDescription: string;
+    backupButton: string;
+    restoreTitle: string;
+    restoreDescription: string;
+    dragAndDrop: string;
+    selectFromComputer: string;
+    chooseFile: string;
+    noFileSelected: string;
+    restoreButton: string;
+    processing: string;
   };
   login: {
     title: string;

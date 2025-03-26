@@ -117,6 +117,11 @@ const router = createRouter({
       path: '/upgrade',
       component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/management/backup',
+      component: () => import('../views/management/backup/BackupManagement.vue'),
+      beforeEnter: requireAuth
     }
   ]
 });

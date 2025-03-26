@@ -21,7 +21,8 @@ export default {
     device: 'Geräteverwaltung',
     diagnostics: 'Diagnose',
     firmware: 'Firmware-Upgrade',
-    reset: 'Gerät zurücksetzen'
+    reset: 'Gerät zurücksetzen',
+    backup: 'Sicherung'
   },
   header: {
     account: 'Konto',
@@ -445,6 +446,20 @@ export default {
     factoryConfirm: 'Sind Sie sicher, dass Sie das Gerät auf Werkseinstellungen zurücksetzen möchten? Alle Konfigurationen gehen verloren.',
     countdown: 'Das Gerät wird in {seconds} Sekunden neu gestartet...',
     success: 'Befehl erfolgreich gesendet'
+  },
+  backup: {
+    title: 'Sicherung & Wiederherstellung',
+    backupTitle: 'Sicherung',
+    backupDescription: 'Aktuelle Konfigurationsdatei auf Ihren lokalen Computer sichern',
+    backupButton: 'Sichern',
+    restoreTitle: 'Wiederherstellung',
+    restoreDescription: 'Konfiguration aus Sicherungsdatei wiederherstellen',
+    dragAndDrop: 'Dateien hierher ziehen und ablegen',
+    selectFromComputer: '(oder) Datei von Ihrem Computer auswählen',
+    chooseFile: 'Datei auswählen',
+    noFileSelected: 'Keine Datei ausgewählt',
+    restoreButton: 'Wiederherstellen',
+    processing: 'Verarbeitung läuft...'
   },
   login: {
     title: 'Login',

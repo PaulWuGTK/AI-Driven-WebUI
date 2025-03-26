@@ -21,7 +21,8 @@ export default {
     device: 'デバイス管理',
     diagnostics: '診断ツール',
     firmware: 'ファームウェアアップグレード',
-    reset: 'デバイスリセット'
+    reset: 'デバイスリセット',
+    backup: 'バックアップ'
   },
   header: {
     account: 'アカウント',
@@ -445,6 +446,20 @@ export default {
     factoryConfirm: 'デバイスを工場出荷時の設定にリセットしてもよろしいですか？すべての設定が失われます。',
     countdown: 'デバイスは{seconds}秒後に再起動します...',
     success: 'コマンドが正常に送信されました'
+  },
+  backup: {
+    title: 'バックアップと復元',
+    backupTitle: 'バックアップ',
+    backupDescription: '現在の設定ファイルをローカルコンピューターにバックアップします',
+    backupButton: 'バックアップ',
+    restoreTitle: '復元',
+    restoreDescription: 'バックアップファイルから設定を復元します',
+    dragAndDrop: 'ここにファイルをドラッグ＆ドロップ',
+    selectFromComputer: '(または) コンピューターからファイルを選択',
+    chooseFile: 'ファイルを選択',
+    noFileSelected: 'ファイルが選択されていません',
+    restoreButton: '復元',
+    processing: '処理中...'
   },
   login: {
     title: 'ログイン',

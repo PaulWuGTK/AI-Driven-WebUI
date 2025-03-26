@@ -21,7 +21,8 @@ export default {
     device: 'Gestion des appareils',
     diagnostics: 'Outils de diagnostic',
     firmware: 'Mise à jour du firmware',
-    reset: 'Réinitialisation de l\'appareil'
+    reset: 'Réinitialisation de l\'appareil',
+    backup: 'Sauvegarde'
   },
   header: {
     account: 'Compte',
@@ -445,6 +446,20 @@ export default {
     factoryConfirm: 'Êtes-vous sûr de vouloir réinitialiser l\'appareil aux paramètres d\'usine ? Toute la configuration sera perdue.',
     countdown: 'L\'appareil redémarrera dans {seconds} secondes...',
     success: 'Commande envoyée avec succès'
+  },
+  backup: {
+    title: 'Sauvegarde & Restauration',
+    backupTitle: 'Sauvegarde',
+    backupDescription: 'Sauvegardez le fichier de configuration actuel sur votre ordinateur local',
+    backupButton: 'Sauvegarder',
+    restoreTitle: 'Restauration',
+    restoreDescription: 'Restaurer la configuration à partir d’un fichier de sauvegarde',
+    dragAndDrop: 'Glissez et déposez les fichiers ici',
+    selectFromComputer: '(ou) Sélectionnez un fichier depuis votre ordinateur',
+    chooseFile: 'Choisir un fichier',
+    noFileSelected: 'Aucun fichier sélectionné',
+    restoreButton: 'Restaurer',
+    processing: 'Traitement en cours...'
   },
   login: {
     title: 'Connexion',

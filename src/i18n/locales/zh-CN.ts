@@ -21,7 +21,8 @@ export default {
     device: '设备管理',
     diagnostics: '诊断工具',
     firmware: '固件升级',
-    reset: '设备重置'
+    reset: '设备重置',
+    backup: '备份'
   },
   header: {
     account: '帐户',
@@ -445,6 +446,20 @@ export default {
     factoryConfirm: '您确定要将设备重置为出厂设置吗？所有配置都将丢失。',
     countdown: '设备将在 {seconds} 秒后重启...',
     success: '命令发送成功'
+  },
+  backup: {
+    title: '备份与还原',
+    backupTitle: '备份',
+    backupDescription: '将当前配置文件备份到本地计算机',
+    backupButton: '备份',
+    restoreTitle: '还原',
+    restoreDescription: '从备份文件还原配置',
+    dragAndDrop: '将文件拖放到此处',
+    selectFromComputer: '（或）从电脑中选择文件',
+    chooseFile: '选择文件',
+    noFileSelected: '未选择文件',
+    restoreButton: '还原',
+    processing: '处理中...'
   },
   login: {
     title: '登录',
