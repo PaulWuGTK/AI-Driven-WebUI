@@ -109,7 +109,7 @@ onMounted(fetchNtpSettings);
           <div class="card-content">
             <div class="form-group">
               <label>{{ t('ntp.currentTime') }}</label>
-              <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime }}</div>
+              <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime.split('.')[0] }}</div>
             </div>
 
             <div class="form-group">
