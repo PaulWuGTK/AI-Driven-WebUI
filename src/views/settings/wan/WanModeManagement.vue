@@ -8,6 +8,7 @@ import WanModeDetail from './WanModeDetail.vue';
 
 const { t } = useI18n();
 const managementData = ref<WanModeConfig[]>([]);
+const tempManagementData = ref<WanModeConfig[]>([]);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
@@ -21,6 +22,7 @@ const fetchManagementData = async () => {
   try {
     const response = await getWanModeManagement();
     managementData.value = response.WanModeManagement;
+    tempManagementData.value = JSON.parse(JSON.stringify(response.WanModeManagement));
   } catch (err) {
     console.error('Error fetching WAN mode management:', err);
     error.value = 'Failed to fetch WAN mode management';
@@ -60,11 +62,8 @@ const handleDelete = async (mode: WanModeConfig) => {
   if (!confirm(t('wanManagement.confirmDelete'))) return;
   
   try {
-    const updatedModes = managementData.value.filter(m => m.WANMode !== mode.WANMode);
-    await updateWanModeManagement({
-      WanModeManagement: updatedModes
-    });
-    await fetchManagementData();
+    const updatedModes = tempManagementData.value.filter(m => m.WANMode !== mode.WANMode);
+    tempManagementData.value = updatedModes;
   } catch (err) {
     console.error('Error deleting WAN mode:', err);
     error.value = 'Failed to delete WAN mode';
@@ -78,20 +77,43 @@ const handleDetail = (mode: WanModeConfig) => {
 const handleSave = async (mode: WanModeConfig) => {
   try {
     const updatedModes = editingMode.value?.WANMode
-      ? managementData.value.map(m => m.WANMode === editingMode.value?.WANMode ? mode : m)
-      : [...managementData.value, mode];
+      ? tempManagementData.value.map(m => m.WANMode === editingMode.value?.WANMode ? mode : m)
+      : [...tempManagementData.value, mode];
 
-    await updateWanModeManagement({
-      WanModeManagement: updatedModes
-    });
-    
+    tempManagementData.value = updatedModes;
     isEditing.value = false;
     editingMode.value = null;
-    await fetchManagementData();
   } catch (err) {
     console.error('Error saving WAN mode:', err);
     error.value = 'Failed to save WAN mode';
   }
+};
+
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
+};
+
+const handleApply = async () => {
+  loading.value = true;
+  try {
+    await updateWanModeManagement({
+      WanModeManagement: tempManagementData.value
+    });
+    managementData.value = JSON.parse(JSON.stringify(tempManagementData.value));
+    showSuccessMessage();
+  } catch (err) {
+    console.error('Error applying WAN mode changes:', err);
+    error.value = 'Failed to apply changes';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleCancel = () => {
+  tempManagementData.value = JSON.parse(JSON.stringify(managementData.value));
 };
 
 onMounted(fetchManagementData);
@@ -132,7 +154,7 @@ onMounted(fetchManagementData);
               </tr>
             </thead>
             <tbody>
-              <tr v-for="mode in managementData" :key="mode.WANMode">
+              <tr v-for="mode in tempManagementData" :key="mode.WANMode">
                 <td>{{ mode.WANMode }}</td>
                 <td>{{ mode.EnableSensing ? 'True' : 'False' }}</td>
                 <td>{{ mode.DNSMode }}</td>
@@ -158,7 +180,7 @@ onMounted(fetchManagementData);
         </div>
 
         <div class="mobile-cards">
-          <div class="table-card" v-for="mode in managementData" :key="mode.WANMode">
+          <div class="table-card" v-for="mode in tempManagementData" :key="mode.WANMode">
             <div class="card-row">
               <span class="card-label">{{ t('wanManagement.name') }}</span>
               <span class="card-value">{{ mode.WANMode }}</span>
@@ -196,6 +218,15 @@ onMounted(fetchManagementData);
             </div>
           </div>
         </div>
+
+        <div class="button-group">
+          <button class="btn btn-secondary" @click="handleCancel">
+            {{ t('common.cancel') }}
+          </button>
+          <button class="btn btn-primary" @click="handleApply">
+            {{ t('common.apply') }}
+          </button>
+        </div>
       </div>
 
       <WanModeEdit
@@ -211,6 +242,10 @@ onMounted(fetchManagementData);
         @back="viewingMode = null"
       />
     </template>
+
+    <div v-if="showSuccess" class="success-message">
+      {{ t('common.apply') }} successful
+    </div>
   </div>
 </template>
 
@@ -276,6 +311,33 @@ onMounted(fetchManagementData);
   color: #dc3545;
 }
 
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
 @media (max-width: 768px) {
   .header-row {
     flex-direction: column;
@@ -299,6 +361,15 @@ onMounted(fetchManagementData);
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
+  }
+
+  .button-group {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .button-group .btn {
+    width: 100%;
   }
 }
 </style>

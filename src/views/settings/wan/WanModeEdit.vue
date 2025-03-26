@@ -126,7 +126,7 @@ const validateVLANPriority = (value: string) => {
 
 <template>
   <div class="wan-mode-edit">
-    <h2>{{ mode ? t('wanManagement.editMode') : t('wanManagement.addMode') }}</h2>
+    <h2>{{ mode?.WANMode ? t('wanManagement.editMode') : t('wanManagement.addMode') }}</h2>
 
     <form @submit.prevent="handleSave">
       <div class="form-group">
@@ -135,8 +135,8 @@ const validateVLANPriority = (value: string) => {
           type="text"
           v-model="editingMode.WANMode"
           required
-          :readonly="!!mode"
-          :class="{ 'readonly': !!mode }"
+          :readonly="!!mode?.WANMode"
+          :class="{ 'readonly': !!mode?.WANMode }"
         />
       </div>
 
