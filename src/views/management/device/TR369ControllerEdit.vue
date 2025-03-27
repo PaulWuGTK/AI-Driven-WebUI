@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 const editingController = ref<TR369Controller>({ ...props.controller });
 
-const protocolVersions = ['3.1','3.1.1', '5.0'];
+const protocolVersions = ['3.1','3.1.1', '5'];
 const transportProtocols = ['TCP/IP','TLS','WebSocket','WebSocketTLS'];
 
 const handleSubmit = () => {

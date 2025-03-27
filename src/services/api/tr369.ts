@@ -40,7 +40,7 @@ export const getTR369Config = async (): Promise<TR369Response> => {
             ClientID: "gemtek::prplos-SN4CBA7DC75961",
             PeriodicNotify: 30,
             KeepAliveTime: 5,
-            ProtocolVersion: "5.0",
+            ProtocolVersion: "5",
             TransportProtocol: "TCP/IP"
           }
         ]

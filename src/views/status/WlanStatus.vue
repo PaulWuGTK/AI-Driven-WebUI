@@ -7,10 +7,19 @@ import WlanBandInfo from '../../components/status/WlanBandInfo.vue';
 
 const { t } = useI18n();
 const wlanData = ref<WlanStatusResponse | null>(null);
+const bandOrder = ["2.4GHz", "5GHz", "6GHz"];
 
 const fetchWlanStatus = async () => {
   try {
-    wlanData.value = await getWlanStatus();
+    const response = await getWlanStatus();
+
+    response.StatusWlan.sort((a, b) => {
+  const aIndex = bandOrder.indexOf(a.Band);
+  const bIndex = bandOrder.indexOf(b.Band);
+  return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
+});
+
+    wlanData.value = response;
   } catch (error) {
     console.error('Error fetching WLAN status:', error);
   }
