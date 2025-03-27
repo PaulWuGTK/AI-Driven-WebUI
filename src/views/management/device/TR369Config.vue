@@ -94,13 +94,22 @@ const showSuccessMessage = () => {
 const handleApply = async () => {
   loading.value = true;
   try {
+    const sanitizedControllers = tempControllers.value.map((c) => ({
+      ...c,
+      Enable: c.Enable ? 1 : 0, // 預設為啟用
+      BrokerPort: String(c.BrokerPort),
+      ProtocolVersion: String(c.ProtocolVersion),
+      Password: c.Password ?? "", // 防止 undefined
+      ClientID: c.ClientID ?? "", // 防止 undefined
+    }));
+
     await updateTR369Config({
       TR369: {
         AgentEndpointID: agentEndpointID.value,
-        Controller: tempControllers.value
+        Controller: sanitizedControllers
       }
     });
-    controllers.value = [...tempControllers.value];
+    controllers.value = [...sanitizedControllers];
     showSuccessMessage();
   } catch (err) {
     console.error('Error updating TR-369 config:', err);
