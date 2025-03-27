@@ -81,7 +81,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
               <input
                 type="checkbox"
                 :checked="modelValue.AutoChannelEnable === 1"
-                @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? '1' : '0')"
+                @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
                 :disabled="modelValue.RadioEnable === 0"
               />
               <span class="slider"></span>

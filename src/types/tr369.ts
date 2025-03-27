@@ -6,7 +6,7 @@ export interface TR369Controller {
   ControllerTopic: string;
   AgentTopic: string;
   BrokerAddress: string;
-  BrokerPort: string;
+  BrokerPort: number;
   Username: string;
   Password: string;
   ClientID: string;

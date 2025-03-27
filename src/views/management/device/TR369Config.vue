@@ -48,7 +48,7 @@ const handleAdd = () => {
     ControllerTopic: '',
     AgentTopic: '',
     BrokerAddress: '',
-    BrokerPort: '',
+    BrokerPort: 0,
     Username: '',
     Password: '',
     ClientID: '',
@@ -97,7 +97,7 @@ const handleApply = async () => {
     const sanitizedControllers = tempControllers.value.map((c) => ({
       ...c,
       Enable: c.Enable ? 1 : 0, // 預設為啟用
-      BrokerPort: String(c.BrokerPort),
+      BrokerPort: Number(c.BrokerPort),
       ProtocolVersion: String(c.ProtocolVersion),
       Password: c.Password ?? "", // 防止 undefined
       ClientID: c.ClientID ?? "", // 防止 undefined

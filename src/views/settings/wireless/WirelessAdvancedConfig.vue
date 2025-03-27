@@ -39,21 +39,21 @@ const handleSubmit = async () => {
           Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi2g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi2g.ChannelBandwidth,
-          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi2g.AutoChannelEnable
+          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi2g.AutoChannelEnable)
         },
         wifi5g: {
           RadioEnable: advancedData.value.WlanAdvanced.wifi5g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi5g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi5g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi5g.ChannelBandwidth,
-          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi5g.AutoChannelEnable
+          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi5g.AutoChannelEnable)
         },
         wifi6g: {
           RadioEnable: advancedData.value.WlanAdvanced.wifi6g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi6g.Mode,
           Channel: advancedData.value.WlanAdvanced.wifi6g.Channel.toString(),
           ChannelBandwidth: advancedData.value.WlanAdvanced.wifi6g.ChannelBandwidth,
-          AutoChannelEnable: advancedData.value.WlanAdvanced.wifi6g.AutoChannelEnable
+          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi6g.AutoChannelEnable)
         }
       }
     };
