@@ -14,13 +14,24 @@ const emit = defineEmits<{
   (e: 'cancel'): void;
 }>();
 
-const editingController = ref<TR369Controller>({ ...props.controller });
+// Create a deep copy and ensure BrokerPort is a string
+const editingController = ref<TR369Controller>({
+  ...props.controller,
+  BrokerPort: String(props.controller.BrokerPort), // Ensure BrokerPort is a string
+  ProtocolVersion: String(props.controller.ProtocolVersion) // Ensure ProtocolVersion is a string
+});
 
-const protocolVersions = ['3.1.1', '5.0'];
-const transportProtocols = ['TCP/IP'];
+const protocolVersions = ['3.1','3.1.1', '5.0'];
+const transportProtocols = ['TCP/IP','TLS','WebSocket','WebSocketTLS'];
 
 const handleSubmit = () => {
-  emit('save', editingController.value);
+  // Ensure BrokerPort is a string before emitting
+  const controller = {
+    ...editingController.value,
+    BrokerPort: String(editingController.value.BrokerPort),
+    ProtocolVersion: String(editingController.value.ProtocolVersion)
+  };
+  emit('save', controller);
 };
 </script>
 
@@ -95,6 +106,7 @@ const handleSubmit = () => {
           type="text"
           v-model="editingController.BrokerPort"
           required
+          pattern="[0-9]+"
         />
       </div>
 

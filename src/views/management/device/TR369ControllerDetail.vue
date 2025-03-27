@@ -21,6 +21,10 @@ defineProps<{
             <span class="info-value">{{ controller.Enable ? 'True' : 'False' }}</span>
           </div>
           <div class="info-row">
+            <span class="info-label">{{ t('device.status') }}</span>
+            <span class="info-value">{{ controller.Status }}</span>
+          </div>
+          <div class="info-row">
             <span class="info-label">{{ t('device.alias') }}</span>
             <span class="info-value">{{ controller.Alias }}</span>
           </div>

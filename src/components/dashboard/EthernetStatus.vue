@@ -47,9 +47,11 @@ const sortedEthernet = computed(() => {
 
 .port-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* 改為水平排列 */
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem; /* 元素間距稍微拉開 */
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
 }
 
 .port-icon {
@@ -69,7 +71,10 @@ const sortedEthernet = computed(() => {
 }
 
 .port-info {
-  text-align: center;
+  display: flex;
+  flex-direction: row; /* 橫向排列名稱與速度 */
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .port-name {

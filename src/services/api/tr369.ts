@@ -10,6 +10,7 @@ export const getTR369Config = async (): Promise<TR369Response> => {
         AgentEndpointID: "gemtek::prplos-SN4CBA7DC75961",
         Controller: [
           {
+            Enable: 1,
             Alias: "friendly-tech",
             Status: "Connected",
             ControllerEndpointID: "self:ft:1",
@@ -26,6 +27,7 @@ export const getTR369Config = async (): Promise<TR369Response> => {
             TransportProtocol: "TCP/IP"
           },
           {
+            Enable: 1,
             Alias: "dcms",
             Status: "Connected",
             ControllerEndpointID: "GenixController",
