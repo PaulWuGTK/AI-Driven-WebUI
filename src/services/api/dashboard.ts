@@ -179,10 +179,12 @@ const generateMockData = (): DashboardResponse => {
         }
       },
       WAN: {
-        BytesSent: wanStats.bytesSent,
-        PacketsSent: wanStats.packetsSent,
-        BytesReceived: wanStats.bytesReceived,
-        PacketsReceived: wanStats.packetsReceived
+        IPv4Address: "192.168.11.4",
+        IPv6Address: "fdea:e111:ce6b:0:f091:c3ff:fe8f:c02c",
+        BytesReceived: 315237055,
+        BytesSent: 30098693,
+        PacketsReceived: 344314,
+        PacketsSent: 202629
       },
       CPU: {
         CPUUsage: Math.floor(previousValues.cpu.usage)

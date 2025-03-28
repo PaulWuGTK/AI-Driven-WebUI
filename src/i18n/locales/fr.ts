@@ -47,7 +47,9 @@ export default {
     sent: 'Envoyé',
     wifi: 'WiFi',
     clients: 'Clients',
-    ethernet: 'Ports Ethernet'
+    ethernet: 'Ports Ethernet',
+    ipv4Address: 'Adresse IPv4',
+    ipv6Address: 'Adresse IPv6'
   },
   wan: {
     title: 'État du WAN',

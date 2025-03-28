@@ -25,6 +25,8 @@ export interface DashboardWiFi {
 }
 
 export interface DashboardWAN {
+  IPv4Address: string;
+  IPv6Address: string;
   BytesSent: number;
   PacketsSent: number;
   BytesReceived: number;

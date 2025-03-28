@@ -103,6 +103,8 @@ onUnmounted(() => {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 100%;       /* 限制寬度不能被內部撐爆 */
+  overflow: hidden;      /* 限制文字外溢 */
   padding: 1.5rem;
 }
 

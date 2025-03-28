@@ -161,7 +161,7 @@ onMounted(() => {
               <div class="card-section">
                 <div class="section-subtitle">Rx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxytes') }}</span>
+                  <span class="card-label">{{ t('statistics.rxbytes') }}</span>
                   <span class="card-value">{{ entry.RxBytes }}</span>
                 </div>
                 <div class="card-row">

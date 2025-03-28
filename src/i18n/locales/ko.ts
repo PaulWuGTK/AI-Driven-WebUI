@@ -47,7 +47,9 @@ export default {
     sent: '송신',
     wifi: 'WiFi',
     clients: '클라이언트',
-    ethernet: '이더넷 포트'
+    ethernet: '이더넷 포트',
+    ipv4Address: 'IPv4 주소',
+    ipv6Address: 'IPv6 주소'
   },
   wan: {
     title: 'WAN 상태',

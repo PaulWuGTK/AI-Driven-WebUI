@@ -10,6 +10,8 @@ const props = defineProps<{
   wifiInfo?: DashboardWiFi;
 }>();
 
+const showChart = false;
+
 // Store previous values and timestamps
 const previousValues = ref<{
   '2_4GHz': { bytesReceived: number; bytesSent: number; };
@@ -219,7 +221,7 @@ const getCurrentRates = (band: keyof DashboardWiFi) => {
         </div>
       </div>
     </div>
-    <div class="chart-container">
+    <div class="chart-container" v-if="showChart">
       <LineChart :chart-data="chartData" />
     </div>
   </div>

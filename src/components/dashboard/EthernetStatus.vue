@@ -75,6 +75,7 @@ const sortedEthernet = computed(() => {
   flex-direction: row; /* 橫向排列名稱與速度 */
   align-items: center;
   gap: 0.5rem;
+  min-width: 150px;
 }
 
 .port-name {

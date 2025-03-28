@@ -47,7 +47,9 @@ export default {
     sent: '已傳送',
     wifi: 'WiFi',
     clients: '用戶端',
-    ethernet: '乙太網路埠'
+    ethernet: '乙太網路埠',
+    ipv4Address: 'IPv4 位址',
+    ipv6Address: 'IPv6 位址'
   },
   wan: {
     title: 'WAN 狀態',

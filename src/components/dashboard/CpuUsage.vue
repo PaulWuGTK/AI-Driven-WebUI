@@ -47,11 +47,14 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="cpu-chart-container" v-if="cpuInfo">
+  <div class="memory-status" v-if="cpuInfo">
     <h2 class="card-title">{{ t('dashboard.cpu') }}</h2>
-    <div class="chart-wrapper">
-      <Doughnut :data="chartData" :options="chartOptions" />
-      <div class="center-label">{{ usage }}%</div>
+    <div class="cpu-chart-container">
+      
+      <div class="chart-wrapper">
+        <Doughnut :data="chartData" :options="chartOptions" />
+        <div class="center-label">{{ usage }}%</div>
+      </div>
     </div>
   </div>
 </template>
@@ -61,6 +64,7 @@ const chartOptions = {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
 .chart-wrapper {

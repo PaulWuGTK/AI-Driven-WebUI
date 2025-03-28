@@ -47,7 +47,9 @@ export default {
     sent: '已发送',
     wifi: 'WiFi',
     clients: '客户端',
-    ethernet: '以太网端口'
+    ethernet: '以太网端口',
+    ipv4Address: 'IPv4 地址',
+    ipv6Address: 'IPv6 地址'
   },
   wan: {
     title: '广域网状态',

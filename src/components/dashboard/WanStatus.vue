@@ -127,6 +127,14 @@ const currentRates = computed(() => {
     <h2 class="card-title">{{ t('dashboard.wan') }} {{ t('dashboard.status') }}</h2>
     <div class="info-grid">
       <div class="info-row">
+        <span class="info-label">{{ t('dashboard.ipv4Address') }}</span>
+        <span class="value" :title="wanInfo.IPv4Address">{{ wanInfo.IPv4Address }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">{{ t('dashboard.ipv6Address') }}</span>
+        <span class="value" :title="wanInfo.IPv6Address">{{ wanInfo.IPv6Address }}</span>
+      </div>
+      <div class="info-row">
         <span class="info-label">{{ t('dashboard.received') }}</span>
         <span class="info-value">{{ formatRate(currentRates.received) }}</span>
       </div>
@@ -145,21 +153,31 @@ const currentRates = computed(() => {
 .info-grid {
   display: grid;
   gap: 1rem;
+  max-width: 100%;
 }
 
 .info-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
+  width: 100%; /* ✅ 很重要，確保 row 不會超出 card */
+  overflow: hidden; /* ✅ 補強 */
 }
 
-.label {
+.info-label {
+  flex: 0 0 110px; /* 固定 label 寬度 */
   color: var(--text-secondary);
 }
 
 .value {
+  flex: 1 1 auto;          /* 可以撐滿但會收縮 */
+  min-width: 0;            /* �� Ellipsis 成功的必要條件 */
+  max-width: 100%;         /* 不超出容器 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
   color: var(--text-primary);
-  font-weight: 500;
 }
 
 .chart-container {
@@ -172,4 +190,5 @@ const currentRates = computed(() => {
   color: #333;
   margin: 0 0 1rem 0;
 }
+
 </style>

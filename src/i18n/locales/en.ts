@@ -50,7 +50,9 @@ const translations: Translations = {
     sent: 'Sent',
     wifi: 'WiFi',
     clients: 'Clients',
-    ethernet: 'Ethernet Ports'
+    ethernet: 'Ethernet Ports',
+    ipv4Address: 'IPv4 Address',
+    ipv6Address: 'IPv6 Address'
   },
   wan: {
     title: 'WAN Status',
