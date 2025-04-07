@@ -16,6 +16,11 @@ const loading = ref<{ [key: string]: boolean }>({
   '5': false,
   '6': false
 });
+const errors = ref<{ [key: string]: string | null }>({
+  '2': null,
+  '5': null,
+  '6': null
+});
 
 const fetchWifiNeighbors = async () => {
   try {
@@ -29,13 +34,20 @@ const handleScan = async (band: string) => {
   if (loading.value[band]) return;
 
   loading.value[band] = true;
+  errors.value[band] = null;
   try {
     const response = await scanWifiNeighbors(band);
-    if (response.WifiNeighbor) {
+    if ('NOK' in response.WifiNeighbor) {
+      errors.value[band] = String(response.WifiNeighbor.NOK);
+      neighborResults.value[band] = [];
+    } else {
+      errors.value[band] = null;
       neighborResults.value[band] = response.WifiNeighbor;
     }
   } catch (error) {
     console.error(`Error scanning ${band}G band:`, error);
+    errors.value[band] = error instanceof Error ? error.message : 'Unknown error occurred';
+    neighborResults.value[band] = [];
   } finally {
     loading.value[band] = false;
   }
@@ -50,11 +62,15 @@ onMounted(fetchWifiNeighbors);
 
     <div class="status-content">
       <!-- 2.4G Section -->
-      <div class="panel-section" v-if="wifiNeighborData?.WifiNeighbor.Enable2g">
+      <div class="panel-section">
         <div class="section-title">2.4G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         
         <div class="card-content">
-          <div class="table-container">
+          <div v-if="errors['2']" class="error-message">
+            {{ errors['2'] }}
+          </div>
+
+          <div class="table-container" v-if="neighborResults['2'].length > 0">
             <table>
               <thead>
                 <tr>
@@ -79,7 +95,7 @@ onMounted(fetchWifiNeighbors);
             </table>
           </div>
 
-          <div class="mobile-cards">
+          <div class="mobile-cards" v-if="neighborResults['2'].length > 0">
             <div class="table-card" v-for="neighbor in neighborResults['2']" :key="neighbor.BSSID">
               <div class="card-row">
                 <span class="card-label">{{ t('wifiNeighbor.ssid') }}</span>
@@ -112,7 +128,7 @@ onMounted(fetchWifiNeighbors);
             <button 
               class="btn btn-primary" 
               @click="handleScan('2')"
-              :disabled="loading['2']"
+              :disabled="loading['2'] || !wifiNeighborData?.WifiNeighbor.Enable2g"
             >
               {{ loading['2'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
             </button>
@@ -121,11 +137,15 @@ onMounted(fetchWifiNeighbors);
       </div>
 
       <!-- 5G Section -->
-      <div class="panel-section" v-if="wifiNeighborData?.WifiNeighbor.Enable5g">
+      <div class="panel-section">
         <div class="section-title">5G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         
         <div class="card-content">
-          <div class="table-container">
+          <div v-if="errors['5']" class="error-message">
+            {{ errors['5'] }}
+          </div>
+
+          <div class="table-container" v-if="neighborResults['5'].length > 0">
             <table>
               <thead>
                 <tr>
@@ -150,7 +170,7 @@ onMounted(fetchWifiNeighbors);
             </table>
           </div>
 
-          <div class="mobile-cards">
+          <div class="mobile-cards" v-if="neighborResults['5'].length > 0">
             <div class="table-card" v-for="neighbor in neighborResults['5']" :key="neighbor.BSSID">
               <div class="card-row">
                 <span class="card-label">{{ t('wifiNeighbor.ssid') }}</span>
@@ -183,7 +203,7 @@ onMounted(fetchWifiNeighbors);
             <button 
               class="btn btn-primary" 
               @click="handleScan('5')"
-              :disabled="loading['5']"
+              :disabled="loading['5'] || !wifiNeighborData?.WifiNeighbor.Enable5g"
             >
               {{ loading['5'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
             </button>
@@ -192,11 +212,15 @@ onMounted(fetchWifiNeighbors);
       </div>
 
       <!-- 6G Section -->
-      <div class="panel-section" v-if="wifiNeighborData?.WifiNeighbor.Enable6g">
+      <div class="panel-section">
         <div class="section-title">6G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
         
         <div class="card-content">
-          <div class="table-container">
+          <div v-if="errors['6']" class="error-message">
+            {{ errors['6'] }}
+          </div>
+
+          <div class="table-container" v-if="neighborResults['6'].length > 0">
             <table>
               <thead>
                 <tr>
@@ -221,7 +245,7 @@ onMounted(fetchWifiNeighbors);
             </table>
           </div>
 
-          <div class="mobile-cards">
+          <div class="mobile-cards" v-if="neighborResults['6'].length > 0">
             <div class="table-card" v-for="neighbor in neighborResults['6']" :key="neighbor.BSSID">
               <div class="card-row">
                 <span class="card-label">{{ t('wifiNeighbor.ssid') }}</span>
@@ -254,7 +278,7 @@ onMounted(fetchWifiNeighbors);
             <button 
               class="btn btn-primary" 
               @click="handleScan('6')"
-              :disabled="loading['6']"
+              :disabled="loading['6'] || !wifiNeighborData?.WifiNeighbor.Enable6g"
             >
               {{ loading['6'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
             </button>
@@ -266,11 +290,33 @@ onMounted(fetchWifiNeighbors);
 </template>
 
 <style scoped>
-
 .scan-button-container {
   display: flex;
   justify-content: center;
   margin-top: 1.5rem;
 }
 
+.error-message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #fee;
+  color: #dc3545;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .scan-button-container {
+    margin-top: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
 </style>

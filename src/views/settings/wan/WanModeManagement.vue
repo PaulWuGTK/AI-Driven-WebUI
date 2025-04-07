@@ -46,8 +46,20 @@ const handleAdd = () => {
       PPPoEUserName: '',
       PPPoEPassword: '',
       VLANType: 'untagged',
-      VLANID: '100',
-      VLANPriority: '0'
+      VLANID: 100, 
+      VLANPriority: 0,  
+      StaticIPv4Address: { 
+        IPv4Address: '',
+        SubnetMask: '',
+        DNSServers: '',
+        DefaultRouter: ''
+      },
+      StaticIPv6Address: {
+        IPv6Address: '',
+        PrefixLength: 0,
+        DNSServers: '',
+        DefaultRouter: ''
+      }
     }]
   };
   isEditing.value = true;

@@ -9,7 +9,7 @@ export interface StaticIPv6Address {
   DNSServers: string;
   DefaultRouter: string;
   IPv6Address: string;
-  PrefixLength: string;
+  PrefixLength: number;
 }
 
 export interface WanInterface {
@@ -19,8 +19,8 @@ export interface WanInterface {
   PPPoEUserName: string;
   PPPoEPassword: string;
   VLANType: "untagged" | "vlan" | "atm";
-  VLANID: string;
-  VLANPriority: string;
+  VLANID: number;
+  VLANPriority: number;
   StaticIPv4Address?: StaticIPv4Address;
   StaticIPv6Address?: StaticIPv6Address;
 }

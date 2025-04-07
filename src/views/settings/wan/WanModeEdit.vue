@@ -25,7 +25,7 @@ const defaultStaticIPv6 = {
   DNSServers: '',
   DefaultRouter: '',
   IPv6Address: '',
-  PrefixLength: ''
+  PrefixLength: 0
 };
 
 const defaultInterface: WanInterface = {
@@ -35,8 +35,8 @@ const defaultInterface: WanInterface = {
   PPPoEUserName: '',
   PPPoEPassword: '',
   VLANType: "untagged",
-  VLANID: '100',
-  VLANPriority: '0',
+  VLANID: 100,
+  VLANPriority: 0,
   StaticIPv4Address: { ...defaultStaticIPv4 },
   StaticIPv6Address: { ...defaultStaticIPv6 }
 };
@@ -117,10 +117,10 @@ const validatePPPoEInput = (value: string, field: 'username' | 'password') => {
   return value;
 };
 
-const validateVLANPriority = (value: string) => {
-  const num = parseInt(value);
-  if (isNaN(num)) return '0';
-  return Math.max(-1, Math.min(7, num)).toString();
+const validateVLANPriority = (value: number) => {
+  const num = value;
+  if (isNaN(num)) return 0;
+  return Math.max(-1, Math.min(7, num));
 };
 </script>
 
@@ -245,7 +245,7 @@ const validateVLANPriority = (value: string) => {
                 required
                 min="-1"
                 max="7"
-                @input="iface.VLANPriority = validateVLANPriority(($event.target as HTMLInputElement).value)"
+                @input="iface.VLANPriority = validateVLANPriority(Number(($event.target as HTMLInputElement).value))"
               />
             </div>
           </template>
