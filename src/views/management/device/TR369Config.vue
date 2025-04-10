@@ -54,6 +54,8 @@ const handleAdd = () => {
     ClientID: '',
     PeriodicNotify: 30,
     KeepAliveTime: 60,
+    ConnectRetryTime: 5,
+    ConnectRetryMaxInterval: 60,
     ProtocolVersion: '3.1.1',
     TransportProtocol: 'TCP/IP'
   };

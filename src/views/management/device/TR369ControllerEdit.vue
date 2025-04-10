@@ -145,6 +145,26 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
+        <label>{{ t('device.connectRetryTime') }}</label>
+        <input
+          type="number"
+          v-model="editingController.ConnectRetryTime"
+          required
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>{{ t('device.connectRetryMaxInterval') }}</label>
+        <input
+          type="number"
+          v-model="editingController.ConnectRetryMaxInterval"
+          required
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
         <label>{{ t('device.protocolVersion') }}</label>
         <select v-model="editingController.ProtocolVersion">
           <option v-for="version in protocolVersions" :key="version" :value="version">

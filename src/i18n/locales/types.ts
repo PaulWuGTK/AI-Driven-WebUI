@@ -347,6 +347,8 @@ export interface Translations {
     status: string;
     periodicNotify: string;
     keepAliveTime: string;
+    connectRetryTime: string;
+    connectRetryMaxInterval: string;
     protocolVersion: string;
     transportProtocol: string;
     addController: string;

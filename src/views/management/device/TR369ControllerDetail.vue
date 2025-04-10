@@ -65,6 +65,14 @@ defineProps<{
             <span class="info-value">{{ controller.KeepAliveTime }}</span>
           </div>
           <div class="info-row">
+            <span class="info-label">{{ t('device.connectRetryTime') }}</span>
+            <span class="info-value">{{ controller.ConnectRetryTime }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">{{ t('device.connectRetryMaxInterval') }}</span>
+            <span class="info-value">{{ controller.ConnectRetryMaxInterval }}</span>
+          </div>
+          <div class="info-row">
             <span class="info-label">{{ t('device.protocolVersion') }}</span>
             <span class="info-value">{{ controller.ProtocolVersion }}</span>
           </div>

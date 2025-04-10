@@ -371,6 +371,8 @@ const translations: Translations = {
     status: 'Status',
     periodicNotify: 'Periodic Notify',
     keepAliveTime: 'Keep Alive Time',
+    connectRetryTime: 'Connect Retry Time',
+    connectRetryMaxInterval: 'Connect Retry Max Interval',
     protocolVersion: 'Protocol Version',
     transportProtocol: 'Transport Protocol',
     addController: 'Add Controller',

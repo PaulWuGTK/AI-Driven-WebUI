@@ -12,6 +12,8 @@ export interface TR369Controller {
   ClientID: string;
   PeriodicNotify: number;
   KeepAliveTime: number;
+  ConnectRetryTime: number;
+  ConnectRetryMaxInterval: number;
   ProtocolVersion: string;
   TransportProtocol: string;
 }
