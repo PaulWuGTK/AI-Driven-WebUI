@@ -368,6 +368,8 @@ export default {
     status: 'ステータス',
     periodicNotify: '定期通知',
     keepAliveTime: 'キープアライブ時間',
+    connectRetryTime: '再接続時間',
+    connectRetryMaxInterval: '最大再接続間隔',
     protocolVersion: 'プロトコルバージョン',
     transportProtocol: 'トランスポートプロトコル',
     addController: 'コントローラー追加',

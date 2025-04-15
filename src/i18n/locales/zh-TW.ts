@@ -368,6 +368,8 @@ export default {
     status: '狀態',
     periodicNotify: '定期通知',
     keepAliveTime: '保持連線時間',
+    connectRetryTime: '連線重試時間',
+    connectRetryMaxInterval: '連線重試最大間隔',
     protocolVersion: '協定版本',
     transportProtocol: '傳輸協定',
     addController: '新增控制器',

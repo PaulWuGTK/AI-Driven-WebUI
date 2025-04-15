@@ -368,6 +368,8 @@ export default {
     status: 'Status',
     periodicNotify: 'Periodische Benachrichtigung',
     keepAliveTime: 'Keep-Alive-Zeit',
+    connectRetryTime: 'Verbindungswiederholungszeit',
+    connectRetryMaxInterval: 'Maximales Intervall für Verbindungswiederholung',
     protocolVersion: 'Protokollversion',
     transportProtocol: 'Transportprotokoll',
     addController: 'Controller hinzufügen',
