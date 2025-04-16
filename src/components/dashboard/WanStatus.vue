@@ -171,7 +171,7 @@ const currentRates = computed(() => {
 
 .value {
   flex: 1 1 auto;          /* 可以撐滿但會收縮 */
-  min-width: 0;            /* �� Ellipsis 成功的必要條件 */
+  min-width: 0;            /* Ellipsis 成功的必要條件 */
   max-width: 100%;         /* 不超出容器 */
   overflow: hidden;
   text-overflow: ellipsis;

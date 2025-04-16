@@ -122,6 +122,11 @@ const router = createRouter({
       path: '/management/backup',
       component: () => import('../views/management/backup/BackupManagement.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/application/xperience-control',
+      component: () => import('../views/application/XperienceControl.vue'),
+      beforeEnter: requireAuth
     }
   ]
 });

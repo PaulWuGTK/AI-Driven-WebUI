@@ -25,7 +25,9 @@ const translations: Translations = {
     firmware: 'Upgrade Firmware',
     reset: 'Device Reset',
     lanSetting: 'LAN',
-    backup: 'Backup'
+    backup: 'Backup',
+    xperienceControl: 'XperienceControl',
+    application: 'Application'
   },
   header: {
     account: 'Account',
@@ -474,6 +476,22 @@ const translations: Translations = {
     password: 'Password',
     submit: 'Login',
     error: 'Invalid username or password'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: 'Click the button below to start a speed test.',
+    startTest: 'Start Speed Test',
+    downloadSpeed: 'Download Speed',
+    uploadSpeed: 'Upload Speed',
+    pingInfo: 'Ping Info',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: 'Packet Loss',
+    minEchoTime: 'Min Echo Time',
+    meanEchoTime: 'Mean Echo Time',
+    maxEchoTime: 'Max Echo Time',
+    testFailed: 'Speedtest failed. Please try again.',
+    testing: 'Testing...'
   },
   common: {
     save: 'Save',

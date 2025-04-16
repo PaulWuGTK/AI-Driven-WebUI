@@ -25,6 +25,8 @@ export interface Translations {
     firmware: string;
     reset: string;
     backup: string;
+    xperienceControl: string;
+    application: string;
   };
   header: {
     account: string;
@@ -443,6 +445,22 @@ export interface Translations {
     noFileSelected: string;
     restoreButton: string;
     processing: string;
+  };
+  xperienceControl: {
+    title: string;
+    description: string;
+    startTest: string;
+    downloadSpeed: string;
+    uploadSpeed: string;
+    pingInfo: string;
+    mbps: string;
+    ms: string;
+    packetLoss: string;
+    minEchoTime: string;
+    meanEchoTime: string;
+    maxEchoTime: string;
+    testFailed: string;
+    testing: string;
   };
   login: {
     title: string;

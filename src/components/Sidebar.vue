@@ -20,6 +20,7 @@ import statusIcon from '/src/assets/icons/icon-1/menu-status.svg';
 import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
 import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
+import xperienceIcon from '/src/assets/icons/icon-1/menu-xperience.svg';
 
 const menuItems = [
   {
@@ -72,6 +73,14 @@ const menuItems = [
       { name: 'Device Reset', path: '/management/reset', translationKey: 'menu.reset' },
       { name: 'Backup', path: '/management/backup', translationKey: 'menu.backup' },
       { name: 'Upgrade Firmware', path: '/upgrade', translationKey: 'menu.firmware' }
+    ]
+  },
+  {
+    name: 'Application',
+    icon: xperienceIcon,
+    translationKey: 'menu.application',
+    subItems: [
+      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
     ]
   }
 ];
