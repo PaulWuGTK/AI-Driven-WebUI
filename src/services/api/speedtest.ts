@@ -39,7 +39,7 @@ export const runSpeedTest = async (): Promise<SpeedTestResponse> => {
       'Content-Type': 'application/json',
       ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({AppXperienceControl:""})
   });
 
   if (!response.ok) {
