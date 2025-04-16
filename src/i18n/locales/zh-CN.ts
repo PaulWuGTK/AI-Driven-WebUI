@@ -22,7 +22,9 @@ export default {
     diagnostics: '诊断工具',
     firmware: '固件升级',
     reset: '设备重置',
-    backup: '备份'
+    backup: '备份',
+    xperienceControl: 'XperienceControl',
+    application: '应用程序'
   },
   header: {
     account: '帐户',
@@ -464,6 +466,22 @@ export default {
     noFileSelected: '未选择文件',
     restoreButton: '还原',
     processing: '处理中...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: '点击下方按钮开始速度测试。',
+    startTest: '开始速度测试',
+    downloadSpeed: '下载速度',
+    uploadSpeed: '上传速度',
+    pingInfo: 'Ping 信息',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: '丢包率',
+    minEchoTime: '最小回显时间',
+    meanEchoTime: '平均回显时间',
+    maxEchoTime: '最大回显时间',
+    testFailed: '测速失败，请重试。',
+    testing: '测试中...'
   },
   login: {
     title: '登录',

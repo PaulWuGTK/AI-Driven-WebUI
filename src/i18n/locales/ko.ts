@@ -22,7 +22,9 @@ export default {
     diagnostics: '진단 도구',
     firmware: '펌웨어 업그레이드',
     reset: '장치 초기화',
-    backup: '백업'
+    backup: '백업',
+    xperienceControl: 'XperienceControl',
+    application: '애플리케이션'
   },
   header: {
     account: '계정',
@@ -463,6 +465,22 @@ export default {
     noFileSelected: '선택된 파일 없음',
     restoreButton: '복원',
     processing: '처리 중...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: '아래 버튼을 클릭하여 속도 테스트를 시작하세요.',
+    startTest: '속도 테스트 시작',
+    downloadSpeed: '다운로드 속도',
+    uploadSpeed: '업로드 속도',
+    pingInfo: '핑 정보',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: '패킷 손실',
+    minEchoTime: '최소 에코 시간',
+    meanEchoTime: '평균 에코 시간',
+    maxEchoTime: '최대 에코 시간',
+    testFailed: '속도 테스트 실패. 다시 시도하세요.',
+    testing: '테스트 중...'
   },
   login: {
     title: '로그인',

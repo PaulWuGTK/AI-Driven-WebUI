@@ -470,13 +470,6 @@ const translations: Translations = {
     restoreButton: 'Restore',
     processing: 'Processing...'
   },
-  login: {
-    title: 'Login',
-    username: 'Username',
-    password: 'Password',
-    submit: 'Login',
-    error: 'Invalid username or password'
-  },
   xperienceControl: {
     title: 'XperienceControl',
     description: 'Click the button below to start a speed test.',
@@ -492,6 +485,13 @@ const translations: Translations = {
     maxEchoTime: 'Max Echo Time',
     testFailed: 'Speedtest failed. Please try again.',
     testing: 'Testing...'
+  },
+  login: {
+    title: 'Login',
+    username: 'Username',
+    password: 'Password',
+    submit: 'Login',
+    error: 'Invalid username or password'
   },
   common: {
     save: 'Save',

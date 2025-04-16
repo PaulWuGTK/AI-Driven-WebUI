@@ -22,7 +22,9 @@ export default {
     diagnostics: 'Outils de diagnostic',
     firmware: 'Mise à jour du firmware',
     reset: 'Réinitialisation de l\'appareil',
-    backup: 'Sauvegarde'
+    backup: 'Sauvegarde',
+    xperienceControl: 'XperienceControl',
+    application: 'Application'
   },
   header: {
     account: 'Compte',
@@ -464,6 +466,22 @@ export default {
     noFileSelected: 'Aucun fichier sélectionné',
     restoreButton: 'Restaurer',
     processing: 'Traitement en cours...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: 'Cliquez sur le bouton ci-dessous pour lancer un test de vitesse.',
+    startTest: 'Démarrer le test de vitesse',
+    downloadSpeed: 'Vitesse de téléchargement',
+    uploadSpeed: 'Vitesse de téléversement',
+    pingInfo: 'Infos Ping',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: 'Perte de paquets',
+    minEchoTime: 'Temps d’écho minimum',
+    meanEchoTime: 'Temps d’écho moyen',
+    maxEchoTime: 'Temps d’écho maximum',
+    testFailed: 'Échec du test de vitesse. Veuillez réessayer.',
+    testing: 'Test en cours...'
   },
   login: {
     title: 'Connexion',

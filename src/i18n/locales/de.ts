@@ -22,7 +22,9 @@ export default {
     diagnostics: 'Diagnose',
     firmware: 'Firmware-Upgrade',
     reset: 'Gerät zurücksetzen',
-    backup: 'Sicherung'
+    backup: 'Sicherung',
+    xperienceControl: 'XperienceControl',
+    application: 'Anwendung'
   },
   header: {
     account: 'Konto',
@@ -464,6 +466,22 @@ export default {
     noFileSelected: 'Keine Datei ausgewählt',
     restoreButton: 'Wiederherstellen',
     processing: 'Verarbeitung läuft...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: 'Klicken Sie auf die Schaltfläche unten, um einen Geschwindigkeitstest zu starten.',
+    startTest: 'Geschwindigkeitstest starten',
+    downloadSpeed: 'Download-Geschwindigkeit',
+    uploadSpeed: 'Upload-Geschwindigkeit',
+    pingInfo: 'Ping-Informationen',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: 'Paketverlust',
+    minEchoTime: 'Minimale Echozeit',
+    meanEchoTime: 'Durchschnittliche Echozeit',
+    maxEchoTime: 'Maximale Echozeit',
+    testFailed: 'Geschwindigkeitstest fehlgeschlagen. Bitte erneut versuchen.',
+    testing: 'Test läuft...'
   },
   login: {
     title: 'Login',

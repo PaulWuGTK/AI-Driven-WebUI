@@ -22,7 +22,9 @@ export default {
     diagnostics: '診断ツール',
     firmware: 'ファームウェアアップグレード',
     reset: 'デバイスリセット',
-    backup: 'バックアップ'
+    backup: 'バックアップ',
+    xperienceControl: 'XperienceControl',
+    application: 'アプリケーション'
   },
   header: {
     account: 'アカウント',
@@ -464,6 +466,22 @@ export default {
     noFileSelected: 'ファイルが選択されていません',
     restoreButton: '復元',
     processing: '処理中...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: '以下のボタンをクリックして速度テストを開始します。',
+    startTest: '速度テスト開始',
+    downloadSpeed: 'ダウンロード速度',
+    uploadSpeed: 'アップロード速度',
+    pingInfo: 'Ping 情報',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: 'パケット損失',
+    minEchoTime: '最小エコー時間',
+    meanEchoTime: '平均エコー時間',
+    maxEchoTime: '最大エコー時間',
+    testFailed: '速度テストに失敗しました。再試行してください。',
+    testing: 'テスト中...'
   },
   login: {
     title: 'ログイン',

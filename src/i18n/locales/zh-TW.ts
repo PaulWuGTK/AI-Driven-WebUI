@@ -22,7 +22,9 @@ export default {
     diagnostics: '診斷工具',
     firmware: '韌體升級',
     reset: '裝置重置',
-    backup: '備份'
+    backup: '備份',
+    xperienceControl: 'XperienceControl',
+    application: '應用程式'
   },
   header: {
     account: '帳號',
@@ -464,6 +466,22 @@ export default {
     noFileSelected: '尚未選擇檔案',
     restoreButton: '還原',
     processing: '處理中...'
+  },
+  xperienceControl: {
+    title: 'XperienceControl',
+    description: '點擊下方按鈕開始速度測試。',
+    startTest: '開始速度測試',
+    downloadSpeed: '下載速度',
+    uploadSpeed: '上傳速度',
+    pingInfo: 'Ping 資訊',
+    mbps: 'Mbps',
+    ms: 'ms',
+    packetLoss: '封包遺失',
+    minEchoTime: '最小回應時間',
+    meanEchoTime: '平均回應時間',
+    maxEchoTime: '最大回應時間',
+    testFailed: '測速失敗，請再試一次。',
+    testing: '測試中...'
   },
   login: {
     title: '登入',
