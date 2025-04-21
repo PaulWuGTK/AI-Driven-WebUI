@@ -21,13 +21,19 @@ const fetchInterfaces = async () => {
     const data = await getDiagnostics();
     interfaces.value = data.ManagementDiagnostic.Interfaces;
     results.value = data.ManagementDiagnostic.TraceRoute;
+
     if (interfaces.value.length > 0) {
       if (results.value && results.value.Interface) {
-        selectedInterface.value = results.value.Interface; // 選擇 TraceRoute 目前的 Interface
+        selectedInterface.value = results.value.Interface;
       } else {
-        selectedInterface.value = interfaces.value[0].Interface; // 預設選擇第一個 Interface
+        selectedInterface.value = interfaces.value[0].Interface;
       }
     }
+
+    if (results.value?.DiagnosticsState === 'Not_Complete' && !pollingInterval.value) {
+      pollingInterval.value = window.setInterval(pollTraceRouteStatus, 3000);
+    }
+
   } catch (err) {
     console.error('Error fetching interfaces:', err);
     error.value = 'Failed to fetch interfaces';
@@ -96,7 +102,7 @@ const handleTraceRoute = async () => {
       await pollTraceRouteStatus();
       
       // Start polling every 3 seconds if state is "Not_Complete"
-      if (results.value?.DiagnosticsState === 'Not_Complete') {
+      if (results.value?.DiagnosticsState === 'Not_Complete' && !pollingInterval.value) {
         pollingInterval.value = window.setInterval(pollTraceRouteStatus, 3000);
       } else {
       loading.value = false;
