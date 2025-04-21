@@ -52,6 +52,7 @@ export interface WlanWpsResponse {
     Enable: number;
     PINCode: string;
     Band: WlanWpsBand[];
+    PairingResult?: "NotExecute" | "PairingInprogress" | "Success" | "NotSuccess";
   };
 }
 

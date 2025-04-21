@@ -64,10 +64,15 @@ export const wlanAdvancedMockData: WlanAdvancedResponse = {
   }
 };
 
+// Simulate WPS pairing state
+let wpsPairingState: "NotExecute" | "PairingInprogress" | "Success" | "NotSuccess" = "NotExecute";
+let wpsPairingTimer: number | null = null;
+
 export const wlanWpsMockData: WlanWpsResponse = {
   WlanWps: {
     Enable: 1,
     PINCode: "60668011",
+    PairingResult: wpsPairingState,
     Band: [
       {
         Band: "2.4GHz",
@@ -87,6 +92,54 @@ export const wlanWpsMockData: WlanWpsResponse = {
       }
     ]
   }
+};
+
+// Function to simulate WPS pairing process
+export const simulateWpsPairing = (action: string) => {
+  // Clear any existing timer
+  if (wpsPairingTimer) {
+    clearTimeout(wpsPairingTimer);
+    wpsPairingTimer = null;
+  }
+
+  // Set state to in progress
+  wpsPairingState = "PairingInprogress";
+  wlanWpsMockData.WlanWps.PairingResult = wpsPairingState;
+
+  // Simulate pairing completion after random time (5-10 seconds)
+  const pairingTime = Math.floor(Math.random() * 5000) + 5000;
+  wpsPairingTimer = window.setTimeout(() => {
+    // 80% chance of success
+    wpsPairingState = Math.random() < 0.8 ? "Success" : "NotSuccess";
+    wlanWpsMockData.WlanWps.PairingResult = wpsPairingState;
+    
+    // Reset state after 30 seconds
+    wpsPairingTimer = window.setTimeout(() => {
+      wpsPairingState = "NotExecute";
+      wlanWpsMockData.WlanWps.PairingResult = wpsPairingState;
+      wpsPairingTimer = null;
+    }, 30000);
+  }, pairingTime);
+
+  return { ...wlanWpsMockData };
+};
+
+// Update the getWlanWps function to return the current state
+export const getWlanWpsMock = (): WlanWpsResponse => {
+  return { ...wlanWpsMockData };
+};
+
+// Update the updateWlanWps function to handle actions
+export const updateWlanWpsMock = (data: { WlanWps: { Enable?: number; Action?: string; ClientPIN?: number } }): WlanWpsResponse => {
+  if (data.WlanWps.Enable !== undefined) {
+    wlanWpsMockData.WlanWps.Enable = data.WlanWps.Enable;
+  }
+
+  if (data.WlanWps.Action) {
+    return simulateWpsPairing(data.WlanWps.Action);
+  }
+
+  return { ...wlanWpsMockData };
 };
 
 export const wlanMeshMockData: WlanMeshResponse = {

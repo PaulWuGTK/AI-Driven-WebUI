@@ -8,7 +8,8 @@ import { handleApiResponse } from '../../utils/apiUtils';
 import {
   wlanBasicMockData,
   wlanAdvancedMockData,
-  wlanWpsMockData,
+  getWlanWpsMock,
+  updateWlanWpsMock,
   wlanMeshMockData
 } from '../mockData/wirelessMockData';
 
@@ -87,7 +88,7 @@ export async function updateWlanAdvanced(data: WlanAdvancedResponse): Promise<Wl
 
 export async function getWlanWps(): Promise<WlanWpsResponse> {
   if (isDevelopment) {
-    return wlanWpsMockData;
+    return getWlanWpsMock();
   }
   const response = await fetch(`${API_URL}?list=WlanWps`);
   return handleApiResponse<WlanWpsResponse>(response);
@@ -95,7 +96,7 @@ export async function getWlanWps(): Promise<WlanWpsResponse> {
 
 export async function updateWlanWps(data: { WlanWps: { Enable?: number; Action?: string; ClientPIN?: number } }): Promise<WlanWpsResponse> {
   if (isDevelopment) {
-    return wlanWpsMockData;
+    return updateWlanWpsMock(data);
   }
   const response = await fetch(`${API_URL}?list=WlanWps`, {
     method: 'POST',
