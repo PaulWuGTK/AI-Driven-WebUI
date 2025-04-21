@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const activeMenu = ref('Dashboard');
 const activeSubItem = ref('');
 const expandedMenus = ref<string[]>([]); // Changed from initial value to empty array
 const isMobileMenuOpen = ref(false);
+const deviceMode = ref<'Gateway' | 'Extender'>('Gateway');
+const hasStreambow = ref(false);
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -22,7 +25,56 @@ import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
 import xperienceIcon from '/src/assets/icons/icon-1/menu-xperience.svg';
 
-const menuItems = [
+// Define types for menu items
+interface SubMenuItem {
+  name: string;
+  path: string;
+  translationKey: string;
+}
+
+interface MenuItem {
+  name: string;
+  icon: string;
+  translationKey: string;
+  path?: string;
+  subItems?: SubMenuItem[];
+}
+
+// Menu visibility configuration based on device mode
+const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean }>> = {
+  'Status': {
+    'WAN': { gateway: true, extender: false },
+    'LAN': { gateway: true, extender: true },
+    'WLAN': { gateway: true, extender: true },
+    'Statistics': { gateway: true, extender: true },
+    'WiFi Neighbor': { gateway: true, extender: false },
+    'Mesh Information': { gateway: true, extender: false },
+    'LCM': { gateway: true, extender: true }
+  },
+  'Basic Setting': {
+    'WAN': { gateway: true, extender: false },
+    'LAN': { gateway: true, extender: true },
+    'Wireless': { gateway: true, extender: false }
+  },
+  'Advanced': {
+    'DDNS': { gateway: true, extender: false }
+  },
+  'Management': {
+    'NTP': { gateway: true, extender: false },
+    'SSH': { gateway: true, extender: false },
+    'Diagnostics': { gateway: true, extender: true },
+    'Device Management': { gateway: false, extender: false },
+    'Device Reset': { gateway: true, extender: true },
+    'Backup': { gateway: true, extender: true },
+    'Upgrade Firmware': { gateway: true, extender: true }
+  },
+  'Application': {
+    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true }
+  }
+};
+
+// Base menu structure
+const baseMenuItems: MenuItem[] = [
   {
     name: 'Dashboard',
     icon: homeIcon,
@@ -85,6 +137,46 @@ const menuItems = [
   }
 ];
 
+// Filter menu items based on device mode and app availability
+const menuItems = ref<MenuItem[]>(baseMenuItems);
+
+const filterMenuItems = () => {
+  const isGateway = deviceMode.value === 'Gateway';
+  
+  menuItems.value = baseMenuItems.map(item => {
+    // Skip filtering for Dashboard
+    if (item.name === 'Dashboard') return item;
+    
+    // Filter subItems based on device mode
+    if (item.subItems) {
+      const filteredSubItems = item.subItems.filter(subItem => {
+        const visibilityCategory = menuVisibility[item.name];
+        if (!visibilityCategory) return true; // If no visibility rule for category, show by default
+        
+        const visibility = visibilityCategory[subItem.name];
+        if (!visibility) return true; // If no visibility rule for item, show by default
+        
+        // Special case for XperienceControl
+        if (visibility.requiresStreambow) {
+          return hasStreambow.value;
+        }
+        
+        return isGateway ? visibility.gateway : visibility.extender;
+      });
+      
+      // Only include menu items that have at least one visible subitem
+      if (filteredSubItems.length === 0) return null;
+      
+      return {
+        ...item,
+        subItems: filteredSubItems
+      };
+    }
+    
+    return item;
+  }).filter((item): item is MenuItem => item !== null); // Type guard to filter out null items
+};
+
 const toggleMenu = (menuName: string) => {
   // Clear all expanded menus and only expand the clicked one
   expandedMenus.value = expandedMenus.value.includes(menuName) ? [] : [menuName];
@@ -109,10 +201,42 @@ const isMenuExpanded = (menuName: string): boolean => {
   return expandedMenus.value.includes(menuName);
 };
 
+// Fetch sidebar menu data
+const fetchSidebarMenu = async () => {
+  try {
+    const response = await getSidebarMenu();
+    deviceMode.value = response.SidebarMenu.mode;
+    
+    // Check if Streambow app is active
+    hasStreambow.value = response.SidebarMenu.Apps.some(
+      app => app.name === 'arm32v7/streambow' && app.state === 'active'
+    );
+    
+    // Update language if it's different from current
+    if (response.SidebarMenu.language.current !== locale.value) {
+      locale.value = response.SidebarMenu.language.current;
+    }
+    
+    // Filter menu items based on device mode
+    filterMenuItems();
+  } catch (error) {
+    console.error('Error fetching sidebar menu:', error);
+  }
+};
+
+// Watch for language changes and update the API
+watch(() => locale.value, async (newLocale) => {
+  try {
+    await updateSidebarMenuLanguage(newLocale);
+  } catch (error) {
+    console.error('Error updating language:', error);
+  }
+});
+
 // Watch for route changes to update active states
 watch(() => route.path, (newPath) => {
   let found = false;
-  for (const item of menuItems) {
+  for (const item of menuItems.value) {
     if (item.path === newPath) {
       activeMenu.value = item.name;
       activeSubItem.value = '';
@@ -137,6 +261,10 @@ watch(() => route.path, (newPath) => {
     expandedMenus.value = []; // Close all submenus if no match found
   }
 }, { immediate: true });
+
+onMounted(() => {
+  fetchSidebarMenu();
+});
 </script>
 
 <template>
