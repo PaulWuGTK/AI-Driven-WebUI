@@ -54,7 +54,13 @@ const translations: Translations = {
     clients: 'Clients',
     ethernet: 'Ethernet Ports',
     ipv4Address: 'IPv4 Address',
-    ipv6Address: 'IPv6 Address'
+    ipv6Address: 'IPv6 Address',
+    protocol: 'Protocol',
+    subnetMask: 'Subnet Mask',
+    defaultGateway: 'Default Gateway',
+    primaryDNS: 'Primary DNS',
+    secondaryDNS: 'Secondary DNS',
+    macAddress: 'MAC Address'
   },
   wan: {
     title: 'WAN Status',

@@ -51,7 +51,13 @@ export default {
     clients: '客户端',
     ethernet: '以太网端口',
     ipv4Address: 'IPv4 地址',
-    ipv6Address: 'IPv6 地址'
+    ipv6Address: 'IPv6 地址',
+    protocol: '协议',
+    subnetMask: '子网掩码',
+    defaultGateway: '默认网关',
+    primaryDNS: '主 DNS',
+    secondaryDNS: '备用 DNS',
+    macAddress: 'MAC 地址'
   },
   wan: {
     title: '广域网状态',

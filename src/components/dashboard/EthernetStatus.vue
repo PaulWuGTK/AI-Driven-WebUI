@@ -29,8 +29,9 @@ const sortedEthernet = computed(() => {
           <span class="material-icons">settings_ethernet</span>
         </div>
         <div class="port-info">
-          <div class="port-name">{{ port.Port }}</div>
-          <div class="port-speed">{{ port.Speed }} Mbps</div>
+          <span class="port-name">{{ port.Port }}</span>
+          <span class="port-role">{{ port.Role.toUpperCase() }}</span>
+          <span class="port-speed">{{ port.Speed }} Mbps</span>
         </div>
       </div>
     </div>
@@ -52,6 +53,14 @@ const sortedEthernet = computed(() => {
   gap: 1rem; /* 元素間距稍微拉開 */
   padding: 0.5rem 1rem;
   border-radius: 8px;
+  width: 100%;
+  background-color: #f8f8f8;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.port-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .port-icon {
@@ -63,6 +72,7 @@ const sortedEthernet = computed(() => {
   align-items: center;
   justify-content: center;
   color: #666;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .port-icon.active {
@@ -72,20 +82,33 @@ const sortedEthernet = computed(() => {
 
 .port-info {
   display: flex;
-  flex-direction: row; /* 橫向排列名稱與速度 */
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 150px;
+  gap: 0.75rem;
 }
 
 .port-name {
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
+  font-size: 1.1rem;
+}
+
+.port-role {
+  color: #0070BB;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  padding: 0.15rem 0.5rem;
+  background-color: rgba(0, 112, 187, 0.1);
+  border-radius: 4px;
 }
 
 .port-speed {
-  font-size: 0.8rem;
   color: #666;
+  font-size: 0.85rem;
+  background-color: #f0f0f0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
 .card-title {

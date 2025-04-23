@@ -179,12 +179,13 @@ const generateMockData = (): DashboardResponse => {
         }
       },
       WAN: {
-        IPv4Address: "192.168.11.4",
-        IPv6Address: "fdea:e111:ce6b:0:f091:c3ff:fe8f:c02c",
-        BytesReceived: 315237055,
-        BytesSent: 30098693,
-        PacketsReceived: 344314,
-        PacketsSent: 202629
+        Protocol: "DHCP",
+        InternetAddress: "192.168.99.51",
+        SubnetMask: "255.255.255.0",
+        DefaultGateway: "192.168.99.1",
+        PrimaryDNS: "8.8.8.8",
+        SecondaryDNS: "8.8.4.4",
+        MacAddress: "4c:ba:7d:a7:55:22"
       },
       CPU: {
         CPUUsage: Math.floor(previousValues.cpu.usage)

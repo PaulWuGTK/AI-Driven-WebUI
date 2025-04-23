@@ -51,7 +51,13 @@ export default {
     clients: 'Clients',
     ethernet: 'Ethernet-Ports',
     ipv4Address: 'IPv4-Adresse',
-    ipv6Address: 'IPv6-Adresse'
+    ipv6Address: 'IPv6-Adresse',
+    protocol: 'Protokoll',
+    subnetMask: 'Subnetzmaske',
+    defaultGateway: 'Standardgateway',
+    primaryDNS: 'Primärer DNS',
+    secondaryDNS: 'Sekundärer DNS',
+    macAddress: 'MAC-Adresse'
   },
   wan: {
     title: 'WAN-Status',

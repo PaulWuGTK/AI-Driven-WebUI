@@ -25,12 +25,13 @@ export interface DashboardWiFi {
 }
 
 export interface DashboardWAN {
-  IPv4Address: string;
-  IPv6Address: string;
-  BytesSent: number;
-  PacketsSent: number;
-  BytesReceived: number;
-  PacketsReceived: number;
+  Protocol: string;
+  InternetAddress: string;
+  SubnetMask: string;
+  DefaultGateway: string;
+  PrimaryDNS: string;
+  SecondaryDNS: string;
+  MacAddress: string;
 }
 
 export interface DashboardCPU {

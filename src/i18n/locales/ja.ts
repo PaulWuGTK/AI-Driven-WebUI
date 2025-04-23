@@ -51,7 +51,13 @@ export default {
     clients: 'クライアント',
     ethernet: 'イーサネットポート',
     ipv4Address: 'IPv4アドレス',
-    ipv6Address: 'IPv6アドレス'
+    ipv6Address: 'IPv6アドレス',
+    protocol: 'プロトコル',
+    subnetMask: 'サブネットマスク',
+    defaultGateway: 'デフォルトゲートウェイ',
+    primaryDNS: 'プライマリ DNS',
+    secondaryDNS: 'セカンダリ DNS',
+    macAddress: 'MAC アドレス'
   },
   wan: {
     title: 'WAN ステータス',

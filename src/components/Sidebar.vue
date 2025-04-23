@@ -366,6 +366,8 @@ onMounted(() => {
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   position: relative;
   transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
@@ -374,12 +376,33 @@ onMounted(() => {
   align-items: center;
   padding: 0 1.5rem;
   background-color: #006BC4;
+  flex-shrink: 0;
 }
 
 .logo-text {
   color: #ffffff;
   font-size: 1.25rem;
   font-weight: bold;
+}
+
+.menu {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
 
 .menu-header {

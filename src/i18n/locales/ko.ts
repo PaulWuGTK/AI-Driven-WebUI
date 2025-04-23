@@ -51,7 +51,13 @@ export default {
     clients: '클라이언트',
     ethernet: '이더넷 포트',
     ipv4Address: 'IPv4 주소',
-    ipv6Address: 'IPv6 주소'
+    ipv6Address: 'IPv6 주소',
+    protocol: '프로토콜',
+    subnetMask: '서브넷 마스크',
+    defaultGateway: '기본 게이트웨이',
+    primaryDNS: '기본 DNS',
+    secondaryDNS: '보조 DNS',
+    macAddress: 'MAC 주소'
   },
   wan: {
     title: 'WAN 상태',

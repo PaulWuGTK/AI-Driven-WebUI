@@ -51,7 +51,13 @@ export default {
     clients: '用戶端',
     ethernet: '乙太網路埠',
     ipv4Address: 'IPv4 位址',
-    ipv6Address: 'IPv6 位址'
+    ipv6Address: 'IPv6 位址',
+    protocol: '協定',
+    subnetMask: '子網路遮罩',
+    defaultGateway: '預設閘道',
+    primaryDNS: '主要 DNS',
+    secondaryDNS: '次要 DNS',
+    macAddress: 'MAC 位址'
   },
   wan: {
     title: 'WAN 狀態',
