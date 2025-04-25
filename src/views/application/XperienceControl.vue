@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SpeedTestResponse } from '../../types/speedtest';
 import { runSpeedTest } from '../../services/api/speedtest';
+import streambowLogo from '/src/assets/Logo_Streambow_Primary-Black-Positive SB.png';
 
 const { t } = useI18n();
 const loading = ref(false);
@@ -33,11 +34,20 @@ const handleSpeedTest = async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('xperienceControl.title') }}</h1>
+    <h1 class="page-title flex items-center gap-3">
+      {{ t('xperienceControl.title') }} - 
+      <span class="text-base font-normal text-gray-600">
+        {{ t('xperienceControl.tagline') }}
+      </span>
+    </h1>
 
     <div class="status-content">
       <div class="panel-section">
-        <div class="section-title">{{ t('xperienceControl.title') }}</div>
+        <div class="section-title flex items-center gap-2 flex-wrap">
+          <span>{{ t('xperienceControl.title') }} -</span>
+          <span class="text-sm text-gray-500 whitespace-nowrap">{{ t('xperienceControl.poweredBy') }}</span>
+          <img :src="streambowLogo" alt="Streambow" class="logo-streambow ml-auto" />
+        </div>
         
         <div class="card-content">
           <div class="description">
@@ -117,6 +127,23 @@ const handleSpeedTest = async () => {
 </template>
 
 <style scoped>
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.logo-streambow {
+  height: 20px;
+  width: auto;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
 .description {
   margin-bottom: 2rem;
   text-align: center;

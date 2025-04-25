@@ -448,6 +448,8 @@ export interface Translations {
   };
   xperienceControl: {
     title: string;
+    tagline: string;
+    poweredBy: string;
     description: string;
     startTest: string;
     downloadSpeed: string;

@@ -10,38 +10,6 @@ let previousValues = {
   },
   cpu: {
     usage: 45
-  },
-  network: {
-    wan: {
-      bytesSent: 15460119,
-      bytesReceived: 378986963,
-      packetsSent: 179645,
-      packetsReceived: 326093,
-      lastUpdate: Date.now()
-    },
-    wifi: {
-      '2_4GHz': {
-        bytesSent: 83058834,
-        bytesReceived: 15000000,
-        packetsSent: 166284,
-        packetsReceived: 35000,
-        lastUpdate: Date.now()
-      },
-      '5GHz': {
-        bytesSent: 83058242,
-        bytesReceived: 25000000,
-        packetsSent: 166281,
-        packetsReceived: 45000,
-        lastUpdate: Date.now()
-      },
-      '6GHz': {
-        bytesSent: 83058074,
-        bytesReceived: 20000000,
-        packetsSent: 166280,
-        packetsReceived: 40000,
-        lastUpdate: Date.now()
-      }
-    }
   }
 };
 
@@ -55,20 +23,8 @@ const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
 };
 
-// Helper function to generate realistic network traffic changes
-const updateNetworkStats = (previous: number, minRate: number, maxRate: number) => {
-  const now = Date.now();
-  const timeDiff = (now - previousValues.network.wan.lastUpdate) / 1000; // Convert to seconds
-  const bytesPerSecond = getFluctuation(minRate, maxRate);
-  const increase = Math.floor(bytesPerSecond * timeDiff);
-  return previous + increase;
-};
-
 // Generate mock data with realistic variations
 const generateMockData = (): DashboardResponse => {
-  const now = Date.now();
-  const timeDiff = (now - previousValues.network.wan.lastUpdate) / 1000;
-
   // Update memory free space (fluctuate between 30-50% of total)
   const totalMemory = 897980;
   const minFree = totalMemory * 0.3;
@@ -87,33 +43,6 @@ const generateMockData = (): DashboardResponse => {
     10,
     90
   );
-
-  // Update WAN statistics with realistic rates
-  const wanStats = {
-    bytesSent: updateNetworkStats(previousValues.network.wan.bytesSent, 100000, 500000), // 100KB/s - 500KB/s
-    bytesReceived: updateNetworkStats(previousValues.network.wan.bytesReceived, 200000, 1000000), // 200KB/s - 1MB/s
-    packetsSent: Math.floor(updateNetworkStats(previousValues.network.wan.packetsSent, 100, 500)),
-    packetsReceived: Math.floor(updateNetworkStats(previousValues.network.wan.packetsReceived, 200, 1000))
-  };
-  previousValues.network.wan = {
-    ...wanStats,
-    lastUpdate: now
-  };
-
-  // Update WiFi statistics for each band with realistic rates
-  const updateWiFiBand = (band: keyof typeof previousValues.network.wifi) => {
-    const stats = {
-      bytesSent: updateNetworkStats(previousValues.network.wifi[band].bytesSent, 50000, 2000000), // 50KB/s - 2000KB/s
-      bytesReceived: updateNetworkStats(previousValues.network.wifi[band].bytesReceived, 75000, 3000000), // 75KB/s - 3000KB/s
-      packetsSent: Math.floor(updateNetworkStats(previousValues.network.wifi[band].packetsSent, 50, 200)),
-      packetsReceived: Math.floor(updateNetworkStats(previousValues.network.wifi[band].packetsReceived, 75, 300))
-    };
-    previousValues.network.wifi[band] = {
-      ...stats,
-      lastUpdate: now
-    };
-    return stats;
-  };
 
   return {
     Dashboard: {
@@ -159,23 +88,46 @@ const generateMockData = (): DashboardResponse => {
         }
       ],
       WiFi: {
-        "2_4GHz": {
-          BytesSent: updateWiFiBand('2_4GHz').bytesSent,
-          PacketsSent: updateWiFiBand('2_4GHz').packetsSent,
-          BytesReceived: updateWiFiBand('2_4GHz').bytesReceived,
-          PacketsReceived: updateWiFiBand('2_4GHz').packetsReceived
+        "wifi2g": {
+          Password: "GemtekVIP",
+          Enable: 1,
+          SecurityModeAvailable: "None,WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+          SSID: "Gemtek_prplmesh",
+          SecurityMode: "WPA2-Personal"
         },
-        "5GHz": {
-          BytesSent: updateWiFiBand('5GHz').bytesSent,
-          PacketsSent: updateWiFiBand('5GHz').packetsSent,
-          BytesReceived: updateWiFiBand('5GHz').bytesReceived,
-          PacketsReceived: updateWiFiBand('5GHz').packetsReceived
+        "wifi5g": {
+          Password: "GemtekVIP",
+          Enable: 1,
+          SecurityModeAvailable: "None,WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+          SSID: "Gemtek_prplmesh_5GHz",
+          SecurityMode: "WPA2-Personal"
         },
-        "6GHz": {
-          BytesSent: updateWiFiBand('6GHz').bytesSent,
-          PacketsSent: updateWiFiBand('6GHz').packetsSent,
-          BytesReceived: updateWiFiBand('6GHz').bytesReceived,
-          PacketsReceived: updateWiFiBand('6GHz').packetsReceived
+        "wifi6g": {
+          Password: "GemtekVIP",
+          Enable: 0,
+          SecurityModeAvailable: "WPA3-Personal",
+          SSID: "Gemtek_prplmesh_6GHz",
+          SecurityMode: "WPA3-Personal"
+        }
+      },
+      Guest: {
+        "wifi2g": {
+          Enable: 0,
+          GuestClients: 0,
+          SSID: "prplOS-guest",
+          Password: "GemtekGuest"
+        },
+        "wifi5g": {
+          Enable: 0,
+          GuestClients: 0,
+          SSID: "prplOS-guest",
+          Password: "GemtekGuest"
+        },
+        "wifi6g": {
+          Enable: 0,
+          GuestClients: 0,
+          SSID: "prplOS-guest",
+          Password: "GemtekGuest"
         }
       },
       WAN: {

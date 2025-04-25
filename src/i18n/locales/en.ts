@@ -478,6 +478,8 @@ const translations: Translations = {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga Carrier Grade SpeedTest",
+    poweredBy: "Powered by Streambow",
     description: 'Click the button below to start a speed test.',
     startTest: 'Start Speed Test',
     downloadSpeed: 'Download Speed',

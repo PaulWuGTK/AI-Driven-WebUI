@@ -12,16 +12,30 @@ export interface DashboardEthernetPort {
 }
 
 export interface DashboardWiFiBand {
-  BytesSent: number;
-  PacketsSent: number;
-  BytesReceived: number;
-  PacketsReceived: number;
+  Password: string;
+  Enable: number;
+  SecurityModeAvailable: string;
+  SSID: string;
+  SecurityMode: string;
 }
 
 export interface DashboardWiFi {
-  "2_4GHz": DashboardWiFiBand;
-  "5GHz": DashboardWiFiBand;
-  "6GHz": DashboardWiFiBand;
+  "wifi2g": DashboardWiFiBand;
+  "wifi5g": DashboardWiFiBand;
+  "wifi6g": DashboardWiFiBand;
+}
+
+export interface DashboardGuestWiFiBand {
+  Enable: number;
+  GuestClients: number;
+  SSID: string;
+  Password: string;
+}
+
+export interface DashboardGuest {
+  "wifi2g": DashboardGuestWiFiBand;
+  "wifi5g": DashboardGuestWiFiBand;
+  "wifi6g": DashboardGuestWiFiBand;
 }
 
 export interface DashboardWAN {
@@ -50,6 +64,7 @@ export interface DashboardResponse {
     Memory: DashboardMemory;
     Ethernet: DashboardEthernetPort[];
     WiFi: DashboardWiFi;
+    Guest?: DashboardGuest;
     WAN: DashboardWAN;
     CPU: DashboardCPU;
     System: DashboardSystem;
