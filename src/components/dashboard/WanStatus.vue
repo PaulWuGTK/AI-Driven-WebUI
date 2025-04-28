@@ -36,27 +36,27 @@ const props = defineProps<{
 
       <div class="info-row">
         <span class="info-label">{{ t('dashboard.subnetMask') }}</span>
-        <span class="value">{{ wanInfo.SubnetMask }}</span>
+        <span class="value" :title="wanInfo.SubnetMask">{{ wanInfo.SubnetMask }}</span>
       </div>
 
       <div class="info-row">
         <span class="info-label">{{ t('dashboard.defaultGateway') }}</span>
-        <span class="value">{{ wanInfo.DefaultGateway }}</span>
+        <span class="value" :title="wanInfo.DefaultGateway">{{ wanInfo.DefaultGateway }}</span>
       </div>
 
       <div class="info-row">
         <span class="info-label">{{ t('dashboard.primaryDNS') }}</span>
-        <span class="value">{{ wanInfo.PrimaryDNS }}</span>
+        <span class="value" :title="wanInfo.PrimaryDNS">{{ wanInfo.PrimaryDNS }}</span>
       </div>
 
       <div class="info-row">
         <span class="info-label">{{ t('dashboard.secondaryDNS') }}</span>
-        <span class="value">{{ wanInfo.SecondaryDNS }}</span>
+        <span class="value" :title="wanInfo.SecondaryDNS">{{ wanInfo.SecondaryDNS }}</span>
       </div>
 
       <div class="info-row">
         <span class="info-label">{{ t('dashboard.macAddress') }}</span>
-        <span class="value">{{ wanInfo.MacAddress }}</span>
+        <span class="value" :title="wanInfo.MacAddress">{{ wanInfo.MacAddress }}</span>
       </div>
     </div>
   </div>

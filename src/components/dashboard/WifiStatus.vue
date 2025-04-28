@@ -21,7 +21,7 @@ const enabledBands = computed(() => {
   if (!props.wifiInfo) return [];
   
   return Object.entries(props.wifiInfo)
-    .filter(([_, band]) => band.Enable === 1)
+    .filter(([_, band]) => band && band.Enable === 1)
     .map(([key, band]) => ({
       key,
       displayName: bandNames[key as keyof typeof bandNames],
@@ -31,6 +31,11 @@ const enabledBands = computed(() => {
 
 // Check if any WiFi is enabled
 const hasEnabledWifi = computed(() => enabledBands.value.length > 0);
+
+// Check if a security mode requires a password (is not "None")
+const requiresPassword = (securityMode: string): boolean => {
+  return securityMode !== "None";
+}
 </script>
 
 <template>
@@ -43,14 +48,14 @@ const hasEnabledWifi = computed(() => enabledBands.value.length > 0);
           <div class="row-label">SSID</div>
           <div class="row-value">
             <span class="text-truncate" :title="band.SSID">{{ band.SSID }}</span>
-            <span class="security-icon material-icons">lock</span>
+            <span v-if="requiresPassword(band.SecurityMode)" class="security-icon material-icons">lock</span>
           </div>
         </div>
         <div class="network-row">
           <div class="row-label">band</div>
           <div class="row-value">{{ band.displayName }}</div>
         </div>
-        <div class="network-row">
+        <div class="network-row" v-if="requiresPassword(band.SecurityMode)">
           <div class="row-label">Password:</div>
           <div class="row-value password text-truncate" :title="band.Password">{{ band.Password }}</div>
         </div>
@@ -147,6 +152,6 @@ const hasEnabledWifi = computed(() => enabledBands.value.length > 0);
 .card-title {
   font-size: 1.1rem;
   color: #333;
-  margin: 0 0 1rem 0;
+  margin-bottom: 1rem;
 }
 </style>

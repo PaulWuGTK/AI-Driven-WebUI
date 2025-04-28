@@ -100,11 +100,11 @@ const generateMockData = (): DashboardResponse => {
           Enable: 1,
           SecurityModeAvailable: "None,WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
           SSID: "Gemtek_prplmesh_5GHz",
-          SecurityMode: "WPA2-Personal"
+          SecurityMode: "None"
         },
         "wifi6g": {
           Password: "GemtekVIP",
-          Enable: 0,
+          Enable: 1,
           SecurityModeAvailable: "WPA3-Personal",
           SSID: "Gemtek_prplmesh_6GHz",
           SecurityMode: "WPA3-Personal"
