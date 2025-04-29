@@ -35,6 +35,9 @@ const renderChart = () => {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+          duration: 300 // Faster animation for smoother updates
+        },
         scales: {
           x: {
             grid: {
@@ -102,6 +105,14 @@ watch(
   { deep: true }
 );
 
+// Watch for unit changes
+watch(
+  () => props.unit,
+  () => {
+    renderChart();
+  }
+);
+
 onMounted(() => {
   renderChart();
 });
@@ -131,6 +142,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .chart-title {
@@ -144,6 +156,10 @@ onMounted(() => {
   width: 100%;
   height: 300px;
   position: relative;
+  background-color: white;
+  border-radius: 4px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chart-legend {
@@ -176,5 +192,15 @@ onMounted(() => {
 .legend-label {
   font-size: 0.9rem;
   color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .throughput-chart {
+    padding: 0 1rem 1rem 1rem;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
 }
 </style>
