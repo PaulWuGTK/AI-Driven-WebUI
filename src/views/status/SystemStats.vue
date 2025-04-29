@@ -1,412 +1,256 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
+import { ref, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { SystemStatsResponse, FormattedThroughputData, ThroughputType, WifiBand, ChartDataSeries } from '../../types/systemStats';
+import type {
+  SystemStatsResponse,
+  ThroughputType,
+  WifiBand,
+  ChartDataSeries,
+  FormattedThroughputData
+} from '../../types/systemStats';
 import { getSystemStats } from '../../services/api/systemStats';
 import ThroughputChart from '../../components/ThroughputChart.vue';
-import { calculateDataRate, prepareChartData, determineYAxisUnit, convertToUnit } from '../../utils/throughputUtils';
+import {
+  prepareChartData,
+  determineYAxisUnit,
+  convertToUnit
+} from '../../utils/throughputUtils';
+
+/**
+ * 修正版：加入 `interface` 欄位，符合 FormattedThroughputData 型別
+ */
+
+type CounterPoint = {
+  counterRx: number;
+  counterTx: number;
+  rateRx: number;
+  rateTx: number;
+  timestamp: number;
+  iface: string;
+};
 
 const { t } = useI18n();
 
-// State variables
+// ------------------ reactive state ------------------
 const activeTab = ref<ThroughputType>('WAN');
 const selectedWanInterface = ref<string>('');
 const selectedWifiBand = ref<WifiBand>('2.4G');
 const loading = ref(true);
 const error = ref<string | null>(null);
 
-// Data storage
+const wanData = ref<Map<string, CounterPoint[]>>(new Map());
+const lanData = ref<Map<string, CounterPoint[]>>(new Map());
+const wifiData = ref<Map<WifiBand, CounterPoint[]>>(new Map());
 const wanInterfaces = ref<string[]>([]);
-const wanData = ref<Map<string, FormattedThroughputData[]>>(new Map());
-const lanData = ref<Map<string, FormattedThroughputData[]>>(new Map());
-const wifiData = ref<Map<WifiBand, FormattedThroughputData[]>>(new Map());
 
-// Polling interval
-const pollingInterval = ref<number | null>(null);
-const lastPollTime = ref<number>(Date.now());
-const POLL_INTERVAL_MS = 2000; // 2 seconds
-const MAX_DATA_POINTS = 30; // 1 minute of data at 2-second intervals
+const POLL_INTERVAL_MS = 2000;
+const MAX_POINTS = 30;
+let timer: number | null = null;
 
-// Chart data
-const wanChartData = ref<ChartDataSeries>({
-  labels: [],
-  datasets: [
-    {
-      label: 'Tx',
-      data: [],
-      borderColor: 'rgba(0, 112, 187, 1)',
-      backgroundColor: 'rgba(0, 112, 187, 0.2)',
-      fill: true,
-      tension: 0.4
-    },
-    {
-      label: 'Rx',
-      data: [],
-      borderColor: 'rgba(116, 119, 191, 1)',
-      backgroundColor: 'rgba(116, 119, 191, 0.2)',
-      fill: true,
-      tension: 0.4
-    }
-  ]
-});
+function blankSeries(): ChartDataSeries {
+  return {
+    labels: [],
+    datasets: [
+      {
+        label: 'Tx',
+        data: [],
+        borderColor: 'rgba(0, 112, 187, 1)',
+        backgroundColor: 'rgba(0, 112, 187, 0.2)',
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Rx',
+        data: [],
+        borderColor: 'rgba(116, 119, 191, 1)',
+        backgroundColor: 'rgba(116, 119, 191, 0.2)',
+        fill: true,
+        tension: 0.4
+      }
+    ]
+  };
+}
 
-const lanChartData = ref<ChartDataSeries>({
-  labels: [],
-  datasets: [
-    {
-      label: 'Tx',
-      data: [],
-      borderColor: 'rgba(0, 112, 187, 1)',
-      backgroundColor: 'rgba(0, 112, 187, 0.2)',
-      fill: true,
-      tension: 0.4
-    },
-    {
-      label: 'Rx',
-      data: [],
-      borderColor: 'rgba(116, 119, 191, 1)',
-      backgroundColor: 'rgba(116, 119, 191, 0.2)',
-      fill: true,
-      tension: 0.4
-    }
-  ]
-});
+const wanChartData = ref<ChartDataSeries>(blankSeries());
+const lanChartData = ref<ChartDataSeries>(blankSeries());
+const wifiChartData = ref<ChartDataSeries>(blankSeries());
 
-const wifiChartData = ref<ChartDataSeries>({
-  labels: [],
-  datasets: [
-    {
-      label: 'Tx',
-      data: [],
-      borderColor: 'rgba(0, 112, 187, 1)',
-      backgroundColor: 'rgba(0, 112, 187, 0.2)',
-      fill: true,
-      tension: 0.4
-    },
-    {
-      label: 'Rx',
-      data: [],
-      borderColor: 'rgba(116, 119, 191, 1)',
-      backgroundColor: 'rgba(116, 119, 191, 0.2)',
-      fill: true,
-      tension: 0.4
-    }
-  ]
-});
-
-// Y-axis units
 const wanUnit = ref('Mbps');
 const lanUnit = ref('Mbps');
 const wifiUnit = ref('Mbps');
 
-// Fetch data and update charts
-const fetchAndUpdateData = async () => {
+async function fetchAndUpdate() {
   try {
+    const resp: SystemStatsResponse = await getSystemStats();
     const now = Date.now();
-    const intervalSeconds = (now - lastPollTime.value) / 1000;
-    lastPollTime.value = now;
-    
-    const response = await getSystemStats();
-    
-    // Process WAN data
-    response.StatusSystemStat.WAN.forEach(wan => {
-      const interfaceName = wan.interface || 'unknown';
-      
-      // Initialize interface data if not exists
-      if (!wanData.value.has(interfaceName)) {
-        wanData.value.set(interfaceName, []);
-        
-        // Set first interface as selected if none selected
-        if (!selectedWanInterface.value) {
-          selectedWanInterface.value = interfaceName;
-        }
-      }
-      
-      const interfaceData = wanData.value.get(interfaceName) || [];
-      const currentData = {
-        rx: Number(wan.Receive),
-        tx: Number(wan.Sent),
-        timestamp: now,
-        interface: interfaceName
-      };
-      
-      const previousData = interfaceData.length > 0 ? interfaceData[interfaceData.length - 1] : null;
-      const dataRate = calculateDataRate(
-        { rx: currentData.rx, tx: currentData.tx },
-        previousData ? { rx: previousData.rx, tx: previousData.tx } : null,
-        intervalSeconds
-      );
-      
-      interfaceData.push({
-        ...currentData,
-        rx: dataRate.rx,
-        tx: dataRate.tx
-      });
-      
-      // Limit data points
-      if (interfaceData.length > MAX_DATA_POINTS) {
-        interfaceData.shift();
-      }
-      
-      wanData.value.set(interfaceName, interfaceData);
-    });
-    
-    // Update WAN interfaces list
+
+    /* WAN */
+    for (const w of resp.StatusSystemStat.WAN) {
+      const iface = w.interface || 'unknown';
+      if (!wanData.value.has(iface)) wanData.value.set(iface, []);
+      const list = wanData.value.get(iface)!;
+      const bytesRx = Number(w.Receive);
+      const bytesTx = Number(w.Sent);
+      const prev = list.at(-1);
+      const dt = prev ? (now - prev.timestamp) / 1000 : POLL_INTERVAL_MS / 1000;
+      const rateRx = prev ? Math.max(0, bytesRx - prev.counterRx) / dt : 0;
+      const rateTx = prev ? Math.max(0, bytesTx - prev.counterTx) / dt : 0;
+      list.push({ counterRx: bytesRx, counterTx: bytesTx, rateRx, rateTx, timestamp: now, iface });
+      if (list.length > MAX_POINTS) list.shift();
+    }
     wanInterfaces.value = Array.from(wanData.value.keys());
-    
-    // Process LAN data
-    response.StatusSystemStat.LAN.forEach(lan => {
-      const interfaceName = lan.interface || 'unknown';
-      
-      // Initialize interface data if not exists
-      if (!lanData.value.has(interfaceName)) {
-        lanData.value.set(interfaceName, []);
-      }
-      
-      const interfaceData = lanData.value.get(interfaceName) || [];
-      const currentData = {
-        rx: Number(lan.Receive),
-        tx: Number(lan.Sent),
-        timestamp: now,
-        interface: interfaceName
-      };
-      
-      const previousData = interfaceData.length > 0 ? interfaceData[interfaceData.length - 1] : null;
-      const dataRate = calculateDataRate(
-        { rx: currentData.rx, tx: currentData.tx },
-        previousData ? { rx: previousData.rx, tx: previousData.tx } : null,
-        intervalSeconds
-      );
-      
-      interfaceData.push({
-        ...currentData,
-        rx: dataRate.rx,
-        tx: dataRate.tx
-      });
-      
-      // Limit data points
-      if (interfaceData.length > MAX_DATA_POINTS) {
-        interfaceData.shift();
-      }
-      
-      lanData.value.set(interfaceName, interfaceData);
-    });
-    
-    // Process WiFi data
-    const wifiBands: { key: WifiBand; data: { Receive: string; Sent: string } }[] = [
-      { key: '2.4G', data: response.StatusSystemStat.WiFi.wifi2g },
-      { key: '5G', data: response.StatusSystemStat.WiFi.wifi5g },
-      { key: '6G', data: response.StatusSystemStat.WiFi.wifi6g }
+    if (!selectedWanInterface.value && wanInterfaces.value.length) selectedWanInterface.value = wanInterfaces.value[0];
+
+    /* LAN */
+    for (const l of resp.StatusSystemStat.LAN) {
+      const iface = l.interface || 'unknown';
+      if (!lanData.value.has(iface)) lanData.value.set(iface, []);
+      const list = lanData.value.get(iface)!;
+      const bytesRx = Number(l.Receive);
+      const bytesTx = Number(l.Sent);
+      const prev = list.at(-1);
+      const dt = prev ? (now - prev.timestamp) / 1000 : POLL_INTERVAL_MS / 1000;
+      const rateRx = prev ? Math.max(0, bytesRx - prev.counterRx) / dt : 0;
+      const rateTx = prev ? Math.max(0, bytesTx - prev.counterTx) / dt : 0;
+      list.push({ counterRx: bytesRx, counterTx: bytesTx, rateRx, rateTx, timestamp: now, iface });
+      if (list.length > MAX_POINTS) list.shift();
+    }
+
+    /* WiFi */
+    const wifiList: [WifiBand, { Receive: string; Sent: string }][] = [
+      ['2.4G', resp.StatusSystemStat.WiFi.wifi2g],
+      ['5G', resp.StatusSystemStat.WiFi.wifi5g],
+      ['6G', resp.StatusSystemStat.WiFi.wifi6g]
     ];
-    
-    wifiBands.forEach(({ key, data }) => {
-      // Initialize band data if not exists
-      if (!wifiData.value.has(key)) {
-        wifiData.value.set(key, []);
-      }
-      
-      const bandData = wifiData.value.get(key) || [];
-      const currentData = {
-        rx: Number(data.Receive),
-        tx: Number(data.Sent),
-        timestamp: now,
-        interface: key
-      };
-      
-      const previousData = bandData.length > 0 ? bandData[bandData.length - 1] : null;
-      const dataRate = calculateDataRate(
-        { rx: currentData.rx, tx: currentData.tx },
-        previousData ? { rx: previousData.rx, tx: previousData.tx } : null,
-        intervalSeconds
-      );
-      
-      bandData.push({
-        ...currentData,
-        rx: dataRate.rx,
-        tx: dataRate.tx
-      });
-      
-      // Limit data points
-      if (bandData.length > MAX_DATA_POINTS) {
-        bandData.shift();
-      }
-      
-      wifiData.value.set(key, bandData);
-    });
-    
-    // Update chart data
-    updateChartData();
-    
+    for (const [band, v] of wifiList) {
+      if (!wifiData.value.has(band)) wifiData.value.set(band, []);
+      const list = wifiData.value.get(band)!;
+      const bytesRx = Number(v.Receive);
+      const bytesTx = Number(v.Sent);
+      const prev = list.at(-1);
+      const dt = prev ? (now - prev.timestamp) / 1000 : POLL_INTERVAL_MS / 1000;
+      const rateRx = prev ? Math.max(0, bytesRx - prev.counterRx) / dt : 0;
+      const rateTx = prev ? Math.max(0, bytesTx - prev.counterTx) / dt : 0;
+      list.push({ counterRx: bytesRx, counterTx: bytesTx, rateRx, rateTx, timestamp: now, iface: band });
+      if (list.length > MAX_POINTS) list.shift();
+    }
+
+    updateCharts();
     loading.value = false;
     error.value = null;
-  } catch (err) {
-    console.error('Error fetching system stats:', err);
+  } catch (e) {
+    console.error(e);
     error.value = 'Failed to fetch system statistics';
     loading.value = false;
   }
-};
+}
 
-// Update chart data based on selected interfaces/bands
-const updateChartData = () => {
-  // Update WAN chart
+function toFormatted(list: CounterPoint[], unit: string): FormattedThroughputData[] {
+  return list.map(p => ({
+    timestamp: p.timestamp,
+    rx: convertToUnit(p.rateRx, unit),
+    tx: convertToUnit(p.rateTx, unit),
+    interface: p.iface
+  }));
+}
+
+function updateCharts() {
+  /* WAN */
   if (selectedWanInterface.value && wanData.value.has(selectedWanInterface.value)) {
-    const interfaceData = wanData.value.get(selectedWanInterface.value) || [];
-    
-    // Determine appropriate unit based on data
-    const dataRates = interfaceData.map(point => ({ rx: point.rx, tx: point.tx }));
-    wanUnit.value = determineYAxisUnit(dataRates);
-    
-    // Convert data to the determined unit
-    const convertedData = interfaceData.map(point => ({
-      ...point,
-      rx: convertToUnit(point.rx, wanUnit.value),
-      tx: convertToUnit(point.tx, wanUnit.value)
-    }));
-    
-    wanChartData.value = prepareChartData(convertedData);
+    const list = wanData.value.get(selectedWanInterface.value)!;
+    wanUnit.value = determineYAxisUnit(list.map(p => ({ rx: p.rateRx, tx: p.rateTx })));
+    wanChartData.value = prepareChartData(toFormatted(list, wanUnit.value));
   }
-  
-  // Update LAN chart (if enabled)
-  if (lanData.value.size > 0) {
-    const firstInterface = Array.from(lanData.value.keys())[0];
-    const interfaceData = lanData.value.get(firstInterface) || [];
-    
-    // Determine appropriate unit based on data
-    const dataRates = interfaceData.map(point => ({ rx: point.rx, tx: point.tx }));
-    lanUnit.value = determineYAxisUnit(dataRates);
-    
-    // Convert data to the determined unit
-    const convertedData = interfaceData.map(point => ({
-      ...point,
-      rx: convertToUnit(point.rx, lanUnit.value),
-      tx: convertToUnit(point.tx, lanUnit.value)
-    }));
-    
-    lanChartData.value = prepareChartData(convertedData);
+  /* LAN (保持隱藏) */
+  if (lanData.value.size) {
+    const first = Array.from(lanData.value.keys())[0];
+    const list = lanData.value.get(first)!;
+    lanUnit.value = determineYAxisUnit(list.map(p => ({ rx: p.rateRx, tx: p.rateTx })));
+    lanChartData.value = prepareChartData(toFormatted(list, lanUnit.value));
   }
-  
-  // Update WiFi chart
+  /* WiFi */
   if (wifiData.value.has(selectedWifiBand.value)) {
-    const bandData = wifiData.value.get(selectedWifiBand.value) || [];
-    
-    // Determine appropriate unit based on data
-    const dataRates = bandData.map(point => ({ rx: point.rx, tx: point.tx }));
-    wifiUnit.value = determineYAxisUnit(dataRates);
-    
-    // Convert data to the determined unit
-    const convertedData = bandData.map(point => ({
-      ...point,
-      rx: convertToUnit(point.rx, wifiUnit.value),
-      tx: convertToUnit(point.tx, wifiUnit.value)
-    }));
-    
-    wifiChartData.value = prepareChartData(convertedData);
+    const list = wifiData.value.get(selectedWifiBand.value)!;
+    wifiUnit.value = determineYAxisUnit(list.map(p => ({ rx: p.rateRx, tx: p.rateTx })));
+    wifiChartData.value = prepareChartData(toFormatted(list, wifiUnit.value));
   }
-};
+}
 
-// Watch for changes in selected interface/band
-watchEffect(() => {
-  updateChartData();
-});
+watchEffect(updateCharts);
 
-// Start polling on mount
 onMounted(() => {
-  fetchAndUpdateData();
-  pollingInterval.value = window.setInterval(fetchAndUpdateData, POLL_INTERVAL_MS);
+  fetchAndUpdate();
+  timer = window.setInterval(fetchAndUpdate, POLL_INTERVAL_MS);
 });
 
-// Clean up on unmount
 onUnmounted(() => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value);
-  }
+  if (timer) clearInterval(timer);
 });
 </script>
 
 <template>
   <div class="page-container">
     <h1 class="page-title">{{ t('systemStats.title') }}</h1>
-
     <div class="status-content">
       <div class="panel-section">
+        <!-- tabs -->
         <div class="tab-navigation">
           <button
             class="tab-button"
             :class="{ active: activeTab === 'WAN' }"
             @click="activeTab = 'WAN'"
-          >
-            {{ t('systemStats.wanThroughput') }}
-          </button>
-          <button
-            class="tab-button"
-            :class="{ active: activeTab === 'LAN', disabled: true }"
-            v-if="false"
-          >
-            {{ t('systemStats.lanThroughput') }}
-          </button>
+          >{{ t('systemStats.wanThroughput') }}</button>
+
+          <!-- LAN 仍隱藏，可視需要開啟 -->
+          <!--<button class="tab-button" :class="{ active: activeTab === 'LAN' }" @click="activeTab = 'LAN'">LAN Throughput</button>-->
+
           <button
             class="tab-button"
             :class="{ active: activeTab === 'WiFi' }"
             @click="activeTab = 'WiFi'"
-          >
-            {{ t('systemStats.wifiThroughput') }}
-          </button>
+          >{{ t('systemStats.wifiThroughput') }}</button>
         </div>
 
         <div class="tab-content">
           <div v-if="loading && !wanData.size && !wifiData.size" class="loading-state">
-            <div class="loading-spinner"></div>
-            <span>Loading...</span>
+            <div class="loading-spinner"></div><span>Loading...</span>
           </div>
+          <div v-else-if="error" class="error-state">{{ error }}</div>
 
-          <div v-else-if="error" class="error-state">
-            {{ error }}
-          </div>
-
-          <template v-else>
-            <!-- WAN Throughput Tab -->
-            <div v-if="activeTab === 'WAN'" class="throughput-content">
-              <div class="header-row">
-                <h2 class="section-title">{{ t('systemStats.wanThroughput') }}</h2>
-                <div class="interface-selector">
-                  <select v-model="selectedWanInterface">
-                    <option v-for="iface in wanInterfaces" :key="iface" :value="iface">
-                      {{ iface }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <ThroughputChart
-                :chart-data="wanChartData"
-                :title="selectedWanInterface"
-                :label-tx="t('systemStats.tx')"
-                :label-rx="t('systemStats.rx')"
-                :unit="wanUnit"
-              />
+          <!-- WAN -->
+          <template v-if="activeTab === 'WAN'">
+            <div class="header-row">
+              <h2>{{ t('systemStats.wanThroughput') }}</h2>
+              <select v-model="selectedWanInterface">
+                <option v-for="i in wanInterfaces" :key="i" :value="i">{{ i }}</option>
+              </select>
             </div>
+            <ThroughputChart
+              :chart-data="wanChartData"
+              :title="selectedWanInterface"
+              :label-tx="t('systemStats.tx')"
+              :label-rx="t('systemStats.rx')"
+              :unit="wanUnit"
+            />
+          </template>
 
-            <!-- WiFi Throughput Tab -->
-            <div v-if="activeTab === 'WiFi'" class="throughput-content">
-              <div class="header-row">
-                <h2 class="section-title">{{ t('systemStats.wifiThroughput') }}</h2>
-                <div class="interface-selector">
-                  <select v-model="selectedWifiBand">
-                    <option value="2.4G">2.4G</option>
-                    <option value="5G">5G</option>
-                    <option value="6G">6G</option>
-                  </select>
-                </div>
-              </div>
-
-              <ThroughputChart
-                :chart-data="wifiChartData"
-                :title="selectedWifiBand"
-                :label-tx="t('systemStats.tx')"
-                :label-rx="t('systemStats.rx')"
-                :unit="wifiUnit"
-              />
+          <!-- WiFi -->
+          <template v-if="activeTab === 'WiFi'">
+            <div class="header-row">
+              <h2>{{ t('systemStats.wifiThroughput') }}</h2>
+              <select v-model="selectedWifiBand">
+                <option value="2.4G">2.4G</option>
+                <option value="5G">5G</option>
+                <option value="6G">6G</option>
+              </select>
             </div>
+            <ThroughputChart
+              :chart-data="wifiChartData"
+              :title="selectedWifiBand"
+              :label-tx="t('systemStats.tx')"
+              :label-rx="t('systemStats.rx')"
+              :unit="wifiUnit"
+            />
           </template>
         </div>
       </div>

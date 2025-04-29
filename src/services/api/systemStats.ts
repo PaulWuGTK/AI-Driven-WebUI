@@ -59,5 +59,5 @@ export const getSystemStats = async (): Promise<SystemStatsResponse> => {
     return generateMockData();
   }
 
-  return callApi<SystemStatsResponse>('/API/info?list=ThroughputStat');
+  return callApi<SystemStatsResponse>('/API/info?list=StatusSystemStat');
 };
