@@ -11,6 +11,7 @@ export interface Translations {
     wifiNeighbor: string;
     meshInfo: string;
     lcm: string;
+    systemStats: string;
     basicSetting: string;
     wireless: string;
     wanSetting: string;
@@ -147,6 +148,14 @@ export interface Translations {
     uuid: string;
     vendor: string;
     version: string;
+  };
+  systemStats: {
+    title: string;
+    wanThroughput: string;
+    lanThroughput: string;
+    wifiThroughput: string;
+    tx: string;
+    rx: string;
   };
   wireless: {
     title: string;

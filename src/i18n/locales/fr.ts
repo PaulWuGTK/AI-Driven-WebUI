@@ -10,6 +10,7 @@ export default {
     wifiNeighbor: 'Appareils voisins WiFi',
     meshInfo: 'Informations sur le maillage',
     lcm: 'LCM',
+    systemStats: 'Statistiques système',
     basicSetting: 'Paramètres de base',
     wireless: 'Sans fil',
     wanSetting: 'WAN',
@@ -174,6 +175,14 @@ export default {
     uuid: "UUID",
     vendor: "Fournisseur",
     version: "Version"
+  },
+  systemStats: {
+    title: 'Statistiques système',
+    wanThroughput: 'Débit WAN',
+    lanThroughput: 'Débit LAN',
+    wifiThroughput: 'Débit WiFi',
+    tx: 'Tx (Émis)',
+    rx: 'Rx (Reçu)'
   },
   wireless: {
     title: 'Paramètres sans fil',

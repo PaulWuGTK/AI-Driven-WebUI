@@ -10,6 +10,7 @@ export default {
     wifiNeighbor: 'WiFi-Nachbar',
     meshInfo: 'Mesh-Informationen',
     lcm: 'LCM',
+    systemStats: 'Systemstatistiken',
     basicSetting: 'Grundeinstellung',
     wireless: 'Drahtlos',
     wanSetting: 'WAN',
@@ -174,6 +175,14 @@ export default {
     uuid: "UUID",
     vendor: "Anbieter",
     version: "Version"
+  },
+  systemStats: {
+    title: 'Systemstatistiken',
+    wanThroughput: 'WAN-Durchsatz',
+    lanThroughput: 'LAN-Durchsatz',
+    wifiThroughput: 'WiFi-Durchsatz',
+    tx: 'Tx (Gesendet)',
+    rx: 'Rx (Empfangen)'
   },
   wireless: {
     title: 'WLAN-Einstellungen',

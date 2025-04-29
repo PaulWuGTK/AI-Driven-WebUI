@@ -10,6 +10,7 @@ export default {
     wifiNeighbor: 'WiFi 주변 기기',
     meshInfo: '메시 정보',
     lcm: 'LCM',
+    systemStats: '시스템 통계',
     basicSetting: '기본 설정',
     wireless: '무선',
     wanSetting: 'WAN',
@@ -173,6 +174,14 @@ export default {
     uuid: "UUID",
     vendor: "제조업체",
     version: "버전"
+  },
+  systemStats: {
+    title: '시스템 통계',
+    wanThroughput: 'WAN 처리량',
+    lanThroughput: 'LAN 처리량',
+    wifiThroughput: 'WiFi 처리량',
+    tx: 'Tx (송신)',
+    rx: 'Rx (수신)'
   },
   wireless: {
     title: '무선 설정',

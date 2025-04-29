@@ -10,6 +10,7 @@ export default {
     wifiNeighbor: 'Wi-Fi 鄰近設備',
     meshInfo: 'Mesh 資訊',
     lcm: 'LCM',
+    systemStats: '系統統計',
     basicSetting: '基本設定',
     wireless: '無線',
     wanSetting: 'WAN',
@@ -174,6 +175,14 @@ export default {
     uuid: "UUID",
     vendor: "供應商",
     version: "版本"
+  },
+  systemStats: {
+    title: '系統統計',
+    wanThroughput: 'WAN 吞吐量',
+    lanThroughput: 'LAN 吞吐量',
+    wifiThroughput: 'WiFi 吞吐量',
+    tx: 'Tx（傳送）',
+    rx: 'Rx（接收）'
   },
   wireless: {
     title: '無線設定',

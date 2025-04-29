@@ -12,6 +12,7 @@ const translations: Translations = {
     wifiNeighbor: 'WiFi Neighbor',
     meshInfo: 'Mesh Information',
     lcm: 'LCM',
+    systemStats: 'System Stats',
     basicSetting: 'Basic Setting',
     wireless: 'Wireless',
     wanSetting: 'WAN',
@@ -177,6 +178,14 @@ const translations: Translations = {
     uuid: 'UUID',
     vendor: 'Vendor',
     version: 'Version'
+  },
+  systemStats: {
+    title: 'System Stats',
+    wanThroughput: 'WAN Throughput',
+    lanThroughput: 'LAN Throughput',
+    wifiThroughput: 'WiFi Throughput',
+    tx: 'Tx (Sent)',
+    rx: 'Rx (Received)'
   },
   wireless: {
     title: 'Wireless Settings',
