@@ -89,6 +89,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/wifi/wireless-extender',
+      component: () => import('../views/wifi/WirelessExtender.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/ddns',
       component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth

@@ -48,7 +48,7 @@ onMounted(() => {
     @change="handleChange"
     :disabled="loading"
   >
-    <option v-if="loading" value="">Loading...</option>
+    <option v-if="loading" value="">{{ t('common.loading') }}</option>
     <option 
       v-else
       v-for="(timezone, index) in timezones" 

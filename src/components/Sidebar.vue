@@ -57,6 +57,9 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'LAN': { gateway: true, extender: true },
     'Wireless': { gateway: true, extender: false }
   },
+  'Wi-Fi': {
+    'Wireless Extender': { gateway: true, extender: true }
+  },
   'Advanced': {
     'DDNS': { gateway: true, extender: false }
   },
@@ -105,6 +108,14 @@ const baseMenuItems: MenuItem[] = [
       { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
       { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
       { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
+    ]
+  },
+  {
+    name: 'Wi-Fi',
+    icon: basicIcon,
+    translationKey: 'menu.wifi',
+    subItems: [
+      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
     ]
   },
   {

@@ -115,7 +115,7 @@ onMounted(fetchDdns);
     <div class="status-content">
       <div v-if="loading" class="loading-state">
         <div class="loading-spinner"></div>
-        <span>Loading...</span>
+        <span>{{ t('common.loading') }}</span>
       </div>
 
       <div v-else-if="error" class="error-state">

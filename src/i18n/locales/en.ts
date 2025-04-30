@@ -16,6 +16,9 @@ const translations: Translations = {
     basicSetting: 'Basic Setting',
     wireless: 'Wireless',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: 'Wireless Extender',
     management: 'Management',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -25,7 +28,6 @@ const translations: Translations = {
     diagnostics : 'Diagnostics',
     firmware: 'Upgrade Firmware',
     reset: 'Device Reset',
-    lanSetting: 'LAN',
     backup: 'Backup',
     xperienceControl: 'XperienceControl',
     application: 'Application'
@@ -222,7 +224,8 @@ const translations: Translations = {
     pushButton: 'WPS Push Button',
     pinCode: 'PIN Code',
     pinCodeOfClient: 'PIN Code of Client Device',
-    noPublicKeys: 'No public keys added'
+    noPublicKeys: 'No public keys added',
+    extender: 'Extender'
   },
   wanSetup: {
     title: 'WAN Settings',
@@ -519,7 +522,8 @@ const translations: Translations = {
     apply: 'Apply',
     edit: 'Edit',
     delete: 'Delete',
-    enable: 'Enable'
+    enable: 'Enable',
+    loading: 'Loading...'
   }
 };
 

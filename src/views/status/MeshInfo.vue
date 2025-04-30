@@ -120,7 +120,7 @@ onUnmounted(() => {
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
         <div class="loading-spinner"></div>
-        Loading...
+        {{ t('common.loading') }}
       </div>
 
       <!-- Error State -->

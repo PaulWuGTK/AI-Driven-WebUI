@@ -59,7 +59,7 @@ onMounted(fetchMeshConfig);
   <div class="mesh-config">
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
-      <span>Loading...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <div v-else-if="error" class="error-state">

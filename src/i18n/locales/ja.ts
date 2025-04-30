@@ -14,6 +14,9 @@ export default {
     basicSetting: '基本設定',
     wireless: '無線',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: '無線中継機',
     management: '管理',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -219,7 +222,8 @@ export default {
     pushButton: 'WPSプッシュボタン',
     pinCode: 'PINコード',
     pinCodeOfClient: 'クライアントデバイスのPINコード',
-    noPublicKeys: '公開鍵が追加されていません'
+    noPublicKeys: '公開鍵が追加されていません',
+    extender: '中継機'
   },
   wanSetup: {
     title: 'WAN設定',
@@ -484,6 +488,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga キャリアグレード スピードテスト",
+    poweredBy: "提供：Streambow",
     description: '以下のボタンをクリックして速度テストを開始します。',
     startTest: '速度テスト開始',
     downloadSpeed: 'ダウンロード速度',
@@ -514,6 +520,7 @@ export default {
     apply: '適用',
     edit: '編集',
     delete: '削除',
-    enable: '有効'
+    enable: '有効',
+    loading: '読み込み中...'
   }
 };

@@ -16,6 +16,8 @@ export interface Translations {
     wireless: string;
     wanSetting: string;
     lanSetting: string;
+    wifi: string;
+    wirelessExtender: string;
     management: string;
     ntp: string;
     ssh: string;
@@ -186,22 +188,23 @@ export interface Translations {
     wpsStatus: string;
     easyMesh: string;
     commonSsidConfig: string;
-    pushButtonTitle: string,
-    pinConnectTitle: string,
-    devicePinTitle: string,
-    pushButton: string,
-    pinCode: string,
-    pinCodeOfClient: string,
-    noPublicKeys: string
+    pushButtonTitle: string;
+    pinConnectTitle: string;
+    devicePinTitle: string;
+    pushButton: string;
+    pinCode: string;
+    pinCodeOfClient: string;
+    noPublicKeys: string;
+    extender: string;
   };
   wanSetup: {
-    title: string
-    modeSetup: string
-    modeManagement: string
-    operationMode: string
-    wanMode: string
-    manual: string
-    auto: string
+    title: string;
+    modeSetup: string;
+    modeManagement: string;
+    operationMode: string;
+    wanMode: string;
+    manual: string;
+    auto: string;
   };
   wanManagement: {
     addMode: string;
@@ -490,5 +493,6 @@ export interface Translations {
     edit: string;
     delete: string;
     enable: string;
+    loading: string;
   },
 }

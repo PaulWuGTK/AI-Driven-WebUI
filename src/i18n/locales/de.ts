@@ -14,6 +14,9 @@ export default {
     basicSetting: 'Grundeinstellung',
     wireless: 'Drahtlos',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: 'WLAN-Repeater',
     management: 'Management',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -219,7 +222,8 @@ export default {
     pushButton: 'WPS-Taste',
     pinCode: 'PIN-Code',
     pinCodeOfClient: 'PIN-Code des Client-Geräts',
-    noPublicKeys: 'Keine öffentlichen Schlüssel hinzugefügt'
+    noPublicKeys: 'Keine öffentlichen Schlüssel hinzugefügt',
+    extender: 'Repeater'
   }, 
   wanSetup: {
     title: 'WAN-Einstellungen',
@@ -484,6 +488,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga SpeedTest in Carrier-Qualität",
+    poweredBy: "Bereitgestellt von Streambow",
     description: 'Klicken Sie auf die Schaltfläche unten, um einen Geschwindigkeitstest zu starten.',
     startTest: 'Geschwindigkeitstest starten',
     downloadSpeed: 'Download-Geschwindigkeit',
@@ -514,6 +520,7 @@ export default {
     apply: 'Anwenden',
     edit: 'Bearbeiten',
     delete: 'Löschen',
-    enable: 'Aktivieren'
+    enable: 'Aktivieren',
+    loading: 'Lädt...'
   }
 };

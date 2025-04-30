@@ -233,7 +233,7 @@ onUnmounted(() => {
           <!-- Loading and Error States -->
           <div v-if="loading && !wanData.size && !wifiData.size" class="loading-state">
             <div class="loading-spinner"></div>
-            <span>Loading...</span>
+            <span>{{ t('common.loading') }}</span>
           </div>
           
           <div v-else-if="error" class="error-state">

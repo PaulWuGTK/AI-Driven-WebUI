@@ -14,6 +14,9 @@ export default {
     basicSetting: '기본 설정',
     wireless: '무선',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: '무선 확장기',
     management: '관리',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -218,7 +221,8 @@ export default {
     pushButton: 'WPS 버튼',
     pinCode: 'PIN 코드',
     pinCodeOfClient: '클라이언트 장치의 PIN 코드',
-    noPublicKeys: '추가된 공개 키 없음'
+    noPublicKeys: '추가된 공개 키 없음',
+    extender: '확장기'
   },
   wanSetup: {
     title: 'WAN 설정',
@@ -483,6 +487,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga 통신사급 속도 테스트",
+    poweredBy: "Streambow 제공",
     description: '아래 버튼을 클릭하여 속도 테스트를 시작하세요.',
     startTest: '속도 테스트 시작',
     downloadSpeed: '다운로드 속도',
@@ -513,6 +519,7 @@ export default {
     apply: '적용',
     edit: '편집',
     delete: '삭제',
-    enable: '활성화'
+    enable: '활성화',
+    loading: '로딩 중...'
   }
 };

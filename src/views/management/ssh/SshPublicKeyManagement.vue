@@ -79,7 +79,7 @@ onMounted(fetchKeys);
 
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
-      <span>Loading...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <div v-else class="key-list">

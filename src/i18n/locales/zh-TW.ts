@@ -14,6 +14,9 @@ export default {
     basicSetting: '基本設定',
     wireless: '無線',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: '無線延伸器',
     management: '管理',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -219,7 +222,8 @@ export default {
     pushButton: 'WPS 按鈕',
     pinCode: 'PIN 碼',
     pinCodeOfClient: '用戶端裝置的 PIN 碼',
-    noPublicKeys: '尚未新增公開金鑰'
+    noPublicKeys: '尚未新增公開金鑰',
+    extender: '延伸器'
   },
   wanSetup: {
     title: 'WAN 設定',
@@ -484,6 +488,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga 電信等級速度測試",
+    poweredBy: "技術支援：Streambow",
     description: '點擊下方按鈕開始速度測試。',
     startTest: '開始速度測試',
     downloadSpeed: '下載速度',
@@ -514,6 +520,7 @@ export default {
     apply: '套用',
     edit: '編輯',
     delete: '刪除',
-    enable: '啟用'
+    enable: '啟用',
+    loading: '載入中...'
   }
 };

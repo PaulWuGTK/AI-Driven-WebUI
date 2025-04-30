@@ -14,6 +14,9 @@ export default {
     basicSetting: '基本设置',
     wireless: '无线',
     wanSetting: 'WAN',
+    lanSetting: 'LAN',
+    wifi: 'Wi-Fi',
+    wirelessExtender: '无线扩展器',
     management: '管理',
     ntp: 'NTP',
     ssh: 'SSH',
@@ -219,7 +222,8 @@ export default {
     pushButton: 'WPS 按钮',
     pinCode: 'PIN 码',
     pinCodeOfClient: '客户端设备的 PIN 码',
-    noPublicKeys: '尚未添加公钥'
+    noPublicKeys: '尚未添加公钥',
+    extender: '扩展器'
   },
   wanSetup: {
     title: 'WAN 设置',
@@ -484,6 +488,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
+    tagline: "XGiga 运营商级速度测试",
+    poweredBy: "由 Streambow 提供技术支持",
     description: '点击下方按钮开始速度测试。',
     startTest: '开始速度测试',
     downloadSpeed: '下载速度',
@@ -514,6 +520,7 @@ export default {
     apply: '应用',
     edit: '编辑',
     delete: '删除',
-    enable: '启用'
+    enable: '启用',
+    loading: '加载中...'
   }
 };

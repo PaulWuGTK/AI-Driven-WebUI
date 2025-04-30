@@ -37,7 +37,7 @@ onMounted(fetchSessions);
     <div class="sessions-list">
       <div v-if="loading" class="loading-state">
         <div class="loading-spinner"></div>
-        <span>Loading...</span>
+        <span>{{ t('common.loading') }}</span>
       </div>
 
       <template v-else>
