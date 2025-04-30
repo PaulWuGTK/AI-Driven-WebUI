@@ -52,11 +52,11 @@ const requiresPassword = (securityMode: string): boolean => {
           </div>
         </div>
         <div class="network-row">
-          <div class="row-label">band</div>
+          <div class="row-label">{{ t('wireless.band') }}</div>
           <div class="row-value">{{ band.displayName }}</div>
         </div>
         <div class="network-row" v-if="requiresPassword(band.SecurityMode)">
-          <div class="row-label">Password:</div>
+          <div class="row-label">{{ t('wireless.password') }}:</div>
           <div class="row-value password text-truncate" :title="band.Password">{{ band.Password }}</div>
         </div>
       </div>

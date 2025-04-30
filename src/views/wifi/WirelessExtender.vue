@@ -188,7 +188,7 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('menu.wirelessExtender') }}</h1>
+    <h1 class="page-title">{{ t('wirelessExtender.title') }}</h1>
 
     <div class="status-content">
       <div v-if="loading && !extenderData" class="loading-state">
@@ -203,12 +203,12 @@ onMounted(() => {
       <template v-else-if="extenderData">
         <!-- Extender Configuration Section -->
         <div class="panel-section">
-          <div class="section-title">Extender Configurations</div>
+          <div class="section-title">{{ t('wirelessExtender.configuration') }}</div>
           
           <div class="card-content">
             <div class="form-group">
               <div class="switch-label">
-                <span>Extender Enabled</span>
+                <span>{{ t('wirelessExtender.enabled') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
@@ -221,14 +221,14 @@ onMounted(() => {
             </div>
 
             <div v-if="isExtenderEnabled" class="form-group">
-              <label>Extender Role</label>
+              <label>{{ t('wirelessExtender.role') }}</label>
               <select 
                 :value="extenderRole"
                 @change="updateRole"
                 class="role-select"
               >
-                <option value="Repeater">Repeater</option>
-                <option value="MeshAgent">Mesh Agent</option>
+                <option value="Repeater">{{ t('wirelessExtender.repeater') }}</option>
+                <option value="MeshAgent">{{ t('wirelessExtender.meshAgent') }}</option>
               </select>
             </div>
           </div>
@@ -237,17 +237,17 @@ onMounted(() => {
         <template v-if="isExtenderEnabled">
           <!-- Connection Status Section -->
           <div class="panel-section">
-            <div class="section-title">Connection Status</div>
+            <div class="section-title">{{ t('wirelessExtender.connectionStatus') }}</div>
             
             <div class="card-content">
               <div class="table-container">
                 <table>
                   <thead>
                     <tr>
-                      <th>Band</th>
-                      <th>Status</th>
-                      <th>SSID</th>
-                      <th>Security</th>
+                      <th>{{ t('wirelessExtender.band') }}</th>
+                      <th>{{ t('wirelessExtender.status') }}</th>
+                      <th>{{ t('wirelessExtender.ssid') }}</th>
+                      <th>{{ t('wirelessExtender.security') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -255,7 +255,8 @@ onMounted(() => {
                       <td>2.4 GHz</td>
                       <td>
                         <span :class="getStatusClass(connectionStatus['2.4GHz'].Status)">
-                          {{ connectionStatus['2.4GHz'].Status }}
+                          {{ connectionStatus['2.4GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                         </span>
                       </td>
                       <td>{{ connectionStatus['2.4GHz'].SSID }}</td>
@@ -265,7 +266,8 @@ onMounted(() => {
                       <td>5 GHz</td>
                       <td>
                         <span :class="getStatusClass(connectionStatus['5GHz'].Status)">
-                          {{ connectionStatus['5GHz'].Status }}
+                          {{ connectionStatus['5GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                         </span>
                       </td>
                       <td>{{ connectionStatus['5GHz'].SSID }}</td>
@@ -275,7 +277,8 @@ onMounted(() => {
                       <td>6 GHz</td>
                       <td>
                         <span :class="getStatusClass(connectionStatus['6GHz'].Status)">
-                          {{ connectionStatus['6GHz'].Status }}
+                          {{ connectionStatus['6GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                         </span>
                       </td>
                       <td>{{ connectionStatus['6GHz'].SSID }}</td>
@@ -288,63 +291,66 @@ onMounted(() => {
               <div class="mobile-cards">
                 <div class="table-card" v-if="connectionStatus">
                   <div class="card-row">
-                    <span class="card-label">Band</span>
+                    <span class="card-label">{{ t('wirelessExtender.band') }}</span>
                     <span class="card-value">2.4 GHz</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Status</span>
+                    <span class="card-label">{{ t('wirelessExtender.status') }}</span>
                     <span class="card-value" :class="getStatusClass(connectionStatus['2.4GHz'].Status)">
-                      {{ connectionStatus['2.4GHz'].Status }}
+                      {{ connectionStatus['2.4GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                     </span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">SSID</span>
+                    <span class="card-label">{{ t('wirelessExtender.ssid') }}</span>
                     <span class="card-value">{{ connectionStatus['2.4GHz'].SSID }}</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Security</span>
+                    <span class="card-label">{{ t('wirelessExtender.security') }}</span>
                     <span class="card-value">{{ connectionStatus['2.4GHz'].Security }}</span>
                   </div>
                 </div>
 
                 <div class="table-card" v-if="connectionStatus">
                   <div class="card-row">
-                    <span class="card-label">Band</span>
+                    <span class="card-label">{{ t('wirelessExtender.band') }}</span>
                     <span class="card-value">5 GHz</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Status</span>
+                    <span class="card-label">{{ t('wirelessExtender.status') }}</span>
                     <span class="card-value" :class="getStatusClass(connectionStatus['5GHz'].Status)">
-                      {{ connectionStatus['5GHz'].Status }}
+                      {{ connectionStatus['5GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                     </span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">SSID</span>
+                    <span class="card-label">{{ t('wirelessExtender.ssid') }}</span>
                     <span class="card-value">{{ connectionStatus['5GHz'].SSID }}</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Security</span>
+                    <span class="card-label">{{ t('wirelessExtender.security') }}</span>
                     <span class="card-value">{{ connectionStatus['5GHz'].Security }}</span>
                   </div>
                 </div>
 
                 <div class="table-card" v-if="connectionStatus">
                   <div class="card-row">
-                    <span class="card-label">Band</span>
+                    <span class="card-label">{{ t('wirelessExtender.band') }}</span>
                     <span class="card-value">6 GHz</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Status</span>
+                    <span class="card-label">{{ t('wirelessExtender.status') }}</span>
                     <span class="card-value" :class="getStatusClass(connectionStatus['6GHz'].Status)">
-                      {{ connectionStatus['6GHz'].Status }}
+                      {{ connectionStatus['6GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
                     </span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">SSID</span>
+                    <span class="card-label">{{ t('wirelessExtender.ssid') }}</span>
                     <span class="card-value">{{ connectionStatus['6GHz'].SSID }}</span>
                   </div>
                   <div class="card-row">
-                    <span class="card-label">Security</span>
+                    <span class="card-label">{{ t('wirelessExtender.security') }}</span>
                     <span class="card-value">{{ connectionStatus['6GHz'].Security }}</span>
                   </div>
                 </div>
@@ -354,12 +360,12 @@ onMounted(() => {
 
           <!-- WPS Section -->
           <div class="panel-section">
-            <div class="section-title">WPS</div>
+            <div class="section-title">{{ t('wirelessExtender.wps') }}</div>
             
             <div class="card-content">
               <div class="wps-info">
                 <div class="wps-pin">
-                  <span class="pin-label">WPS Pin Code:</span>
+                  <span class="pin-label">{{ t('wirelessExtender.pinCode') }}:</span>
                   <span class="pin-value">{{ wpsPinCode }}</span>
                 </div>
                 <button 
@@ -367,7 +373,7 @@ onMounted(() => {
                   @click="handleWPSPairing"
                   :disabled="loading"
                 >
-                  WPS Pairing
+                  {{ t('wirelessExtender.pairing') }}
                 </button>
               </div>
             </div>
@@ -375,7 +381,7 @@ onMounted(() => {
 
           <!-- Neighbor AP Scan Section -->
           <div class="panel-section">
-            <div class="section-title">Neighbor AP Scan</div>
+            <div class="section-title">{{ t('wirelessExtender.neighborScan') }}</div>
             
             <div class="card-content">
               <div class="scan-button-container">
@@ -384,7 +390,7 @@ onMounted(() => {
                   @click="handleScan"
                   :disabled="scanning"
                 >
-                  {{ scanning ? 'Scanning...' : 'Scan' }}
+                  {{ scanning ? t('wirelessExtender.scanning') : t('wirelessExtender.scan') }}
                 </button>
               </div>
 
@@ -393,12 +399,12 @@ onMounted(() => {
                   <table>
                     <thead>
                       <tr>
-                        <th>SSID</th>
-                        <th>Band</th>
-                        <th>Channel</th>
-                        <th>Signal</th>
-                        <th>Security</th>
-                        <th>Select</th>
+                        <th>{{ t('wirelessExtender.ssid') }}</th>
+                        <th>{{ t('wirelessExtender.band') }}</th>
+                        <th>{{ t('wifiNeighbor.channel') }}</th>
+                        <th>{{ t('wifiNeighbor.signal') }}</th>
+                        <th>{{ t('wirelessExtender.security') }}</th>
+                        <th>{{ t('wirelessExtender.select') }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -413,7 +419,7 @@ onMounted(() => {
                             class="btn btn-select"
                             @click="openConnectModal(ap)"
                           >
-                            Select
+                            {{ t('wirelessExtender.select') }}
                           </button>
                         </td>
                       </tr>
@@ -424,23 +430,23 @@ onMounted(() => {
                 <div class="mobile-cards">
                   <div class="table-card" v-for="(ap, index) in scanResults" :key="index">
                     <div class="card-row">
-                      <span class="card-label">SSID</span>
+                      <span class="card-label">{{ t('wirelessExtender.ssid') }}</span>
                       <span class="card-value">{{ ap.SSID }}</span>
                     </div>
                     <div class="card-row">
-                      <span class="card-label">Band</span>
+                      <span class="card-label">{{ t('wirelessExtender.band') }}</span>
                       <span class="card-value">{{ ap.Band }}</span>
                     </div>
                     <div class="card-row">
-                      <span class="card-label">Channel</span>
+                      <span class="card-label">{{ t('wifiNeighbor.channel') }}</span>
                       <span class="card-value">{{ ap.Channel }}</span>
                     </div>
                     <div class="card-row">
-                      <span class="card-label">Signal</span>
+                      <span class="card-label">{{ t('wifiNeighbor.signal') }}</span>
                       <span class="card-value">{{ ap.Signal }}</span>
                     </div>
                     <div class="card-row">
-                      <span class="card-label">Security</span>
+                      <span class="card-label">{{ t('wirelessExtender.security') }}</span>
                       <span class="card-value">{{ ap.Security }}</span>
                     </div>
                     <div class="card-actions">
@@ -448,7 +454,7 @@ onMounted(() => {
                         class="btn btn-primary"
                         @click="openConnectModal(ap)"
                       >
-                        Select
+                        {{ t('wirelessExtender.select') }}
                       </button>
                     </div>
                   </div>
@@ -461,37 +467,37 @@ onMounted(() => {
           <div v-if="showConnectModal && selectedAP" class="modal-overlay">
             <div class="modal-content">
               <div class="modal-header">
-                <h3>Connect to AP</h3>
+                <h3>{{ t('wirelessExtender.connectToAP') }}</h3>
                 <button class="close-button" @click="closeConnectModal">&times;</button>
               </div>
               
               <div class="modal-body">
                 <div class="form-group">
-                  <label>Radio Band</label>
+                  <label>{{ t('wirelessExtender.radioBand') }}</label>
                   <div class="info-value">{{ selectedAP.Band }}</div>
                 </div>
                 
                 <div class="form-group">
-                  <label>SSID</label>
+                  <label>{{ t('wirelessExtender.ssid') }}</label>
                   <div class="info-value">{{ selectedAP.SSID }}</div>
                 </div>
                 
                 <div class="form-group">
-                  <label>WiFi Mode</label>
+                  <label>{{ t('wirelessExtender.wifiMode') }}</label>
                   <div class="info-value">{{ selectedAP.Band === '2.4GHz' ? '11NG' : selectedAP.Band === '5GHz' ? '11AC' : '11AX' }}</div>
                 </div>
                 
                 <div class="form-group">
-                  <label>Security</label>
+                  <label>{{ t('wirelessExtender.security') }}</label>
                   <div class="info-value">{{ selectedAP.Security }}</div>
                 </div>
                 
                 <div class="form-group">
-                  <label>WPA Preshare Key</label>
+                  <label>{{ t('wirelessExtender.wpaPreshareKey') }}</label>
                   <input 
                     type="password" 
                     v-model="password"
-                    placeholder="Please Enter the value"
+                    :placeholder="t('ntp.placeholder')"
                     required
                   />
                 </div>
@@ -499,14 +505,14 @@ onMounted(() => {
               
               <div class="modal-footer">
                 <button class="btn btn-secondary" @click="closeConnectModal">
-                  Cancel
+                  {{ t('common.cancel') }}
                 </button>
                 <button 
                   class="btn btn-primary" 
                   @click="handleConnect"
                   :disabled="!password || loading"
                 >
-                  Connect
+                  {{ t('wirelessExtender.connect') }}
                 </button>
               </div>
             </div>

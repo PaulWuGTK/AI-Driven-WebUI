@@ -21,6 +21,7 @@ const toggleMobileMenu = () => {
 import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
 import statusIcon from '/src/assets/icons/icon-1/menu-status.svg';
 import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
+import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
 import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
 import xperienceIcon from '/src/assets/icons/icon-1/menu-xperience.svg';
@@ -112,7 +113,7 @@ const baseMenuItems: MenuItem[] = [
   },
   {
     name: 'Wi-Fi',
-    icon: basicIcon,
+    icon: wifiIcon,
     translationKey: 'menu.wifi',
     subItems: [
       { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
