@@ -61,7 +61,8 @@ export default {
     defaultGateway: 'Passerelle par défaut',
     primaryDNS: 'DNS primaire',
     secondaryDNS: 'DNS secondaire',
-    macAddress: 'Adresse MAC'
+    macAddress: 'Adresse MAC',
+    password: 'Mot de passe'
   },
   wan: {
     title: 'État du WAN',

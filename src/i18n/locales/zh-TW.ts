@@ -61,7 +61,8 @@ export default {
     defaultGateway: '預設閘道',
     primaryDNS: '主要 DNS',
     secondaryDNS: '次要 DNS',
-    macAddress: 'MAC 位址'
+    macAddress: 'MAC 位址',
+    password: '密碼'
   },
   wan: {
     title: 'WAN 狀態',

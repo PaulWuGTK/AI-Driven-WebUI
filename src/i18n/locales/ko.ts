@@ -61,7 +61,8 @@ export default {
     defaultGateway: '기본 게이트웨이',
     primaryDNS: '기본 DNS',
     secondaryDNS: '보조 DNS',
-    macAddress: 'MAC 주소'
+    macAddress: 'MAC 주소',
+    password: '비밀번호'
   },
   wan: {
     title: 'WAN 상태',

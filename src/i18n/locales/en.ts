@@ -63,7 +63,8 @@ const translations: Translations = {
     defaultGateway: 'Default Gateway',
     primaryDNS: 'Primary DNS',
     secondaryDNS: 'Secondary DNS',
-    macAddress: 'MAC Address'
+    macAddress: 'MAC Address',
+    password: 'Password'
   },
   wan: {
     title: 'WAN Status',

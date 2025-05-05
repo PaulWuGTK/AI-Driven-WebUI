@@ -56,7 +56,7 @@ const requiresPassword = (securityMode: string): boolean => {
           <div class="row-value">{{ band.displayName }}</div>
         </div>
         <div class="network-row" v-if="requiresPassword(band.SecurityMode)">
-          <div class="row-label">{{ t('wireless.password') }}:</div>
+          <div class="row-label">{{ t('dashboard.password') }}</div>
           <div class="row-value password text-truncate" :title="band.Password">{{ band.Password }}</div>
         </div>
       </div>
@@ -103,10 +103,11 @@ const requiresPassword = (securityMode: string): boolean => {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-end; /* 新增這行，使文字靠右 */
   gap: 0.5rem;
   font-weight: 500;
   color: #333;
-  min-width: 0; /* Required for text-truncate to work */
+  min-width: 0;
 }
 
 .text-truncate {

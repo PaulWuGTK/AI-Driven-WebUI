@@ -61,7 +61,8 @@ export default {
     defaultGateway: '默认网关',
     primaryDNS: '主 DNS',
     secondaryDNS: '备用 DNS',
-    macAddress: 'MAC 地址'
+    macAddress: 'MAC 地址',
+    password: '密码'
   },
   wan: {
     title: '广域网状态',

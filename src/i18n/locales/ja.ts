@@ -61,7 +61,8 @@ export default {
     defaultGateway: 'デフォルトゲートウェイ',
     primaryDNS: 'プライマリ DNS',
     secondaryDNS: 'セカンダリ DNS',
-    macAddress: 'MAC アドレス'
+    macAddress: 'MAC アドレス',
+    password: 'パスワード'
   },
   wan: {
     title: 'WAN ステータス',

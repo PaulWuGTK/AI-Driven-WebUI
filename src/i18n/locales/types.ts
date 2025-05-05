@@ -63,6 +63,7 @@ export interface Translations {
     primaryDNS: string;
     secondaryDNS: string;
     macAddress: string;
+    password: string;
   };
   wan: {
     title: string;

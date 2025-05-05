@@ -59,7 +59,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
-    'Wireless Extender': { gateway: true, extender: true }
+    'Wireless Extender': { gateway: false, extender: false }
   },
   'Advanced': {
     'DDNS': { gateway: true, extender: false }
@@ -68,7 +68,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'NTP': { gateway: true, extender: false },
     'SSH': { gateway: true, extender: false },
     'Diagnostics': { gateway: true, extender: true },
-    'Device Management': { gateway: false, extender: false },
+    'Device Management': { gateway: true, extender: false },
     'Device Reset': { gateway: true, extender: true },
     'Backup': { gateway: true, extender: true },
     'Upgrade Firmware': { gateway: true, extender: true }
@@ -215,6 +215,8 @@ const isMenuExpanded = (menuName: string): boolean => {
   return expandedMenus.value.includes(menuName);
 };
 
+const STREAMBOW_KEYWORDS = ['streambow'];
+
 // Fetch sidebar menu data
 const fetchSidebarMenu = async () => {
   try {
@@ -222,9 +224,15 @@ const fetchSidebarMenu = async () => {
     deviceMode.value = response.SidebarMenu.mode;
     
     // Check if Streambow app is active
-    hasStreambow.value = response.SidebarMenu.Apps.some(
-      app => app.name === 'arm32v7/streambow' && app.state === 'active'
-    );
+    hasStreambow.value = response.SidebarMenu.Apps.some(app => {
+      if (app.state !== 'active') return false;
+
+      const name = app.name?.toLowerCase() || '';
+      const alias = app.alias?.toLowerCase() || '';
+      return STREAMBOW_KEYWORDS.some(keyword =>
+        name.includes(keyword) || alias.includes(keyword)
+      );
+    });
     
     // Update language if it's different from current
     if (response.SidebarMenu.language.current !== locale.value) {
