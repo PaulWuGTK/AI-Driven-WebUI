@@ -34,9 +34,7 @@ export interface LanBasicResponse {
 }
 
 export interface DeviceConnectedResponse {
-  LanDeviceConnected: {
-    DeviceConnected: DeviceConnected[];
-  }
+  LanDeviceConnected: DeviceConnected[];
 }
 
 export interface LanBasicUpdateRequest {

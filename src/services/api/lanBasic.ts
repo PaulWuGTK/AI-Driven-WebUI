@@ -38,15 +38,18 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
 export const getDeviceConnected = async (): Promise<DeviceConnectedResponse> => {
   if (isDevelopment) {
     return {
-      LanDeviceConnected: {
-        DeviceConnected: [
-          {
-            Host: "22026021-PC01",
-            MACAddress: "68:05:CA:00:ED:33",
-            IPAddress: "192.168.101.168"
-          }
-        ]
-      }
+      LanDeviceConnected: [
+        {
+          Host: "PC-ID-b8e2b3f2-d76e-49a1-aee8-20e8f0743f4c",
+          IPAddress: "192.168.101.3",
+          MACAddress: "CE:E7:61:ED:D6:15"
+        },
+        {
+          Host: "PC-ID-74091540-2c22-4b92-89a5-ef67d75656d5",
+          IPAddress: "192.168.101.2",
+          MACAddress: "B0:0C:D1:52:A5:DE"
+        }
+      ]
     };
   }
 

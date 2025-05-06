@@ -48,7 +48,7 @@ onMounted(fetchDeviceConnected);
             </tr>
           </thead>
           <tbody>
-            <tr v-for="device in deviceData.LanDeviceConnected.DeviceConnected" :key="device.MACAddress">
+            <tr v-for="device in deviceData.LanDeviceConnected" :key="device.MACAddress">
               <td>{{ device.Host }}</td>
               <td>{{ device.MACAddress }}</td>
               <td>{{ device.IPAddress }}</td>
@@ -60,7 +60,7 @@ onMounted(fetchDeviceConnected);
       <div class="mobile-cards">
         <div 
           class="table-card" 
-          v-for="device in deviceData.LanDeviceConnected.DeviceConnected" 
+          v-for="device in deviceData.LanDeviceConnected" 
           :key="device.MACAddress"
         >
           <div class="card-row">
