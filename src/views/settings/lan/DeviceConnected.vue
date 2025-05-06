@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { LanBasicResponse } from '../../../types/lanBasic';
-import { getLanBasic } from '../../../services/api/lanBasic';
+import type { DeviceConnectedResponse } from '../../../types/lanBasic';
+import { getDeviceConnected } from '../../../services/api/lanBasic';
 
 const { t } = useI18n();
-const lanData = ref<LanBasicResponse | null>(null);
+const deviceData = ref<DeviceConnectedResponse | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
-const fetchLanBasic = async () => {
+const fetchDeviceConnected = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const response = await getLanBasic();
-    lanData.value = response;
+    const response = await getDeviceConnected();
+    deviceData.value = response;
   } catch (err) {
-    console.error('Error fetching LAN basic:', err);
+    console.error('Error fetching connected devices:', err);
     error.value = 'Failed to fetch connected devices';
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(fetchLanBasic);
+onMounted(fetchDeviceConnected);
 </script>
 
 <template>
@@ -37,7 +37,7 @@ onMounted(fetchLanBasic);
       {{ error }}
     </div>
 
-    <template v-else-if="lanData">
+    <template v-else-if="deviceData">
       <div class="table-container">
         <table>
           <thead>
@@ -48,7 +48,7 @@ onMounted(fetchLanBasic);
             </tr>
           </thead>
           <tbody>
-            <tr v-for="device in lanData.LanBasic.DeviceConnected" :key="device.MACAddress">
+            <tr v-for="device in deviceData.LanDeviceConnected.DeviceConnected" :key="device.MACAddress">
               <td>{{ device.Host }}</td>
               <td>{{ device.MACAddress }}</td>
               <td>{{ device.IPAddress }}</td>
@@ -60,7 +60,7 @@ onMounted(fetchLanBasic);
       <div class="mobile-cards">
         <div 
           class="table-card" 
-          v-for="device in lanData.LanBasic.DeviceConnected" 
+          v-for="device in deviceData.LanDeviceConnected.DeviceConnected" 
           :key="device.MACAddress"
         >
           <div class="card-row">
@@ -79,7 +79,7 @@ onMounted(fetchLanBasic);
       </div>
 
       <div class="button-group">
-        <button class="btn btn-primary" @click="fetchLanBasic">
+        <button class="btn btn-primary" @click="fetchDeviceConnected">
           <span class="material-icons">refresh</span>
           {{ t('lanBasic.refresh') }}
         </button>

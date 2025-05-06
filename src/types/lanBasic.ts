@@ -30,6 +30,11 @@ export interface LanBasicResponse {
     LANIPSetting: LANIPSetting;
     DHCPv4Setting: DHCPv4Setting;
     IPAddressReservation: IPAddressReservation[];
+  }
+}
+
+export interface DeviceConnectedResponse {
+  LanDeviceConnected: {
     DeviceConnected: DeviceConnected[];
   }
 }
@@ -38,6 +43,6 @@ export interface LanBasicUpdateRequest {
   LanBasic: {
     LANIPSetting: LANIPSetting;
     DHCPv4Setting: DHCPv4Setting;
-    IPAddressReservation: IPAddressReservation[];
+    IPAddressReservation?: IPAddressReservation[];
   }
 }

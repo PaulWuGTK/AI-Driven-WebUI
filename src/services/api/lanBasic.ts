@@ -1,4 +1,4 @@
-import type { LanBasicResponse, LanBasicUpdateRequest } from '../../types/lanBasic';
+import type { LanBasicResponse, LanBasicUpdateRequest, DeviceConnectedResponse } from '../../types/lanBasic';
 import { handleApiResponse } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
@@ -26,7 +26,19 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
             IPAddress: "192.168.1.168",
             Enable: 1
           }
-        ],
+        ]
+      }
+    };
+  }
+
+  const response = await fetch('/API/info?list=LanBasic');
+  return handleApiResponse<LanBasicResponse>(response);
+};
+
+export const getDeviceConnected = async (): Promise<DeviceConnectedResponse> => {
+  if (isDevelopment) {
+    return {
+      LanDeviceConnected: {
         DeviceConnected: [
           {
             Host: "22026021-PC01",
@@ -38,8 +50,8 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
     };
   }
 
-  const response = await fetch('/API/info?list=LanBasic');
-  return handleApiResponse<LanBasicResponse>(response);
+  const response = await fetch('/API/info?list=LanDeviceConnected');
+  return handleApiResponse<DeviceConnectedResponse>(response);
 };
 
 export const updateLanBasic = async (data: LanBasicUpdateRequest): Promise<LanBasicResponse> => {
