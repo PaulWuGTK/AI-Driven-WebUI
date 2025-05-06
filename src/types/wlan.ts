@@ -15,6 +15,7 @@ export interface WlanBand {
   AutoChannel: number;
   Bandwidth: string;
   MACAddress: string;
+  Enable: number;
   Interface: WlanInterface[];
 }
 

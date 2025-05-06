@@ -3,6 +3,7 @@ import type { WlanStatusResponse } from '../../types/wlan';
 export const wlanMockData: WlanStatusResponse = {
   "StatusWlan": [
     {
+      "Enable": 1,
       "Band": "2.4GHz",
       "Channel": 1,
       "AutoChannel": 0,
@@ -32,6 +33,7 @@ export const wlanMockData: WlanStatusResponse = {
       ]
     },
     {
+      "Enable": 1,
       "Band": "5GHz",
       "Channel": 36,
       "AutoChannel": 0,
@@ -61,6 +63,7 @@ export const wlanMockData: WlanStatusResponse = {
       ]
     },
     {
+      "Enable": 1,
       "Band": "6GHz",
       "Channel": 33,
       "AutoChannel": 0,

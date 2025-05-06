@@ -12,6 +12,10 @@ defineProps<{
   <div class="band-info">
     <div class="info-grid">
       <div class="info-row">
+        <span class="info-label">{{ t('wlan.status') }}</span>
+        <span class="info-value">{{ band.Enable ? t('wlan.enable') : t('wlan.disable') }}</span>
+      </div>
+      <div class="info-row">
         <span class="info-label">{{ t('wlan.channel') }}</span>
         <span class="info-value">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
       </div>
