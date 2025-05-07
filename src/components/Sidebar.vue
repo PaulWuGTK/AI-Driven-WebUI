@@ -59,7 +59,8 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
-    'Wireless Extender': { gateway: false, extender: false }
+    'Wireless Extender': { gateway: true, extender: true },
+    'Guest Access': { gateway: true, extender: false }
   },
   'Advanced': {
     'DDNS': { gateway: true, extender: false }
@@ -116,7 +117,8 @@ const baseMenuItems: MenuItem[] = [
     icon: wifiIcon,
     translationKey: 'menu.wifi',
     subItems: [
-      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
+      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' },
+      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' }
     ]
   },
   {

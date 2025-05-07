@@ -18,6 +18,7 @@ export interface Translations {
     lanSetting: string;
     wifi: string;
     wirelessExtender: string;
+    guestAccess: string;
     management: string;
     ntp: string;
     ssh: string;
@@ -226,6 +227,28 @@ export interface Translations {
     pinCodeOfClient: string;
     noPublicKeys: string;
     extender: string;
+  };
+  guest: {
+    title: string;
+    guestWiFi: string;
+    guestLAN: string;
+    deviceConnected: string;
+    enable: string;
+    ssid: string;
+    authentication: string;
+    password: string;
+    lanIpSetting: string;
+    ipAddress: string;
+    subnetMask: string;
+    dhcpSetting: string;
+    enableDhcpServer: string;
+    dnsServer: string;
+    beginAddress: string;
+    endAddress: string;
+    leaseTime: string;
+    seconds: string;
+    hostName: string;
+    macAddress: string;
   };
   wanSetup: {
     title: string;

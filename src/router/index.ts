@@ -94,6 +94,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/wifi/guest-access',
+      component: () => import('../views/wifi/GuestAccess.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/ddns',
       component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth
