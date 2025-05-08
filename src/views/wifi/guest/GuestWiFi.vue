@@ -78,7 +78,7 @@ onMounted(fetchGuestWiFi);
     <form v-else-if="guestWiFiData" @submit.prevent="handleSubmit">
       <div class="form-group">
         <div class="switch-label">
-          <span>Enable</span>
+          <span>{{ t('guest.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
@@ -92,7 +92,7 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="form-group">
-        <label>SSID</label>
+        <label>{{ t('guest.ssid') }}</label>
         <input
           type="text"
           v-model="guestWiFiData.GuestWiFi.SSID"
@@ -102,7 +102,7 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="form-group">
-        <label>Authentication</label>
+        <label>{{ t('guest.authentication') }}</label>
         <select
           v-model="guestWiFiData.GuestWiFi.SecurityMode"
           :disabled="guestWiFiData.GuestWiFi.Enable === 0"
@@ -114,7 +114,7 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="form-group">
-        <label>WPA Preshare Key</label>
+        <label>{{ t('guest.password') }}</label>
         <div class="password-input">
           <input
             :type="showPassword ? 'text' : 'password'"

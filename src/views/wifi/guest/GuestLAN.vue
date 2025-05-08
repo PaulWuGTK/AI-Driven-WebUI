@@ -215,11 +215,11 @@ onMounted(fetchGuestLAN);
     <form v-else-if="guestLANData" @submit.prevent="handleSubmit">
       <!-- LAN IP Setting -->
       <div class="panel-section">
-        <div class="section-title">LAN IP Setting</div>
+        <div class="section-title">{{ t('guest.lanIpSetting') }}</div>
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>Enable</span>
+              <span>{{ t('guest.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
@@ -233,7 +233,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>IP Address</label>
+            <label>{{ t('guest.ipAddress') }}</label>
             <input
               type="text"
               :value="guestLANData.GuestLAN.GUESTIPSetting.IPAddress"
@@ -244,7 +244,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>Subnet Mask</label>
+            <label>{{ t('guest.subnetMask') }}</label>
             <input
               type="text"
               v-model="guestLANData.GuestLAN.GUESTIPSetting.SubnetMask"
@@ -257,11 +257,11 @@ onMounted(fetchGuestLAN);
 
       <!-- DHCPv4 Setting -->
       <div class="panel-section">
-        <div class="section-title">DHCPv4 Setting</div>
+        <div class="section-title">{{ t('guest.dhcpSetting') }}</div>
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>Enable DHCP Server</span>
+              <span>{{ t('guest.enableDhcpServer') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
@@ -275,7 +275,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>DNS Server</label>
+            <label>{{ t('guest.dnsServer') }}</label>
             <input
               type="text"
               :value="guestLANData.GuestLAN.DHCPv4Setting.DNSServers"
@@ -286,7 +286,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>Begin Address</label>
+            <label>{{ t('guest.beginAddress') }}</label>
             <input
               type="text"
               :value="guestLANData.GuestLAN.DHCPv4Setting.BeginAddress"
@@ -297,7 +297,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>End Address</label>
+            <label>{{ t('guest.endAddress') }}</label>
             <input
               type="text"
               :value="guestLANData.GuestLAN.DHCPv4Setting.EndAddress"
@@ -308,7 +308,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>Subnet Mask</label>
+            <label>{{ t('guest.subnetMask') }}</label>
             <input
               type="text"
               v-model="guestLANData.GuestLAN.DHCPv4Setting.SubnetMask"
@@ -318,7 +318,7 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>Lease Time</label>
+            <label>{{ t('guest.leaseTime') }}</label>
             <div class="input-with-unit">
               <input
                 type="number"
@@ -327,7 +327,7 @@ onMounted(fetchGuestLAN);
                 min="300"
                 max="604800"
               />
-              <span class="unit">Seconds</span>
+              <span class="unit">{{ t('guest.seconds') }}</span>
             </div>
           </div>
         </div>

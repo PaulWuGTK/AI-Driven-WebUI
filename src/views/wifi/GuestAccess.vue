@@ -10,15 +10,15 @@ const activeTab = ref('wifi');
 
 // Use computed to dynamically generate tabs
 const tabs = computed(() => [
-  { id: 'wifi', label: 'Guest WiFi' },
-  { id: 'lan', label: 'Guest LAN' },
-  { id: 'devices', label: 'Device Connected' }
+  { id: 'wifi', label: t('guest.guestWiFi') },
+  { id: 'lan', label: t('guest.guestLAN') },
+  { id: 'devices', label: t('guest.deviceConnected') }
 ]);
 </script>
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">Guest Access</h1>
+    <h1 class="page-title">{{ t('guest.title') }}</h1>
 
     <div class="status-content">
       <div class="panel-section">

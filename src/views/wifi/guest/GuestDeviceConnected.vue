@@ -42,9 +42,9 @@ onMounted(fetchDeviceConnected);
         <table>
           <thead>
             <tr>
-              <th>Host Name</th>
-              <th>MAC Address</th>
-              <th>IP Address</th>
+              <th>{{ t('guest.hostName') }}</th>
+              <th>{{ t('guest.macAddress') }}</th>
+              <th>{{ t('guest.ipAddress') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -54,7 +54,7 @@ onMounted(fetchDeviceConnected);
               <td>{{ device.IPAddress }}</td>
             </tr>
             <tr v-if="deviceData.GuestDeviceConnected.length === 0">
-              <td colspan="3" class="no-data">No devices connected</td>
+              <td colspan="3" class="no-data">{{ t('guest.deviceConnected') }}</td>
             </tr>
           </tbody>
         </table>
@@ -62,7 +62,7 @@ onMounted(fetchDeviceConnected);
 
       <div class="mobile-cards">
         <div v-if="deviceData.GuestDeviceConnected.length === 0" class="no-data-mobile">
-          No devices connected
+          {{ t('guest.deviceConnected') }}
         </div>
         <div 
           class="table-card" 
@@ -71,15 +71,15 @@ onMounted(fetchDeviceConnected);
           :key="device.MACAddress"
         >
           <div class="card-row">
-            <span class="card-label">Host Name</span>
+            <span class="card-label">{{ t('guest.hostName') }}</span>
             <span class="card-value">{{ device.Host }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">MAC Address</span>
+            <span class="card-label">{{ t('guest.macAddress') }}</span>
             <span class="card-value">{{ device.MACAddress }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">IP Address</span>
+            <span class="card-label">{{ t('guest.ipAddress') }}</span>
             <span class="card-value">{{ device.IPAddress }}</span>
           </div>
         </div>
