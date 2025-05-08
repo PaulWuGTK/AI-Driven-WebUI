@@ -59,7 +59,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
-    'Wireless Extender': { gateway: true, extender: true },
+    'Wireless Extender': { gateway: false, extender: false },
     'Guest Access': { gateway: true, extender: false }
   },
   'Advanced': {

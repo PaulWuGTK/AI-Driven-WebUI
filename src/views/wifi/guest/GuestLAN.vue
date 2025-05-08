@@ -68,15 +68,15 @@ const validateLeaseTime = (time: number): number => {
 const validateLANSettings = (): boolean => {
   if (!guestLANData.value) return false;
 
-  const { LANIPSetting, DHCPv4Setting } = guestLANData.value.GuestLAN;
+  const { GUESTIPSetting, DHCPv4Setting } = guestLANData.value.GuestLAN;
 
   // Validate LAN IP
-  if (!isValidIPv4(LANIPSetting.IPAddress)) {
+  if (!isValidIPv4(GUESTIPSetting.IPAddress)) {
     error.value = 'Invalid LAN IP address format';
     return false;
   }
 
-  if (!isValidSubnetMask(LANIPSetting.SubnetMask)) {
+  if (!isValidSubnetMask(GUESTIPSetting.SubnetMask)) {
     error.value = 'Invalid subnet mask format';
     return false;
   }
@@ -109,8 +109,8 @@ const validateLANSettings = (): boolean => {
       return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
     };
 
-    const lanIp = ipToNumber(LANIPSetting.IPAddress);
-    const lanMask = maskToNumber(LANIPSetting.SubnetMask);
+    const lanIp = ipToNumber(GUESTIPSetting.IPAddress);
+    const lanMask = maskToNumber(GUESTIPSetting.SubnetMask);
     const beginIp = ipToNumber(DHCPv4Setting.BeginAddress);
     const endIp = ipToNumber(DHCPv4Setting.EndAddress);
     const networkAddr = lanIp & lanMask;
@@ -164,7 +164,7 @@ const handleSubmit = async () => {
 
     await updateGuestLAN({
       GuestLAN: {
-        LANIPSetting: guestLANData.value.GuestLAN.LANIPSetting,
+        GUESTIPSetting: guestLANData.value.GuestLAN.GUESTIPSetting,
         DHCPv4Setting: {
           ...guestLANData.value.GuestLAN.DHCPv4Setting,
           LeaseTime: validateLeaseTime(leaseTime)
@@ -188,7 +188,7 @@ const handleIPInput = (event: Event, field: string) => {
   const validatedIP = validateIPInput(input.value);
   
   if (field === 'lanIP') {
-    guestLANData.value.GuestLAN.LANIPSetting.IPAddress = validatedIP;
+    guestLANData.value.GuestLAN.GUESTIPSetting.IPAddress = validatedIP;
   } else if (field === 'dnsServer') {
     guestLANData.value.GuestLAN.DHCPv4Setting.DNSServers = validatedIP;
   } else if (field === 'beginAddress') {
@@ -223,7 +223,7 @@ onMounted(fetchGuestLAN);
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="guestLANData.GuestLAN.LANIPSetting.Enable"
+                  v-model="guestLANData.GuestLAN.GUESTIPSetting.Enable"
                   :true-value="1"
                   :false-value="0"
                 >
@@ -236,9 +236,9 @@ onMounted(fetchGuestLAN);
             <label>IP Address</label>
             <input
               type="text"
-              :value="guestLANData.GuestLAN.LANIPSetting.IPAddress"
+              :value="guestLANData.GuestLAN.GUESTIPSetting.IPAddress"
               @input="handleIPInput($event, 'lanIP')"
-              :disabled="!guestLANData.GuestLAN.LANIPSetting.Enable"
+              :disabled="!guestLANData.GuestLAN.GUESTIPSetting.Enable"
               placeholder="192.168.2.1"
             />
           </div>
@@ -247,8 +247,8 @@ onMounted(fetchGuestLAN);
             <label>Subnet Mask</label>
             <input
               type="text"
-              v-model="guestLANData.GuestLAN.LANIPSetting.SubnetMask"
-              :disabled="!guestLANData.GuestLAN.LANIPSetting.Enable"
+              v-model="guestLANData.GuestLAN.GUESTIPSetting.SubnetMask"
+              :disabled="!guestLANData.GuestLAN.GUESTIPSetting.Enable"
               placeholder="255.255.255.0"
             />
           </div>

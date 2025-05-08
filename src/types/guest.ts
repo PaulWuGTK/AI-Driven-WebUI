@@ -19,7 +19,7 @@ export interface GuestWiFiUpdateRequest {
 
 export interface GuestLANResponse {
   GuestLAN: {
-    LANIPSetting: {
+    GUESTIPSetting: {
       Enable: number;
       IPAddress: string;
       SubnetMask: string;
@@ -37,7 +37,7 @@ export interface GuestLANResponse {
 
 export interface GuestLANUpdateRequest {
   GuestLAN: {
-    LANIPSetting: {
+    GUESTIPSetting: {
       Enable: number;
       IPAddress: string;
       SubnetMask: string;

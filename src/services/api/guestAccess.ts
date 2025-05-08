@@ -53,7 +53,7 @@ export const getGuestLAN = async (): Promise<GuestLANResponse> => {
   if (isDevelopment) {
     return {
       GuestLAN: {
-        LANIPSetting: {
+        GUESTIPSetting: {
           Enable: 1,
           IPAddress: "192.168.2.1",
           SubnetMask: "255.255.255.0"
@@ -79,7 +79,7 @@ export const updateGuestLAN = async (data: GuestLANUpdateRequest): Promise<Guest
     console.log('Update Guest LAN:', data);
     return {
       GuestLAN: {
-        LANIPSetting: data.GuestLAN.LANIPSetting,
+        GUESTIPSetting: data.GuestLAN.GUESTIPSetting,
         DHCPv4Setting: {
           ...data.GuestLAN.DHCPv4Setting,
           LeaseTime: String(data.GuestLAN.DHCPv4Setting.LeaseTime)
