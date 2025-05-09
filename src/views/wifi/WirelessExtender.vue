@@ -141,24 +141,28 @@ const closeConnectModal = () => {
 // Connect to selected AP
 const handleConnect = async () => {
   if (!selectedAP.value) return;
-  
+
   loading.value = true;
   error.value = null;
+
+  // 先解構出需要用的欄位
+  const { Band, SSID, Security } = selectedAP.value;
+
   try {
     const connectRequest: ExtenderConnectRequest = {
       Extender: {
-        Action: 'connect',
-        Band: selectedAP.value.Band,
-        SSID: selectedAP.value.SSID,
-        Security: selectedAP.value.Security,
+        Action: 'connection_setting',
+        Band,
+        SSID,
+        Security,
         Password: password.value
       }
     };
-    
+
     await connectToAP(connectRequest);
-    closeConnectModal();
-    await fetchExtenderStatus();
-    showSuccessNotification(`Connected to ${selectedAP.value.SSID} successfully`);
+    await fetchExtenderStatus();          // 跟裝置拿最新狀態
+    showSuccessNotification(`Connected to ${SSID} successfully`);
+    closeConnectModal();                  // 最後再關閉 modal，清掉 selectedAP
   } catch (err) {
     console.error('Error connecting to AP:', err);
     error.value = 'Failed to connect to AP';

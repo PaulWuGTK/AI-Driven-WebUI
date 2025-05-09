@@ -59,10 +59,11 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
-    'Wireless Extender': { gateway: false, extender: false },
+    'Wireless Extender': { gateway: true, extender: false },
     'Guest Access': { gateway: true, extender: false }
   },
   'Advanced': {
+    'DMZ': { gateway: true, extender: false },
     'DDNS': { gateway: true, extender: false }
   },
   'Management': {
@@ -126,6 +127,7 @@ const baseMenuItems: MenuItem[] = [
     icon: advancedIcon,
     translationKey: 'menu.advanced',
     subItems: [
+      { name: 'DMZ', path: '/advanced/dmz', translationKey: 'menu.dmz' },
       { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' }
     ]
   },

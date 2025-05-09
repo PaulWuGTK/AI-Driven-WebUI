@@ -99,6 +99,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/advanced/dmz',
+      component: () => import('../views/advanced/DmzSettings.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/ddns',
       component: () => import('../views/advanced/DdnsSettings.vue'),
       beforeEnter: requireAuth

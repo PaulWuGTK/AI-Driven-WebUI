@@ -25,6 +25,7 @@ const translations: Translations = {
     ssh: 'SSH',
     advanced: 'Advanced',
     ddns: 'DDNS',
+    dmz: 'DMZ',
     device: 'Device Management',
     diagnostics : 'Diagnostics',
     firmware: 'Upgrade Firmware',
@@ -343,6 +344,12 @@ const translations: Translations = {
     connect: 'Connect',
     connected: 'Connected',
     disconnected: 'Disconnected'
+  },
+  dmz: {
+    title: 'DMZ Settings',
+    enable: 'Enable DMZ',
+    ipAddress: 'IP Address',
+    description: 'DMZ (Demilitarized Zone) allows a computer on your local network to be fully exposed to the Internet. This feature is useful for gaming or video conferencing applications that have problems working through NAT.'
   },
   ddns: {
     title: 'DDNS Settings',

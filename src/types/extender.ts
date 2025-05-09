@@ -45,7 +45,7 @@ export interface ExtenderUpdateRequest {
 
 export interface ExtenderConnectRequest {
   Extender: {
-    Action: "connect";
+    Action: "connection_setting";
     Band: string;
     SSID: string;
     Security: string;

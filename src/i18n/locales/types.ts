@@ -24,6 +24,7 @@ export interface Translations {
     ssh: string;
     advanced: string;
     ddns: string;
+    dmz: string;
     device: string;
     diagnostics: string;
     firmware: string;
@@ -342,6 +343,12 @@ export interface Translations {
     connect: string;
     connected: string;
     disconnected: string;
+  };
+  dmz: {
+    title: string;
+    enable: string;
+    ipAddress: string;
+    description: string;
   };
   ddns: {
     title: string;
