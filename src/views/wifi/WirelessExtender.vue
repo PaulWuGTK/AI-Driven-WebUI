@@ -6,6 +6,8 @@ import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP
 
 const { t } = useI18n();
 const extenderData = ref<ExtenderResponse | null>(null);
+const tempExtenderEnabled = ref<number>(0);
+const tempExtenderRole = ref<"MeshAgent" | "Repeater">("MeshAgent");
 const scanResults = ref<ExtenderNeighbor[]>([]);
 const loading = ref(false);
 const scanning = ref(false);
@@ -15,6 +17,9 @@ const selectedAP = ref<ExtenderNeighbor | null>(null);
 const password = ref('');
 const showSuccess = ref(false);
 const successMessage = ref('');
+const redirectCountdown = ref<number | null>(null);
+const redirectTimer = ref<number | null>(null);
+const redirectUrl = ref<string | null>(null);
 
 // Computed properties
 const isExtenderEnabled = computed(() => 
@@ -22,7 +27,7 @@ const isExtenderEnabled = computed(() =>
 );
 
 const extenderRole = computed(() => 
-  extenderData.value?.Extender.ExtenderRole.Role || 'Repeater'
+  extenderData.value?.Extender.ExtenderRole.Role || 'MeshAgent'
 );
 
 const wpsPinCode = computed(() => 
@@ -39,6 +44,9 @@ const fetchExtenderStatus = async () => {
   error.value = null;
   try {
     extenderData.value = await getExtenderStatus();
+    // Initialize temp values with current values
+    tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
+    tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
   } catch (err) {
     console.error('Error fetching extender status:', err);
     error.value = 'Failed to fetch extender status';
@@ -47,50 +55,66 @@ const fetchExtenderStatus = async () => {
   }
 };
 
-// Toggle extender enabled state
-const toggleExtenderEnabled = async () => {
-  if (!extenderData.value) return;
-  
+// Handle toggle extender enabled state (just updates the temp value)
+const handleExtenderEnabledChange = (event: Event) => {
+  tempExtenderEnabled.value = (event.target as HTMLInputElement).checked ? 1 : 0;
+};
+
+// Handle role change (just updates the temp value)
+const handleRoleChange = (event: Event) => {
+  tempExtenderRole.value = (event.target as HTMLSelectElement).value as "MeshAgent" | "Repeater";
+};
+
+// Apply configuration changes
+const applyConfigChanges = async () => {
   loading.value = true;
   try {
-    const newState = extenderData.value.Extender.ExtenderEnabled.Enabled === 1 ? 0 : 1;
-    await updateExtenderSettings({
+    const response = await updateExtenderSettings({
       Extender: {
         Action: 'ExtenderEnable',
-        Enabled: newState,
-        Role: extenderRole.value
+        Enabled: tempExtenderEnabled.value,
+        Role: tempExtenderRole.value
       }
     });
-    await fetchExtenderStatus();
-    showSuccessNotification(newState === 1 ? 'Extender enabled successfully' : 'Extender disabled successfully');
+    
+    // Check if we need to redirect (mode switch)
+    if (response.Extender && 'ip_address' in response.Extender && response.Extender.ip_address) {
+      redirectUrl.value = `http://${response.Extender.ip_address}`;
+      redirectCountdown.value = 10;
+      
+      // Start countdown for redirect
+      if (redirectTimer.value) {
+        clearInterval(redirectTimer.value);
+      }
+      
+      redirectTimer.value = window.setInterval(() => {
+        if (redirectCountdown.value !== null) {
+          redirectCountdown.value--;
+          if (redirectCountdown.value <= 0) {
+            clearInterval(redirectTimer.value as number);
+            window.location.href = redirectUrl.value as string;
+          }
+        }
+      }, 1000);
+      
+      showSuccessNotification(`${response.Extender.message}. Redirecting in ${redirectCountdown.value} seconds...`);
+    } else {
+      await fetchExtenderStatus();
+      showSuccessNotification('Configuration updated successfully');
+    }
   } catch (err) {
-    console.error('Error toggling extender state:', err);
-    error.value = 'Failed to update extender state';
+    console.error('Error updating extender configuration:', err);
+    error.value = 'Failed to update extender configuration';
   } finally {
     loading.value = false;
   }
 };
 
-// Update extender role
-const updateRole = async (event: Event) => {
-  const role = (event.target as HTMLSelectElement).value as "MeshAgent" | "Repeater";
-  
-  loading.value = true;
-  try {
-    await updateExtenderSettings({
-      Extender: {
-        Action: 'ExtenderEnable',
-        Enabled: isExtenderEnabled.value ? 1 : 0,
-        Role: role
-      }
-    });
-    await fetchExtenderStatus();
-    showSuccessNotification('Extender role updated successfully');
-  } catch (err) {
-    console.error('Error updating extender role:', err);
-    error.value = 'Failed to update extender role';
-  } finally {
-    loading.value = false;
+// Cancel configuration changes
+const cancelConfigChanges = () => {
+  if (extenderData.value) {
+    tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
+    tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
   }
 };
 
@@ -176,13 +200,26 @@ const showSuccessNotification = (message: string) => {
   successMessage.value = message;
   showSuccess.value = true;
   setTimeout(() => {
-    showSuccess.value = false;
+    if (!redirectCountdown.value) { // Don't hide if we're redirecting
+      showSuccess.value = false;
+    }
   }, 3000);
 };
 
 // Get status class based on connection status
 const getStatusClass = (status: string) => {
   return status === 'connected' ? 'status-connected' : 'status-disconnected';
+};
+
+// Cancel redirect
+const cancelRedirect = () => {
+  if (redirectTimer.value) {
+    clearInterval(redirectTimer.value);
+    redirectTimer.value = null;
+  }
+  redirectCountdown.value = null;
+  redirectUrl.value = null;
+  showSuccess.value = false;
 };
 
 onMounted(() => {
@@ -216,24 +253,43 @@ onMounted(() => {
                 <label class="switch">
                   <input
                     type="checkbox"
-                    :checked="isExtenderEnabled"
-                    @change="toggleExtenderEnabled"
+                    :checked="tempExtenderEnabled === 1"
+                    @change="handleExtenderEnabledChange"
                   >
                   <span class="slider"></span>
                 </label>
               </div>
             </div>
 
-            <div v-if="isExtenderEnabled" class="form-group">
+            <div v-if="tempExtenderEnabled === 1" class="form-group">
               <label>{{ t('wirelessExtender.role') }}</label>
               <select 
-                :value="extenderRole"
-                @change="updateRole"
+                :value="tempExtenderRole"
+                @change="handleRoleChange"
                 class="role-select"
               >
-                <option value="Repeater">{{ t('wirelessExtender.repeater') }}</option>
                 <option value="MeshAgent">{{ t('wirelessExtender.meshAgent') }}</option>
+                <option value="Repeater">{{ t('wirelessExtender.repeater') }}</option>
               </select>
+            </div>
+
+            <div class="button-group">
+              <button 
+                type="button" 
+                class="btn btn-secondary" 
+                @click="cancelConfigChanges"
+                :disabled="loading"
+              >
+                {{ t('common.cancel') }}
+              </button>
+              <button 
+                type="button"
+                class="btn btn-primary"
+                @click="applyConfigChanges"
+                :disabled="loading"
+              >
+                {{ t('common.apply') }}
+              </button>
             </div>
           </div>
         </div>
@@ -527,6 +583,10 @@ onMounted(() => {
       <!-- Success notification -->
       <div v-if="showSuccess" class="success-message">
         {{ successMessage }}
+        <div v-if="redirectCountdown !== null" class="redirect-info">
+          <div>Redirecting in {{ redirectCountdown }} seconds...</div>
+          <button @click="cancelRedirect" class="btn-cancel-redirect">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
@@ -749,6 +809,28 @@ input {
   z-index: 100;
 }
 
+.redirect-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-cancel-redirect {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.btn-cancel-redirect:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
 .loading-state {
   display: flex;
   align-items: center;
@@ -767,6 +849,13 @@ input {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 @keyframes fadeInOut {
@@ -795,6 +884,14 @@ input {
   }
 
   .modal-footer .btn {
+    width: 100%;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
     width: 100%;
   }
 }

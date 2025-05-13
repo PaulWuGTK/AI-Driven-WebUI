@@ -342,6 +342,12 @@ export default {
     connected: 'Verbunden',
     disconnected: 'Getrennt'
   },
+  dmz: {
+    title: 'DMZ-Einstellungen',
+    enable: 'DMZ aktivieren',
+    ipAddress: 'IP-Adresse',
+    description: 'DMZ (Demilitarisierte Zone) ermöglicht es, einen Rechner Ihres lokalen Netzwerks vollständig dem Internet auszusetzen. Nützlich für Online-Gaming oder Videokonferenzen, die hinter NAT Probleme haben.'
+  },
   ddns: {
     title: 'DDNS-Einstellungen',
     management: 'DDNS-Verwaltung',

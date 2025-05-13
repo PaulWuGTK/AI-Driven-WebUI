@@ -28,6 +28,8 @@ export interface ExtenderResponse {
     Wps: {
       WpsPinCode: string;
     };
+    ip_address?: string;
+    message?: string;
   };
 }
 

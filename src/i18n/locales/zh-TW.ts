@@ -342,6 +342,12 @@ export default {
     connected: '已連接',
     disconnected: '未連接'
   },
+  dmz: {
+    title: 'DMZ 設定',
+    enable: '啟用 DMZ',
+    ipAddress: 'IP 位址',
+    description: 'DMZ（非軍事區）可將您區域網路中的某台電腦完整暴露於 Internet。當線上遊戲或視訊會議應用程式因 NAT 而無法正常運作時，可使用此功能。'
+  },
   ddns: {
     title: 'DDNS設定',
     management: 'DDNS管理',

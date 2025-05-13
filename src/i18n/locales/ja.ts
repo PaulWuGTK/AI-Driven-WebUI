@@ -342,6 +342,12 @@ export default {
     connected: '接続済み',
     disconnected: '未接続'
   },
+  dmz: {
+    title: 'DMZ 設定',
+    enable: 'DMZ を有効化',
+    ipAddress: 'IP アドレス',
+    description: 'DMZ（非武装地帯）を有効にすると、ローカルネットワーク上のコンピューターをインターネットに完全公開できます。NAT を介すると動作しにくいオンラインゲームやビデオ会議アプリに便利です。'
+  },
   ddns: {
     title: 'DDNS設定',
     management: 'DDNS管理',

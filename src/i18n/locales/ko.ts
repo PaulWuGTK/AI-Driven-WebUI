@@ -341,6 +341,12 @@ export default {
     connected: '연결됨',
     disconnected: '해제됨'
   },
+  dmz: {
+    title: 'DMZ 설정',
+    enable: 'DMZ 활성화',
+    ipAddress: 'IP 주소',
+    description: 'DMZ(비무장 지대)를 사용하면 로컬 네트워크의 컴퓨터를 인터넷에 완전히 노출할 수 있습니다. NAT 환경에서 문제가 발생하는 온라인 게임이나 화상 회의 애플리케이션에 유용합니다.'
+  },
   ddns: {
     title: 'DDNS 설정',
     management: 'DDNS 관리',
