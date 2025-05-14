@@ -60,7 +60,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
   },
   'Wi-Fi': {
     'Guest Access': { gateway: true, extender: false },
-    'MAC Filter': { gateway: true, extender: true },
+    'MAC Filter': { gateway: true, extender: false },
     'Wireless Extender': { gateway: true, extender: true }
   },
   'Advanced': {
