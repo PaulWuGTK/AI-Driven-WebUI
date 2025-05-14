@@ -89,13 +89,18 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
-      path: '/wifi/wireless-extender',
-      component: () => import('../views/wifi/WirelessExtender.vue'),
+      path: '/wifi/guest-access',
+      component: () => import('../views/wifi/GuestAccess.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/wifi/guest-access',
-      component: () => import('../views/wifi/GuestAccess.vue'),
+      path: '/wifi/mac-filter',
+      component: () => import('../views/wifi/MacFilter.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/wifi/wireless-extender',
+      component: () => import('../views/wifi/WirelessExtender.vue'),
       beforeEnter: requireAuth
     },
     {

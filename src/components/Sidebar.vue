@@ -59,8 +59,9 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
-    'Wireless Extender': { gateway: true, extender: true },
-    'Guest Access': { gateway: true, extender: false }
+    'Guest Access': { gateway: true, extender: false },
+    'MAC Filter': { gateway: true, extender: true },
+    'Wireless Extender': { gateway: true, extender: true }
   },
   'Advanced': {
     'DMZ': { gateway: true, extender: false },
@@ -118,8 +119,9 @@ const baseMenuItems: MenuItem[] = [
     icon: wifiIcon,
     translationKey: 'menu.wifi',
     subItems: [
-      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' },
-      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' }
+      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
+      { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
+      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
     ]
   },
   {
