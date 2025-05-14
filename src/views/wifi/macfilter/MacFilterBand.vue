@@ -150,7 +150,7 @@ const updateACLMode = (mode: string) => {
 const updateEntryMacList = () => {
   if (!selectedEntry.value) return;
   
-  const macList = macAddresses.value.join(', ');
+  const macList = macAddresses.value.join(',');
   
   const updatedEntries = props.entries.map(entry => {
     if (entry.SSID === selectedEntry.value.SSID) {
