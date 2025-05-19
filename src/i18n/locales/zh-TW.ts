@@ -361,6 +361,21 @@ export default {
     apply: '套用',
     cancel: '取消'
   },
+  serviceControl: {
+    title: '服務控制',
+    management: '服務控制管理',
+    addRule: '新增規則',
+    editRule: '編輯規則',
+    serviceType: '服務類型',
+    accessDirection: '存取方向',
+    protocol: '通訊協定',
+    ipRange: 'IP 範圍',
+    status: '狀態',
+    action: '操作',
+    enabled: '已啟用',
+    disabled: '已停用',
+    confirmDelete: '確定要刪除此規則嗎？'
+  },
   dmz: {
     title: 'DMZ 設定',
     enable: '啟用 DMZ',
@@ -422,6 +437,8 @@ export default {
     enable: '啟用SSH伺服器',
     allowPasswordLogin: '允許密碼登入',
     allowRootLogin: '允許root登入',
+    allowAllIPv4: '允許所有 IPv4',
+    allowAllIPv6: '允許所有 IPv6',
     maxAuthTries: '最大認證嘗試次數',
     idleTimeout: '閒置逾時（秒）',
     confirmDelete: '確定要刪除此SSH伺服器嗎？',

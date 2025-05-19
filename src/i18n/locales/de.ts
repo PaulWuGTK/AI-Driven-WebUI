@@ -361,6 +361,21 @@ export default {
     apply: 'Anwenden',
     cancel: 'Abbrechen'
   },
+  serviceControl: {
+    title: 'Dienststeuerung',
+    management: 'Dienststeuerung verwalten',
+    addRule: 'Regel hinzufügen',
+    editRule: 'Regel bearbeiten',
+    serviceType: 'Diensttyp',
+    accessDirection: 'Zugriffsrichtung',
+    protocol: 'Protokoll',
+    ipRange: 'IP-Bereich',
+    status: 'Status',
+    action: 'Aktion',
+    enabled: 'Aktiviert',
+    disabled: 'Deaktiviert',
+    confirmDelete: 'Möchten Sie diese Regel wirklich löschen?'
+  },
   dmz: {
     title: 'DMZ-Einstellungen',
     enable: 'DMZ aktivieren',
@@ -422,6 +437,8 @@ export default {
     enable: 'SSH-Server aktivieren',
     allowPasswordLogin: 'Passwort-Anmeldung erlauben',
     allowRootLogin: 'Root-Anmeldung erlauben',
+    allowAllIPv4: 'Allen IPv4-Verkehr erlauben',
+    allowAllIPv6: 'Allen IPv6-Verkehr erlauben',
     maxAuthTries: 'Maximale Authentifizierungsversuche',
     idleTimeout: 'Leerlauf-Timeout (Sekunden)',
     confirmDelete: 'Sind Sie sicher, dass Sie diesen SSH-Server löschen möchten?',

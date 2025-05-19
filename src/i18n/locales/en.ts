@@ -25,6 +25,7 @@ const translations: Translations = {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Advanced',
+    serviceControl: 'Service Control',
     ddns: 'DDNS',
     dmz: 'DMZ',
     device: 'Device Management',
@@ -364,6 +365,21 @@ const translations: Translations = {
     apply: 'Apply',
     cancel: 'Cancel'
   },
+  serviceControl: {
+    title: 'Service Control',
+    management: 'Service Control Management',
+    addRule: 'Add Rule',
+    editRule: 'Edit Rule',
+    serviceType: 'Service Type',
+    accessDirection: 'Access Direction',
+    protocol: 'Protocol',
+    ipRange: 'IP Range',
+    status: 'Status',
+    action: 'Action',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    confirmDelete: 'Are you sure you want to delete this rule?'
+  },
   dmz: {
     title: 'DMZ Settings',
     enable: 'Enable DMZ',
@@ -425,6 +441,8 @@ const translations: Translations = {
     enable: 'Enable SSH Server',
     allowPasswordLogin: 'Allow Password Login',
     allowRootLogin: 'Allow Root Login',
+    allowAllIPv4: 'Allow All IPv4',
+    allowAllIPv6: 'Allow All IPv6',
     maxAuthTries: 'Maximum Authentication Tries',
     idleTimeout: 'Idle Timeout (seconds)',
     confirmDelete: 'Are you sure you want to delete this SSH server?',

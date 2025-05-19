@@ -361,6 +361,21 @@ export default {
     apply: 'Appliquer',
     cancel: 'Annuler'
   },
+  serviceControl: {
+    title: 'Contrôle des services',
+    management: 'Gestion du contrôle des services',
+    addRule: 'Ajouter une règle',
+    editRule: 'Modifier la règle',
+    serviceType: 'Type de service',
+    accessDirection: 'Direction d’accès',
+    protocol: 'Protocole',
+    ipRange: 'Plage IP',
+    status: 'Statut',
+    action: 'Action',
+    enabled: 'Activé',
+    disabled: 'Désactivé',
+    confirmDelete: 'Voulez-vous vraiment supprimer cette règle ?'
+  },
   dmz: {
     title: 'Paramètres DMZ',
     enable: 'Activer la DMZ',
@@ -422,6 +437,8 @@ export default {
     enable: 'Activer le serveur SSH',
     allowPasswordLogin: 'Autoriser la connexion par mot de passe',
     allowRootLogin: 'Autoriser la connexion root',
+    allowAllIPv4: 'Autoriser tout le trafic IPv4',
+    allowAllIPv6: 'Autoriser tout le trafic IPv6',
     maxAuthTries: 'Nombre maximal de tentatives d\'authentification',
     idleTimeout: 'Délai d\'inactivité (secondes)',
     confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce serveur SSH ?',

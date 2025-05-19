@@ -24,6 +24,7 @@ export interface Translations {
     ntp: string;
     ssh: string;
     advanced: string;
+    serviceControl: string;
     ddns: string;
     dmz: string;
     device: string;
@@ -363,6 +364,21 @@ export interface Translations {
     apply: string;
     cancel: string;
   };
+  serviceControl: {
+    title: string;
+    management: string;
+    addRule: string;
+    editRule: string;
+    serviceType: string;
+    accessDirection: string;
+    protocol: string;
+    ipRange: string;
+    status: string;
+    action: string;
+    enabled: string;
+    disabled: string;
+    confirmDelete: string;
+  };
   dmz: {
     title: string;
     enable: string;
@@ -424,6 +440,8 @@ export interface Translations {
     enable: string;
     allowPasswordLogin: string;
     allowRootLogin: string;
+    allowAllIPv4: string;
+    allowAllIPv6: string;
     maxAuthTries: string;
     idleTimeout: string;
     confirmDelete: string;

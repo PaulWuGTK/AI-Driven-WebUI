@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../types/ssh';
 
@@ -26,21 +26,70 @@ const autoDisableOptions = [
 
 const connectionTimeoutOptions = [
   { value: 0, label: 'Never timeout when idling' },
-  { value: 300, label: '5 minutes' },
-  { value: 600, label: '10 minutes' },
-  { value: 1800, label: '30 minutes' },
-  { value: 3600, label: '1 hour' }
+  { value: -1, label: 'Close connection when idling over' }
 ];
 
 const keepAliveOptions = [
   { value: 0, label: 'Never send KeepAlive message' },
-  { value: 60, label: '1 minute' },
-  { value: 300, label: '5 minutes' },
-  { value: 600, label: '10 minutes' }
+  { value: -1, label: 'Send KeepAlive message every' }
 ];
+
+const selectedTimeoutOption = ref(props.server.IdleTimeout === 0 ? 0 : -1);
+const customTimeoutValue = ref(props.server.IdleTimeout === 0 ? 10 : Math.min(60, Math.max(1, props.server.IdleTimeout / 60)));
+
+const selectedKeepAliveOption = ref(props.server.KeepAlive === 0 ? 0 : -1);
+const customKeepAliveValue = ref(props.server.KeepAlive === 0 ? 5 : Math.min(60, Math.max(1, props.server.KeepAlive / 60)));
 
 const updateServer = (field: keyof SshServer, value: any) => {
   emit('update:server', { ...props.server, [field]: value });
+};
+
+const handleTimeoutChange = (event: Event) => {
+  const value = parseInt((event.target as HTMLSelectElement).value);
+  selectedTimeoutOption.value = value;
+  
+  if (value === 0) {
+    updateServer('IdleTimeout', 0);
+  } else {
+    // When selecting "Close connection when idling over", use the custom value
+    updateServer('IdleTimeout', customTimeoutValue.value * 60);
+  }
+};
+
+const handleCustomTimeoutChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  let value = parseInt(input.value);
+  
+  // Enforce range 1-60
+  value = Math.min(60, Math.max(1, value));
+  input.value = value.toString();
+  
+  customTimeoutValue.value = value;
+  updateServer('IdleTimeout', value * 60);
+};
+
+const handleKeepAliveChange = (event: Event) => {
+  const value = parseInt((event.target as HTMLSelectElement).value);
+  selectedKeepAliveOption.value = value;
+  
+  if (value === 0) {
+    updateServer('KeepAlive', 0);
+  } else {
+    // When selecting "Send KeepAlive message every", use the custom value
+    updateServer('KeepAlive', customKeepAliveValue.value * 60);
+  }
+};
+
+const handleCustomKeepAliveChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  let value = parseInt(input.value);
+  
+  // Enforce range 1-60
+  value = Math.min(60, Math.max(1, value));
+  input.value = value.toString();
+  
+  customKeepAliveValue.value = value;
+  updateServer('KeepAlive', value * 60);
 };
 </script>
 
@@ -106,28 +155,66 @@ const updateServer = (field: keyof SshServer, value: any) => {
         <div class="form-group">
           <label>{{ t('ssh.connectionTimeout') }}</label>
           <select 
-            :value="server.IdleTimeout"
-            @change="updateServer('IdleTimeout', parseInt(($event.target as HTMLSelectElement).value))"
+            :value="selectedTimeoutOption"
+            @change="handleTimeoutChange"
           >
             <option v-for="option in connectionTimeoutOptions" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
           </select>
+          
+          <div v-if="selectedTimeoutOption === -1" class="custom-input-wrapper">
+            <input 
+              type="number" 
+              :value="customTimeoutValue"
+              @input="handleCustomTimeoutChange"
+              min="1"
+              max="60"
+              class="custom-input"
+            >
+            <span class="input-unit">mins</span>
+          </div>
         </div>
 
         <div class="form-group">
           <label>{{ t('ssh.keepAliveMessage') }}</label>
           <select 
-            :value="server.KeepAlive"
-            @change="updateServer('KeepAlive', parseInt(($event.target as HTMLSelectElement).value))"
+            :value="selectedKeepAliveOption"
+            @change="handleKeepAliveChange"
           >
             <option v-for="option in keepAliveOptions" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
           </select>
+          
+          <div v-if="selectedKeepAliveOption === -1" class="custom-input-wrapper">
+            <input 
+              type="number" 
+              :value="customKeepAliveValue"
+              @input="handleCustomKeepAliveChange"
+              min="1"
+              max="60"
+              class="custom-input"
+            >
+            <span class="input-unit">mins</span>
+          </div>
         </div>
 
         <div class="form-group">
+          <label class="switch-label">
+            <span>{{ t('ssh.allowAllIPv4') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="server.AllowAllIPv4 === 1"
+                @change="updateServer('AllowAllIPv4', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+              >
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <div class="form-group" v-if="!server.AllowAllIPv4">
           <label>{{ t('ssh.ipv4Prefix') }}</label>
           <input 
             type="text" 
@@ -138,6 +225,20 @@ const updateServer = (field: keyof SshServer, value: any) => {
         </div>
 
         <div class="form-group">
+          <label class="switch-label">
+            <span>{{ t('ssh.allowAllIPv6') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="server.AllowAllIPv6 === 1"
+                @change="updateServer('AllowAllIPv6', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+              >
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <div class="form-group" v-if="!server.AllowAllIPv6">
           <label>{{ t('ssh.ipv6Prefix') }}</label>
           <input 
             type="text" 
@@ -191,6 +292,18 @@ const updateServer = (field: keyof SshServer, value: any) => {
             </label>
           </label>
         </div>
+
+        <div class="form-group">
+          <label>{{ t('ssh.maxAuthTries') }}</label>
+          <input 
+            type="number" 
+            :value="server.MaxAuthTries"
+            @input="updateServer('MaxAuthTries', parseInt(($event.target as HTMLInputElement).value))"
+            min="1"
+            max="20"
+            required
+          >
+        </div>
       </div>
 
       <div class="button-group">
@@ -219,6 +332,7 @@ const updateServer = (field: keyof SshServer, value: any) => {
 
 .form-group {
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .form-group label {
@@ -233,6 +347,13 @@ input, select {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
+}
+
+.unit {
+  position: absolute;
+  right: 10px;
+  top: 33px;
+  color: #666;
 }
 
 .switch-label {
@@ -313,5 +434,56 @@ input:checked + .slider:before {
 
 .btn:hover {
   opacity: 0.9;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.custom-input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.custom-input {
+  width: 80px;
+}
+
+.input-unit {
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .ssh-server-edit {
+    padding: 1rem;
+  }
+
+  .form-section {
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
 }
 </style>

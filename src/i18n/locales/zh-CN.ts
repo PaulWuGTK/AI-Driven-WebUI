@@ -361,6 +361,21 @@ export default {
     apply: '应用',
     cancel: '取消'
   },
+  serviceControl: {
+    title: '服务控制',
+    management: '服务控制管理',
+    addRule: '新增规则',
+    editRule: '编辑规则',
+    serviceType: '服务类型',
+    accessDirection: '访问方向',
+    protocol: '协议',
+    ipRange: 'IP 范围',
+    status: '状态',
+    action: '操作',
+    enabled: '已启用',
+    disabled: '已禁用',
+    confirmDelete: '确定要删除此规则吗？'
+  },
   dmz: {
     title: 'DMZ 设置',
     enable: '启用 DMZ',
@@ -422,6 +437,8 @@ export default {
     enable: '启用SSH服务器',
     allowPasswordLogin: '允许密码登录',
     allowRootLogin: '允许root登录',
+    allowAllIPv4: '允许所有 IPv4',
+    allowAllIPv6: '允许所有 IPv6',
     maxAuthTries: '最大认证尝试次数',
     idleTimeout: '空闲超时（秒）',
     confirmDelete: '确定要删除此SSH服务器吗？',

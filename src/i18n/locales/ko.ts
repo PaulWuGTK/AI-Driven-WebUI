@@ -360,6 +360,21 @@ export default {
     apply: '적용',
     cancel: '취소'
   },
+  serviceControl: {
+    title: '서비스 제어',
+    management: '서비스 제어 관리',
+    addRule: '규칙 추가',
+    editRule: '규칙 편집',
+    serviceType: '서비스 유형',
+    accessDirection: '접근 방향',
+    protocol: '프로토콜',
+    ipRange: 'IP 범위',
+    status: '상태',
+    action: '작업',
+    enabled: '활성화됨',
+    disabled: '비활성화됨',
+    confirmDelete: '해당 규칙을 삭제하시겠습니까?'
+  },
   dmz: {
     title: 'DMZ 설정',
     enable: 'DMZ 활성화',
@@ -421,6 +436,8 @@ export default {
     enable: 'SSH 서버 활성화',
     allowPasswordLogin: '비밀번호 로그인 허용',
     allowRootLogin: 'root 로그인 허용',
+    allowAllIPv4: '모든 IPv4 허용',
+    allowAllIPv6: '모든 IPv6 허용',
     maxAuthTries: '최대 인증 시도 횟수',
     idleTimeout: '유휴 시간 초과 (초)',
     confirmDelete: '이 SSH 서버를 삭제하시겠습니까?',

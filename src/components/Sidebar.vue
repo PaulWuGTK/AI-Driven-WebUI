@@ -64,6 +64,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless Extender': { gateway: true, extender: true }
   },
   'Advanced': {
+    'Service Control': { gateway: true, extender: false },
     'DMZ': { gateway: true, extender: false },
     'DDNS': { gateway: true, extender: false }
   },
@@ -129,6 +130,7 @@ const baseMenuItems: MenuItem[] = [
     icon: advancedIcon,
     translationKey: 'menu.advanced',
     subItems: [
+      { name: 'Service Control', path: '/advanced/service-control', translationKey: 'menu.serviceControl' },
       { name: 'DMZ', path: '/advanced/dmz', translationKey: 'menu.dmz' },
       { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' }
     ]

@@ -104,6 +104,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/advanced/service-control',
+      component: () => import('../views/advanced/ServiceControl.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/advanced/dmz',
       component: () => import('../views/advanced/DmzSettings.vue'),
       beforeEnter: requireAuth

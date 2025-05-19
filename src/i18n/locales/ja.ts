@@ -361,6 +361,21 @@ export default {
     apply: '適用',
     cancel: 'キャンセル'
   },
+  serviceControl: {
+    title: 'サービス制御',
+    management: 'サービス制御管理',
+    addRule: 'ルール追加',
+    editRule: 'ルール編集',
+    serviceType: 'サービス種別',
+    accessDirection: 'アクセス方向',
+    protocol: 'プロトコル',
+    ipRange: 'IP 範囲',
+    status: 'ステータス',
+    action: '操作',
+    enabled: '有効',
+    disabled: '無効',
+    confirmDelete: 'このルールを削除してもよろしいですか？'
+  },
   dmz: {
     title: 'DMZ 設定',
     enable: 'DMZ を有効化',
@@ -422,6 +437,8 @@ export default {
     enable: 'SSHサーバーを有効化',
     allowPasswordLogin: 'パスワードログインを許可',
     allowRootLogin: 'rootログインを許可',
+    allowAllIPv4: 'すべての IPv4 を許可',
+    allowAllIPv6: 'すべての IPv6 を許可',
     maxAuthTries: '最大認証試行回数',
     idleTimeout: 'アイドルタイムアウト（秒）',
     confirmDelete: 'このSSHサーバーを削除してもよろしいですか？',
