@@ -14,10 +14,20 @@ const emit = defineEmits<{
   (e: 'update:entries', entries: MACFilteringEntry[]): void;
 }>();
 
+// Sort entries by Path
+const sortedEntries = computed(() => {
+  return [...props.entries].sort((a, b) => {
+    // Extract numbers from paths like "Device.WiFi.AccessPoint.3."
+    const numA = parseInt(a.Path.match(/\d+(?=\.)/)?.[0] || '0', 10);
+    const numB = parseInt(b.Path.match(/\d+(?=\.)/)?.[0] || '0', 10);
+    return numA - numB;
+  });
+});
+
 // Selected SSID and its corresponding entry
-const selectedSSID = ref(props.entries.length > 0 ? props.entries[0].SSID : '');
+const selectedSSID = ref(sortedEntries.value.length > 0 ? sortedEntries.value[0].SSID : '');
 const selectedEntry = computed(() => {
-  return props.entries.find(entry => entry.SSID === selectedSSID.value) || props.entries[0];
+  return sortedEntries.value.find(entry => entry.SSID === selectedSSID.value) || sortedEntries.value[0];
 });
 
 // MAC address list management
@@ -175,7 +185,7 @@ import { watch, onMounted } from 'vue';
     <div class="form-group">
       <label>{{ t('macfilter.ssid') }}</label>
       <select v-model="selectedSSID" class="form-select">
-        <option v-for="entry in entries" :key="entry.Path" :value="entry.SSID">
+        <option v-for="entry in sortedEntries" :key="entry.Path" :value="entry.SSID">
           {{ entry.SSID }}
         </option>
       </select>
