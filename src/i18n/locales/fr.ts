@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Avancé',
+    serviceControl: 'Contrôle des services',
     ddns: 'DDNS',
     device: 'Gestion des appareils',
     diagnostics: 'Outils de diagnostic',
@@ -226,7 +227,9 @@ export default {
     pinCode: 'Code PIN',
     pinCodeOfClient: 'Code PIN de l\'appareil client',
     noPublicKeys: 'Aucune clé publique ajoutée',
-    extender: 'Répéteur'
+    extender: 'Répéteur',
+    enableWpsConfirm: 'Activer le WPS',
+    enableWpsMessage: 'Activer le WPS désactivera le filtre MAC. Voulez-vous continuer ?'
   },
   guest: {
     title: 'Accès invité',
@@ -266,7 +269,13 @@ export default {
     noMacAddresses: 'Aucune adresse MAC ajoutée',
     emptyMacError: 'L’adresse MAC ne peut pas être vide',
     invalidMacFormat: 'Format d’adresse MAC invalide',
-    duplicateMacError: 'Cette adresse MAC existe déjà'
+    duplicateMacError: 'Cette adresse MAC existe déjà',
+    changeModeTitle: 'Changer le mode de filtrage MAC',
+    changeModeMessage: 'L’activation du filtrage MAC désactivera le WPS. Continuer ?',
+    deleteMacTitle: 'Supprimer l’adresse MAC',
+    deleteMacMessage: 'Voulez-vous vraiment supprimer cette adresse MAC ?',
+    applyChangesTitle: 'Appliquer les paramètres du filtre MAC',
+    applyChangesMessage: 'L’activation du filtrage MAC désactivera le WPS. Continuer ?'
   },
   wirelessExtender: {
     title: 'Répéteur sans fil',

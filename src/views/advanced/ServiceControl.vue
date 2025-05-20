@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ServiceControlRule, ServiceControlResponse } from '../../types/serviceControl';
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
@@ -83,7 +83,7 @@ const handleEditRule = (rule: ServiceControlRule) => {
 const handleDeleteRule = async (service: string) => {
   if (!serviceControlData.value) return;
   
-  if (!confirm('Are you sure you want to delete this rule?')) return;
+  if (!confirm(t('serviceControl.confirmDelete'))) return;
   
   const updatedRules = serviceControlData.value.AdvancedServiceControl.Rules.filter(
     rule => rule.Service !== service
@@ -158,7 +158,7 @@ onMounted(fetchServiceControl);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">Service Control</h1>
+    <h1 class="page-title">{{ t('serviceControl.title') }}</h1>
 
     <div class="status-content">
       <div v-if="loading && !serviceControlData" class="loading-state">
@@ -172,10 +172,10 @@ onMounted(fetchServiceControl);
 
       <div v-else-if="serviceControlData" class="panel-section">
         <div class="header-row">
-          <div class="section-title-sp">Service Control</div>
-          <button class="btn btn-primary" @click="handleAddRule">
+          <div class="section-title-sp">{{ t('serviceControl.management') }}</div>
+          <button class="btn btn-primary add-rule-btn" @click="handleAddRule">
             <span class="material-icons">add</span>
-            Add
+            <span>{{ t('serviceControl.addRule') }}</span>
           </button>
         </div>
 
@@ -184,12 +184,12 @@ onMounted(fetchServiceControl);
             <table>
               <thead>
                 <tr>
-                  <th>Service Type</th>
-                  <th>Access Direction</th>
-                  <th>Protocol</th>
-                  <th>IP Range</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>{{ t('serviceControl.serviceType') }}</th>
+                  <th>{{ t('serviceControl.accessDirection') }}</th>
+                  <th>{{ t('serviceControl.protocol') }}</th>
+                  <th>{{ t('serviceControl.ipRange') }}</th>
+                  <th>{{ t('serviceControl.status') }}</th>
+                  <th>{{ t('serviceControl.action') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,7 +205,7 @@ onMounted(fetchServiceControl);
                   </td>
                   <td>
                     <span :class="rule.Enable ? 'status-enabled' : 'status-disabled'">
-                      {{ rule.Enable ? 'Enabled' : 'Disabled' }}
+                      {{ rule.Enable ? t('serviceControl.enabled') : t('serviceControl.disabled') }}
                     </span>
                   </td>
                   <td>
@@ -231,25 +231,24 @@ onMounted(fetchServiceControl);
               No rules configured
             </div>
             <div 
-              v-else
               class="table-card" 
               v-for="rule in serviceControlData.AdvancedServiceControl.Rules" 
               :key="rule.Service"
             >
               <div class="card-row">
-                <span class="card-label">Service Type</span>
+                <span class="card-label">{{ t('serviceControl.serviceType') }}</span>
                 <span class="card-value">{{ rule.Service }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">Access Direction</span>
+                <span class="card-label">{{ t('serviceControl.accessDirection') }}</span>
                 <span class="card-value">{{ interfaceMap[rule.Interface] || rule.Interface }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">Protocol</span>
+                <span class="card-label">{{ t('serviceControl.protocol') }}</span>
                 <span class="card-value">{{ protocolMap[rule.Protocol] || rule.Protocol }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">IP Range</span>
+                <span class="card-label">{{ t('serviceControl.ipRange') }}</span>
                 <span class="card-value">
                   {{ formatIPVersion(rule.IPVersion) }}
                   <span v-if="rule.SourceIPStart && rule.SourceIPEnd">
@@ -258,9 +257,9 @@ onMounted(fetchServiceControl);
                 </span>
               </div>
               <div class="card-row">
-                <span class="card-label">Status</span>
+                <span class="card-label">{{ t('serviceControl.status') }}</span>
                 <span class="card-value" :class="rule.Enable ? 'status-enabled' : 'status-disabled'">
-                  {{ rule.Enable ? 'Enabled' : 'Disabled' }}
+                  {{ rule.Enable ? t('serviceControl.enabled') : t('serviceControl.disabled') }}
                 </span>
               </div>
               <div class="card-actions">
@@ -359,6 +358,17 @@ onMounted(fetchServiceControl);
   z-index: 100;
 }
 
+.add-rule-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-rule-btn .material-icons {
+  font-size: 20px;
+  line-height: 1;
+}
+
 @keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; transform: translateY(0); }
@@ -371,6 +381,10 @@ onMounted(fetchServiceControl);
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
+  }
+
+  .section-title-sp {
+    padding: 0;
   }
 
   .btn {

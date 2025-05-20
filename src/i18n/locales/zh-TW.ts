@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '進階設定',
+    serviceControl: '服務控制',
     ddns: 'DDNS',
     device: '裝置管理',
     diagnostics: '診斷工具',
@@ -226,7 +227,9 @@ export default {
     pinCode: 'PIN 碼',
     pinCodeOfClient: '用戶端裝置的 PIN 碼',
     noPublicKeys: '尚未新增公開金鑰',
-    extender: '延伸器'
+    extender: '延伸器',
+    enableWpsConfirm: '啟用 WPS',
+    enableWpsMessage: '啟用 WPS 會停用 MAC 篩選。是否繼續？'
   },
   guest: {
     title: '訪客存取',
@@ -266,7 +269,13 @@ export default {
     noMacAddresses: '尚未加入任何 MAC 位址',
     emptyMacError: 'MAC 位址不可為空',
     invalidMacFormat: '無效的 MAC 位址格式',
-    duplicateMacError: '此 MAC 位址已存在'
+    duplicateMacError: '此 MAC 位址已存在',
+    changeModeTitle: '變更 MAC 篩選模式',
+    changeModeMessage: '啟用 MAC 篩選將停用 WPS，是否繼續？',
+    deleteMacTitle: '刪除 MAC 位址',
+    deleteMacMessage: '確定要刪除此 MAC 位址嗎？',
+    applyChangesTitle: '套用 MAC 篩選設定',
+    applyChangesMessage: '啟用 MAC 篩選將停用 WPS，是否繼續？'
   },
   wirelessExtender: {
     title: '無線延伸器',

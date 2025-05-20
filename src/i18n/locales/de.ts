@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Erweitert',
+    serviceControl: 'Dienststeuerung',
     ddns: 'DDNS',
     device: 'Geräteverwaltung',
     diagnostics: 'Diagnose',
@@ -226,7 +227,9 @@ export default {
     pinCode: 'PIN-Code',
     pinCodeOfClient: 'PIN-Code des Client-Geräts',
     noPublicKeys: 'Keine öffentlichen Schlüssel hinzugefügt',
-    extender: 'Repeater'
+    extender: 'Repeater',
+    enableWpsConfirm: 'WPS aktivieren',
+    enableWpsMessage: 'Durch das Aktivieren von WPS wird der MAC-Filter deaktiviert. Möchten Sie fortfahren?'
   },
   guest: {
     title: 'Gastzugang',
@@ -266,7 +269,13 @@ export default {
     noMacAddresses: 'Keine MAC-Adressen hinzugefügt',
     emptyMacError: 'MAC-Adresse darf nicht leer sein',
     invalidMacFormat: 'Ungültiges MAC-Adressformat',
-    duplicateMacError: 'Diese MAC-Adresse existiert bereits'
+    duplicateMacError: 'Diese MAC-Adresse existiert bereits',
+    changeModeTitle: 'MAC-Filtermodus ändern',
+    changeModeMessage: 'Das Aktivieren des MAC-Filters deaktiviert WPS. Fortfahren?',
+    deleteMacTitle: 'MAC-Adresse löschen',
+    deleteMacMessage: 'Möchten Sie diese MAC-Adresse wirklich löschen?',
+    applyChangesTitle: 'MAC-Filtereinstellungen übernehmen',
+    applyChangesMessage: 'Das Aktivieren des MAC-Filters deaktiviert WPS. Fortfahren?'
   },
   wirelessExtender: {
     title: 'WLAN-Extender',

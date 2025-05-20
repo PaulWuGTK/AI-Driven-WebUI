@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '고급 설정',
+    serviceControl: '서비스 제어',
     ddns: 'DDNS',
     device: '장치 관리',
     diagnostics: '진단 도구',
@@ -225,7 +226,9 @@ export default {
     pinCode: 'PIN 코드',
     pinCodeOfClient: '클라이언트 장치의 PIN 코드',
     noPublicKeys: '추가된 공개 키 없음',
-    extender: '확장기'
+    extender: '확장기',
+    enableWpsConfirm: 'WPS 활성화',
+    enableWpsMessage: 'WPS를 활성화하면 MAC 필터가 비활성화됩니다. 계속하시겠습니까?'
   },
   guest: {
     title: '게스트 액세스',
@@ -265,7 +268,13 @@ export default {
     noMacAddresses: '추가된 MAC 주소가 없습니다',
     emptyMacError: 'MAC 주소는 비워둘 수 없습니다',
     invalidMacFormat: '잘못된 MAC 주소 형식',
-    duplicateMacError: '해당 MAC 주소가 이미 존재합니다'
+    duplicateMacError: '해당 MAC 주소가 이미 존재합니다',
+    changeModeTitle: 'MAC 필터 모드 변경',
+    changeModeMessage: 'MAC 필터를 활성화하면 WPS가 비활성화됩니다. 계속하시겠습니까?',
+    deleteMacTitle: 'MAC 주소 삭제',
+    deleteMacMessage: '이 MAC 주소를 삭제하시겠습니까?',
+    applyChangesTitle: 'MAC 필터 설정 적용',
+    applyChangesMessage: 'MAC 필터를 활성화하면 WPS가 비활성화됩니다. 계속하시겠습니까?'
   },
   wirelessExtender: {
     title: '무선 확장기',

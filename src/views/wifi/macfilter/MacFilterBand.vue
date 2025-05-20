@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MACFilteringEntry } from '../../../types/macFiltering';
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 
 const { t } = useI18n();
 
@@ -35,6 +36,12 @@ const macAddresses = ref<string[]>([]);
 const newMacAddress = ref('');
 const editingIndex = ref<number | null>(null);
 const error = ref('');
+
+// Confirmation dialog state
+const showConfirmDialog = ref(false);
+const confirmDialogAction = ref<'mode' | 'delete' | null>(null);
+const confirmDialogIndex = ref<number | null>(null);
+const pendingACLMode = ref<string | null>(null);
 
 // ACL mode mapping
 const aclModeOptions = [
@@ -106,8 +113,20 @@ const startEditMac = (index: number) => {
 
 // Delete MAC address
 const deleteMacAddress = (index: number) => {
-  macAddresses.value.splice(index, 1);
-  updateEntryMacList();
+  confirmDialogAction.value = 'delete';
+  confirmDialogIndex.value = index;
+  showConfirmDialog.value = true;
+};
+
+// Confirm delete MAC address
+const confirmDeleteMac = () => {
+  if (confirmDialogIndex.value !== null) {
+    macAddresses.value.splice(confirmDialogIndex.value, 1);
+    updateEntryMacList();
+  }
+  showConfirmDialog.value = false;
+  confirmDialogAction.value = null;
+  confirmDialogIndex.value = null;
 };
 
 // Save edited MAC address
@@ -146,6 +165,23 @@ const cancelEdit = () => {
 const updateACLMode = (mode: string) => {
   if (!selectedEntry.value) return;
   
+  // If changing from Off to another mode or vice versa, show confirmation
+  if ((selectedEntry.value.ACLMode === 'Off' && mode !== 'Off') || 
+      (selectedEntry.value.ACLMode !== 'Off' && mode === 'Off')) {
+    pendingACLMode.value = mode;
+    confirmDialogAction.value = 'mode';
+    showConfirmDialog.value = true;
+    return;
+  }
+  
+  // Otherwise, apply directly
+  applyACLModeChange(mode);
+};
+
+// Apply ACL mode change after confirmation
+const applyACLModeChange = (mode: string) => {
+  if (!selectedEntry.value) return;
+  
   const updatedEntries = props.entries.map(entry => {
     if (entry.SSID === selectedEntry.value.SSID) {
       return { ...entry, ACLMode: mode };
@@ -154,6 +190,16 @@ const updateACLMode = (mode: string) => {
   });
   
   emit('update:entries', updatedEntries);
+};
+
+// Confirm ACL mode change
+const confirmACLModeChange = () => {
+  if (pendingACLMode.value !== null) {
+    applyACLModeChange(pendingACLMode.value);
+  }
+  showConfirmDialog.value = false;
+  confirmDialogAction.value = null;
+  pendingACLMode.value = null;
 };
 
 // Update MAC list in the entry
@@ -176,8 +222,6 @@ const updateEntryMacList = () => {
 onMounted(() => {
   initializeMacAddresses();
 });
-
-import { watch, onMounted } from 'vue';
 </script>
 
 <template>
@@ -362,6 +406,17 @@ import { watch, onMounted } from 'vue';
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Dialog -->
+    <ConfirmationDialog
+      :is-open="showConfirmDialog"
+      :title="confirmDialogAction === 'mode' ? t('macfilter.changeModeTitle') : t('macfilter.deleteMacTitle')"
+      :message="confirmDialogAction === 'mode' 
+        ? t('macfilter.changeModeMessage') 
+        : t('macfilter.deleteMacMessage')"
+      @confirm="confirmDialogAction === 'mode' ? confirmACLModeChange() : confirmDeleteMac()"
+      @cancel="showConfirmDialog = false"
+    />
   </div>
 </template>
 

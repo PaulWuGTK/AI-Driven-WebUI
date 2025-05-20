@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { MACFilteringResponse, MACFilteringEntry } from '../../types/macFiltering';
 import { getMACFiltering, updateMACFiltering } from '../../services/api/macFiltering';
 import MacFilterBand from './macfilter/MacFilterBand.vue';
+import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
 
 const { t } = useI18n();
 const activeTab = ref('2.4G');
@@ -11,6 +12,7 @@ const macFilteringData = ref<MACFilteringResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const showConfirmDialog = ref(false);
 
 // Computed properties for each band's entries
 const wifi2gEntries = computed(() => 
@@ -67,7 +69,12 @@ const showSuccessMessage = () => {
 };
 
 // Apply changes
-const handleApply = async () => {
+const handleApply = () => {
+  showConfirmDialog.value = true;
+};
+
+// Confirm apply changes
+const confirmApply = async () => {
   if (!macFilteringData.value) return;
   
   loading.value = true;
@@ -82,6 +89,7 @@ const handleApply = async () => {
     error.value = 'Failed to update MAC filtering';
   } finally {
     loading.value = false;
+    showConfirmDialog.value = false;
   }
 };
 
@@ -178,6 +186,15 @@ onMounted(fetchMACFiltering);
       <div v-if="showSuccess" class="success-message">
         {{ t('common.apply') }} successful
       </div>
+
+      <!-- Confirmation Dialog -->
+      <ConfirmationDialog
+        :is-open="showConfirmDialog"
+        :title="t('macfilter.applyChangesTitle')"
+        :message="t('macfilter.applyChangesMessage')"
+        @confirm="confirmApply"
+        @cancel="showConfirmDialog = false"
+      />
     </div>
   </div>
 </template>

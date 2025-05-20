@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { updateWlanWps } from '../../../../services/api/wireless';
+import ConfirmationDialog from '../../../../components/ConfirmationDialog.vue';
 
 const { t } = useI18n();
+
 const props = defineProps<{
   pinCode: string;
 }>();
@@ -14,41 +16,52 @@ const emit = defineEmits<{
 
 const clientPin = ref('');
 const loading = ref(false);
+const showConfirmDialog = ref(false);
+const confirmAction = ref<'pushButton' | 'pinConnect' | null>(null);
 
 const handlePushButton = async () => {
-  loading.value = true;
-  try {
-    await updateWlanWps({
-      WlanWps: {
-        Action: 'PBCbtn'
-      }
-    });
-    emit('refresh');
-  } catch (error) {
-    console.error('Error triggering WPS push button:', error);
-  } finally {
-    loading.value = false;
-  }
+  confirmAction.value = 'pushButton';
+  showConfirmDialog.value = true;
 };
 
 const handlePinConnect = async () => {
   if (!clientPin.value) return;
   
+  confirmAction.value = 'pinConnect';
+  showConfirmDialog.value = true;
+};
+
+const confirmAction_execute = async () => {
   loading.value = true;
   try {
-    await updateWlanWps({
-      WlanWps: {
-        Action: 'PIN',
-        ClientPIN: parseInt(clientPin.value, 10)
-      }
-    });
+    if (confirmAction.value === 'pushButton') {
+      await updateWlanWps({
+        WlanWps: {
+          Action: 'PBCbtn'
+        }
+      });
+    } else if (confirmAction.value === 'pinConnect') {
+      await updateWlanWps({
+        WlanWps: {
+          Action: 'PIN',
+          ClientPIN: parseInt(clientPin.value, 10)
+        }
+      });
+      clientPin.value = '';
+    }
     emit('refresh');
-    clientPin.value = '';
   } catch (error) {
-    console.error('Error connecting with PIN:', error);
+    console.error('Error with WPS action:', error);
   } finally {
     loading.value = false;
+    showConfirmDialog.value = false;
+    confirmAction.value = null;
   }
+};
+
+const cancelConfirmation = () => {
+  showConfirmDialog.value = false;
+  confirmAction.value = null;
 };
 </script>
 
@@ -110,6 +123,15 @@ const handlePinConnect = async () => {
         </div>
       </div>
     </div>
+
+    <!-- Confirmation Dialog -->
+    <ConfirmationDialog
+      :is-open="showConfirmDialog"
+      :title="t('wireless.enableWpsConfirm')"
+      :message="t('wireless.enableWpsMessage')"
+      @confirm="confirmAction_execute"
+      @cancel="cancelConfirmation"
+    />
   </div>
 </template>
 

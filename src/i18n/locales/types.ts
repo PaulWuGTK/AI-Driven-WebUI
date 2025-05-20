@@ -230,6 +230,8 @@ export interface Translations {
     pinCodeOfClient: string;
     noPublicKeys: string;
     extender: string;
+    enableWpsConfirm: string;
+    enableWpsMessage: string;
   };
   guest: {
     title: string;
@@ -270,6 +272,12 @@ export interface Translations {
     emptyMacError: string;
     invalidMacFormat: string;
     duplicateMacError: string;
+    changeModeTitle: string;
+    changeModeMessage: string;
+    deleteMacTitle: string;
+    deleteMacMessage: string;
+    applyChangesTitle: string;
+    applyChangesMessage: string;
   };
   wirelessExtender: {
     title: string;

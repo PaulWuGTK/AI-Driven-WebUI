@@ -230,7 +230,9 @@ const translations: Translations = {
     pinCode: 'PIN Code',
     pinCodeOfClient: 'PIN Code of Client Device',
     noPublicKeys: 'No public keys added',
-    extender: 'Extender'
+    extender: 'Extender',
+    enableWpsConfirm: 'Enable WPS',
+    enableWpsMessage: '	Enabling WPS will disable the MAC filter. Are you sure you want to continue?'
   },
   guest: {
     title: 'Guest Access',
@@ -270,7 +272,13 @@ const translations: Translations = {
     noMacAddresses: 'No MAC addresses added',
     emptyMacError: 'MAC address cannot be empty',
     invalidMacFormat: 'Invalid MAC address format',
-    duplicateMacError: 'This MAC address already exists'
+    duplicateMacError: 'This MAC address already exists',
+    changeModeTitle: 'Change MAC Filter Mode',
+    changeModeMessage: 'Enabling MAC filter will disable WPS. Do you want to continue?',
+    deleteMacTitle: 'Delete MAC Address',
+    deleteMacMessage: 'Are you sure you want to delete this MAC address?',
+    applyChangesTitle: 'Apply MAC Filter Settings',
+    applyChangesMessage: 'Enabling MAC filter will disable WPS. Do you want to continue?'
   },
   wirelessExtender: {
     title: 'Wireless Extender',

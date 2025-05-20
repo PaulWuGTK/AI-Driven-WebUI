@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '高级设置',
+    serviceControl: '服务控制',
     ddns: 'DDNS',
     device: '设备管理',
     diagnostics: '诊断工具',
@@ -226,7 +227,9 @@ export default {
     pinCode: 'PIN 码',
     pinCodeOfClient: '客户端设备的 PIN 码',
     noPublicKeys: '尚未添加公钥',
-    extender: '扩展器'
+    extender: '扩展器',
+    enableWpsConfirm: '启用 WPS',
+    enableWpsMessage: '启用 WPS 将禁用 MAC 过滤。是否继续？'
   },
   guest: {
     title: '访客访问',
@@ -266,7 +269,13 @@ export default {
     noMacAddresses: '尚未添加 MAC 地址',
     emptyMacError: 'MAC 地址不能为空',
     invalidMacFormat: '无效的 MAC 地址格式',
-    duplicateMacError: '该 MAC 地址已存在'
+    duplicateMacError: '该 MAC 地址已存在',
+    changeModeTitle: '更改 MAC 过滤模式',
+    changeModeMessage: '启用 MAC 过滤将禁用 WPS，是否继续？',
+    deleteMacTitle: '删除 MAC 地址',
+    deleteMacMessage: '确定要删除该 MAC 地址吗？',
+    applyChangesTitle: '应用 MAC 过滤设置',
+    applyChangesMessage: '启用 MAC 过滤将禁用 WPS，是否继续？'
   },
   wirelessExtender: {
     title: '无线扩展器',

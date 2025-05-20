@@ -23,6 +23,7 @@ export default {
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '詳細設定',
+    serviceControl: 'サービス制御',
     ddns: 'DDNS',
     device: 'デバイス管理',
     diagnostics: '診断ツール',
@@ -226,7 +227,9 @@ export default {
     pinCode: 'PINコード',
     pinCodeOfClient: 'クライアントデバイスのPINコード',
     noPublicKeys: '公開鍵が追加されていません',
-    extender: '中継機'
+    extender: '中継機',
+    enableWpsConfirm: 'WPS を有効化',
+    enableWpsMessage: 'WPS を有効にすると MAC フィルターが無効になります。続行してもよろしいですか？'
   },
   guest: {
     title: 'ゲストアクセス',
@@ -266,7 +269,13 @@ export default {
     noMacAddresses: '追加された MAC アドレスはありません',
     emptyMacError: 'MAC アドレスを入力してください',
     invalidMacFormat: '無効な MAC アドレス形式',
-    duplicateMacError: 'この MAC アドレスは既に存在します'
+    duplicateMacError: 'この MAC アドレスは既に存在します',
+    changeModeTitle: 'MAC フィルターモードを変更',
+    changeModeMessage: 'MAC フィルターを有効にすると WPS が無効になります。続行しますか？',
+    deleteMacTitle: 'MAC アドレス削除',
+    deleteMacMessage: 'この MAC アドレスを削除してもよろしいですか？',
+    applyChangesTitle: 'MAC フィルター設定を適用',
+    applyChangesMessage: 'MAC フィルターを有効にすると WPS が無効になります。続行しますか？'
   },
   wirelessExtender: {
     title: 'ワイヤレスエクステンダー',

@@ -5,19 +5,24 @@ import { getWlanWps, updateWlanWps } from '../../../services/api/wireless';
 import type { WlanWpsResponse } from '../../../types/wireless';
 import WpsVapInfo from './wps/WpsVapInfo.vue';
 import WpsActions from './wps/WpsActions.vue';
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 
 const { t } = useI18n();
 const wpsData = ref<WlanWpsResponse | null>(null);
+const tempWpsEnabled = ref<number>(0);
 const loading = ref(false);
 const pairingInProgress = ref(false);
 const pairingResult = ref<"Success" | "NotSuccess" | null>(null);
 const pollingInterval = ref<number | null>(null);
+const showConfirmDialog = ref(false);
+const showSuccess = ref(false);
 
 const fetchWpsConfig = async () => {
   loading.value = true;
   try {
     const data = await getWlanWps();
     wpsData.value = data;
+    tempWpsEnabled.value = data.WlanWps.Enable;
     
     // Check pairing result status
     if (data.WlanWps.PairingResult === "PairingInprogress") {
@@ -76,21 +81,52 @@ const startPolling = () => {
   }, 3000);
 };
 
-const handleEnableToggle = async (enabled: boolean) => {
+const handleEnableToggle = (enabled: boolean) => {
+  tempWpsEnabled.value = enabled ? 1 : 0;
+};
+
+const handleApply = () => {
+  // If enabling WPS, show confirmation dialog
+  if (tempWpsEnabled.value === 1 && wpsData.value?.WlanWps.Enable === 0) {
+    showConfirmDialog.value = true;
+  } else {
+    applyWpsConfig();
+  }
+};
+
+const applyWpsConfig = async () => {
+  loading.value = true;
   try {
     await updateWlanWps({
       WlanWps: {
-        Enable: enabled ? 1 : 0
+        Enable: tempWpsEnabled.value
       }
     });
     await fetchWpsConfig();
+    showSuccessMessage();
   } catch (error) {
     console.error('Error updating WPS enable state:', error);
+  } finally {
+    loading.value = false;
+    showConfirmDialog.value = false;
+  }
+};
+
+const handleCancel = () => {
+  if (wpsData.value) {
+    tempWpsEnabled.value = wpsData.value.WlanWps.Enable;
   }
 };
 
 const handlePairingComplete = () => {
   pairingResult.value = null;
+};
+
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
 };
 
 // Clean up interval when component is unmounted
@@ -112,12 +148,21 @@ onMounted(fetchWpsConfig);
         <label class="switch">
           <input
             type="checkbox"
-            :checked="wpsData?.WlanWps.Enable === 1"
+            :checked="tempWpsEnabled === 1"
             @change="handleEnableToggle(($event.target as HTMLInputElement).checked)"
           >
           <span class="slider"></span>
         </label>
       </div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" class="btn btn-secondary" @click="handleCancel">
+        {{ t('common.cancel') }}
+      </button>
+      <button type="button" class="btn btn-primary" @click="handleApply" :disabled="loading">
+        {{ t('common.apply') }}
+      </button>
     </div>
 
     <template v-if="wpsData?.WlanWps.Enable === 1">
@@ -157,6 +202,20 @@ onMounted(fetchWpsConfig);
         </button>
       </div>
     </div>
+
+    <!-- Success Message -->
+    <div v-if="showSuccess" class="success-message">
+      {{ t('common.apply') }} successful
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <ConfirmationDialog
+      :is-open="showConfirmDialog"
+      :title="t('wireless.enableWpsConfirm')"
+      :message="t('wireless.enableWpsMessage')"
+      @confirm="applyWpsConfig"
+      @cancel="showConfirmDialog = false"
+    />
   </div>
 </template>
 
@@ -167,6 +226,13 @@ onMounted(fetchWpsConfig);
 }
 
 .wps-enable {
+  margin-bottom: 1.5rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -279,6 +345,25 @@ input:checked + .slider:before {
   font-size: 3rem;
 }
 
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -287,6 +372,14 @@ input:checked + .slider:before {
 @media (max-width: 768px) {
   .wireless-wps-config {
     padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
   }
 }
 </style>

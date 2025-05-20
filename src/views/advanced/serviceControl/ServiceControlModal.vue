@@ -86,7 +86,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
   <div class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>{{ editingRule.Service ? 'Edit Rule' : 'Add Rule' }}</h3>
+        <h3>{{ editingRule.Service ? t('serviceControl.editRule') : t('serviceControl.addRule') }}</h3>
         <button class="close-button" @click="$emit('cancel')">&times;</button>
       </div>
       
@@ -95,7 +95,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- Enable/Disable Toggle -->
           <div class="form-group">
             <div class="switch-label">
-              <span>Enable</span>
+              <span>{{ t('common.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
@@ -108,7 +108,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Predefined Service Selection -->
           <div class="form-group">
-            <label>Predefined Service</label>
+            <label>{{ t('serviceControl.serviceType') }}</label>
             <select v-model="selectedPredefinedService">
               <option value="">Custom Service</option>
               <option v-for="service in options.Services" :key="service.value" :value="service.value">
@@ -119,7 +119,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Service Name -->
           <div class="form-group">
-            <label>Service Name</label>
+            <label>{{ t('serviceControl.serviceType') }}</label>
             <input 
               type="text" 
               v-model="editingRule.Service" 
@@ -130,7 +130,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Protocol -->
           <div class="form-group">
-            <label>Protocol</label>
+            <label>{{ t('serviceControl.protocol') }}</label>
             <select v-model="editingRule.Protocol" required>
               <option v-for="protocol in options.Protocols" :key="protocol.value" :value="protocol.value">
                 {{ protocol.label }}
@@ -140,7 +140,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Destination Port (not needed for ICMP) -->
           <div class="form-group" v-if="!isICMPProtocol(editingRule.Protocol)">
-            <label>Destination Port</label>
+            <label>{{ t('serviceControl.serviceType') }}</label>
             <input 
               type="text" 
               v-model="editingRule.DestPort" 
@@ -151,7 +151,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Interface Selection -->
           <div class="form-group">
-            <label>Access Direction</label>
+            <label>{{ t('serviceControl.accessDirection') }}</label>
             <select v-model="editingRule.Interface" required>
               <option v-for="iface in options.Interfaces" :key="iface.value" :value="iface.value">
                 {{ iface.label }}
@@ -161,7 +161,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- IP Version -->
           <div class="form-group">
-            <label>IP Protocol Type</label>
+            <label>{{ t('serviceControl.ipRange') }}</label>
             <select v-model="editingRule.IPVersion" required>
               <option :value="-1">Both IPv4 & IPv6</option>
               <option v-for="ipVersion in options.IPVersions" :key="ipVersion.value" :value="Number(ipVersion.value)">
@@ -207,7 +207,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Action Selection -->
           <div class="form-group">
-            <label>Action</label>
+            <label>{{ t('serviceControl.action') }}</label>
             <select v-model="editingRule.Action" required>
               <option value="Accept">Accept</option>
               <option value="Drop">Drop</option>
@@ -217,10 +217,10 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- Form Buttons -->
           <div class="button-group">
             <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
-              Cancel
+              {{ t('common.cancel') }}
             </button>
             <button type="submit" class="btn btn-primary">
-              Confirm
+              {{ t('common.confirm') }}
             </button>
           </div>
         </form>
