@@ -623,6 +623,8 @@ export default {
     edit: '編集',
     delete: '削除',
     enable: '有効',
-    loading: '読み込み中...'
+    loading: '読み込み中...',
+    yes: 'はい', 
+    no: 'いいえ'
   }
 };

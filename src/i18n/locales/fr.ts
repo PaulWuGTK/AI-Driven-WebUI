@@ -623,6 +623,8 @@ export default {
     edit: 'Modifier',
     delete: 'Supprimer',
     enable: 'Activer',
-    loading: 'Chargement...'
+    loading: 'Chargement...',
+    yes: 'Oui',
+    no: 'Non'
   }
 };

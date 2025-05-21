@@ -626,7 +626,9 @@ const translations: Translations = {
     edit: 'Edit',
     delete: 'Delete',
     enable: 'Enable',
-    loading: 'Loading...'
+    loading: 'Loading...',
+    yes: 'Yes',
+    no: 'No'
   }
 };
 

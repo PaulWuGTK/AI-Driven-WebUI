@@ -623,6 +623,8 @@ export default {
     edit: '編輯',
     delete: '刪除',
     enable: '啟用',
-    loading: '載入中...'
+    loading: '載入中...',
+    yes: '是', 
+    no: '否'
   }
 };
