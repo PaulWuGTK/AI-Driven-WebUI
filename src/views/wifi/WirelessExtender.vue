@@ -124,7 +124,7 @@ const handleScan = async () => {
   error.value = null;
   try {
     const response = await scanNeighborAPs();
-    scanResults.value = response.Extender;
+    scanResults.value = response.ExtenderScan;
   } catch (err) {
     console.error('Error scanning for neighbor APs:', err);
     error.value = 'Failed to scan for neighbor APs';

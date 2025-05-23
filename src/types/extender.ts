@@ -34,7 +34,7 @@ export interface ExtenderResponse {
 }
 
 export interface ExtenderScanResponse {
-  Extender: ExtenderNeighbor[];
+  ExtenderScan: ExtenderNeighbor[];
 }
 
 export interface ExtenderUpdateRequest {

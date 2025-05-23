@@ -36,7 +36,7 @@ const mockExtenderData: ExtenderResponse = {
 };
 
 const mockScanResults: ExtenderScanResponse = {
-  Extender: [
+  ExtenderScan: [
     {
       SSID: "GJ1900_5G",
       Channel: 48,
