@@ -625,6 +625,7 @@ export default {
     enable: '启用',
     loading: '加载中...',
     yes: '是', 
-    no: '否'
+    no: '否',
+    confirm: '确认'
   }
 };

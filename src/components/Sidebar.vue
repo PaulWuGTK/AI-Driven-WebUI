@@ -64,7 +64,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Wireless Extender': { gateway: true, extender: true }
   },
   'Advanced': {
-    'Service Control': { gateway: false, extender: false },
+    'Service Control': { gateway: true, extender: false },
     'DMZ': { gateway: true, extender: false },
     'DDNS': { gateway: true, extender: false }
   },

@@ -624,6 +624,7 @@ export default {
     enable: '활성화',
     loading: '로딩 중...',
     yes: '예', 
-    no: '아니요'
+    no: '아니요',
+    confirm: '확인'
   }
 };

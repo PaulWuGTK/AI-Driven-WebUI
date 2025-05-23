@@ -625,6 +625,7 @@ export default {
     enable: 'Activer',
     loading: 'Chargement...',
     yes: 'Oui',
-    no: 'Non'
+    no: 'Non',
+    confirm: 'Confirmer'
   }
 };

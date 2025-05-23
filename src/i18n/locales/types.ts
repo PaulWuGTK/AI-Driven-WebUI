@@ -628,5 +628,6 @@ export interface Translations {
     loading: string;
     yes: string;
     no: string;
+    confirm: string;
   },
 }

@@ -628,7 +628,8 @@ const translations: Translations = {
     enable: 'Enable',
     loading: 'Loading...',
     yes: 'Yes',
-    no: 'No'
+    no: 'No',
+    confirm: 'Confirm'
   }
 };
 

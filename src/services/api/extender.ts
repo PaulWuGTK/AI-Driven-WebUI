@@ -99,13 +99,13 @@ export const scanNeighborAPs = async (): Promise<ExtenderScanResponse> => {
     return mockScanResults;
   }
 
-  const response = await fetch('/API/info?list=Extender', {
+  const response = await fetch('/API/info?list=ExtenderScan', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      Extender: {
+      ExtenderScan: {
         Action: "trigger_scan"
       }
     }),

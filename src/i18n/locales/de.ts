@@ -625,6 +625,7 @@ export default {
     enable: 'Aktivieren',
     loading: 'Lädt...',
     yes: 'Ja',  
-    no: 'Nein'
+    no: 'Nein',
+    confirm: 'Bestätigen'
   }
 };

@@ -625,6 +625,7 @@ export default {
     enable: '有効',
     loading: '読み込み中...',
     yes: 'はい', 
-    no: 'いいえ'
+    no: 'いいえ',
+    confirm: '確認'
   }
 };
