@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { ServiceControlRule, ServiceControlResponse } from '../../types/serviceControl';
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
 import ServiceControlModal from './serviceControl/ServiceControlModal.vue';
+import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
 
 const { t } = useI18n();
 const serviceControlData = ref<ServiceControlResponse | null>(null);
@@ -11,7 +12,10 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const showModal = ref(false);
 const editingRule = ref<ServiceControlRule | null>(null);
+const originalServiceName = ref<string | null>(null);
 const showSuccess = ref(false);
+const showConfirmDialog = ref(false);
+const ruleToDelete = ref<string | null>(null);
 
 // Computed properties for display
 const protocolMap = computed(() => {
@@ -70,26 +74,32 @@ const handleAddRule = () => {
     IPVersion: 4
   };
   
+  originalServiceName.value = null;
   showModal.value = true;
 };
 
 // Handle editing an existing rule
 const handleEditRule = (rule: ServiceControlRule) => {
   editingRule.value = { ...rule };
+  originalServiceName.value = rule.Service;
   showModal.value = true;
 };
 
 // Handle deleting a rule
 const handleDeleteRule = async (service: string) => {
-  if (!serviceControlData.value) return;
-  
-  if (!confirm(t('serviceControl.confirmDelete'))) return;
-  
-  const updatedRules = serviceControlData.value.AdvancedServiceControl.Rules.filter(
-    rule => rule.Service !== service
-  );
+  ruleToDelete.value = service;
+  showConfirmDialog.value = true;
+};
+
+// Confirm delete rule
+const confirmDeleteRule = async () => {
+  if (!ruleToDelete.value || !serviceControlData.value) return;
   
   try {
+    const updatedRules = serviceControlData.value.AdvancedServiceControl.Rules.filter(
+      rule => rule.Service !== ruleToDelete.value
+    );
+    
     await updateServiceControl({
       AdvancedServiceControl: {
         Rules: updatedRules
@@ -101,6 +111,9 @@ const handleDeleteRule = async (service: string) => {
   } catch (err) {
     console.error('Error deleting rule:', err);
     error.value = 'Failed to delete rule';
+  } finally {
+    showConfirmDialog.value = false;
+    ruleToDelete.value = null;
   }
 };
 
@@ -108,18 +121,19 @@ const handleDeleteRule = async (service: string) => {
 const handleSaveRule = async (rule: ServiceControlRule) => {
   if (!serviceControlData.value) return;
   
-  const isNewRule = !serviceControlData.value.AdvancedServiceControl.Rules.some(
-    r => r.Service === rule.Service
-  );
+  const isNewRule = !originalServiceName.value;
   
   let updatedRules: ServiceControlRule[];
   
   if (isNewRule) {
+    // Adding a new rule
     updatedRules = [...serviceControlData.value.AdvancedServiceControl.Rules, rule];
   } else {
-    updatedRules = serviceControlData.value.AdvancedServiceControl.Rules.map(
-      r => r.Service === rule.Service ? rule : r
+    // Editing an existing rule
+    updatedRules = serviceControlData.value.AdvancedServiceControl.Rules.filter(
+      r => r.Service !== originalServiceName.value
     );
+    updatedRules.push(rule);
   }
   
   try {
@@ -132,6 +146,7 @@ const handleSaveRule = async (rule: ServiceControlRule) => {
     await fetchServiceControl();
     showModal.value = false;
     editingRule.value = null;
+    originalServiceName.value = null;
     showSuccessMessage();
   } catch (err) {
     console.error('Error saving rule:', err);
@@ -287,6 +302,15 @@ onMounted(fetchServiceControl);
         :options="serviceControlData.AdvancedServiceControl.ACLAvailableOptions"
         @save="handleSaveRule"
         @cancel="showModal = false"
+      />
+
+      <!-- Confirmation Dialog -->
+      <ConfirmationDialog
+        :is-open="showConfirmDialog"
+        :title="t('serviceControl.confirmDelete')"
+        :message="t('serviceControl.confirmDelete')"
+        @confirm="confirmDeleteRule"
+        @cancel="showConfirmDialog = false"
       />
     </div>
   </div>
