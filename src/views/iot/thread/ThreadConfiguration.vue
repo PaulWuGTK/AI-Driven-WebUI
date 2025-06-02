@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { 
   ThreadConfigurationResponse, 
@@ -33,8 +33,8 @@ const defaultDatasetConfig: ThreadDatasetConfig = {
   'Active Timestamp': 1,
   NetworkName: '',
   NetworkKey: '',
-  Channel: 15,
-  ChannelMask: 134215680,
+  Channel: 1,
+  ChannelMask: 0,
   PanId: '',
   ExtPanId: '',
   MeshLocalPrefix: '',
@@ -93,41 +93,26 @@ const fetchThreadConfiguration = async () => {
 };
 
 // Generate a random dataset
-const generateDataset = (type: 'Active' | 'Pending') => {
-  const dataset = type === 'Active' ? activeDataset.value : pendingDataset.value;
-  if (!dataset) return;
-
-  // Generate random values
-  const randomHex = (length: number) => {
-    return Array.from({ length }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('').toUpperCase();
-  };
-
-  // Update dataset with random values
-  if (type === 'Active') {
-    activeDataset.value = {
-      ...dataset,
-      'Active Timestamp': Math.floor(Date.now() / 1000),
-      NetworkName: `OpenThread-${randomHex(4)}`,
-      NetworkKey: randomHex(32),
-      Channel: Math.floor(Math.random() * 16) + 11, // Channels 11-26
-      PanId: randomHex(4),
-      ExtPanId: randomHex(16),
-      PSKc: randomHex(32)
+const generateDataset = async (type: 'Active' | 'Pending') => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const request: ThreadConfigurationUpdateRequest = {
+      ThreadConfiguration: {
+        Enable: threadEnabled.value,
+        Type: type,
+        Mode: 'Auto'
+      }
     };
-  } else {
-    pendingDataset.value = {
-      ...dataset,
-      'Pending Timestamp': Math.floor(Date.now() / 1000),
-      'Active Timestamp': Math.floor(Date.now() / 1000) + 60,
-      NetworkName: `OpenThread-${randomHex(4)}`,
-      NetworkKey: randomHex(32),
-      Channel: Math.floor(Math.random() * 16) + 11, // Channels 11-26
-      PanId: randomHex(4),
-      ExtPanId: randomHex(16),
-      PSKc: randomHex(32)
-    };
+    
+    await updateThreadConfiguration(request);
+    await fetchThreadConfiguration();
+    showSuccessNotification(`${type} dataset generated successfully`);
+  } catch (err) {
+    console.error(`Error generating ${type} dataset:`, err);
+    error.value = `Failed to generate ${type} dataset`;
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -142,7 +127,7 @@ const updateActiveDataset = async () => {
       ThreadConfiguration: {
         Enable: threadEnabled.value,
         Type: 'Active',
-        Mode: activeMode.value,
+        Mode: 'Manual',
         Dataset: activeDataset.value
       }
     };
@@ -169,7 +154,7 @@ const updatePendingDataset = async () => {
       ThreadConfiguration: {
         Enable: threadEnabled.value,
         Type: 'Pending',
-        Mode: pendingMode.value,
+        Mode: 'Manual',
         Dataset: pendingDataset.value
       }
     };
@@ -192,10 +177,7 @@ const updateThreadEnabled = async () => {
   try {
     const request: ThreadConfigurationUpdateRequest = {
       ThreadConfiguration: {
-        Enable: tempThreadEnabled.value,
-        Type: 'Active',
-        Mode: 'Auto',
-        Dataset: activeDataset.value || defaultDatasetConfig
+        Enable: tempThreadEnabled.value
       }
     };
     
@@ -522,7 +504,7 @@ onMounted(() => {
             </div>
 
             <div class="mode-section">
-              <div class="mode-label">{{ t('common.auto') }}</div>
+              <div class="mode-label">{{ t('common.manual') }}</div>
             </div>
 
             <div class="button-group">

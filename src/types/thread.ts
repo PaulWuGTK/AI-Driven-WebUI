@@ -117,9 +117,9 @@ export interface ThreadConfigurationResponse {
 export interface ThreadConfigurationUpdateRequest {
   ThreadConfiguration: {
     Enable: boolean;
-    Type: 'Active' | 'Pending';
-    Mode: 'Auto' | 'Manual';
-    Dataset: ThreadDatasetConfig;
+    Type?: 'Active' | 'Pending';
+    Mode?: 'Auto' | 'Manual';
+    Dataset?: ThreadDatasetConfig;
   };
 }
 
