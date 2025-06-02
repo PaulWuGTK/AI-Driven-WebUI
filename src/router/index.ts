@@ -157,6 +157,16 @@ const router = createRouter({
       path: '/application/xperience-control',
       component: () => import('../views/application/XperienceControl.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/iot/thread',
+      component: () => import('../views/iot/thread/ThreadLayout.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/iot/matter',
+      component: () => import('../views/iot/matter/MatterDashboard.vue'),
+      beforeEnter: requireAuth
     }
   ]
 });

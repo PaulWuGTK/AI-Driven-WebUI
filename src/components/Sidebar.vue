@@ -79,6 +79,10 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
   },
   'Application': {
     'XperienceControl': { gateway: false, extender: false, requiresStreambow: true }
+  },
+  'Internet of Things': {
+    'Thread': { gateway: true, extender: false },
+    'Matter': { gateway: true, extender: false }
   }
 };
 
@@ -155,6 +159,15 @@ const baseMenuItems: MenuItem[] = [
     translationKey: 'menu.application',
     subItems: [
       { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
+    ]
+  },
+  {
+    name: 'Internet of Things',
+    icon: wifiIcon, // Reusing WiFi icon for now
+    translationKey: 'menu.iot',
+    subItems: [
+      { name: 'Thread', path: '/iot/thread', translationKey: 'menu.thread' },
+      { name: 'Matter', path: '/iot/matter', translationKey: 'menu.matter' }
     ]
   }
 ];
