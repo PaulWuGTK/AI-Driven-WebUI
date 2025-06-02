@@ -18,6 +18,7 @@ const successMessage = ref('');
 
 // UI state
 const threadEnabled = ref(false);
+const tempThreadEnabled = ref(false); // Temporary state for enable toggle
 const activeDataset = ref<ThreadDatasetConfig | null>(null);
 const pendingDataset = ref<ThreadDatasetConfig | null>(null);
 const showActiveNetworkKey = ref(false);
@@ -27,6 +28,38 @@ const showPendingPSKc = ref(false);
 const activeMode = ref<'Auto' | 'Manual'>('Auto');
 const pendingMode = ref<'Auto' | 'Manual'>('Manual');
 
+// Default dataset configuration
+const defaultDatasetConfig: ThreadDatasetConfig = {
+  'Active Timestamp': 1,
+  NetworkName: '',
+  NetworkKey: '',
+  Channel: 15,
+  ChannelMask: 134215680,
+  PanId: '',
+  ExtPanId: '',
+  MeshLocalPrefix: '',
+  PSKc: '',
+  SecurityPolicy: {
+    AutonomousEnrollment: false,
+    CommercialCommissioning: false,
+    ExternalCommissioning: false,
+    NativeCommissioning: false,
+    NetworkKeyProvisioning: false,
+    NonCcmRouters: false,
+    ObtainNetworkKey: false,
+    RotationTime: 0,
+    Routers: false,
+    TobleLink: false
+  }
+};
+
+const defaultPendingDatasetConfig: ThreadDatasetConfig = {
+  ...defaultDatasetConfig,
+  'Pending Timestamp': 1,
+  Delay: 30000,
+  'Active Timestamp': 2,
+};
+
 // Fetch thread configuration
 const fetchThreadConfiguration = async () => {
   loading.value = true;
@@ -35,8 +68,22 @@ const fetchThreadConfiguration = async () => {
     const response = await getThreadConfiguration();
     threadConfig.value = response;
     threadEnabled.value = response.ThreadConfiguration.Enable;
-    activeDataset.value = { ...response.ThreadConfiguration.ActiveDataset };
-    pendingDataset.value = { ...response.ThreadConfiguration.PendingDataset };
+    tempThreadEnabled.value = response.ThreadConfiguration.Enable; // Initialize temp state
+    
+    // Handle case where ActiveDataset or PendingDataset are empty arrays
+    if (Array.isArray(response.ThreadConfiguration.ActiveDataset) && 
+        response.ThreadConfiguration.ActiveDataset.length === 0) {
+      activeDataset.value = { ...defaultDatasetConfig };
+    } else {
+      activeDataset.value = { ...response.ThreadConfiguration.ActiveDataset };
+    }
+    
+    if (Array.isArray(response.ThreadConfiguration.PendingDataset) && 
+        response.ThreadConfiguration.PendingDataset.length === 0) {
+      pendingDataset.value = { ...defaultPendingDatasetConfig };
+    } else {
+      pendingDataset.value = { ...response.ThreadConfiguration.PendingDataset };
+    }
   } catch (err) {
     console.error('Error fetching Thread configuration:', err);
     error.value = 'Failed to fetch Thread configuration';
@@ -145,37 +192,16 @@ const updateThreadEnabled = async () => {
   try {
     const request: ThreadConfigurationUpdateRequest = {
       ThreadConfiguration: {
-        Enable: threadEnabled.value,
+        Enable: tempThreadEnabled.value,
         Type: 'Active',
         Mode: 'Auto',
-        Dataset: activeDataset.value || threadConfig.value?.ThreadConfiguration.ActiveDataset || {
-          NetworkName: '',
-          NetworkKey: '',
-          Channel: 15,
-          ChannelMask: 0,
-          PanId: '',
-          ExtPanId: '',
-          MeshLocalPrefix: '',
-          PSKc: '',
-          SecurityPolicy: {
-            AutonomousEnrollment: false,
-            CommercialCommissioning: false,
-            ExternalCommissioning: false,
-            NativeCommissioning: false,
-            NetworkKeyProvisioning: false,
-            NonCcmRouters: false,
-            ObtainNetworkKey: false,
-            RotationTime: 0,
-            Routers: false,
-            TobleLink: false
-          }
-        }
+        Dataset: activeDataset.value || defaultDatasetConfig
       }
     };
     
     await updateThreadConfiguration(request);
     await fetchThreadConfiguration();
-    showSuccessNotification(`Thread ${threadEnabled.value ? 'enabled' : 'disabled'} successfully`);
+    showSuccessNotification(`Thread ${tempThreadEnabled.value ? 'enabled' : 'disabled'} successfully`);
   } catch (err) {
     console.error('Error updating Thread enabled state:', err);
     error.value = 'Failed to update Thread enabled state';
@@ -184,10 +210,9 @@ const updateThreadEnabled = async () => {
   }
 };
 
-// Handle toggle change directly
-const handleEnableToggle = (event: Event) => {
-  threadEnabled.value = (event.target as HTMLInputElement).checked;
-  updateThreadEnabled();
+// Cancel enable/disable changes
+const cancelEnableChanges = () => {
+  tempThreadEnabled.value = threadEnabled.value;
 };
 
 // Show success notification
@@ -243,12 +268,20 @@ onMounted(() => {
               <label class="switch">
                 <input
                   type="checkbox"
-                  :checked="threadEnabled"
-                  @change="handleEnableToggle"
+                  v-model="tempThreadEnabled"
                 >
                 <span class="slider"></span>
               </label>
             </div>
+          </div>
+          
+          <div class="button-group">
+            <button type="button" class="btn btn-secondary" @click="cancelEnableChanges">
+              {{ t('common.cancel') }}
+            </button>
+            <button type="button" class="btn btn-primary" @click="updateThreadEnabled">
+              {{ t('common.apply') }}
+            </button>
           </div>
         </div>
       </div>

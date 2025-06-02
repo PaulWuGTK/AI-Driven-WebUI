@@ -24,7 +24,8 @@ import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
 import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
 import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
-import xperienceIcon from '/src/assets/icons/icon-1/menu-xperience.svg';
+import applicationIcon from '/src/assets/icons/icon-1/menu-application.svg';
+import iotIcon from '/src/assets/icons/icon-1/menu-iot.svg';
 
 // Define types for menu items
 interface SubMenuItem {
@@ -155,7 +156,7 @@ const baseMenuItems: MenuItem[] = [
   },
   {
     name: 'Application',
-    icon: xperienceIcon,
+    icon: applicationIcon,
     translationKey: 'menu.application',
     subItems: [
       { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
@@ -163,7 +164,7 @@ const baseMenuItems: MenuItem[] = [
   },
   {
     name: 'Internet of Things',
-    icon: wifiIcon, // Reusing WiFi icon for now
+    icon: iotIcon, // Reusing WiFi icon for now
     translationKey: 'menu.iot',
     subItems: [
       { name: 'Thread', path: '/iot/thread', translationKey: 'menu.thread' },
