@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadTopologyResponse, ThreadNode } from '../../../types/thread';
 import { getThreadTopology } from '../../../services/api/thread';
@@ -67,9 +67,9 @@ const fetchTopologyData = async () => {
   error.value = null;
   try {
     topologyData.value = await getThreadTopology();
-    if (svgContainer.value) {
-      renderTopology();
-    }
+    // 等待下一個 tick，確保 svgContainer 已經有正確尺寸
+    await nextTick();
+    renderTopology();
   } catch (err) {
     console.error('Error fetching Thread topology:', err);
     error.value = 'Failed to fetch Thread topology';
@@ -173,7 +173,7 @@ const renderTopology = () => {
       id,
       source,
       target,
-      type: link.Type
+      type: link.type
     });
   });
 
@@ -191,20 +191,8 @@ const renderTopology = () => {
     .enter()
     .append('line')
     .attr('class', 'link')
-    .style('stroke', '#A9CCE3')
+    .style('stroke', d => d.type === 'RouterLink' ? '#0070BB' : '#FFE082')
     .style('stroke-width', 2);
-
-  // Add link labels
-  const linkText = g.selectAll('.link-text')
-    .data(links)
-    .enter()
-    .append('text')
-    .attr('class', 'link-text')
-    .attr('dy', -5)
-    .attr('text-anchor', 'middle')
-    .text(d => d.type === 'RouterLink' ? 'RouterLink' : 'ChildLink')
-    .style('fill', '#E74C3C')
-    .style('font-size', '12px');
 
   // Create nodes
   const node = g.selectAll<SVGGElement, D3Node>('.node')
@@ -231,15 +219,6 @@ const renderTopology = () => {
   node.append('title')
     .text(d => `${d.id}\nRole: ${d.role}\nRLOC16: ${d.rloc16}`);
 
-  // Add node labels
-  node.append('text')
-    .attr('dy', 5)
-    .attr('text-anchor', 'middle')
-    .text(d => d.role)
-    .style('fill', '#333')
-    .style('font-size', '12px')
-    .style('pointer-events', 'none');
-
   // Update positions on tick
   simulation.on('tick', () => {
     link
@@ -247,10 +226,6 @@ const renderTopology = () => {
       .attr('y1', d => (d.source as D3Node).y!)
       .attr('x2', d => (d.target as D3Node).x!)
       .attr('y2', d => (d.target as D3Node).y!);
-
-    linkText
-      .attr('x', d => ((d.source as D3Node).x! + (d.target as D3Node).x!) / 2)
-      .attr('y', d => ((d.source as D3Node).y! + (d.target as D3Node).y!) / 2);
 
     node
       .attr('transform', d => `translate(${d.x},${d.y})`);
@@ -274,6 +249,13 @@ const renderTopology = () => {
     d.fy = null;
   }
 };
+
+// Watch for changes in topologyData
+watch(() => topologyData.value, () => {
+  if (topologyData.value) {
+    renderTopology();
+  }
+}, { deep: true });
 
 onMounted(() => {
   fetchTopologyData();
@@ -428,7 +410,7 @@ onUnmounted(() => {
 }
 
 .node-details {
-  width: 300px;
+  width: 400px;
   background-color: #f8f9fa;
   border-left: 1px solid var(--border-color);
   overflow-y: auto;
@@ -468,11 +450,12 @@ onUnmounted(() => {
 .info-label {
   font-weight: 500;
   color: var(--text-primary);
+  display: inline-block;
+  width: 120px;
 }
 
 .info-value {
-  display: block;
-  margin-top: 0.25rem;
+  display: inline-block;
   word-break: break-all;
 }
 

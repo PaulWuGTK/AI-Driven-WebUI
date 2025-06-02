@@ -167,7 +167,7 @@ export interface ThreadLinkQuality {
 
 export interface ThreadLink {
   Quality: ThreadLinkQuality;
-  Type: string;
+  type: string;
 }
 
 export interface ThreadNodeMode {

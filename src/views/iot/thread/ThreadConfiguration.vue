@@ -275,9 +275,9 @@ onMounted(() => {
           
           <div class="card-content" v-if="activeDataset">
             <div class="dataset-header">
-              <button class="btn btn-secondary" @click="generateDataset('Active')">
+              <button class="btn btn-secondary generate-btn" @click="generateDataset('Active')">
                 <span class="material-icons">autorenew</span>
-                {{ t('thread.generateDataset') }}
+                <span>{{ t('thread.generateDataset') }}</span>
               </button>
             </div>
 
@@ -503,10 +503,6 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="mode-section">
-              <div class="mode-label">{{ t('common.manual') }}</div>
-            </div>
-
             <div class="button-group">
               <button type="button" class="btn btn-secondary" @click="fetchThreadConfiguration">
                 {{ t('common.cancel') }}
@@ -524,9 +520,9 @@ onMounted(() => {
           
           <div class="card-content" v-if="pendingDataset">
             <div class="dataset-header">
-              <button class="btn btn-secondary" @click="generateDataset('Pending')">
+              <button class="btn btn-secondary generate-btn" @click="generateDataset('Pending')">
                 <span class="material-icons">autorenew</span>
-                {{ t('thread.generateDataset') }}
+                <span>{{ t('thread.generateDataset') }}</span>
               </button>
             </div>
 
@@ -770,10 +766,6 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="mode-section">
-              <div class="mode-label">{{ t('common.manual') }}</div>
-            </div>
-
             <div class="button-group">
               <button type="button" class="btn btn-secondary" @click="fetchThreadConfiguration">
                 {{ t('common.cancel') }}
@@ -880,6 +872,16 @@ input:checked + .slider:before {
   margin-bottom: 1.5rem;
 }
 
+.generate-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.generate-btn .material-icons {
+  font-size: 20px;
+}
+
 .security-policy-section {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
@@ -906,19 +908,6 @@ input:checked + .slider:before {
 
 .form-check input[type="checkbox"] {
   width: auto;
-}
-
-.mode-section {
-  margin-bottom: 1.5rem;
-  padding: 0.5rem;
-  background-color: var(--bg-secondary);
-  border-radius: 4px;
-  text-align: center;
-}
-
-.mode-label {
-  font-weight: 500;
-  color: var(--text-primary);
 }
 
 .button-group {

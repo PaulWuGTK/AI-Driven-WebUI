@@ -163,7 +163,7 @@ const mockThreadTopology: ThreadTopologyResponse = {
           LinkQualityOut: 3,
           RouteCost: 1
         },
-        Type: 'RouterLink'
+        type: 'RouterLink'
       }
     },
     Nodes: {
