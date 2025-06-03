@@ -140,7 +140,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
           <!-- Destination Port (not needed for ICMP) -->
           <div class="form-group" v-if="!isICMPProtocol(editingRule.Protocol)">
-            <label>{{ t('serviceControl.serviceType') }}</label>
+            <label>{{ t('ssh.port') }}</label>
             <input 
               type="text" 
               v-model="editingRule.DestPort" 

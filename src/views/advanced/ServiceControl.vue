@@ -200,6 +200,7 @@ onMounted(fetchServiceControl);
               <thead>
                 <tr>
                   <th>{{ t('serviceControl.serviceType') }}</th>
+                  <th>{{ t('ssh.port') }}</th>
                   <th>{{ t('serviceControl.accessDirection') }}</th>
                   <th>{{ t('serviceControl.protocol') }}</th>
                   <th>{{ t('serviceControl.ipRange') }}</th>
@@ -210,6 +211,7 @@ onMounted(fetchServiceControl);
               <tbody>
                 <tr v-for="rule in serviceControlData.AdvancedServiceControl.Rules" :key="rule.Service">
                   <td>{{ rule.Service }}</td>
+                  <td>{{ rule.DestPort }}</td>
                   <td>{{ interfaceMap[rule.Interface] || rule.Interface }}</td>
                   <td>{{ protocolMap[rule.Protocol] || rule.Protocol }}</td>
                   <td>
@@ -235,7 +237,7 @@ onMounted(fetchServiceControl);
                   </td>
                 </tr>
                 <tr v-if="serviceControlData.AdvancedServiceControl.Rules.length === 0">
-                  <td colspan="6" class="no-data">No rules configured</td>
+                  <td colspan="7" class="no-data">No rules configured</td>
                 </tr>
               </tbody>
             </table>
@@ -253,6 +255,10 @@ onMounted(fetchServiceControl);
               <div class="card-row">
                 <span class="card-label">{{ t('serviceControl.serviceType') }}</span>
                 <span class="card-value">{{ rule.Service }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('ssh.port') }}</span>
+                <span class="card-value">{{ rule.DestPort }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('serviceControl.accessDirection') }}</span>

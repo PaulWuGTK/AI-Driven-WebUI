@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadStatusResponse, ThreadScanResponse, ThreadScanPAN } from '../../../types/thread';
 import { getThreadStatus, scanThreadNetworks } from '../../../services/api/thread';
@@ -239,7 +239,7 @@ onUnmounted(() => {
                 <div class="stats-header">TX</div>
                 <div class="stats-row">
                   <span class="stats-label">{{ t('thread.txBytes') }}</span>
-                  <span class="stats-value">{{ threadStatus.ThreadStatus['Border Router'].MLE.Stats['TX Bytes'] }}</span>
+                  <span class="stats-value">{{ threadStatus.ThreadStatus['Border Router'].MLE.Stats['TX Bytes'] }} KB</span>
                 </div>
                 <div class="stats-row">
                   <span class="stats-label">{{ t('thread.txPackets') }}</span>
@@ -259,7 +259,7 @@ onUnmounted(() => {
                 <div class="stats-header">RX</div>
                 <div class="stats-row">
                   <span class="stats-label">{{ t('thread.rxBytes') }}</span>
-                  <span class="stats-value">{{ threadStatus.ThreadStatus['Border Router'].MLE.Stats['RX Bytes'] }}</span>
+                  <span class="stats-value">{{ threadStatus.ThreadStatus['Border Router'].MLE.Stats['RX Bytes'] }} KB</span>
                 </div>
                 <div class="stats-row">
                   <span class="stats-label">{{ t('thread.rxPackets') }}</span>

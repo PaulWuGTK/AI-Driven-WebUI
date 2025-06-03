@@ -13,6 +13,7 @@ const expandedMenus = ref<string[]>([]); // Changed from initial value to empty 
 const isMobileMenuOpen = ref(false);
 const deviceMode = ref<'Gateway' | 'Extender'>('Gateway');
 const hasStreambow = ref(false);
+const features = ref<Record<string, boolean>>({});
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -197,6 +198,16 @@ const filterMenuItems = () => {
           return hasStreambow.value;
         }
         
+        // Check for feature flags for IoT items
+        if (item.name === 'Internet of Things') {
+          if (subItem.name === 'Thread' && !features.value.thread) {
+            return false;
+          }
+          if (subItem.name === 'Matter' && !features.value.matter) {
+            return false;
+          }
+        }
+        
         return isGateway ? visibility.gateway : visibility.extender;
       });
       
@@ -244,6 +255,9 @@ const fetchSidebarMenu = async () => {
   try {
     const response = await getSidebarMenu();
     deviceMode.value = response.SidebarMenu.mode;
+    
+    // Store features
+    features.value = response.SidebarMenu.features || {};
     
     // Check if Streambow app is active
     hasStreambow.value = response.SidebarMenu.Apps.some(app => {
