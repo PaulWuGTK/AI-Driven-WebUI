@@ -2,18 +2,14 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 
 const router = useRouter();
 const route = useRoute();
 const { t, locale } = useI18n();
 const activeMenu = ref('Dashboard');
 const activeSubItem = ref('');
-const expandedMenus = ref<string[]>([]); // Changed from initial value to empty array
+const expandedMenus = ref<string[]>(['Status']); // Keep Status expanded by default
 const isMobileMenuOpen = ref(false);
-const deviceMode = ref<'Gateway' | 'Extender'>('Gateway');
-const hasStreambow = ref(false);
-const features = ref<Record<string, boolean>>({});
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -21,12 +17,6 @@ const toggleMobileMenu = () => {
 
 import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
 import statusIcon from '/src/assets/icons/icon-1/menu-status.svg';
-import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
-import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
-import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
-import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
-import applicationIcon from '/src/assets/icons/icon-1/menu-application.svg';
-import iotIcon from '/src/assets/icons/icon-1/menu-iot.svg';
 
 // Define types for menu items
 interface SubMenuItem {
@@ -43,53 +33,8 @@ interface MenuItem {
   subItems?: SubMenuItem[];
 }
 
-// Menu visibility configuration based on device mode
-const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean }>> = {
-  'Status': {
-    'WAN': { gateway: true, extender: false },
-    'LAN': { gateway: true, extender: true },
-    'WLAN': { gateway: true, extender: true },
-    'Statistics': { gateway: true, extender: true },
-    'WiFi Neighbor': { gateway: true, extender: false },
-    'Mesh Information': { gateway: true, extender: false },
-    'LCM': { gateway: true, extender: true },
-    'System Stats': { gateway: true, extender: true }
-  },
-  'Basic Setting': {
-    'WAN': { gateway: true, extender: false },
-    'LAN': { gateway: true, extender: true },
-    'Wireless': { gateway: true, extender: false }
-  },
-  'Wi-Fi': {
-    'Guest Access': { gateway: true, extender: false },
-    'MAC Filter': { gateway: true, extender: false },
-    'Wireless Extender': { gateway: true, extender: true }
-  },
-  'Advanced': {
-    'Service Control': { gateway: true, extender: false },
-    'DMZ': { gateway: true, extender: false },
-    'DDNS': { gateway: true, extender: false }
-  },
-  'Management': {
-    'NTP': { gateway: true, extender: false },
-    'SSH': { gateway: true, extender: false },
-    'Diagnostics': { gateway: true, extender: true },
-    'Device Management': { gateway: true, extender: false },
-    'Device Reset': { gateway: true, extender: true },
-    'Backup': { gateway: true, extender: true },
-    'Upgrade Firmware': { gateway: true, extender: true }
-  },
-  'Application': {
-    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true }
-  },
-  'Internet of Things': {
-    'Thread': { gateway: true, extender: false },
-    'Matter': { gateway: true, extender: false }
-  }
-};
-
-// Base menu structure
-const baseMenuItems: MenuItem[] = [
+// Simplified menu structure with only Dashboard and Mesh Information
+const menuItems = ref<MenuItem[]>([
   {
     name: 'Dashboard',
     icon: homeIcon,
@@ -101,128 +46,10 @@ const baseMenuItems: MenuItem[] = [
     icon: statusIcon,
     translationKey: 'menu.status',
     subItems: [
-      { name: 'WAN', path: '/status/wan', translationKey: 'menu.wan' },
-      { name: 'LAN', path: '/status/lan', translationKey: 'menu.lan' },
-      { name: 'WLAN', path: '/status/wlan', translationKey: 'menu.wlan' },
-      { name: 'Statistics', path: '/status/statistics', translationKey: 'menu.statistics' },
-      { name: 'WiFi Neighbor', path: '/status/wifi-neighbor', translationKey: 'menu.wifiNeighbor' },
-      { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' },
-      { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' },
-      { name: 'System Stats', path: '/status/system-stats', translationKey: 'menu.systemStats' }
-    ]
-  },
-  {
-    name: 'Basic Setting',
-    icon: basicIcon,
-    translationKey: 'menu.basicSetting',
-    subItems: [
-      { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
-      { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
-      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
-    ]
-  },
-  {
-    name: 'Wi-Fi',
-    icon: wifiIcon,
-    translationKey: 'menu.wifi',
-    subItems: [
-      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
-      { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
-      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
-    ]
-  },
-  {
-    name: 'Advanced',
-    icon: advancedIcon,
-    translationKey: 'menu.advanced',
-    subItems: [
-      { name: 'Service Control', path: '/advanced/service-control', translationKey: 'menu.serviceControl' },
-      { name: 'DMZ', path: '/advanced/dmz', translationKey: 'menu.dmz' },
-      { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' }
-    ]
-  },
-  { 
-    name: 'Management',
-    icon: managementIcon,
-    translationKey: 'menu.management',
-    subItems: [
-      { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
-      { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' },
-      { name: 'Diagnostics', path: '/management/diagnostics', translationKey: 'menu.diagnostics' },
-      { name: 'Device Management', path: '/management/device', translationKey: 'menu.device' },
-      { name: 'Device Reset', path: '/management/reset', translationKey: 'menu.reset' },
-      { name: 'Backup', path: '/management/backup', translationKey: 'menu.backup' },
-      { name: 'Upgrade Firmware', path: '/upgrade', translationKey: 'menu.firmware' }
-    ]
-  },
-  {
-    name: 'Application',
-    icon: applicationIcon,
-    translationKey: 'menu.application',
-    subItems: [
-      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
-    ]
-  },
-  {
-    name: 'Internet of Things',
-    icon: iotIcon, // Reusing WiFi icon for now
-    translationKey: 'menu.iot',
-    subItems: [
-      { name: 'Thread', path: '/iot/thread', translationKey: 'menu.thread' },
-      { name: 'Matter', path: '/iot/matter', translationKey: 'menu.matter' }
+      { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' }
     ]
   }
-];
-
-// Filter menu items based on device mode and app availability
-const menuItems = ref<MenuItem[]>(baseMenuItems);
-
-const filterMenuItems = () => {
-  const isGateway = deviceMode.value === 'Gateway';
-  
-  menuItems.value = baseMenuItems.map(item => {
-    // Skip filtering for Dashboard
-    if (item.name === 'Dashboard') return item;
-    
-    // Filter subItems based on device mode
-    if (item.subItems) {
-      const filteredSubItems = item.subItems.filter(subItem => {
-        const visibilityCategory = menuVisibility[item.name];
-        if (!visibilityCategory) return true; // If no visibility rule for category, show by default
-        
-        const visibility = visibilityCategory[subItem.name];
-        if (!visibility) return true; // If no visibility rule for item, show by default
-        
-        // Special case for XperienceControl
-        if (visibility.requiresStreambow) {
-          return hasStreambow.value;
-        }
-        
-        // Check for feature flags for IoT items
-        if (item.name === 'Internet of Things') {
-          if (subItem.name === 'Thread' && !features.value.thread) {
-            return false;
-          }
-          if (subItem.name === 'Matter' && !features.value.matter) {
-            return false;
-          }
-        }
-        
-        return isGateway ? visibility.gateway : visibility.extender;
-      });
-      
-      // Only include menu items that have at least one visible subitem
-      if (filteredSubItems.length === 0) return null;
-      
-      return {
-        ...item,
-        subItems: filteredSubItems
-      };
-    }
-    
-    return item;
-  }).filter((item): item is MenuItem => item !== null); // Type guard to filter out null items
-};
+]);
 
 const toggleMenu = (menuName: string) => {
   // Clear all expanded menus and only expand the clicked one
@@ -247,49 +74,6 @@ const handleSubItemClick = (subItem: { name: string; path: string }) => {
 const isMenuExpanded = (menuName: string): boolean => {
   return expandedMenus.value.includes(menuName);
 };
-
-const STREAMBOW_KEYWORDS = ['streambow'];
-
-// Fetch sidebar menu data
-const fetchSidebarMenu = async () => {
-  try {
-    const response = await getSidebarMenu();
-    deviceMode.value = response.SidebarMenu.mode;
-    
-    // Store features
-    features.value = response.SidebarMenu.features || {};
-    
-    // Check if Streambow app is active
-    hasStreambow.value = response.SidebarMenu.Apps.some(app => {
-      if (app.state !== 'active') return false;
-
-      const name = app.name?.toLowerCase() || '';
-      const alias = app.alias?.toLowerCase() || '';
-      return STREAMBOW_KEYWORDS.some(keyword =>
-        name.includes(keyword) || alias.includes(keyword)
-      );
-    });
-    
-    // Update language if it's different from current
-    if (response.SidebarMenu.language.current !== locale.value) {
-      locale.value = response.SidebarMenu.language.current;
-    }
-    
-    // Filter menu items based on device mode
-    filterMenuItems();
-  } catch (error) {
-    console.error('Error fetching sidebar menu:', error);
-  }
-};
-
-// Watch for language changes and update the API
-watch(() => locale.value, async (newLocale) => {
-  try {
-    await updateSidebarMenuLanguage(newLocale);
-  } catch (error) {
-    console.error('Error updating language:', error);
-  }
-});
 
 // Watch for route changes to update active states
 watch(() => route.path, (newPath) => {
@@ -321,7 +105,23 @@ watch(() => route.path, (newPath) => {
 }, { immediate: true });
 
 onMounted(() => {
-  fetchSidebarMenu();
+  // Set initial active menu based on route
+  const currentPath = route.path;
+  for (const item of menuItems.value) {
+    if (item.path === currentPath) {
+      activeMenu.value = item.name;
+      break;
+    }
+    if (item.subItems) {
+      const subItem = item.subItems.find(sub => sub.path === currentPath);
+      if (subItem) {
+        activeMenu.value = item.name;
+        activeSubItem.value = subItem.name;
+        expandedMenus.value = [item.name];
+        break;
+      }
+    }
+  }
 });
 </script>
 

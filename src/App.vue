@@ -20,22 +20,15 @@ const fetchWanStatus = async () => {
 onMounted(() => {
   fetchWanStatus();
 });
-
-const isLoginPage = computed(() => route.path === '/login');
 </script>
 
 <template>
   <div class="app-container">
-    <template v-if="!isLoginPage">
-      <Sidebar />
-      <div class="main-content">
-        <Header />
-        <router-view />
-      </div>
-    </template>
-    <template v-else>
+    <Sidebar />
+    <div class="main-content">
+      <Header />
       <router-view />
-    </template>
+    </div>
   </div>
 </template>
 

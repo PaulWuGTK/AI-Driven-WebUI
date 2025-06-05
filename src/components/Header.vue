@@ -2,16 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AuthService } from '../services/auth';
-import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 
 const router = useRouter();
 const { t, locale } = useI18n();
-
-const handleLogout = () => {
-  AuthService.getInstance().clearSession();
-  router.push('/login');
-};
 
 const languageMap: Record<string, string> = {
   'zh-TW': 'zh_TW',
@@ -37,39 +30,10 @@ const availableLanguages = ref([
   { code: 'ko', label: '한국어' }
 ]);
 
-const username = localStorage.getItem('username') || 'admin';
-
 const handleLanguageChange = async (event: Event) => {
   const newLocale = (event.target as HTMLSelectElement).value;
-  const datamodelLang = reverseLanguageMap[newLocale] || 'en';
-  try {
-    await updateSidebarMenuLanguage(datamodelLang);
-    locale.value = newLocale;
-  } catch (error) {
-    console.error('Error updating language:', error);
-  }
+  locale.value = newLocale;
 };
-
-const fetchAvailableLanguages = async () => {
-  try {
-    const response = await getSidebarMenu();
-    const availableCodes = response.SidebarMenu.language.available;
-    
-    // Filter languages to only show available ones
-    availableLanguages.value = availableLanguages.value.filter(lang =>
-      response.SidebarMenu.language.available.includes(reverseLanguageMap[lang.code])
-    );
-    
-    // Set current language
-    locale.value = languageMap[response.SidebarMenu.language.current] || 'en';
-  } catch (error) {
-    console.error('Error fetching available languages:', error);
-  }
-};
-
-onMounted(() => {
-  fetchAvailableLanguages();
-});
 </script>
 
 <template>
@@ -87,14 +51,6 @@ onMounted(() => {
           </option>
         </select>
       </div>
-      <button class="header-btn">
-        <span class="material-icons">person</span>
-        {{ username }}
-      </button>
-      <button class="header-btn" @click="handleLogout">
-        <span class="material-icons">logout</span>
-        {{ t('header.logout') }}
-      </button>
     </div>
   </header>
 </template>
@@ -131,24 +87,6 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.header-btn {
-  padding: 0.5rem 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.header-btn:hover {
-  color: #333;
-  background-color: #f5f5f5;
-}
-
 .material-icons {
   font-size: 20px;
 }
@@ -160,14 +98,6 @@ onMounted(() => {
 
   .header-controls {
     gap: 0.5rem;
-  }
-
-  .header-btn {
-    padding: 0.5rem;
-  }
-
-  .header-btn span:last-child {
-    display: none;
   }
 }
 </style>
