@@ -19,10 +19,27 @@ const fetchThreadStatus = async () => {
   loading.value = true;
   error.value = null;
   try {
-    threadStatus.value = await getThreadStatus();
+    const response = await getThreadStatus();
+    
+    // Check if the response contains an error message
+    if ('NOK' in response) {
+      console.warn('Thread status API returned an error:', response.NOK);
+      // Don't update threadStatus.value, keep the previous valid data
+      // Only set error if we don't have any data yet
+      if (!threadStatus.value) {
+        error.value = 'Failed to fetch Thread status. Please try again later.';
+      }
+    } else {
+      // Only update the UI with valid data
+      threadStatus.value = response;
+      error.value = null;
+    }
   } catch (err) {
     console.error('Error fetching Thread status:', err);
+    // Only set error if we don't have any data yet
+    if (!threadStatus.value) {
     error.value = 'Failed to fetch Thread status';
+    }
   } finally {
     loading.value = false;
   }
