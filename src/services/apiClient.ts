@@ -10,10 +10,6 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
     ...(options.headers as Headers)
   };
 
-  const sessionId = auth.getSessionId();
-  if (sessionId) {
-    headers.Authorization = `bearer ${sessionId}`;
-  }
 
   const response = await fetch(url, {
     ...options,
