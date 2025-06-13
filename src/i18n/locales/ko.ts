@@ -239,6 +239,7 @@ export default {
     guestLAN: '게스트 LAN',
     deviceConnected: '연결된 장치',
     enable: '활성화',
+    mloEnable: 'MLO 활성화',
     ssid: 'SSID',
     authentication: '인증',
     password: '비밀번호',

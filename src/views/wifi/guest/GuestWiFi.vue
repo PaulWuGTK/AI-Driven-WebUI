@@ -46,6 +46,7 @@ const handleSubmit = async () => {
     await updateGuestWiFi({
       GuestWiFi: {
         Enable: guestWiFiData.value.GuestWiFi.Enable,
+        MLOEnable: guestWiFiData.value.GuestWiFi.MLOEnable,
         Password: guestWiFiData.value.GuestWiFi.Password,
         SecurityMode: guestWiFiData.value.GuestWiFi.SecurityMode,
         SSID: guestWiFiData.value.GuestWiFi.SSID
@@ -85,6 +86,22 @@ onMounted(fetchGuestWiFi);
               v-model="guestWiFiData.GuestWiFi.Enable"
               :true-value="1"
               :false-value="0"
+            >
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="switch-label">
+          <span>MLO {{ t('guest.enable') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              v-model="guestWiFiData.GuestWiFi.MLOEnable"
+              :true-value="1"
+              :false-value="0"
+              :disabled="guestWiFiData.GuestWiFi.Enable === 0"
             >
             <span class="slider"></span>
           </label>

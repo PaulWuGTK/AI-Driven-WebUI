@@ -243,6 +243,7 @@ const translations: Translations = {
     guestLAN: 'Guest LAN',
     deviceConnected: 'Device Connected',
     enable: 'Enable',
+    mloEnable: 'MLO Enable',
     ssid: 'SSID',
     authentication: 'Authentication',
     password: 'Password',

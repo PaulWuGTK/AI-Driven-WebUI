@@ -240,6 +240,7 @@ export default {
     guestLAN: '访客 LAN',
     deviceConnected: '已连接设备',
     enable: '启用',
+    mloEnable: '启用 MLO',
     ssid: 'SSID',
     authentication: '认证方式',
     password: '密码',

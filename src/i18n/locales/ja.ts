@@ -240,6 +240,7 @@ export default {
     guestLAN: 'ゲスト LAN',
     deviceConnected: '接続済みデバイス',
     enable: '有効化',
+    mloEnable: 'MLO を有効にする',
     ssid: 'SSID',
     authentication: '認証',
     password: 'パスワード',

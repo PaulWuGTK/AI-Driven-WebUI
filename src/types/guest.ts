@@ -1,6 +1,7 @@
 export interface GuestWiFiResponse {
   GuestWiFi: {
     Enable: number;
+    MLOEnable: number;
     Password: string;
     SecurityMode: string;
     SSID: string;
@@ -11,6 +12,7 @@ export interface GuestWiFiResponse {
 export interface GuestWiFiUpdateRequest {
   GuestWiFi: {
     Enable: number;
+    MLOEnable: number;
     Password: string;
     SecurityMode: string;
     SSID: string;

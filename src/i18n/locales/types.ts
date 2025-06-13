@@ -242,6 +242,7 @@ export interface Translations {
     guestLAN: string;
     deviceConnected: string;
     enable: string;
+    mloEnable: string;
     ssid: string;
     authentication: string;
     password: string;

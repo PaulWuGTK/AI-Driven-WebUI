@@ -240,6 +240,7 @@ export default {
     guestLAN: 'Gast-LAN',
     deviceConnected: 'Verbundenes Gerät',
     enable: 'Aktivieren',
+    mloEnable: 'MLO aktivieren',
     ssid: 'SSID',
     authentication: 'Authentifizierung',
     password: 'Passwort',
