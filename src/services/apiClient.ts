@@ -15,14 +15,30 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
     headers.Authorization = `bearer ${sessionId}`;
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers
+    });
 
-  if (!response.ok) {
-    throw new Error(`API call failed: ${response.status}`);
+    if (response.status === 401 || response.status === 403) {
+      // Authentication error - redirect to login
+      auth.clearSession();
+      window.location.href = '/login';
+      throw new Error(`Authentication error: ${response.status}`);
+    }
+
+    if (!response.ok) {
+      throw new Error(`API call failed: ${response.status}`);
+    }
+
+    return response.json() as Promise<T>;
+  } catch (err) {
+    // Check if error message contains 401 or 403
+    if (err instanceof Error && (err.message.includes('401') || err.message.includes('403'))) {
+      auth.clearSession();
+      window.location.href = '/login';
+    }
+    throw err;
   }
-
-  return response.json() as Promise<T>;
 }

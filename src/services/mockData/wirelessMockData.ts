@@ -3,6 +3,7 @@ import type { WlanBasicResponse, WlanAdvancedResponse, WlanWpsResponse, WlanMesh
 export const wlanBasicMockData: WlanBasicResponse = {
   WlanBasic: {
     MLOEnable: 0,
+    MeshEnable: 1,
     wifi2g: {
       Password: "password",
       SecurityMode: "WPA2-Personal",
@@ -28,6 +29,7 @@ export const wlanBasicMockData: WlanBasicResponse = {
       Password: "password",
       SecurityMode: "WPA3-Personal",
       SSID: "prplOS-MLO",
+      Enable : 1,
       SecurityModeAvailable: "None,WPA3-Personal"
     }
   }

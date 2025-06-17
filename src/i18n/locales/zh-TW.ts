@@ -235,7 +235,8 @@ export default {
     enableWpsMessage: '啟用 WPS 會停用 MAC 篩選。是否繼續？',
     mloSettings: 'MLO 設定',
     mloEnable: '啟用 MLO',
-    mloModeDisabled: 'MLO 已啟用，無法變更模式。'
+    mloModeDisabled: 'MLO 已啟用，無法變更模式。',
+    meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。'
   },
   guest: {
     title: '訪客存取',

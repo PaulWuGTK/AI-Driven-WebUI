@@ -3,6 +3,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
+import { AuthService } from '../services/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -277,8 +278,19 @@ const fetchSidebarMenu = async () => {
     
     // Filter menu items based on device mode
     filterMenuItems();
-  } catch (error) {
-    console.error('Error fetching sidebar menu:', error);
+  } catch (err) {
+    console.error('Error fetching sidebar menu:', err);
+    
+    // Check if error message contains 403 or 401
+    if (err instanceof Error && 
+        (err.message.includes('403') || 
+         err.message.includes('401') || 
+         err.message.includes('Failed to fetch sidebar menu'))) {
+      // Clear session and redirect to login
+      const auth = AuthService.getInstance();
+      auth.clearSession();
+      router.push('/login');
+    }
   }
 };
 
@@ -288,6 +300,16 @@ watch(() => locale.value, async (newLocale) => {
     await updateSidebarMenuLanguage(newLocale);
   } catch (error) {
     console.error('Error updating language:', error);
+    
+    // Check if error message contains 403 or 401
+    if (error instanceof Error && 
+        (error.message.includes('403') || 
+         error.message.includes('401'))) {
+      // Clear session and redirect to login
+      const auth = AuthService.getInstance();
+      auth.clearSession();
+      router.push('/login');
+    }
   }
 });
 

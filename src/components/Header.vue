@@ -47,6 +47,15 @@ const handleLanguageChange = async (event: Event) => {
     locale.value = newLocale;
   } catch (error) {
     console.error('Error updating language:', error);
+    
+    // Check if error is related to authentication
+    if (error instanceof Error && 
+        (error.message.includes('401') || 
+         error.message.includes('403'))) {
+      // Clear session and redirect to login
+      AuthService.getInstance().clearSession();
+      router.push('/login');
+    }
   }
 };
 

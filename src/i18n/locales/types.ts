@@ -238,6 +238,7 @@ export interface Translations {
     mloSettings: string;
     mloEnable: string;
     mloModeDisabled: string;
+    meshMloDisabled: string;
   };
   guest: {
     title: string;

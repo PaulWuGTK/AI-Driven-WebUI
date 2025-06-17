@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWlanBasic, updateWlanBasic } from '../../../services/api/wireless';
 import type { WlanBasicResponse } from '../../../types/wireless';
@@ -10,6 +10,11 @@ const wlanBasicData = ref<WlanBasicResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const showPassword = ref(false);
+
+// Computed property to check if MLO is disabled by Mesh
+const isMloDisabledByMesh = computed(() => {
+  return wlanBasicData.value?.WlanBasic.MeshEnable === 1;
+});
 
 const fetchBasicConfig = async () => {
   loading.value = true;
@@ -59,18 +64,44 @@ onMounted(fetchBasicConfig);
       </div>
 
       <div v-if="wlanBasicData" class="band-sections">
+        <!-- Show info banner when MLO is disabled by Mesh -->
+        <div class="mesh-status" v-if="isMloDisabledByMesh">
+          <div class="info-banner">
+            <span class="material-icons">info</span>
+            <span>{{ t('wireless.meshMloDisabled') }}</span>
+          </div>
+        </div>
+        <!-- MLO Enable Toggle (Outside of MLO Settings) -->
+        <div class="form-group mlo-enable-toggle">
+          <div class="switch-label">
+            <span>{{ t('wireless.mloEnable') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                v-model="wlanBasicData.WlanBasic.MLOEnable"
+                :true-value="1"
+                :false-value="0"
+                :disabled="isMloDisabledByMesh"
+              >
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
         <!-- MLO Settings Section -->
-        <div class="panel-section">
-          <div class="section-title">{{ t('wireless.mloSettings') }}</div>
+        <div v-if="wlanBasicData.WlanBasic.MLOEnable === 1" class="panel-section">
+          <div class="band-header">
+            <div class="section-title-sp">MLO {{ t('wireless.settings') }}</div>
+          </div>
           
-          <div class="card-content">
+          <div class="band-content">
             <div class="form-group">
               <div class="switch-label">
-                <span>{{ t('wireless.mloEnable') }}</span>
+                <span>{{ t('common.enable') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
-                    v-model="wlanBasicData.WlanBasic.MLOEnable"
+                    v-model="wlanBasicData.WlanBasic.wifimlo.Enable"
                     :true-value="1"
                     :false-value="0"
                   >
@@ -78,51 +109,52 @@ onMounted(fetchBasicConfig);
                 </label>
               </div>
             </div>
+            
+            <div class="form-group">
+              <label>{{ t('wireless.ssid') }}</label>
+              <input
+                type="text"
+                v-model="wlanBasicData.WlanBasic.wifimlo.SSID"
+                :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
+              />
+            </div>
 
-            <!-- MLO Configuration when enabled -->
-            <template v-if="wlanBasicData.WlanBasic.MLOEnable === 1">
-              <div class="form-group">
-                <label>{{ t('wireless.ssid') }}</label>
-                <input
-                  type="text"
-                  v-model="wlanBasicData.WlanBasic.wifimlo.SSID"
-                />
-              </div>
-
-              <div class="form-group">
-                <label>{{ t('wireless.authentication') }}</label>
-                <select
-                  v-model="wlanBasicData.WlanBasic.wifimlo.SecurityMode"
+            <div class="form-group">
+              <label>{{ t('wireless.authentication') }}</label>
+              <select
+                v-model="wlanBasicData.WlanBasic.wifimlo.SecurityMode"
+                :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
+              >
+                <option 
+                  v-for="mode in wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable.split(',')" 
+                  :key="mode" 
+                  :value="mode"
                 >
-                  <option 
-                    v-for="mode in wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable.split(',')" 
-                    :key="mode" 
-                    :value="mode"
-                  >
-                    {{ mode }}
-                  </option>
-                </select>
-              </div>
+                  {{ mode }}
+                </option>
+              </select>
+            </div>
 
-              <div class="form-group">
-                <label>{{ t('wireless.password') }}</label>
-                <div class="password-input">
-                  <input
-                    :type="showPassword ? 'text' : 'password'"
-                    v-model="wlanBasicData.WlanBasic.wifimlo.Password"
-                  />
-                  <button 
-                    type="button" 
-                    class="toggle-password"
-                    @click="showPassword = !showPassword"
-                  >
-                    <span class="material-icons">
-                      {{ showPassword ? 'visibility_off' : 'visibility' }}
-                    </span>
-                  </button>
-                </div>
+            <div class="form-group">
+              <label>{{ t('wireless.password') }}</label>
+              <div class="password-input">
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  v-model="wlanBasicData.WlanBasic.wifimlo.Password"
+                  :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
+                />
+                <button 
+                  type="button" 
+                  class="toggle-password"
+                  @click="showPassword = !showPassword"
+                  :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
+                >
+                  <span class="material-icons">
+                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
               </div>
-            </template>
+            </div>
           </div>
         </div>
 
@@ -197,6 +229,29 @@ onMounted(fetchBasicConfig);
   z-index: 100;
 }
 
+.mlo-enable-toggle {
+  padding: 1.5rem 0 0 0;
+}
+
+.mesh-status {
+  margin-top: 1.5rem;
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid #0070BB;
+  border-radius: 4px;
+  color: #0070BB;
+}
+
+.info-banner .material-icons {
+  font-size: 1.25rem;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -213,7 +268,7 @@ onMounted(fetchBasicConfig);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .panel-section {
@@ -223,20 +278,27 @@ onMounted(fetchBasicConfig);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
 }
 
-.section-title {
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
+.band-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1.5rem;
+  background-color: white;
   border-bottom: 1px solid var(--border-color);
 }
 
-.card-content {
+.section-title-sp {
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.5rem 0rem;
+  background-color: white;
+}
+
+.band-content {
   padding: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
 }
 
 .form-group:last-child {
@@ -255,6 +317,11 @@ input, select {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
+}
+
+input:disabled, select:disabled {
+  background-color: var(--bg-secondary);
+  cursor: not-allowed;
 }
 
 .password-input {
@@ -277,8 +344,13 @@ input, select {
   padding: 0.25rem;
 }
 
-.toggle-password:hover {
+.toggle-password:hover:not(:disabled) {
   color: var(--text-primary);
+}
+
+.toggle-password:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .switch-label {
@@ -371,10 +443,14 @@ input:checked + .slider:before {
 
 @media (max-width: 768px) {
   .band-sections {
+    padding: 0 1rem 1rem 1rem;
+  }
+  
+  .mlo-enable-toggle {
     padding: 1rem;
   }
   
-  .card-content {
+  .band-content {
     padding: 1rem;
   }
 

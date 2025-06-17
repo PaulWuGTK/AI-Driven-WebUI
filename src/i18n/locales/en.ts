@@ -238,7 +238,8 @@ const translations: Translations = {
     enableWpsMessage: 'Enabling WPS will disable the MAC filter. Are you sure you want to continue?',
     mloSettings: 'MLO Settings',
     mloEnable: 'MLO Enable',
-    mloModeDisabled: 'MLO is enabled – Mode cannot be changed.'
+    mloModeDisabled: 'MLO is enabled – Mode cannot be changed.',
+    meshMloDisabled: 'Mesh is enabled – MLO settings cannot be changed.'
   },
   guest: {
     title: 'Guest Access',

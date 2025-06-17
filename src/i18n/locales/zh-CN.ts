@@ -235,7 +235,8 @@ export default {
     enableWpsMessage: '启用 WPS 将禁用 MAC 过滤。是否继续？',
     mloSettings: 'MLO 设置',
     mloEnable: '启用 MLO',
-    mloModeDisabled: 'MLO 已启用，无法更改模式。'
+    mloModeDisabled: 'MLO 已启用，无法更改模式。',
+    meshMloDisabled: 'Mesh 已启用 – 无法更改 MLO 设置。'
   },
   guest: {
     title: '访客访问',

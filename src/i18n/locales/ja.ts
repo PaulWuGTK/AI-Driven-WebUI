@@ -235,7 +235,8 @@ export default {
     enableWpsMessage: 'WPS を有効にすると MAC フィルターが無効になります。続行してもよろしいですか？',
     mloSettings: 'MLO 設定',
     mloEnable: 'MLO を有効にする',
-    mloModeDisabled: 'MLO が有効です – モードは変更できません。'
+    mloModeDisabled: 'MLO が有効です – モードは変更できません。',
+    meshMloDisabled: 'メッシュが有効です – MLO 設定は変更できません。'
   },
   guest: {
     title: 'ゲストアクセス',

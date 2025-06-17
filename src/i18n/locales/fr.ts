@@ -235,7 +235,8 @@ export default {
     enableWpsMessage: 'Activer le WPS désactivera le filtre MAC. Voulez-vous continuer ?',
     mloSettings: 'Paramètres MLO',
     mloEnable: 'Activer MLO',
-    mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.'
+    mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.',
+    meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.'
   },
   guest: {
     title: 'Accès invité',

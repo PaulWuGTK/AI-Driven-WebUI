@@ -234,7 +234,8 @@ export default {
     enableWpsMessage: 'WPS를 활성화하면 MAC 필터가 비활성화됩니다. 계속하시겠습니까?',
     mloSettings: 'MLO 설정',
     mloEnable: 'MLO 활성화',
-    mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.'
+    mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.',
+    meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.'
   },
   guest: {
     title: '게스트 액세스',
