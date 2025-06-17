@@ -232,7 +232,10 @@ export default {
     noPublicKeys: '公開鍵が追加されていません',
     extender: '中継機',
     enableWpsConfirm: 'WPS を有効化',
-    enableWpsMessage: 'WPS を有効にすると MAC フィルターが無効になります。続行してもよろしいですか？'
+    enableWpsMessage: 'WPS を有効にすると MAC フィルターが無効になります。続行してもよろしいですか？',
+    mloSettings: 'MLO 設定',
+    mloEnable: 'MLO を有効にする',
+    mloModeDisabled: 'MLO が有効です – モードは変更できません。'
   },
   guest: {
     title: 'ゲストアクセス',

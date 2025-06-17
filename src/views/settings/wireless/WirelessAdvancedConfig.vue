@@ -34,6 +34,7 @@ const handleSubmit = async () => {
   try {
     const postData: WlanAdvancedResponse = {
       WlanAdvanced: {
+        MLOEnable: advancedData.value.WlanAdvanced.MLOEnable,
         wifi2g: {
           RadioEnable: advancedData.value.WlanAdvanced.wifi2g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,
@@ -83,17 +84,28 @@ onMounted(fetchAdvancedConfig);
       </div>
 
       <div v-if="advancedData" class="band-sections">
+        <!-- MLO Enable Status Information -->
+        <div class="mlo-status" v-if="advancedData.WlanAdvanced.MLOEnable === 1">
+          <div class="info-banner">
+            <span class="material-icons">info</span>
+            <span>{{ t('wireless.mloModeDisabled') }}</span>
+          </div>
+        </div>
+
         <WirelessAdvancedBandConfig
           title="2.4GHz"
           v-model="advancedData.WlanAdvanced.wifi2g"
+          :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
         <WirelessAdvancedBandConfig
           title="5GHz"
           v-model="advancedData.WlanAdvanced.wifi5g"
+          :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
         <WirelessAdvancedBandConfig
           title="6GHz"
           v-model="advancedData.WlanAdvanced.wifi6g"
+          :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
       </div>
 
@@ -149,6 +161,25 @@ onMounted(fetchAdvancedConfig);
   border-radius: 4px;
   animation: fadeInOut 3s ease-in-out;
   z-index: 100;
+}
+
+.mlo-status {
+  margin-bottom: 1.5rem;
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid #0070BB;
+  border-radius: 4px;
+  color: #0070BB;
+}
+
+.info-banner .material-icons {
+  font-size: 1.25rem;
 }
 
 @keyframes spin {

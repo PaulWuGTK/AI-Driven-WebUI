@@ -232,7 +232,10 @@ export default {
     noPublicKeys: '尚未新增公開金鑰',
     extender: '延伸器',
     enableWpsConfirm: '啟用 WPS',
-    enableWpsMessage: '啟用 WPS 會停用 MAC 篩選。是否繼續？'
+    enableWpsMessage: '啟用 WPS 會停用 MAC 篩選。是否繼續？',
+    mloSettings: 'MLO 設定',
+    mloEnable: '啟用 MLO',
+    mloModeDisabled: 'MLO 已啟用，無法變更模式。'
   },
   guest: {
     title: '訪客存取',

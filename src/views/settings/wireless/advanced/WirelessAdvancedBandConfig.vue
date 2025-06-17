@@ -7,6 +7,7 @@ const { t } = useI18n();
 const props = defineProps<{
   title: string;
   modelValue: WlanAdvancedConfig;
+  mloEnabled: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -51,7 +52,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
         <select
           :value="modelValue.Mode"
           @change="updateConfig('Mode', ($event.target as HTMLSelectElement).value)"
-          :disabled="modelValue.RadioEnable === 0"
+          :disabled="modelValue.RadioEnable === 0 || mloEnabled"
         >
           <option v-for="mode in modes" :key="mode" :value="mode">
             {{ mode.toUpperCase() }}

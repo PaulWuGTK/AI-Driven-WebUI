@@ -34,7 +34,8 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
     </div>
 
     <div class="band-content">
-      <div class="form-group">
+      <!-- Only show Enable toggle for individual bands, not for MLO -->
+      <div class="form-group" v-if="title !== 'MLO'">
         <div class="switch-label">
           <span>{{ t('common.enable') }}</span>
           <label class="switch">
@@ -54,6 +55,7 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
           type="text"
           :value="modelValue.SSID"
           @input="updateConfig('SSID', ($event.target as HTMLInputElement).value)"
+          :disabled="title !== 'MLO' && modelValue.Enable === 0"
         />
       </div>
 
@@ -62,6 +64,7 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
         <select
           :value="modelValue.SecurityMode"
           @change="updateConfig('SecurityMode', ($event.target as HTMLSelectElement).value)"
+          :disabled="title !== 'MLO' && modelValue.Enable === 0"
         >
           <option v-for="mode in securityModes" :key="mode" :value="mode">
             {{ mode }}
@@ -76,11 +79,13 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
             :type="showPassword ? 'text' : 'password'"
             :value="modelValue.Password"
             @input="updateConfig('Password', ($event.target as HTMLInputElement).value)"
+            :disabled="title !== 'MLO' && modelValue.Enable === 0"
           />
           <button 
             type="button" 
             class="toggle-password"
             @click="showPassword = !showPassword"
+            :disabled="title !== 'MLO' && modelValue.Enable === 0"
           >
             <span class="material-icons">
               {{ showPassword ? 'visibility_off' : 'visibility' }}
@@ -146,6 +151,11 @@ input, select {
   font-size: 0.9rem;
 }
 
+input:disabled, select:disabled {
+  background-color: var(--bg-secondary);
+  cursor: not-allowed;
+}
+
 .password-input {
   position: relative;
   display: flex;
@@ -166,8 +176,13 @@ input, select {
   padding: 0.25rem;
 }
 
-.toggle-password:hover {
+.toggle-password:hover:not(:disabled) {
   color: var(--text-primary);
+}
+
+.toggle-password:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .switch-label {

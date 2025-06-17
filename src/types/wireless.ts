@@ -3,12 +3,14 @@ export interface WlanBasicConfig {
   Password: string;
   SecurityMode: string;
   SSID: string;
-  Enable: number;
+  Enable?: number;
   SecurityModeAvailable: string;  // Changed from SecurityModeSupport
 }
 
 export interface WlanBasicResponse {
   WlanBasic: {
+    MLOEnable: number;
+    wifimlo: WlanBasicConfig;
     wifi2g: WlanBasicConfig;
     wifi5g: WlanBasicConfig;
     wifi6g: WlanBasicConfig;
@@ -31,6 +33,7 @@ export interface WlanAdvancedConfig {
 
 export interface WlanAdvancedResponse {
   WlanAdvanced: {
+    MLOEnable: number;
     wifi2g: WlanAdvancedConfig;
     wifi5g: WlanAdvancedConfig;
     wifi6g: WlanAdvancedConfig;

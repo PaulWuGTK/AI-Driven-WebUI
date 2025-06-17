@@ -9,6 +9,7 @@ const { t } = useI18n();
 const wlanBasicData = ref<WlanBasicResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
+const showPassword = ref(false);
 
 const fetchBasicConfig = async () => {
   loading.value = true;
@@ -58,18 +59,88 @@ onMounted(fetchBasicConfig);
       </div>
 
       <div v-if="wlanBasicData" class="band-sections">
-        <WirelessBandConfig
-          title="2.4GHz"
-          v-model="wlanBasicData.WlanBasic.wifi2g"
-        />
-        <WirelessBandConfig
-          title="5GHz"
-          v-model="wlanBasicData.WlanBasic.wifi5g"
-        />
-        <WirelessBandConfig
-          title="6GHz"
-          v-model="wlanBasicData.WlanBasic.wifi6g"
-        />
+        <!-- MLO Settings Section -->
+        <div class="panel-section">
+          <div class="section-title">{{ t('wireless.mloSettings') }}</div>
+          
+          <div class="card-content">
+            <div class="form-group">
+              <div class="switch-label">
+                <span>{{ t('wireless.mloEnable') }}</span>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    v-model="wlanBasicData.WlanBasic.MLOEnable"
+                    :true-value="1"
+                    :false-value="0"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- MLO Configuration when enabled -->
+            <template v-if="wlanBasicData.WlanBasic.MLOEnable === 1">
+              <div class="form-group">
+                <label>{{ t('wireless.ssid') }}</label>
+                <input
+                  type="text"
+                  v-model="wlanBasicData.WlanBasic.wifimlo.SSID"
+                />
+              </div>
+
+              <div class="form-group">
+                <label>{{ t('wireless.authentication') }}</label>
+                <select
+                  v-model="wlanBasicData.WlanBasic.wifimlo.SecurityMode"
+                >
+                  <option 
+                    v-for="mode in wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable.split(',')" 
+                    :key="mode" 
+                    :value="mode"
+                  >
+                    {{ mode }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>{{ t('wireless.password') }}</label>
+                <div class="password-input">
+                  <input
+                    :type="showPassword ? 'text' : 'password'"
+                    v-model="wlanBasicData.WlanBasic.wifimlo.Password"
+                  />
+                  <button 
+                    type="button" 
+                    class="toggle-password"
+                    @click="showPassword = !showPassword"
+                  >
+                    <span class="material-icons">
+                      {{ showPassword ? 'visibility_off' : 'visibility' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Individual Band Configurations (only shown when MLO is disabled) -->
+        <template v-if="wlanBasicData.WlanBasic.MLOEnable === 0">
+          <WirelessBandConfig
+            title="2.4GHz"
+            v-model="wlanBasicData.WlanBasic.wifi2g"
+          />
+          <WirelessBandConfig
+            title="5GHz"
+            v-model="wlanBasicData.WlanBasic.wifi5g"
+          />
+          <WirelessBandConfig
+            title="6GHz"
+            v-model="wlanBasicData.WlanBasic.wifi6g"
+          />
+        </template>
       </div>
 
       <div class="button-group">
@@ -145,12 +216,129 @@ onMounted(fetchBasicConfig);
   padding: 1.5rem;
 }
 
+.panel-section {
+  background-color: white;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+input, select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input input {
+  padding-right: 2.5rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.25rem;
+}
+
+.toggle-password:hover {
+  color: var(--text-primary);
+}
+
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
 .button-group {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e0e0e0;
 }
 
 .btn {
@@ -179,5 +367,24 @@ onMounted(fetchBasicConfig);
 
 .btn:not(:disabled):hover {
   opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .band-sections {
+    padding: 1rem;
+  }
+  
+  .card-content {
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
 }
 </style>

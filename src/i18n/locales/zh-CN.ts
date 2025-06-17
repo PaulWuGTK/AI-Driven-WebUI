@@ -232,7 +232,10 @@ export default {
     noPublicKeys: '尚未添加公钥',
     extender: '扩展器',
     enableWpsConfirm: '启用 WPS',
-    enableWpsMessage: '启用 WPS 将禁用 MAC 过滤。是否继续？'
+    enableWpsMessage: '启用 WPS 将禁用 MAC 过滤。是否继续？',
+    mloSettings: 'MLO 设置',
+    mloEnable: '启用 MLO',
+    mloModeDisabled: 'MLO 已启用，无法更改模式。'
   },
   guest: {
     title: '访客访问',

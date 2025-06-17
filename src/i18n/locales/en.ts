@@ -235,7 +235,10 @@ const translations: Translations = {
     noPublicKeys: 'No public keys added',
     extender: 'Extender',
     enableWpsConfirm: 'Enable WPS',
-    enableWpsMessage: '	Enabling WPS will disable the MAC filter. Are you sure you want to continue?'
+    enableWpsMessage: 'Enabling WPS will disable the MAC filter. Are you sure you want to continue?',
+    mloSettings: 'MLO Settings',
+    mloEnable: 'MLO Enable',
+    mloModeDisabled: 'MLO is enabled – Mode cannot be changed.'
   },
   guest: {
     title: 'Guest Access',

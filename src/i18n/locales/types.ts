@@ -235,6 +235,9 @@ export interface Translations {
     extender: string;
     enableWpsConfirm: string;
     enableWpsMessage: string;
+    mloSettings: string;
+    mloEnable: string;
+    mloModeDisabled: string;
   };
   guest: {
     title: string;

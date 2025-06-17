@@ -232,7 +232,10 @@ export default {
     noPublicKeys: 'Aucune clé publique ajoutée',
     extender: 'Répéteur',
     enableWpsConfirm: 'Activer le WPS',
-    enableWpsMessage: 'Activer le WPS désactivera le filtre MAC. Voulez-vous continuer ?'
+    enableWpsMessage: 'Activer le WPS désactivera le filtre MAC. Voulez-vous continuer ?',
+    mloSettings: 'Paramètres MLO',
+    mloEnable: 'Activer MLO',
+    mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.'
   },
   guest: {
     title: 'Accès invité',
