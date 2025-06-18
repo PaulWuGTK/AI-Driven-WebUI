@@ -154,7 +154,8 @@ export const updateWlanWpsMock = (data: { WlanWps: { Enable?: number; Action?: s
 
 export const wlanMeshMockData: WlanMeshResponse = {
   WlanMesh: {
-    MeshEnable: 1,
+    MeshEnable: 0,
+    MLOEnable: 1,
     CommonSSID: "prplOS"
   }
 };

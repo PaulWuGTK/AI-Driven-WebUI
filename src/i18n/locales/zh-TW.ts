@@ -236,6 +236,7 @@ export default {
     mloSettings: 'MLO 設定',
     mloEnable: '啟用 MLO',
     mloModeDisabled: 'MLO 已啟用，無法變更模式。',
+    mloMeshDisabled: 'MLO 已啟用 – 無法變更 Mesh 設定。',
     meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。'
   },
   guest: {

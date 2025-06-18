@@ -236,6 +236,7 @@ export default {
     mloSettings: 'Paramètres MLO',
     mloEnable: 'Activer MLO',
     mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.',
+    mloMeshDisabled: 'Le MLO est activé – les paramètres Mesh ne peuvent pas être modifiés.',
     meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.'
   },
   guest: {

@@ -14,8 +14,9 @@ export const getGuestWiFi = async (): Promise<GuestWiFiResponse> => {
   if (isDevelopment) {
     return {
       GuestWiFi: {
-        Enable: 1,
+        Enable: 0,
         MLOEnable: 0,
+        MeshEnable: 1,
         Password: "password",
         SecurityMode: "WPA3-Personal",
         SSID: "prplOS-guest-2g",

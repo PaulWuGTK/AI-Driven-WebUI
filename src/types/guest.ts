@@ -2,6 +2,7 @@ export interface GuestWiFiResponse {
   GuestWiFi: {
     Enable: number;
     MLOEnable: number;
+    MeshEnable?: number;
     Password: string;
     SecurityMode: string;
     SSID: string;

@@ -11,6 +11,11 @@ const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showPassword = ref(false);
 
+// Computed property to check if MLO is disabled by Mesh
+const isMLODisabledByMesh = computed(() => {
+  return guestWiFiData.value?.GuestWiFi.MeshEnable === 1;
+});
+
 const fetchGuestWiFi = async () => {
   loading.value = true;
   error.value = null;
@@ -77,6 +82,14 @@ onMounted(fetchGuestWiFi);
     </div>
 
     <form v-else-if="guestWiFiData" @submit.prevent="handleSubmit">
+      <!-- Show info banner when MLO is disabled by Mesh -->
+      <div v-if="isMLODisabledByMesh" class="mesh-status">
+        <div class="info-banner">
+          <span class="material-icons">info</span>
+          <span>{{ t('wireless.meshMloDisabled') }}</span>
+        </div>
+      </div>
+
       <div class="form-group">
         <div class="switch-label">
           <span>{{ t('guest.enable') }}</span>
@@ -101,7 +114,7 @@ onMounted(fetchGuestWiFi);
               v-model="guestWiFiData.GuestWiFi.MLOEnable"
               :true-value="1"
               :false-value="0"
-              :disabled="guestWiFiData.GuestWiFi.Enable === 0"
+              :disabled="guestWiFiData.GuestWiFi.Enable === 0 || isMLODisabledByMesh"
             >
             <span class="slider"></span>
           </label>
@@ -171,6 +184,25 @@ onMounted(fetchGuestWiFi);
 <style scoped>
 .guest-wifi {
   padding: 1.5rem;
+}
+
+.mesh-status {
+  margin-bottom: 1.5rem;
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid #0070BB;
+  border-radius: 4px;
+  color: #0070BB;
+}
+
+.info-banner .material-icons {
+  font-size: 1.25rem;
 }
 
 .form-group {
@@ -276,6 +308,11 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+
+input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .button-group {

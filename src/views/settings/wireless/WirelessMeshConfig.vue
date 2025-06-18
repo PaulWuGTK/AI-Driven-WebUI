@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
@@ -9,6 +9,11 @@ const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+
+// Computed property to check if Mesh is disabled by MLO
+const isMeshDisabledByMLO = computed(() => {
+  return meshData.value?.WlanMesh.MLOEnable === 1;
+});
 
 const fetchMeshConfig = async () => {
   loading.value = true;
@@ -66,14 +71,23 @@ onMounted(fetchMeshConfig);
     </div>
 
     <template v-else-if="meshData">
+      <!-- Show info banner when Mesh is disabled by MLO -->
+      <div v-if="isMeshDisabledByMLO" class="mlo-status">
+        <div class="info-banner">
+          <span class="material-icons">info</span>
+          <span>{{ t('wireless.meshMloDisabled') }}</span>
+        </div>
+      </div>
+
       <div class="switch-label">
-        <span>EasyMesh</span>
+        <span>{{ t('wireless.easyMesh') }}</span>
         <label class="switch">
           <input
             type="checkbox"
             v-model="meshData.WlanMesh.MeshEnable"
             :true-value="1"
             :false-value="0"
+            :disabled="isMeshDisabledByMLO"
           >
           <span class="slider"></span>
         </label>
@@ -97,7 +111,7 @@ onMounted(fetchMeshConfig);
         <button class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
+        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading || isMeshDisabledByMLO">
           {{ t('common.apply') }}
         </button>
       </div>
@@ -112,6 +126,25 @@ onMounted(fetchMeshConfig);
 <style scoped>
 .mesh-config {
   padding: 1.5rem;
+}
+
+.mlo-status {
+  margin-bottom: 1.5rem;
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid #0070BB;
+  border-radius: 4px;
+  color: #0070BB;
+}
+
+.info-banner .material-icons {
+  font-size: 1.25rem;
 }
 
 .switch-label {
@@ -166,6 +199,11 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+
+input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .common-ssid {
