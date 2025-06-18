@@ -3,14 +3,14 @@ export interface WlanBasicConfig {
   Password: string;
   SecurityMode: string;
   SSID: string;
-  Enable?: number;
-  SecurityModeAvailable: string;  // Changed from SecurityModeSupport
+  Enable: number;
+  SecurityModeAvailable?: string;  // Changed from SecurityModeSupport
 }
 
 export interface WlanBasicResponse {
   WlanBasic: {
     MLOEnable: number;
-    MeshEnable: number;  // Added MeshEnable parameter
+    MeshEnable?: number;  // Added MeshEnable parameter
     wifimlo: WlanBasicConfig & { Enable: number };  // Added Enable property
     wifi2g: WlanBasicConfig;
     wifi5g: WlanBasicConfig;

@@ -73,6 +73,16 @@ const fetchAvailableLanguages = async () => {
     locale.value = languageMap[response.SidebarMenu.language.current] || 'en';
   } catch (error) {
     console.error('Error fetching available languages:', error);
+    
+    // Check if error is related to authentication or contains the specific error message
+    if (error instanceof Error && 
+        (error.message.includes('401') || 
+         error.message.includes('403') ||
+         error.message.includes('Failed to fetch sidebar menu'))) {
+      // Clear session and redirect to login
+      AuthService.getInstance().clearSession();
+      router.push('/login');
+    }
   }
 };
 

@@ -39,7 +39,38 @@ const handleSubmit = async () => {
   
   loading.value = true;
   try {
-    await updateWlanBasic(wlanBasicData.value);
+    // Create a new object without MeshEnable and SecurityModeAvailable for the POST request
+    const postData = {
+      WlanBasic: {
+        MLOEnable: wlanBasicData.value.WlanBasic.MLOEnable,
+        wifi2g: {
+          Enable: wlanBasicData.value.WlanBasic.wifi2g.Enable,
+          SSID: wlanBasicData.value.WlanBasic.wifi2g.SSID,
+          SecurityMode: wlanBasicData.value.WlanBasic.wifi2g.SecurityMode,
+          Password: wlanBasicData.value.WlanBasic.wifi2g.Password
+        },
+        wifi5g: {
+          Enable: wlanBasicData.value.WlanBasic.wifi5g.Enable,
+          SSID: wlanBasicData.value.WlanBasic.wifi5g.SSID,
+          SecurityMode: wlanBasicData.value.WlanBasic.wifi5g.SecurityMode,
+          Password: wlanBasicData.value.WlanBasic.wifi5g.Password
+        },
+        wifi6g: {
+          Enable: wlanBasicData.value.WlanBasic.wifi6g.Enable,
+          SSID: wlanBasicData.value.WlanBasic.wifi6g.SSID,
+          SecurityMode: wlanBasicData.value.WlanBasic.wifi6g.SecurityMode,
+          Password: wlanBasicData.value.WlanBasic.wifi6g.Password
+        },
+        wifimlo: {
+          Enable: wlanBasicData.value.WlanBasic.wifimlo.Enable,
+          SSID: wlanBasicData.value.WlanBasic.wifimlo.SSID,
+          SecurityMode: wlanBasicData.value.WlanBasic.wifimlo.SecurityMode,
+          Password: wlanBasicData.value.WlanBasic.wifimlo.Password
+        }
+      }
+    };
+    
+    await updateWlanBasic(postData);
     showSuccessMessage();
     await fetchBasicConfig();
   } catch (error) {
@@ -71,27 +102,34 @@ onMounted(fetchBasicConfig);
             <span>{{ t('wireless.meshMloDisabled') }}</span>
           </div>
         </div>
-        <!-- MLO Enable Toggle (Outside of MLO Settings) -->
-        <div class="form-group mlo-enable-toggle">
-          <div class="switch-label">
-            <span>{{ t('wireless.mloEnable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                v-model="wlanBasicData.WlanBasic.MLOEnable"
-                :true-value="1"
-                :false-value="0"
-                :disabled="isMloDisabledByMesh"
-              >
-              <span class="slider"></span>
-            </label>
+        
+        <!-- MLO Settings Section -->
+        <div class="panel-section">
+          <div class="section-title">{{ t('wireless.mloSettings') }}</div>
+          <div class="card-content">
+            <!-- MLO Enable Toggle -->
+            <div class="form-group">
+              <div class="switch-label">
+                <span>{{ t('wireless.mloEnable') }}</span>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    v-model="wlanBasicData.WlanBasic.MLOEnable"
+                    :true-value="1"
+                    :false-value="0"
+                    :disabled="isMloDisabledByMesh"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- MLO Settings Section -->
         <div v-if="wlanBasicData.WlanBasic.MLOEnable === 1" class="panel-section">
           <div class="band-header">
-            <div class="section-title-sp">MLO {{ t('wireless.settings') }}</div>
+            <div class="section-title-sp">2.4GHz / 5GHz / 6GHz {{ t('wireless.settings') }}</div>
           </div>
           
           <div class="band-content">
@@ -126,7 +164,7 @@ onMounted(fetchBasicConfig);
                 :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
               >
                 <option 
-                  v-for="mode in wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable.split(',')" 
+                  v-for="mode in (wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable ?? '').split(',')"
                   :key="mode" 
                   :value="mode"
                 >
@@ -229,10 +267,6 @@ onMounted(fetchBasicConfig);
   z-index: 100;
 }
 
-.mlo-enable-toggle {
-  padding: 1.5rem 0 0 0;
-}
-
 .mesh-status {
   margin-top: 1.5rem;
 }
@@ -268,7 +302,7 @@ onMounted(fetchBasicConfig);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 1.5rem;
 }
 
 .panel-section {
@@ -299,6 +333,7 @@ onMounted(fetchBasicConfig);
 }
 
 .form-group {
+  margin-bottom: 1.5rem;
 }
 
 .form-group:last-child {
@@ -406,6 +441,18 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
+.section-title {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
 .button-group {
   display: flex;
   justify-content: flex-end;
@@ -443,14 +490,10 @@ input:checked + .slider:before {
 
 @media (max-width: 768px) {
   .band-sections {
-    padding: 0 1rem 1rem 1rem;
-  }
-  
-  .mlo-enable-toggle {
     padding: 1rem;
   }
   
-  .band-content {
+  .card-content {
     padding: 1rem;
   }
 

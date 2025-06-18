@@ -16,7 +16,7 @@ const emit = defineEmits<{
 const showPassword = ref(false);
 
 const securityModes = computed(() => 
-  props.modelValue.SecurityModeAvailable.split(',')
+  (props.modelValue.SecurityModeAvailable ?? '').split(',')
 );
 
 const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
