@@ -75,7 +75,7 @@ onMounted(fetchMeshConfig);
       <div v-if="isMeshDisabledByMLO" class="mlo-status">
         <div class="info-banner">
           <span class="material-icons">info</span>
-          <span>{{ t('wireless.meshMloDisabled') }}</span>
+          <span>{{ t('wireless.mloMeshDisabled') }}</span>
         </div>
       </div>
 

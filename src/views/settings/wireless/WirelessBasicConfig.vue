@@ -359,6 +359,11 @@ input:disabled, select:disabled {
   cursor: not-allowed;
 }
 
+input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .password-input {
   position: relative;
   display: flex;
