@@ -1,5 +1,6 @@
 import type { LanBasicResponse, LanBasicUpdateRequest, DeviceConnectedResponse } from '../../types/lanBasic';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -30,9 +31,7 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
       }
     };
   }
-
-  const response = await fetch('/API/info?list=LanBasic');
-  return handleApiResponse<LanBasicResponse>(response);
+  return callApi<LanBasicResponse>('/API/info?list=LanBasic');
 };
 
 export const getDeviceConnected = async (): Promise<DeviceConnectedResponse> => {
@@ -52,9 +51,7 @@ export const getDeviceConnected = async (): Promise<DeviceConnectedResponse> => 
       ]
     };
   }
-
-  const response = await fetch('/API/info?list=LanDeviceConnected');
-  return handleApiResponse<DeviceConnectedResponse>(response);
+  return callApi<DeviceConnectedResponse>('/API/info?list=LanDeviceConnected');
 };
 
 export const updateLanBasic = async (data: LanBasicUpdateRequest): Promise<LanBasicResponse> => {

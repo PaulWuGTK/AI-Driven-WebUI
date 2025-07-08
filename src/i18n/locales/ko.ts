@@ -235,7 +235,7 @@ export default {
     mloSettings: 'MLO 설정',
     mloEnable: 'MLO 활성화',
     mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.',
-    mloMeshDisabled: 'MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
+    mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
     meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.'
   },
   guest: {

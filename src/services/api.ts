@@ -22,32 +22,28 @@ export async function getWanStatus(): Promise<WanStatusResponse> {
   if (isDevelopment) {
     return wanMockData;
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=StatusWan`);
-  return handleApiResponse<WanStatusResponse>(response);
+  return callApi<WanStatusResponse>(`${API_BASE_URL}/info?list=StatusWan`);
 }
 
 export async function getLanStatus(): Promise<LanStatusResponse> {
   if (isDevelopment) {
     return lanMockData;
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=StatusLan`);
-  return handleApiResponse<LanStatusResponse>(response);
+  return callApi<LanStatusResponse>(`${API_BASE_URL}/info?list=StatusLan`);
 }
 
 export async function getWlanStatus(): Promise<WlanStatusResponse> {
   if (isDevelopment) {
     return wlanMockData;
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=StatusWlan`);
-  return handleApiResponse<WlanStatusResponse>(response);
+  return callApi<WlanStatusResponse>(`${API_BASE_URL}/info?list=StatusWlan`);
 }
 
 export async function getStatistics(): Promise<StatisticsResponse> {
   if (isDevelopment) {
     return statisticsMockData;
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=Statistics`);
-  return handleApiResponse<StatisticsResponse>(response);
+  return callApi<StatisticsResponse>(`${API_BASE_URL}/info?list=Statistics`);
 }
 
 export async function getWifiNeighbors(): Promise<WifiNeighborStatusResponse> {
@@ -60,8 +56,7 @@ export async function getWifiNeighbors(): Promise<WifiNeighborStatusResponse> {
       }
     };
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=WifiNeighbor`);
-  return handleApiResponse<WifiNeighborStatusResponse>(response);
+  return callApi<WifiNeighborStatusResponse>(`${API_BASE_URL}/info?list=WifiNeighbor`);
 }
 
 export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanResponse> {
@@ -131,22 +126,20 @@ export async function getLcmStatus(): Promise<StatusLcmResponse> {
     return {
       StatusLcm: {
         ExecutionUnitNumberOfEntries: 1,
-          ExecEnvNumberOfEntries: 1,
+        ExecEnvNumberOfEntries: 1,
         DeploymentUnitNumberOfEntries: count,
         DeploymentUnits: generateRandomDeploymentUnits(count)
       }
     };
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=StatusLcm`);
-  return handleApiResponse<StatusLcmResponse>(response);
+  return callApi<StatusLcmResponse>(`${API_BASE_URL}/info?list=StatusLcm`);
 }
 
 export async function getNtpSettings(): Promise<NtpResponse> {
   if (isDevelopment) {
     return ntpMockData;
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=Ntp`);
-  return handleApiResponse<NtpResponse>(response);
+  return callApi<NtpResponse>(`${API_BASE_URL}/info?list=Ntp`);
 }
 
 export async function updateNtpSettings(data: NtpUpdateRequest): Promise<NtpResponse> {
@@ -174,8 +167,7 @@ export async function getTimezones(): Promise<TimezoneResponse> {
   if (isDevelopment) {
     return timezoneData;
   }
-  const response = await fetch('/API/info?list=Timezone');
-  return handleApiResponse<TimezoneResponse>(response);
+  return callApi<TimezoneResponse>(`${API_BASE_URL}/info?list=Timezone`);
 }
 
 export async function updateTimezone(data: TimezoneUpdateRequest): Promise<TimezoneResponse> {
@@ -196,8 +188,7 @@ export async function getDdns(): Promise<DdnsResponse> {
   if (isDevelopment) {
     return ddnsData;
   }
-  const response = await fetch('/API/info?list=Ddns');
-  return handleApiResponse<DdnsResponse>(response);
+  return callApi<DdnsResponse>(`${API_BASE_URL}/info?list=Ddns`);
 }
 
 export async function updateDdns(data: DdnsUpdateRequest): Promise<DdnsResponse> {

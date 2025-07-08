@@ -1,5 +1,6 @@
 import type { ServiceControlResponse, ServiceControlUpdateRequest } from '../../types/serviceControl';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -68,9 +69,7 @@ export const getServiceControl = async (): Promise<ServiceControlResponse> => {
   if (isDevelopment) {
     return mockServiceControlData;
   }
-
-  const response = await fetch('/API/info?list=AdvancedServiceControl');
-  return handleApiResponse<ServiceControlResponse>(response);
+  return callApi<ServiceControlResponse>('/API/info?list=AdvancedServiceControl');
 };
 
 export const updateServiceControl = async (data: ServiceControlUpdateRequest): Promise<ServiceControlResponse> => {

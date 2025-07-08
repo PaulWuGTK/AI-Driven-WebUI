@@ -1,5 +1,6 @@
 import type { MACFilteringResponse, MACFilteringUpdateRequest } from '../../types/macFiltering';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -56,8 +57,7 @@ export const getMACFiltering = async (): Promise<MACFilteringResponse> => {
     return mockMACFilteringData;
   }
 
-  const response = await fetch('/API/info?list=MACFiltering');
-  return handleApiResponse<MACFilteringResponse>(response);
+  return callApi<MACFilteringResponse>('/API/info?list=MACFiltering');
 };
 
 export const updateMACFiltering = async (data: MACFilteringUpdateRequest): Promise<MACFilteringResponse> => {

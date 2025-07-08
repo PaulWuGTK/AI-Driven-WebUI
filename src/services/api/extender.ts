@@ -1,5 +1,6 @@
 import type { ExtenderResponse, ExtenderScanResponse, ExtenderUpdateRequest, ExtenderConnectRequest } from '../../types/extender';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -65,9 +66,7 @@ export const getExtenderStatus = async (): Promise<ExtenderResponse> => {
   if (isDevelopment) {
     return mockExtenderData;
   }
-
-  const response = await fetch('/API/info?list=Extender');
-  return handleApiResponse<ExtenderResponse>(response);
+  return callApi<ExtenderResponse>('/API/info?list=Extender');
 };
 
 export const updateExtenderSettings = async (data: ExtenderUpdateRequest): Promise<ExtenderResponse> => {

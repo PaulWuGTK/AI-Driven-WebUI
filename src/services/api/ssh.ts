@@ -6,6 +6,7 @@ import type {
   SshAuthorizedKey 
 } from '../../types/ssh';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 import { sshServerData, sshAuthorizedKeyData, sshSessionData } from '../mockData/sshData';
 
 const isDevelopment = import.meta.env.DEV;
@@ -14,8 +15,7 @@ export async function getSshServers(): Promise<SshServerResponse> {
   if (isDevelopment) {
     return sshServerData;
   }
-  const response = await fetch('/API/info?list=SshServer');
-  return handleApiResponse<SshServerResponse>(response);
+  return callApi<SshServerResponse>('/API/info?list=SshServer');
 }
 
 export async function updateSshServers(servers: SshServer[]): Promise<SshServerResponse> {
@@ -37,8 +37,7 @@ export async function getSshAuthorizedKeys(): Promise<SshAuthorizedKeyResponse> 
   if (isDevelopment) {
     return sshAuthorizedKeyData;
   }
-  const response = await fetch('/API/info?list=SshAuthorizedKey');
-  return handleApiResponse<SshAuthorizedKeyResponse>(response);
+  return callApi<SshAuthorizedKeyResponse>('/API/info?list=SshAuthorizedKey');
 }
 
 export async function updateSshAuthorizedKeys(keys: SshAuthorizedKey[]): Promise<SshAuthorizedKeyResponse> {
@@ -60,6 +59,5 @@ export async function getSshSessions(): Promise<SshSessionResponse> {
   if (isDevelopment) {
     return sshSessionData;
   }
-  const response = await fetch('/API/info?list=SshSession');
-  return handleApiResponse<SshSessionResponse>(response);
+  return callApi<SshSessionResponse>('/API/info?list=SshSession');
 }

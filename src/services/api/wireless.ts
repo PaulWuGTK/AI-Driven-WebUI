@@ -5,6 +5,7 @@ import type {
   WlanMeshResponse 
 } from '../../types/wireless';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 import {
   wlanBasicMockData,
   wlanAdvancedMockData,
@@ -21,8 +22,9 @@ export async function getWlanBasic(): Promise<WlanBasicResponse> {
   if (isDevelopment) {
     return wlanBasicMockData;
   }
-  const response = await fetch(`${API_URL}?list=WlanBasic`);
-  return handleApiResponse<WlanBasicResponse>(response);
+  // const response = await fetch(`${API_URL}?list=WlanBasic`);
+  // return handleApiResponse<WlanBasicResponse>(response);
+  return callApi<WlanBasicResponse>(`${API_URL}?list=WlanBasic`);
 }
 
 export async function updateWlanBasic(data: Partial<WlanBasicResponse>): Promise<WlanBasicResponse> {
@@ -43,8 +45,7 @@ export async function getWlanAdvanced(): Promise<WlanAdvancedResponse> {
   if (isDevelopment) {
     return wlanAdvancedMockData;
   }
-  const response = await fetch(`${API_URL}?list=WlanAdvanced`);
-  return handleApiResponse<WlanAdvancedResponse>(response);
+  return callApi<WlanAdvancedResponse>(`${API_URL}?list=WlanAdvanced`);
 }
 
 export async function updateWlanAdvanced(data: WlanAdvancedResponse): Promise<WlanAdvancedResponse> {
@@ -90,8 +91,8 @@ export async function getWlanWps(): Promise<WlanWpsResponse> {
   if (isDevelopment) {
     return getWlanWpsMock();
   }
-  const response = await fetch(`${API_URL}?list=WlanWps`);
-  return handleApiResponse<WlanWpsResponse>(response);
+
+  return callApi<WlanWpsResponse>(`${API_URL}?list=WlanWps`);
 }
 
 export async function updateWlanWps(data: { WlanWps: { Enable?: number; Action?: string; ClientPIN?: number } }): Promise<WlanWpsResponse> {
@@ -112,8 +113,7 @@ export async function getWlanMesh(): Promise<WlanMeshResponse> {
   if (isDevelopment) {
     return wlanMeshMockData;
   }
-  const response = await fetch(`${API_URL}?list=WlanMesh`);
-  return handleApiResponse<WlanMeshResponse>(response);
+  return callApi<WlanMeshResponse>(`${API_URL}?list=WlanMesh`);
 }
 
 export async function updateWlanMesh(data: WlanMeshResponse): Promise<WlanMeshResponse> {
