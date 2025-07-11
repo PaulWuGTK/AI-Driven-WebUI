@@ -34,7 +34,6 @@ const handleSubmit = async () => {
   try {
     const postData: WlanAdvancedResponse = {
       WlanAdvanced: {
-        MLOEnable: advancedData.value.WlanAdvanced.MLOEnable,
         wifi2g: {
           RadioEnable: advancedData.value.WlanAdvanced.wifi2g.RadioEnable,
           Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,

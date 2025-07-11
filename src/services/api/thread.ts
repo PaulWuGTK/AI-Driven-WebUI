@@ -10,6 +10,7 @@ import type {
   ThreadScanResponse
 } from '../../types/thread';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 
 const API_URL = '/API/info';
 const isDevelopment = import.meta.env.DEV;
@@ -214,9 +215,7 @@ export const getThreadStatus = async (): Promise<ThreadStatusResponse> => {
   if (isDevelopment) {
     return mockThreadStatus;
   }
-
-  const response = await fetch(`${API_URL}?list=ThreadStatus`);
-  return handleApiResponse<ThreadStatusResponse>(response);
+  return callApi<ThreadStatusResponse>(`${API_URL}?list=ThreadStatus`);
 };
 
 // Thread Scan API
@@ -224,9 +223,7 @@ export const scanThreadNetworks = async (): Promise<ThreadScanResponse> => {
   if (isDevelopment) {
     return mockThreadScan;
   }
-
-  const response = await fetch(`${API_URL}?list=ThreadScan`);
-  return handleApiResponse<ThreadScanResponse>(response);
+  return callApi<ThreadScanResponse>(`${API_URL}?list=ThreadScan`);
 };
 
 // Thread Configuration API
@@ -234,9 +231,7 @@ export const getThreadConfiguration = async (): Promise<ThreadConfigurationRespo
   if (isDevelopment) {
     return mockThreadConfiguration;
   }
-
-  const response = await fetch(`${API_URL}?list=ThreadConfiguration`);
-  return handleApiResponse<ThreadConfigurationResponse>(response);
+  return callApi<ThreadConfigurationResponse>(`${API_URL}?list=ThreadConfiguration`);
 };
 
 export const updateThreadConfiguration = async (data: ThreadConfigurationUpdateRequest): Promise<ThreadConfigurationResponse> => {
@@ -283,9 +278,8 @@ export const getThreadCommissioner = async (): Promise<ThreadCommissionerRespons
   if (isDevelopment) {
     return mockThreadCommissioner;
   }
-
-  const response = await fetch(`${API_URL}?list=ThreadCommissioner`);
-  return handleApiResponse<ThreadCommissionerResponse>(response);
+  return callApi<ThreadCommissionerResponse>(`${API_URL}?list=ThreadCommissioner`);
+  
 };
 
 export const updateThreadCommissioner = async (data: ThreadCommissionerUpdateRequest): Promise<ThreadCommissionerResponse> => {
@@ -326,7 +320,5 @@ export const getThreadTopology = async (): Promise<ThreadTopologyResponse> => {
   if (isDevelopment) {
     return mockThreadTopology;
   }
-
-  const response = await fetch(`${API_URL}?list=ThreadTopology`);
-  return handleApiResponse<ThreadTopologyResponse>(response);
+  return callApi<ThreadTopologyResponse>(`${API_URL}?list=ThreadTopology`);
 };

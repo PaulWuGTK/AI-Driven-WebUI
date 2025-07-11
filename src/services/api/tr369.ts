@@ -1,5 +1,6 @@
 import type { TR369Response, TR369UpdateRequest } from '../../types/tr369';
 import { handleApiResponse } from '../../utils/apiUtils';
+import { callApi } from '../apiClient';
 import { tr369MockData } from '../mockData/tr369MockData';
 
 const isDevelopment = import.meta.env.DEV;
@@ -8,9 +9,7 @@ export const getTR369Config = async (): Promise<TR369Response> => {
   if (isDevelopment) {
     return tr369MockData;
   }
-
-  const response = await fetch('/API/info?list=TR369');
-  return handleApiResponse<TR369Response>(response);
+  return callApi<TR369Response>('/API/info?list=TR369');
 };
 
 export const updateTR369Config = async (data: TR369UpdateRequest): Promise<TR369Response> => {

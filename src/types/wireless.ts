@@ -34,7 +34,7 @@ export interface WlanAdvancedConfig {
 
 export interface WlanAdvancedResponse {
   WlanAdvanced: {
-    MLOEnable: number;
+    MLOEnable?: number;
     wifi2g: WlanAdvancedConfig;
     wifi5g: WlanAdvancedConfig;
     wifi6g: WlanAdvancedConfig;

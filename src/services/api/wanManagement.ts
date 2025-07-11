@@ -1,6 +1,7 @@
 import type { WanModeManagementResponse, WanModeManagementUpdateRequest } from '../../types/wanManagement';
 import { handleApiResponse } from '../../utils/apiUtils';
 import { wanManagementMockData } from '../mockData/wanManagementMockData';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -8,8 +9,7 @@ export async function getWanModeManagement(): Promise<WanModeManagementResponse>
   if (isDevelopment) {
     return wanManagementMockData;
   }
-  const response = await fetch('/API/info?list=WanModeManagement');
-  return handleApiResponse<WanModeManagementResponse>(response);
+  return callApi<WanModeManagementResponse>('/API/info?list=WanModeManagement');
 }
 
 export async function updateWanModeManagement(data: WanModeManagementUpdateRequest): Promise<WanModeManagementResponse> {
