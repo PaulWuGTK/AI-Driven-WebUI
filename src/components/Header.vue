@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AuthService } from '../services/auth';
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 
-const router = useRouter();
 const { t, locale } = useI18n();
-
-const handleLogout = () => {
-  AuthService.getInstance().clearSession();
-  router.push('/login');
-};
 
 const languageMap: Record<string, string> = {
   'zh-TW': 'zh_TW',
@@ -46,16 +38,7 @@ const handleLanguageChange = async (event: Event) => {
     await updateSidebarMenuLanguage(datamodelLang);
     locale.value = newLocale;
   } catch (error) {
-    console.error('Error updating language:', error);
-    
-    // Check if error is related to authentication
-    if (error instanceof Error && 
-        (error.message.includes('401') || 
-         error.message.includes('403'))) {
-      // Clear session and redirect to login
-      AuthService.getInstance().clearSession();
-      router.push('/login');
-    }
+    console.error('Error updating language:', error);      
   }
 };
 
@@ -63,26 +46,16 @@ const fetchAvailableLanguages = async () => {
   try {
     const response = await getSidebarMenu();
     const availableCodes = response.SidebarMenu.language.available;
-    
+
     // Filter languages to only show available ones
     availableLanguages.value = availableLanguages.value.filter(lang =>
       response.SidebarMenu.language.available.includes(reverseLanguageMap[lang.code])
     );
-    
+
     // Set current language
     locale.value = languageMap[response.SidebarMenu.language.current] || 'en';
   } catch (error) {
     console.error('Error fetching available languages:', error);
-    
-    // Check if error is related to authentication or contains the specific error message
-    if (error instanceof Error && 
-        (error.message.includes('401') || 
-         error.message.includes('403') ||
-         error.message.includes('Failed to fetch sidebar menu'))) {
-      // Clear session and redirect to login
-      AuthService.getInstance().clearSession();
-      router.push('/login');
-    }
   }
 };
 
@@ -106,13 +79,9 @@ onMounted(() => {
           </option>
         </select>
       </div>
-      <button class="header-btn">
+      <button class="header-btn" style="visibility: hidden;">
         <span class="material-icons">person</span>
         {{ username }}
-      </button>
-      <button class="header-btn" @click="handleLogout">
-        <span class="material-icons">logout</span>
-        {{ t('header.logout') }}
       </button>
     </div>
   </header>

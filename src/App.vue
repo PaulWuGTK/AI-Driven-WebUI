@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
 import type { WanStatusResponse } from './types/wan';
 import { getMockWanStatus } from './services/mockApi';
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
 
-const route = useRoute();
 const wanData = ref<WanStatusResponse | null>(null);
 
 const fetchWanStatus = async () => {
@@ -20,22 +18,15 @@ const fetchWanStatus = async () => {
 onMounted(() => {
   fetchWanStatus();
 });
-
-const isLoginPage = computed(() => route.path === '/login');
 </script>
 
 <template>
   <div class="app-container">
-    <template v-if="!isLoginPage">
-      <Sidebar />
-      <div class="main-content">
-        <Header />
-        <router-view />
-      </div>
-    </template>
-    <template v-else>
+    <Sidebar />
+    <div class="main-content">
+      <Header />
       <router-view />
-    </template>
+    </div>
   </div>
 </template>
 

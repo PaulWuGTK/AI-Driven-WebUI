@@ -3,7 +3,6 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 import { i18n } from './i18n'
-import { AuthService } from './services/auth'
 
 // Global error handler for module loading failures
 window.addEventListener('error', (event) => {
@@ -15,12 +14,7 @@ window.addEventListener('error', (event) => {
     event.message.includes('Loading CSS chunk')
   ) {
     console.error('Module loading error detected:', event.message);
-    
-    // Clear authentication and redirect to login
-    const auth = AuthService.getInstance();
-    auth.clearSession();
-    window.location.href = '/login';
-    
+        
     // Prevent the default error handling
     event.preventDefault();
   }
@@ -37,12 +31,7 @@ window.addEventListener('unhandledrejection', (event) => {
     )
   ) {
     console.error('Module loading promise rejection detected:', event.reason);
-    
-    // Clear authentication and redirect to login
-    const auth = AuthService.getInstance();
-    auth.clearSession();
-    window.location.href = '/login';
-    
+        
     // Prevent the default error handling
     event.preventDefault();
   }
