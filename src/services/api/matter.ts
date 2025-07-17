@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const MATTER_API_BASE_URL = 'http://192.168.101.1:8889';
+const API_ENDPOINT = '/API/info?list=matterProxy';
 
 // OnOff API
 export interface OnOffRequest {
@@ -19,7 +19,11 @@ export interface OnOffResponse {
 
 export const sendOnOffCommand = async (params: OnOffRequest): Promise<OnOffResponse> => {
   try {
-    const response = await axios.post(`${MATTER_API_BASE_URL}/onoff`, params);
+    const response = await axios.post(API_ENDPOINT, {
+      method: "POST",
+      action: "onoff",
+      data: params
+    });
     return response.data;
   } catch (error) {
     console.error('Error sending OnOff command:', error);
