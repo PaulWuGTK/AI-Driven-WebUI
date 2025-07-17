@@ -37,6 +37,15 @@ export interface Translations {
     iot: string;
     thread: string;
     matter: string;
+    matterHome: string;
+    matterPairing: string;
+    matterOnoff: string;
+    matterMultiadmin: string;
+    matterSubscribe: string;
+    matterGetstatus: string;
+    matterBinding: string;
+    matterMediacontrol: string;
+    matterEevsecontrol: string;
   };
   header: {
     account: string;
@@ -699,9 +708,15 @@ export interface Translations {
   matter: {
     title: string;
     description: string;
-    openDashboard: string;
-    dashboardDescription: string;
-    dashboardPort: string;
+    onoffTitle: string;
+    nodeAlias: string;
+    nodeId: string;
+    endpointId: string;
+    on: string;
+    off: string;
+    toggle: string;
+    read: string;
+    getReport: string;
   };
   login: {
     title: string;

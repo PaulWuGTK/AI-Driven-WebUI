@@ -2,7 +2,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AuthService } from '../services/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -53,8 +52,18 @@ const baseMenuItems: MenuItem[] = [
   {
     name: 'Matter',
     icon: matterIcon,
-    path: '/matter',
-    translationKey: 'menu.matter'
+    translationKey: 'menu.matter',
+    subItems: [
+      { name: 'Home', path: '/matter/home', translationKey: 'menu.matterHome' },
+      { name: 'Pairing', path: '/matter/pairing', translationKey: 'menu.matterPairing' },
+      { name: 'OnOff', path: '/matter/onoff', translationKey: 'menu.matterOnoff' },
+      { name: 'MultiAdmin', path: '/matter/multiadmin', translationKey: 'menu.matterMultiadmin' },
+      { name: 'Subscribe', path: '/matter/subscribe', translationKey: 'menu.matterSubscribe' },
+      { name: 'GetStatus', path: '/matter/getstatus', translationKey: 'menu.matterGetstatus' },
+      { name: 'Binding', path: '/matter/binding', translationKey: 'menu.matterBinding' },
+      { name: 'MediaControl', path: '/matter/mediacontrol', translationKey: 'menu.matterMediacontrol' },
+      { name: 'EevseControl', path: '/matter/eevsecontrol', translationKey: 'menu.matterEevsecontrol' }
+    ]
   },
   { 
     name: 'Management',
