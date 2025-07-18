@@ -709,6 +709,7 @@ const translations: Translations = {
   matter: {
     title: 'Matter',
     description: 'Matter is a new smart home standard that aims to simplify development for manufacturers and increase compatibility for consumers.',
+    pairingTitle: 'Pairing',
     onoffTitle: 'OnOff',
     nodeAlias: 'Node Alias',
     nodeId: 'Node ID',

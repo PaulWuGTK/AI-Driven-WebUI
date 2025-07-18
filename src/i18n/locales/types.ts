@@ -708,6 +708,7 @@ export interface Translations {
   matter: {
     title: string;
     description: string;
+    pairingTitle: string;
     onoffTitle: string;
     nodeAlias: string;
     nodeId: string;
