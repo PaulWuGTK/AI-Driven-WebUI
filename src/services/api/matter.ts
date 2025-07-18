@@ -19,11 +19,11 @@ export interface OnOffResponse {
 
 export const sendOnOffCommand = async (params: OnOffRequest): Promise<OnOffResponse> => {
   try {
-    const response = await axios.post(API_ENDPOINT, {
+    const response = await axios.post(API_ENDPOINT, {MatterProxy:{
       method: "POST",
       action: "onoff",
       data: params
-    });
+    }});
     return response.data;
   } catch (error) {
     console.error('Error sending OnOff command:', error);

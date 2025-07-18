@@ -54,11 +54,11 @@ const handlePairing = async () => {
       requestData.discriminator = discriminator.value;
     }
 
-    const response = await axios.post(API_ENDPOINT, {
+    const response = await axios.post(API_ENDPOINT, {MatterProxy:{
       method: "POST",
       action: "pairing",
       data: requestData
-    });
+    }});
     
     result.value = JSON.stringify(response.data, null, 2);
   } catch (err) {
@@ -75,11 +75,11 @@ const getDataset = async () => {
   error.value = null;
   
   try {
-    const response = await axios.post(API_ENDPOINT, {
+    const response = await axios.post(API_ENDPOINT, {MatterProxy:{
       method: "GET",
       action: "get_dataset",
       data: {}
-    });
+    }});
     
     if (response.data.result === 'failed') {
       error.value = response.data.message || 'Failed to get dataset';
