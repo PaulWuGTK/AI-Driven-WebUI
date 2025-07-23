@@ -2,41 +2,50 @@
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-const openMatterDashboard = () => {
-  // Get the current hostname and protocol
-  const protocol = window.location.protocol;
-  const hostname = window.location.hostname;
-  
-  // Construct the Matter dashboard URL with port 8889
-  const matterDashboardUrl = `${protocol}//${hostname}:8889`;
-  
-  // Open in a new tab
-  window.open(matterDashboardUrl, '_blank');
-};
 </script>
 
 <template>
-  <h1 class="page-title">{{ t('matter.title') }}</h1>
-  <div class="matter-content">
-    <div class="panel-section">
-      <div class="section-title">{{ t('matter.title') }}</div>
-      
-      <div class="card-content">
-        <div class="matter-description">
-          <p>{{ t('matter.description') }}</p>
+  <div class="page-container">
+    <h1 class="page-title">{{ t('matter.title') }} {{ t('menu.matterHome') }}</h1>
+    
+    <div class="status-content">
+      <!-- Matter Logo Section -->
+      <div class="panel-section">
+        <div class="card-content">
+          <div class="matter-logo-section">
+            <img src="/src/assets/icons/matter/matter_logo.png" alt="Matter Logo" class="matter-logo-img" />
+          </div>
         </div>
-        
-        <div class="dashboard-section">
-          <h3>{{ t('matter.openDashboard') }}</h3>
-          <p>{{ t('matter.dashboardDescription') }}</p>
-          <p class="port-info">{{ t('matter.dashboardPort') }}</p>
+      </div>
+
+      <!-- What is Matter Section -->
+      <div class="panel-section">
+        <div class="card-content">
+          <h3 class="section-heading">{{ t('matter.whatIsMatter') }}</h3>
+          <div class="matter-description">
+            <p>
+              {{ t('matter.matterDescription1') }}
+            </p>
+            <p>
+              {{ t('matter.matterDescription2') }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- What is Matter Controller Section -->
+      <div class="panel-section">
+        <div class="card-content">
+          <h4 class="section-heading">{{ t('matter.whatIsMatterController') }}</h4>
+          <div class="controller-description">
+            <p>
+              {{ t('matter.controllerDescription') }}
+            </p>
+          </div>
           
-          <div class="button-container">
-            <button class="btn btn-primary" @click="openMatterDashboard">
-              <span class="material-icons">open_in_new</span>
-              {{ t('matter.openDashboard') }}
-            </button>
+          <!-- Matter Controller Diagram -->
+          <div class="controller-diagram-section">
+            <img src="/src/assets/icons/matter/matter_controllers.png" alt="Matter Controllers Diagram" class="controllers-diagram-img" />
           </div>
         </div>
       </div>
@@ -45,72 +54,61 @@ const openMatterDashboard = () => {
 </template>
 
 <style scoped>
-.matter-content {
-  padding: 0.1rem 1.5rem 0 1.5rem;
-}
-
-.panel-section {
-  margin-bottom: 1.5rem;
-}
-
-.matter-description {
-  margin-bottom: 2rem;
-  line-height: 1.6;
-}
-
-.dashboard-section {
-  background-color: var(--bg-secondary);
-  padding: 2rem;
-  border-radius: 8px;
+.matter-logo-section {
   text-align: center;
+  padding: 2rem 0;
 }
 
-.dashboard-section h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
+.matter-logo-img {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px;
+  width: auto;
+}
+
+.section-heading {
   color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
-.dashboard-section p {
-  margin-bottom: 1rem;
+.matter-description,
+.controller-description {
+  line-height: 1.6;
   color: var(--text-secondary);
 }
 
-.port-info {
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 2rem;
+.matter-description p,
+.controller-description p {
+  margin-bottom: 1rem;
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
+.controller-diagram-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
 }
 
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+.controllers-diagram-img {
+  max-width: 100%;
+  height: auto;
+  max-width: 600px;
 }
 
 @media (max-width: 768px) {
-  .matter-content {
+  .controller-diagram-section {
     padding: 1rem;
   }
   
-  .panel-section {
-    margin-bottom: 1rem;
+  .matter-logo-img {
+    max-height: 80px;
   }
   
-  .dashboard-section {
-    padding: 1.5rem;
-  }
-
-  .btn {
-    width: 100%;
-    justify-content: center;
+  .controllers-diagram-img {
+    max-width: 100%;
   }
 }
 </style>

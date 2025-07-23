@@ -1,21 +1,66 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { sendOnOffCommand } from '../../../services/api/matter';
+import { sendOnOffCommand, getMatterStatus, sendOnOffReportCommand } from '../../../services/api/matter';
+import type { GetStatusResponse } from '../../../services/api/matter';
 
 const { t } = useI18n();
 
 // Form data
-const nodeId = ref('');
+const nodeId = ref('1');
 const endPointId = ref(1);
+const nodeAlias = ref('');
+const availableNodes = ref<{ alias: string; id: string }[]>([]);
 const loading = ref(false);
 const result = ref<string | null>(null);
 const error = ref<string | null>(null);
+const reports = ref<{ report: string; timestamp: string }[]>([]);
+
+// Fetch status on component mount
+const fetchStatus = async () => {
+  loading.value = true;
+  error.value = null;
+  
+  try {
+    const response: GetStatusResponse = await getMatterStatus();
+    
+    if (response.result === 'successful' && response.status) {
+      // Convert status object to array of nodes
+      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+        alias,
+        id: String(id)
+      }));
+      
+      availableNodes.value = nodes;
+      
+      // Set default selection to first node if available
+      if (nodes.length > 0) {
+        nodeAlias.value = nodes[0].alias;
+        nodeId.value = nodes[0].id;
+      }
+    } else {
+      error.value = response.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
+    }
+  } catch (err) {
+    console.error('Error fetching status:', err);
+    error.value = 'An error occurred while fetching status';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Handle node alias selection change
+const handleNodeAliasChange = (selectedAlias: string) => {
+  const selectedNode = availableNodes.value.find(node => node.alias === selectedAlias);
+  if (selectedNode) {
+    nodeId.value = selectedNode.id;
+  }
+};
 
 // Send command
 const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
-  if (!nodeId.value && type !== 'read') {
-    error.value = 'Node ID is required';
+  if (!nodeAlias.value || !nodeId.value) {
+    error.value = 'Node selection is required';
     return;
   }
 
@@ -24,20 +69,45 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
   result.value = null;
 
   try {
-    const response = await sendOnOffCommand({
-      nodeId: nodeId.value,
-      endPointId: endPointId.value,
-      type
-    });
+    if (type === 'read') {
+      // Use onoff_report for read operations
+      const response = await sendOnOffReportCommand({
+        attr: 'on-off',
+        nodeAlias: nodeAlias.value,
+        nodeId: nodeId.value,
+        endPointId: endPointId.value,
+        type: 'read'
+      });
 
-    if (response.status === 'success') {
-      if (type === 'read' && response.data) {
-        result.value = `Current state: ${response.data.state ? 'ON' : 'OFF'}`;
+      if (response.result === 'successful') {
+        result.value = 'Read operation successful and got report';
+        if (response.report) {
+          reports.value.unshift({
+            report: response.report,
+            timestamp: new Date().toLocaleTimeString()
+          });
+          
+          // Keep only last 20 reports
+          if (reports.value.length > 20) {
+            reports.value = reports.value.slice(0, 20);
+          }
+        }
       } else {
-        result.value = `Command ${type.toUpperCase()} sent successfully`;
+        error.value = response.message || 'Read operation successful but failed to get report';
       }
     } else {
-      error.value = response.message || 'Failed to send command';
+      // Use regular onoff for control operations
+      const response = await sendOnOffCommand({
+        nodeId: nodeId.value,
+        endPointId: endPointId.value,
+        type
+      });
+
+      if (response.status === 'success') {
+        result.value = `Command ${type.toUpperCase()} sent successfully`;
+      } else {
+        error.value = response.message || 'Failed to send command';
+      }
     }
   } catch (err) {
     console.error('Error:', err);
@@ -46,6 +116,12 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
     loading.value = false;
   }
 };
+
+// Initialize component
+import { onMounted } from 'vue';
+onMounted(() => {
+  fetchStatus();
+});
 </script>
 
 <template>
@@ -57,12 +133,32 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
         <div class="card-content">
           <div class="form-container">
             <div class="form-group">
+              <label for="nodeAlias">{{ t('matter.nodeAlias') }}</label>
+              <select 
+                id="nodeAlias" 
+                v-model="nodeAlias" 
+                @change="handleNodeAliasChange(nodeAlias)"
+                class="form-control"
+              >
+                <option value="" disabled>Select Node Alias</option>
+                <option 
+                  v-for="node in availableNodes" 
+                  :key="node.alias" 
+                  :value="node.alias"
+                >
+                  {{ node.alias }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
               <label for="nodeId">{{ t('matter.nodeId') }}</label>
               <input 
                 type="text" 
                 id="nodeId" 
                 v-model="nodeId" 
                 class="form-control"
+                readonly
               />
             </div>
 
@@ -81,21 +177,21 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
               <button 
                 class="btn btn-primary on-btn" 
                 @click="sendCommand('on')"
-                :disabled="loading"
+                :disabled="loading || !nodeAlias"
               >
                 {{ t('matter.on') }}
               </button>
               <button 
                 class="btn btn-primary toggle-btn" 
                 @click="sendCommand('toggle')"
-                :disabled="loading"
+                :disabled="loading || !nodeAlias"
               >
                 {{ t('matter.toggle') }}
               </button>
               <button 
                 class="btn btn-primary off-btn" 
                 @click="sendCommand('off')"
-                :disabled="loading"
+                :disabled="loading || !nodeAlias"
               >
                 {{ t('matter.off') }}
               </button>
@@ -122,9 +218,19 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
       <div class="panel-section">
         <div class="section-title">{{ t('matter.getReport') }}</div>
         <div class="card-content">
-          <div class="report-container">
-            <!-- Report content will be displayed here -->
-            <p>No report available</p>
+          <div class="reports-container">
+            <div v-if="reports.length === 0" class="no-reports">
+              No reports available
+            </div>
+            <div 
+              v-else
+              class="report-item" 
+              v-for="(item, index) in reports" 
+              :key="index"
+            >
+              <div class="report-timestamp">{{ item.timestamp }}</div>
+              <div class="report-content">{{ item.report }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -155,6 +261,11 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.form-control:read-only {
+  background-color: var(--bg-secondary);
+  cursor: not-allowed;
 }
 
 .button-group {
@@ -217,11 +328,38 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
   margin-bottom: 1rem;
 }
 
-.report-container {
-  min-height: 200px;
-  background-color: var(--bg-secondary);
+.reports-container {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
+}
+
+.no-reports {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.report-item {
   padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-item:last-child {
+  border-bottom: none;
+}
+
+.report-timestamp {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.report-content {
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 @media (max-width: 768px) {

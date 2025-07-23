@@ -81,10 +81,14 @@ const getDataset = async () => {
       data: {}
     }});
     
-    if (response.data.result === 'failed') {
-      error.value = response.data.message || 'Failed to get dataset';
+    if (response.data.MatterProxy?.result === 'successful') {
+      // Successfully obtained dataset, populate the dataset field
+      dataset.value = response.data.MatterProxy.dataset || '';
+      console.log('Dataset obtained successfully:', response.data.MatterProxy.message);
+    } else if (response.data.MatterProxy?.result === 'failed') {
+      error.value = response.data.MatterProxy.message || 'Failed to get dataset';
     } else {
-      dataset.value = response.data.dataset || '';
+      error.value = 'Unexpected response format';
     }
   } catch (err) {
     console.error('Error getting dataset:', err);
@@ -97,7 +101,7 @@ const getDataset = async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('matter.title') }} {{ t('matter.pairingTitle') }}</h1>
+    <h1 class="page-title">{{ t('matter.pairingTitle') }}</h1>
     
     <div class="status-content">
       <div class="panel-section">
@@ -105,7 +109,7 @@ const getDataset = async () => {
           <div class="form-container">
             <!-- Pairing Type Selection -->
             <div class="form-group">
-              <label>Please choose the pairing type:</label>
+              <label>{{ t('matter.pairingType') }}</label>
               <select v-model="pairingType" class="form-control">
                 <option v-for="type in pairingTypes" :key="type.value" :value="type.value">
                   {{ type.label }}
@@ -113,12 +117,10 @@ const getDataset = async () => {
               </select>
             </div>
 
-            <h3 class="section-title">{{ pairingTypes.find(t => t.value === pairingType)?.label }}</h3>
-
             <!-- Common Fields -->
             <div class="form-row">
               <div class="form-group half-width">
-                <label for="nodeId">Node ID</label>
+                <label for="nodeId">{{ t('matter.nodeId') }}</label>
                 <input 
                   type="text" 
                   id="nodeId" 
@@ -129,7 +131,7 @@ const getDataset = async () => {
               </div>
 
               <div class="form-group half-width">
-                <label for="nodeAlias">Node Alias</label>
+                <label for="nodeAlias">{{ t('matter.nodeAlias') }}</label>
                 <input 
                   type="text" 
                   id="nodeAlias" 
@@ -143,7 +145,7 @@ const getDataset = async () => {
             <!-- BLE-WIFI Fields -->
             <div v-if="pairingType === 'ble-wifi'" class="form-row">
               <div class="form-group half-width">
-                <label for="ssId">SSID</label>
+                <label for="ssId">{{ t('matter.ssid') }}</label>
                 <input 
                   type="text" 
                   id="ssId" 
@@ -154,7 +156,7 @@ const getDataset = async () => {
               </div>
 
               <div class="form-group half-width">
-                <label for="password">Password</label>
+                <label for="password">{{ t('matter.password') }}</label>
                 <input 
                   type="password" 
                   id="password" 
@@ -168,7 +170,7 @@ const getDataset = async () => {
             <!-- Pin Code Field -->
             <div class="form-row">
               <div class="form-group" :class="pairingType === 'ble-wifi' || pairingType === 'ble-thread' ? 'half-width' : 'full-width'">
-                <label for="pinCode">Pin Code</label>
+                <label for="pinCode">{{ t('matter.pinCode') }}</label>
                 <input 
                   type="text" 
                   id="pinCode" 
@@ -180,7 +182,7 @@ const getDataset = async () => {
 
               <!-- Discriminator Field for BLE-WIFI and BLE-THREAD -->
               <div v-if="pairingType === 'ble-wifi' || pairingType === 'ble-thread'" class="form-group half-width">
-                <label for="discriminator">Discriminator</label>
+                <label for="discriminator">{{ t('matter.discriminator') }}</label>
                 <input 
                   type="text" 
                   id="discriminator" 
@@ -193,7 +195,7 @@ const getDataset = async () => {
 
             <!-- Dataset Field for BLE-THREAD -->
             <div v-if="pairingType === 'ble-thread'" class="form-group">
-              <label for="dataset">Dataset</label>
+              <label for="dataset">{{ t('matter.dataset') }}</label>
               <input 
                 type="text" 
                 id="dataset" 
@@ -211,7 +213,7 @@ const getDataset = async () => {
                 @click="getDataset"
                 :disabled="loading"
               >
-                GET-DATASET
+                {{ t('matter.getDataset') }}
               </button>
               <button 
                 class="btn btn-primary" 
@@ -225,7 +227,7 @@ const getDataset = async () => {
             <!-- Loading Indicator -->
             <div v-if="loading" class="loading-indicator">
               <div class="spinner"></div>
-              <span>Processing...</span>
+              <span>{{ t('matter.pairing.processing') }}</span>
             </div>
 
             <!-- Error Message -->
@@ -235,7 +237,7 @@ const getDataset = async () => {
 
             <!-- Result Display -->
             <div v-if="result" class="result-container">
-              <h4>Result:</h4>
+              <h4>{{ t('matter.result') }}</h4>
               <pre>{{ result }}</pre>
             </div>
           </div>
