@@ -43,7 +43,8 @@ export default {
     matterGetstatus: 'Status abrufen',
     matterBinding: 'Bindung',
     matterMediacontrol: 'Mediensteuerung',
-    matterEevsecontrol: 'EEVSE-Steuerung'
+    matterEevsecontrol: 'EEVSE-Steuerung',
+    matterQrscanner: 'QR-Scanner'
   },
   header: {
     account: 'Konto',
@@ -802,7 +803,24 @@ export default {
     chargingEnabledUntil: 'Laden aktiviert bis',
     sessionId: 'Sitzungs-ID',
     sessionDuration: 'Sitzungsdauer',
-    eevseReports: 'EEVSE-Berichte'
+    eevseReports: 'EEVSE-Berichte',
+    qrScannerTitle: 'QR-Code-Scanner',
+    startCamera: 'Kamera starten',
+    stopCamera: 'Kamera stoppen',
+    uploadFile: 'QR-Code-Bild hochladen',
+    scanResult: 'Scan-Ergebnis',
+    noResult: 'Kein QR-Code erkannt',
+    cameraError: 'Kamera-Zugriffsfehler',
+    fileError: 'Datei-Lesefehler',
+    selectCamera: 'Kamera auswählen',
+    scanFromFile: 'Von Datei scannen',
+    scanFromCamera: 'Von Kamera scannen',
+    chooseFile: 'Datei auswählen',
+    dragDropFile: 'QR-Code-Bild hier ablegen',
+    scanHistory: 'Scan-Verlauf',
+    clearHistory: 'Verlauf löschen',
+    copyResult: 'Ergebnis kopieren',
+    copied: 'In Zwischenablage kopiert'
   },
   login: {
     title: 'Login',

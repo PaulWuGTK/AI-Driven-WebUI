@@ -43,7 +43,8 @@ export default {
     matterGetstatus: 'Obtenir le statut',
     matterBinding: 'Liaison',
     matterMediacontrol: 'Contrôle multimédia',
-    matterEevsecontrol: 'Contrôle EEVSE'
+    matterEevsecontrol: 'Contrôle EEVSE',
+    matterQrscanner: 'Scanner QR'
   },
   header: {
     account: 'Compte',
@@ -802,7 +803,24 @@ export default {
     chargingEnabledUntil: 'Charge activée jusqu’à',
     sessionId: 'ID de session',
     sessionDuration: 'Durée de session',
-    eevseReports: 'Rapports EEVSE'
+    eevseReports: 'Rapports EEVSE',
+    qrScannerTitle: 'Scanner de code QR',
+    startCamera: 'Démarrer la caméra',
+    stopCamera: 'Arrêter la caméra',
+    uploadFile: 'Télécharger une image de code QR',
+    scanResult: 'Résultat du scan',
+    noResult: 'Aucun code QR détecté',
+    cameraError: 'Erreur d\'accès à la caméra',
+    fileError: 'Erreur de lecture de fichier',
+    selectCamera: 'Sélectionner la caméra',
+    scanFromFile: 'Scanner depuis un fichier',
+    scanFromCamera: 'Scanner depuis la caméra',
+    chooseFile: 'Choisir un fichier',
+    dragDropFile: 'Glisser-déposer l\'image du code QR ici',
+    scanHistory: 'Historique des scans',
+    clearHistory: 'Effacer l\'historique',
+    copyResult: 'Copier le résultat',
+    copied: 'Copié dans le presse-papiers'
   },
   login: {
     title: 'Connexion',

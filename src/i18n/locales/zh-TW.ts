@@ -43,7 +43,8 @@ export default {
     matterGetstatus: '取得狀態',
     matterBinding: '綁定',
     matterMediacontrol: '媒體控制',
-    matterEevsecontrol: 'EEVSE 控制'
+    matterEevsecontrol: 'EEVSE 控制',
+    matterQrscanner: 'QR 掃描器'
   },
   header: {
     account: '帳號',
@@ -802,7 +803,24 @@ export default {
     chargingEnabledUntil: '充電啟用至',
     sessionId: '會話 ID',
     sessionDuration: '會話持續時間',
-    eevseReports: 'EEVSE 報告'
+    eevseReports: 'EEVSE 報告',
+    qrScannerTitle: 'QR 碼掃描器',
+    startCamera: '啟動相機',
+    stopCamera: '停止相機',
+    uploadFile: '上傳 QR 碼圖片',
+    scanResult: '掃描結果',
+    noResult: '未檢測到 QR 碼',
+    cameraError: '相機存取錯誤',
+    fileError: '檔案讀取錯誤',
+    selectCamera: '選擇相機',
+    scanFromFile: '從檔案掃描',
+    scanFromCamera: '從相機掃描',
+    chooseFile: '選擇檔案',
+    dragDropFile: '拖放 QR 碼圖片至此',
+    scanHistory: '掃描歷史',
+    clearHistory: '清除歷史',
+    copyResult: '複製結果',
+    copied: '已複製到剪貼簿'
   },
   login: {
     title: '登入',

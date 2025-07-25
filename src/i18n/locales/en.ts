@@ -46,7 +46,8 @@ const translations: Translations = {
     matterGetstatus : 'GetStatus',
     matterBinding : 'Binding',
     matterMediacontrol : 'MediaControl',
-    matterEevsecontrol : 'EevseControl'
+    matterEevsecontrol : 'EevseControl',
+    matterQrscanner : 'QR Scanner'
   },
   header: {
     account: 'Account',
@@ -805,7 +806,24 @@ const translations: Translations = {
     chargingEnabledUntil: 'Charging Enabled Until',
     sessionId: 'Session Id',
     sessionDuration: 'Session Duration',
-    eevseReports: 'EEVSE Reports'
+    eevseReports: 'EEVSE Reports',
+    qrScannerTitle: 'QR Code Scanner',
+    startCamera: 'Start Camera',
+    stopCamera: 'Stop Camera',
+    uploadFile: 'Upload QR Code Image',
+    scanResult: 'Scan Result',
+    noResult: 'No QR code detected',
+    cameraError: 'Camera access error',
+    fileError: 'File reading error',
+    selectCamera: 'Select Camera',
+    scanFromFile: 'Scan from File',
+    scanFromCamera: 'Scan from Camera',
+    chooseFile: 'Choose File',
+    dragDropFile: 'Drag and drop QR code image here',
+    scanHistory: 'Scan History',
+    clearHistory: 'Clear History',
+    copyResult: 'Copy Result',
+    copied: 'Copied to clipboard'
   },
   login: {
     title: 'Login',

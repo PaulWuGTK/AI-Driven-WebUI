@@ -43,7 +43,8 @@ export default {
     matterGetstatus: '获取状态',
     matterBinding: '绑定',
     matterMediacontrol: '媒体控制',
-    matterEevsecontrol: 'EEVSE 控制'
+    matterEevsecontrol: 'EEVSE 控制',
+    matterQrscanner: 'QR 扫描器'
   },
   header: {
     account: '帐户',
@@ -802,7 +803,24 @@ export default {
     chargingEnabledUntil: '充电启用至',
     sessionId: '会话 ID',
     sessionDuration: '会话持续时间',
-    eevseReports: 'EEVSE 报告'
+    eevseReports: 'EEVSE 报告',
+    qrScannerTitle: 'QR 码扫描器',
+    startCamera: '启动相机',
+    stopCamera: '停止相机',
+    uploadFile: '上传 QR 码图片',
+    scanResult: '扫描结果',
+    noResult: '未检测到 QR 码',
+    cameraError: '相机访问错误',
+    fileError: '文件读取错误',
+    selectCamera: '选择相机',
+    scanFromFile: '从文件扫描',
+    scanFromCamera: '从相机扫描',
+    chooseFile: '选择文件',
+    dragDropFile: '拖放 QR 码图片至此',
+    scanHistory: '扫描历史',
+    clearHistory: '清除历史',
+    copyResult: '复制结果',
+    copied: '已复制到剪贴板'
   },
   login: {
     title: '登录',

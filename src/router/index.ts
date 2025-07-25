@@ -56,6 +56,10 @@ const router = createRouter({
       component: () => import('../views/iot/matter/MatterEevseControl.vue'),
     },
     {
+      path: '/matter/qrscanner',
+      component: () => import('../views/iot/matter/MatterQRScanner.vue'),
+    },
+    {
       path: '/management/firmware',
       component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
     }

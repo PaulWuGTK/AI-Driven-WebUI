@@ -46,6 +46,7 @@ export interface Translations {
     matterBinding: string;
     matterMediacontrol: string;
     matterEevsecontrol: string;
+    matterQrscanner: string;
   };
   header: {
     account: string;
@@ -805,6 +806,23 @@ export interface Translations {
     sessionId: string;
     sessionDuration: string;
     eevseReports: string;
+    qrScannerTitle: string;
+    startCamera: string;
+    stopCamera: string;
+    uploadFile: string;
+    scanResult: string;
+    noResult: string;
+    cameraError: string;
+    fileError: string;
+    selectCamera: string;
+    scanFromFile: string;
+    scanFromCamera: string;
+    chooseFile: string;
+    dragDropFile: string;
+    scanHistory: string;
+    clearHistory: string;
+    copyResult: string;
+    copied: string;
   };
   login: {
     title: string;

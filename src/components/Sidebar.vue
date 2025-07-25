@@ -62,7 +62,8 @@ const baseMenuItems: MenuItem[] = [
       { name: 'GetStatus', path: '/matter/getstatus', translationKey: 'menu.matterGetstatus' },
       { name: 'Binding', path: '/matter/binding', translationKey: 'menu.matterBinding' },
       { name: 'MediaControl', path: '/matter/mediacontrol', translationKey: 'menu.matterMediacontrol' },
-      { name: 'EevseControl', path: '/matter/eevsecontrol', translationKey: 'menu.matterEevsecontrol' }
+      { name: 'EevseControl', path: '/matter/eevsecontrol', translationKey: 'menu.matterEevsecontrol' },
+      { name: 'QRScanner', path: '/matter/qrscanner', translationKey: 'menu.matterQrscanner' }
     ]
   },
   { 

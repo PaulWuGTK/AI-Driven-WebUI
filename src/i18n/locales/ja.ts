@@ -43,7 +43,8 @@ export default {
     matterGetstatus: 'ステータス取得',
     matterBinding: 'バインディング',
     matterMediacontrol: 'メディア制御',
-    matterEevsecontrol: 'EEVSE制御'
+    matterEevsecontrol: 'EEVSE制御',
+    matterQrscanner: 'QRスキャナー'
   },
   header: {
     account: 'アカウント',
@@ -802,7 +803,24 @@ export default {
     chargingEnabledUntil: '充電有効期限',
     sessionId: 'セッションID',
     sessionDuration: 'セッション時間',
-    eevseReports: 'EEVSEレポート'
+    eevseReports: 'EEVSEレポート',
+    qrScannerTitle: 'QRコードスキャナー',
+    startCamera: 'カメラ開始',
+    stopCamera: 'カメラ停止',
+    uploadFile: 'QRコード画像をアップロード',
+    scanResult: 'スキャン結果',
+    noResult: 'QRコードが検出されませんでした',
+    cameraError: 'カメラアクセスエラー',
+    fileError: 'ファイル読み取りエラー',
+    selectCamera: 'カメラを選択',
+    scanFromFile: 'ファイルからスキャン',
+    scanFromCamera: 'カメラからスキャン',
+    chooseFile: 'ファイルを選択',
+    dragDropFile: 'QRコード画像をここにドラッグ&ドロップ',
+    scanHistory: 'スキャン履歴',
+    clearHistory: '履歴をクリア',
+    copyResult: '結果をコピー',
+    copied: 'クリップボードにコピーしました'
   },
   login: {
     title: 'ログイン',

@@ -43,7 +43,8 @@ export default {
     matterGetstatus: '상태 가져오기',
     matterBinding: '바인딩',
     matterMediacontrol: '미디어 제어',
-    matterEevsecontrol: 'EEVSE 제어'
+    matterEevsecontrol: 'EEVSE 제어',
+    matterQrscanner: 'QR 스캐너'
   },
   header: {
     account: '계정',
@@ -801,7 +802,24 @@ export default {
     chargingEnabledUntil: '충전 활성화 시간',
     sessionId: '세션 ID',
     sessionDuration: '세션 시간',
-    eevseReports: 'EEVSE 보고서'
+    eevseReports: 'EEVSE 보고서',
+    qrScannerTitle: 'QR 코드 스캐너',
+    startCamera: '카메라 시작',
+    stopCamera: '카메라 중지',
+    uploadFile: 'QR 코드 이미지 업로드',
+    scanResult: '스캔 결과',
+    noResult: 'QR 코드가 감지되지 않음',
+    cameraError: '카메라 접근 오류',
+    fileError: '파일 읽기 오류',
+    selectCamera: '카메라 선택',
+    scanFromFile: '파일에서 스캔',
+    scanFromCamera: '카메라에서 스캔',
+    chooseFile: '파일 선택',
+    dragDropFile: 'QR 코드 이미지를 여기에 드래그 앤 드롭',
+    scanHistory: '스캔 기록',
+    clearHistory: '기록 지우기',
+    copyResult: '결과 복사',
+    copied: '클립보드에 복사됨'
   },
   login: {
     title: '로그인',
