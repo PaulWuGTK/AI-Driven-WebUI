@@ -12,6 +12,30 @@ const router = createRouter({
       component: () => import('../views/Dashboard.vue'),
     },
     {
+      path: '/settings/wireless',
+      component: () => import('../views/settings/WirelessSettings.vue'),
+    },
+    {
+      path: '/settings/wan',
+      component: () => import('../views/settings/WanSettings.vue'),
+    },
+    {
+      path: '/settings/lan',
+      component: () => import('../views/settings/lan/LanSettings.vue'),
+    },
+    {
+      path: '/wifi/guest-access',
+      component: () => import('../views/wifi/GuestAccess.vue'),
+    },
+    {
+      path: '/wifi/mac-filter',
+      component: () => import('../views/wifi/MacFilter.vue'),
+    },
+    {
+      path: '/wifi/wireless-extender',
+      component: () => import('../views/wifi/WirelessExtender.vue'),
+    },
+    {
       path: '/thread',
       component: () => import('../views/iot/thread/ThreadLayout.vue'),
     },

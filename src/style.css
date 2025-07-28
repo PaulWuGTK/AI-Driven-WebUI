@@ -11,6 +11,7 @@
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
   --sidebar-width: 260px;
   --header-height: 50px;
+  --mobile-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --th-color : #080C11;
   
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

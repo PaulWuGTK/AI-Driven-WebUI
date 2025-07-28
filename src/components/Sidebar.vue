@@ -16,6 +16,8 @@ const toggleMobileMenu = () => {
 };
 
 import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
+import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
+import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
 import threadIcon from '/src/assets/icons/icon-1/menu-iot.svg';
 import matterIcon from '/src/assets/icons/icon-1/menu-iot.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
@@ -42,6 +44,26 @@ const baseMenuItems: MenuItem[] = [
     icon: homeIcon,
     path: '/dashboard',
     translationKey: 'menu.dashboard'
+  },
+  {
+    name: 'Basic Setting',
+    icon: basicIcon,
+    translationKey: 'menu.basicSetting',
+    subItems: [
+      { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
+      { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
+      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
+    ]
+  },
+  {
+    name: 'Wi-Fi',
+    icon: wifiIcon,
+    translationKey: 'menu.wifi',
+    subItems: [
+      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
+      { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
+      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
+    ]
   },
   {
     name: 'Thread',
@@ -321,7 +343,7 @@ onMounted(() => {
 }
 
 .submenu.expanded {
-  max-height: 500px;
+  max-height: 900px;
 }
 
 .submenu-item {
@@ -368,9 +390,10 @@ onMounted(() => {
   }
 
   .menu {
-    height: calc(100vh - var(--header-height));
-    padding-top: 0;
+    height: calc(100vh - var(--header-height) - var(--mobile-safe-area-bottom));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 5rem;
   }
 
   .menu-header {
@@ -379,6 +402,15 @@ onMounted(() => {
 
   .submenu-item {
     padding: 1rem 2.5rem;
+  }
+
+  /* Ensure submenu items are accessible */
+  .submenu.expanded {
+    max-height: none;
+  }
+  
+  .menu-item:last-child .submenu {
+    margin-bottom: 5rem;
   }
 }
 </style>

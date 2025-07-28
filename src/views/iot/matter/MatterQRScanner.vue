@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
+import { sendQRScanResult } from '../../../services/api/matter';
 
 const { t } = useI18n();
 
@@ -11,6 +12,8 @@ const isScanning = ref(false);
 const scanResult = ref<string>('');
 const error = ref<string>('');
 const scanHistory = ref<{ result: string; timestamp: string; type: string }[]>([]);
+const apiResult = ref<string>('');
+const isProcessing = ref(false);
 
 // Camera scanner
 let html5QrcodeScanner: Html5QrcodeScanner | null = null;
@@ -54,8 +57,21 @@ const startCameraScanning = async () => {
   try {
     error.value = '';
     
-    // Clean up any existing scanner
+    // Clean up any existing scanner first
     await stopScanning();
+    
+    // Wait for DOM to be ready
+    await nextTick();
+    
+    const qrReaderElement = document.getElementById("qr-reader");
+    if (!qrReaderElement) {
+      console.error('QR reader element not found');
+      error.value = 'QR reader element not found';
+      return;
+    }
+    
+    console.log('Starting camera with ID:', selectedCamera.value);
+    console.log('QR reader element:', qrReaderElement);
     
     // Create new scanner instance
     html5Qrcode = new Html5Qrcode("qr-reader");
@@ -63,26 +79,38 @@ const startCameraScanning = async () => {
     const config = {
       fps: 10,
       qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0
+      aspectRatio: 1.0,
+      disableFlip: false,
+      videoConstraints: {
+        facingMode: "environment"
+      }
     };
     
+    // Use camera ID or fallback to environment facing
+    const cameraConfig = selectedCamera.value || { facingMode: "environment" };
+    
     await html5Qrcode.start(
-      selectedCamera.value || { facingMode: "environment" },
+      cameraConfig,
       config,
       onScanSuccess,
       onScanFailure
     );
     
     isScanning.value = true;
+    
+    console.log('Camera scanning started successfully');
   } catch (err) {
     console.error('Error starting camera:', err);
-    error.value = t('matter.cameraError');
+    error.value = `${t('matter.cameraError')}: ${err}`;
+    isScanning.value = false;
   }
 };
 
 // Stop scanning
 const stopScanning = async () => {
   try {
+    console.log('Stopping scanner...');
+    
     if (html5Qrcode && isScanning.value) {
       await html5Qrcode.stop();
       html5Qrcode.clear();
@@ -95,21 +123,31 @@ const stopScanning = async () => {
     }
     
     isScanning.value = false;
+    console.log('Scanner stopped successfully');
   } catch (err) {
     console.error('Error stopping scanner:', err);
+    isScanning.value = false;
   }
 };
 
 // Handle successful scan
 const onScanSuccess = (decodedText: string, decodedResult: any) => {
+  console.log('QR Code scanned successfully:', decodedText);
   scanResult.value = decodedText;
   addToHistory(decodedText, 'camera');
   error.value = '';
+  
+  // Send scan result to API
+  sendQRScanResult(decodedText);
+  
+  // Optionally stop scanning after successful scan
+  stopScanning();
 };
 
 // Handle scan failure (this is called frequently, so we don't show errors)
 const onScanFailure = (error: string) => {
   // Don't show errors for scan failures as they happen frequently
+  // console.log('Scan failure:', error);
 };
 
 // Handle file upload
@@ -118,6 +156,7 @@ const handleFileUpload = async (file: File) => {
   
   try {
     error.value = '';
+    console.log('Scanning file:', file.name);
     
     // Create temporary Html5Qrcode instance for file scanning
     const tempScanner = new Html5Qrcode("temp-qr-reader");
@@ -126,6 +165,11 @@ const handleFileUpload = async (file: File) => {
     scanResult.value = result;
     addToHistory(result, 'file');
     
+    // Send scan result to API
+    sendQRScanResult(result);
+    
+    console.log('File scan successful:', result);
+    stopScanning();
     // Clean up
     tempScanner.clear();
   } catch (err) {
@@ -207,9 +251,10 @@ const copyToClipboard = async (text: string) => {
     // Show temporary success message
     const originalError = error.value;
     error.value = '';
+    const originalResult = scanResult.value;
     scanResult.value = t('matter.copied');
     setTimeout(() => {
-      scanResult.value = text;
+      scanResult.value = originalResult;
       error.value = originalError;
     }, 1000);
   } catch (err) {
@@ -222,15 +267,18 @@ const switchMode = async (mode: 'camera' | 'file') => {
   await stopScanning();
   scannerMode.value = mode;
   error.value = '';
+  console.log('Switched to mode:', mode);
 };
 
 // Component lifecycle
 onMounted(async () => {
+  console.log('QR Scanner component mounted');
   await initializeCameras();
   loadHistory();
 });
 
 onUnmounted(async () => {
+  console.log('QR Scanner component unmounting');
   await stopScanning();
 });
 </script>
@@ -301,7 +349,22 @@ onUnmounted(async () => {
 
           <!-- QR Reader Container -->
           <div class="qr-reader-container">
-            <div id="qr-reader" class="qr-reader"></div>
+            <div 
+              id="qr-reader" 
+              class="qr-reader"
+            ></div>
+            <div v-if="!isScanning" class="qr-reader-placeholder">
+              <span class="material-icons">qr_code_scanner</span>
+              <p>{{ t('matter.startCamera') }}</p>
+            </div>
+          </div>
+
+          <!-- Debug Information -->
+          <div v-if="error" class="debug-info">
+            <p><strong>Error:</strong> {{ error }}</p>
+            <p><strong>Cameras found:</strong> {{ cameras.length }}</p>
+            <p><strong>Selected camera:</strong> {{ selectedCamera }}</p>
+            <p><strong>Is scanning:</strong> {{ isScanning }}</p>
           </div>
         </div>
       </div>
@@ -346,7 +409,7 @@ onUnmounted(async () => {
       <div v-if="scanResult || error" class="panel-section">
         <div class="section-title">{{ t('matter.scanResult') }}</div>
         <div class="card-content">
-          <div v-if="error" class="error-message">
+          <div v-if="error && !scanResult" class="error-message">
             <span class="material-icons">error</span>
             {{ error }}
           </div>
@@ -467,15 +530,45 @@ select {
 }
 
 .qr-reader-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #000;
 }
 
 .qr-reader {
-  max-width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+.qr-reader-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.qr-reader-placeholder .material-icons {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.qr-reader-placeholder p {
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .file-drop-zone {
@@ -519,6 +612,19 @@ select {
   color: #f44336;
   border-radius: 4px;
   margin-bottom: 1rem;
+}
+
+.debug-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.debug-info p {
+  margin: 0.25rem 0;
 }
 
 .result-container {
@@ -658,24 +764,51 @@ select {
   transform: none;
 }
 
-/* Global styles for html5-qrcode */
+/* Override html5-qrcode styles */
 :deep(#qr-reader) {
-  border-radius: 8px;
-  overflow: hidden;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px !important;
+  border: none !important;
 }
 
-:deep(#qr-reader__dashboard_section) {
-  background-color: var(--bg-secondary) !important;
-  border-radius: 0 0 8px 8px;
-}
-
-:deep(#qr-reader__dashboard_section_csr) {
-  text-align: center;
-  padding: 1rem;
+:deep(#qr-reader > div) {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 :deep(#qr-reader__scan_region) {
-  border-radius: 8px 8px 0 0;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+:deep(#qr-reader__scan_region > img, #qr-reader__scan_region > video) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+:deep(#qr-reader__dashboard_section) {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  color: white !important;
+  padding: 1rem !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+:deep(#qr-reader__dashboard_section_csr) {
+  text-align: center !important;
+  padding: 0.5rem !important;
+}
+
+:deep(#qr-reader__dashboard_section_csr > div) {
+  color: white !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
@@ -698,6 +831,10 @@ select {
 
   .file-drop-zone {
     padding: 2rem 1rem;
+  }
+
+  .qr-reader-container {
+    min-height: 300px;
   }
 
   .drop-zone-content .material-icons {

@@ -542,6 +542,55 @@ export const sendEevseReadCommand = async (params: EevseReadRequest): Promise<Ee
   }
 };
 
+// QR Scanner API
+export interface QRScannerRequest {
+  MatterQRScanner: {
+    ScanResult: string;
+  };
+}
+
+export interface QRScannerResponse {
+  result: string;
+  message?: string;
+}
+
+export const sendQRScanResult = async (scanResult: string): Promise<QRScannerResponse> => {
+  if (isDevelopment) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('Mock QR scan result sent:', scanResult);
+    return {
+      result: 'successful',
+      message: 'QR scan result processed successfully'
+    };
+  }
+
+  try {
+    const response = await fetch('/API/Info?list=MatterQRScanner', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        MatterQRScanner: {
+          ScanResult: scanResult
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error sending QR scan result:', error);
+    return {
+      result: 'error',
+      message: error instanceof Error ? error.message : 'Failed to send QR scan result'
+    };
+  }
+};
 // OnOff Report API
 export const sendOnOffReportCommand = async (params: {
   attr: string;
