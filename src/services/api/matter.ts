@@ -235,10 +235,11 @@ export const getMatterStatus = async (): Promise<GetStatusResponse> => {
   }
 
   try {
-    const response = await axios.post(API_ENDPOINT, {
+    const response = await axios.post(API_ENDPOINT, {MatterProxy:{
       method: "GET",
-      action: "get_status"
-    });
+      action: "get_status",
+      data: {}
+    }});
     return response.data;
   } catch (error) {
     console.error('Error getting Matter status:', error);
