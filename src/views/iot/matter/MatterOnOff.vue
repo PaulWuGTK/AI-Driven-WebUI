@@ -24,9 +24,9 @@ const fetchStatus = async () => {
   try {
     const response: GetStatusResponse = await getMatterStatus();
     
-    if (response.result === 'successful' && response.status) {
+    if (response.MatterProxy.result === 'successful' && response.MatterProxy.status) {
       // Convert status object to array of nodes
-      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+      const nodes = Object.entries(response.MatterProxy.status).map(([alias, id]) => ({
         alias,
         id: String(id)
       }));
@@ -39,7 +39,7 @@ const fetchStatus = async () => {
         nodeId.value = nodes[0].id;
       }
     } else {
-      error.value = response.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
+      error.value = response.MatterProxy.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
     }
   } catch (err) {
     console.error('Error fetching status:', err);
@@ -79,11 +79,11 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
         type: 'read'
       });
 
-      if (response.result === 'successful') {
+      if (response.MatterProxy.result === 'successful') {
         result.value = 'Read operation successful and got report';
-        if (response.report) {
+        if (response.MatterProxy.report) {
           reports.value.unshift({
-            report: response.report,
+            report: response.MatterProxy.report,
             timestamp: new Date().toLocaleTimeString()
           });
           
@@ -93,7 +93,7 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
           }
         }
       } else {
-        error.value = response.message || 'Read operation successful but failed to get report';
+        error.value = response.MatterProxy.status || 'Read operation successful but failed to get report';
       }
     } else {
       // Use regular onoff for control operations
@@ -103,10 +103,10 @@ const sendCommand = async (type: 'on' | 'off' | 'toggle' | 'read') => {
         type
       });
 
-      if (response.status === 'success') {
+      if (response.MatterProxy.result === 'successful') {
         result.value = `Command ${type.toUpperCase()} sent successfully`;
       } else {
-        error.value = response.message || 'Failed to send command';
+        error.value = response.MatterProxy.message || 'Failed to send command';
       }
     }
   } catch (err) {

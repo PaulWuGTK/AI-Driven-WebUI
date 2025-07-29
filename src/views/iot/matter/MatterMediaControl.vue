@@ -43,8 +43,8 @@ const fetchStatus = async () => {
   try {
     const response: GetStatusResponse = await getMatterStatus();
     
-    if (response.result === 'successful' && response.status) {
-      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+    if (response.MatterProxy.result === 'successful' && response.MatterProxy.status) {
+      const nodes = Object.entries(response.MatterProxy.status).map(([alias, id]) => ({
         alias,
         id: String(id)
       }));
@@ -56,7 +56,7 @@ const fetchStatus = async () => {
         nodeId.value = nodes[0].id;
       }
     } else {
-      error.value = 'No nodes available';
+      error.value = response.MatterProxy.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
     }
   } catch (err) {
     console.error('Error fetching status:', err);
@@ -95,10 +95,10 @@ const launchApp = async () => {
 
     const response = await sendLauncherCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Launch App successful';
     } else {
-      error.value = response.message || 'Failed to launch app';
+      error.value = response.MatterProxy.message || 'Failed to launch app';
     }
   } catch (err) {
     console.error('Error:', err);
@@ -129,10 +129,10 @@ const stopApp = async () => {
 
     const response = await sendLauncherCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Stop App successful';
     } else {
-      error.value = response.message || 'Failed to stop app';
+      error.value = response.MatterProxy.message || 'Failed to stop app';
     }
   } catch (err) {
     console.error('Error:', err);
@@ -162,10 +162,10 @@ const mediaControl = async (type: 'play' | 'pause' | 'stop' | 'startover' | 'pre
 
     const response = await sendMediaControlCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = `Control Media App (${type}) successful`;
     } else {
-      error.value = response.message || `Failed to ${type} media`;
+      error.value = response.MatterProxy.message || `Failed to ${type} media`;
     }
   } catch (err) {
     console.error('Error:', err);
@@ -196,11 +196,11 @@ const mediaRead = async (type: 'currentstate' | 'starttime' | 'duration' | 'play
 
     const response = await sendMediaReadCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Read operation successful and got report';
-      if (response.report) {
+      if (response.MatterProxy.report) {
         mediaReports.value.unshift({
-          report: response.report,
+          report: response.MatterProxy.report,
           timestamp: new Date().toLocaleTimeString()
         });
         
@@ -210,7 +210,7 @@ const mediaRead = async (type: 'currentstate' | 'starttime' | 'duration' | 'play
         }
       }
     } else {
-      error.value = response.message || 'Read operation successful but failed to get report';
+      error.value = response.MatterProxy.message || 'Read operation successful but failed to get report';
     }
   } catch (err) {
     console.error('Error:', err);

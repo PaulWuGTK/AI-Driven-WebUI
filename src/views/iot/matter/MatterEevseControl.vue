@@ -45,8 +45,8 @@ const fetchStatus = async () => {
   try {
     const response: GetStatusResponse = await getMatterStatus();
     
-    if (response.result === 'successful' && response.status) {
-      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+    if (response.MatterProxy.result === 'successful' && response.MatterProxy.status) {
+      const nodes = Object.entries(response.MatterProxy.status).map(([alias, id]) => ({
         alias,
         id: String(id)
       }));
@@ -58,7 +58,7 @@ const fetchStatus = async () => {
         nodeId.value = nodes[0].id;
       }
     } else {
-      error.value = 'No nodes available';
+      error.value = response.MatterProxy.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
     }
   } catch (err) {
     console.error('Error fetching status:', err);
@@ -97,10 +97,10 @@ const eventTrigger = async (type: 'triggerBasic' | 'triggerBasicClear' | 'trigge
 
     const response = await sendEevseEventCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = `Trigger EEVSE event (${type}) successful`;
     } else {
-      error.value = response.message || `Failed to trigger EEVSE event (${type})`;
+      error.value = response.MatterProxy.message || `Failed to trigger EEVSE event (${type})`;
     }
   } catch (err) {
     console.error('Error:', err);
@@ -140,10 +140,10 @@ const eevseControl = async (type: 'enablecharging' | 'write' | 'disable') => {
 
     const response = await sendEevseControlCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = `EEVSE control (${type}) successful`;
     } else {
-      error.value = response.message || `Failed to control EEVSE (${type})`;
+      error.value = response.MatterProxy.message || `Failed to control EEVSE (${type})`;
     }
   } catch (err) {
     console.error('Error:', err);
@@ -174,11 +174,11 @@ const eevseRead = async (type: 'state' | 'supplystate' | 'faultstate' | 'chargin
 
     const response = await sendEevseReadCommand(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = `Get EEVSE report (${type}) successful`;
-      if (response.report) {
+      if (response.MatterProxy.report) {
         eevseReports.value.unshift({
-          report: response.report,
+          report: response.MatterProxy.report,
           timestamp: new Date().toLocaleTimeString()
         });
         
@@ -188,7 +188,7 @@ const eevseRead = async (type: 'state' | 'supplystate' | 'faultstate' | 'chargin
         }
       }
     } else {
-      error.value = response.message || `Failed to get EEVSE report (${type})`;
+      error.value = response.MatterProxy.message || `Failed to get EEVSE report (${type})`;
     }
   } catch (err) {
     console.error('Error:', err);

@@ -5,67 +5,85 @@ const isDevelopment = import.meta.env.DEV;
 
 // Mock data for development
 const mockStatusData = {
-  result: "successful",
-  status: {
-    "Light1": "1",
-    "Switch1": "2",
-    "Sensor1": "3"
+  MatterProxy: {
+    result: "successful",
+    status: {
+      "Light1": "1",
+      "Switch1": "2",
+      "Sensor1": "3"
+    }
   }
 };
 
 const mockOnOffResponse = {
-  status: 'success',
-  message: 'Command executed successfully',
-  data: {
-    state: true
+  MatterProxy: {
+    status: 'success',
+    message: 'Command executed successfully',
+    data: {
+      state: true
+    }
   }
 };
 
 // Mock data for MultiAdmin
 const mockMultiAdminResponse = {
-  result: "successful",
-  message: "Commissioning window opened successfully"
+  MatterProxy: {
+    result: "successful",
+    message: "Commissioning window opened successfully"
+  }
 };
 
 // Mock data for Subscribe
 const mockSubscribeResponse = {
-  result: "successful",
-  message: "Subscribe operation successful"
+  MatterProxy: {
+    result: "successful",
+    message: "Subscribe operation successful"
+  }
 };
 
 // Mock data for Binding
 const mockBindingResponse = {
-  result: "successful",
-  message: "Binding operation successful"
+  MatterProxy: {
+    result: "successful",
+    message: "Binding operation successful"
+  }
 };
 
 // Mock data for Media Control
 const mockMediaResponse = {
-  result: "successful",
-  message: "Media control operation successful"
+  MatterProxy: {
+    result: "successful",
+    message: "Media control operation successful"
+  }
 };
 
 // Mock data for EEVSE Control
 const mockEevseResponse = {
-  result: "successful",
-  message: "EEVSE control operation successful"
+  MatterProxy: {
+    result: "successful",
+    message: "EEVSE control operation successful"
+  }
 };
 
 // Mock data for reports
 const mockReportResponse = {
-  result: "successful",
-  report: "Sample report data",
-  message: "Report retrieved successfully"
+  MatterProxy: {
+    result: "successful",
+    report: "Sample report data",
+    message: "Report retrieved successfully"
+  }
 };
 
 // Mock data for delete node
 const mockDeleteNodeResponse = {
-  result: "successful",
-  status: {
-    "Light1": "1",
-    "Switch1": "2"
-  },
-  message: "Node deleted successfully"
+  MatterProxy: {
+    result: "successful",
+    status: {
+      "Light1": "1",
+      "Switch1": "2"
+    },
+    message: "Node deleted successfully"
+  }
 };
 
 // OnOff API
@@ -76,17 +94,22 @@ export interface OnOffRequest {
 }
 
 export interface OnOffResponse {
-  status: string;
-  message?: string;
-  data?: {
-    state: boolean;
+  MatterProxy: {
+    status: string;
+    message?: string;
+    data?: {
+      state: boolean;
+    }
+    result?:string;
   };
 }
 
 // Get Status API
 export interface GetStatusResponse {
-  result: string;
-  status: Record<string, string>;
+  MatterProxy: {
+    result: string;
+    status: Record<string, string>;
+  };
 }
 
 // MultiAdmin API
@@ -99,8 +122,10 @@ export interface MultiAdminRequest {
 }
 
 export interface MultiAdminResponse {
-  result: string;
-  message?: string;
+  MatterProxy: {
+    result: string;
+    message?: string;
+  };
 }
 
 // Subscribe API
@@ -114,8 +139,10 @@ export interface SubscribeRequest {
 }
 
 export interface SubscribeResponse {
-  result: string;
-  message?: string;
+  MatterProxy: {
+    result: string;
+    message?: string;
+  };
 }
 
 // Delete Node API
@@ -125,9 +152,11 @@ export interface DeleteNodeRequest {
 }
 
 export interface DeleteNodeResponse {
-  result: string;
-  status: Record<string, string>;
-  message?: string;
+  MatterProxy: {
+    result: string;
+    status: Record<string, string>;
+    message?: string;
+  };
 }
 
 // Binding API
@@ -160,8 +189,10 @@ export interface WriteBindingRequest {
 }
 
 export interface BindingResponse {
-  result: string;
-  message?: string;
+  MatterProxy: {
+    result: string;
+    message?: string;
+  };
 }
 
 // Media Control API
@@ -191,9 +222,12 @@ export interface MediaReadRequest {
 }
 
 export interface MediaResponse {
-  result: string;
-  message?: string;
-  report?: string;
+  MatterProxy: {
+    result: string;
+    message?: string;
+    report?: string;
+    status?: string;
+  };
 }
 
 // EEVSE Control API
@@ -223,9 +257,11 @@ export interface EevseReadRequest {
 }
 
 export interface EevseResponse {
-  result: string;
-  message?: string;
-  report?: string;
+  MatterProxy: {
+    result: string;
+    message?: string;
+    report?: string;
+  };
 }
 export const getMatterStatus = async (): Promise<GetStatusResponse> => {
   if (isDevelopment) {
@@ -235,11 +271,12 @@ export const getMatterStatus = async (): Promise<GetStatusResponse> => {
   }
 
   try {
-    const response = await axios.post(API_ENDPOINT, {MatterProxy:{
-      method: "GET",
-      action: "get_status",
-      data: {}
-    }});
+    const response = await axios.post(API_ENDPOINT, {
+      MatterProxy: {
+        method: "GET",
+        action: "get_status"
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error getting Matter status:', error);
@@ -247,8 +284,10 @@ export const getMatterStatus = async (): Promise<GetStatusResponse> => {
       return error.response.data as GetStatusResponse;
     }
     return {
-      result: 'error',
-      status: {}
+      MatterProxy: {
+        result: 'error',
+        status: {}
+      }
     };
   }
 };
@@ -261,16 +300,20 @@ export const sendOnOffCommand = async (params: OnOffRequest): Promise<OnOffRespo
     // Return different responses based on command type
     if (params.type === 'read') {
       return {
-        status: 'success',
-        message: 'Read command successful',
-        data: {
-          state: Math.random() > 0.5 // Random state for demo
+        MatterProxy: {
+          status: 'success',
+          message: 'Read command successful',
+          data: {
+            state: Math.random() > 0.5 // Random state for demo
+          }
         }
       };
     } else {
       return {
-        status: 'success',
-        message: `${params.type.toUpperCase()} command sent successfully`
+        MatterProxy: {
+          status: 'success',
+          message: `${params.type.toUpperCase()} command sent successfully`
+        }
       };
     }
   }
@@ -288,8 +331,10 @@ export const sendOnOffCommand = async (params: OnOffRequest): Promise<OnOffRespo
       return error.response.data as OnOffResponse;
     }
     return {
-      status: 'error',
-      message: 'Failed to send command'
+      MatterProxy: {
+        status: 'error',
+        message: 'Failed to send command'
+      }
     };
   }
 };
@@ -311,8 +356,10 @@ export const sendMultiAdminCommand = async (params: MultiAdminRequest): Promise<
   } catch (error) {
     console.error('Error sending MultiAdmin command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send MultiAdmin command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send MultiAdmin command'
+      }
     };
   }
 };
@@ -334,8 +381,10 @@ export const sendSubscribeCommand = async (params: SubscribeRequest): Promise<Su
   } catch (error) {
     console.error('Error sending Subscribe command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send Subscribe command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send Subscribe command'
+      }
     };
   }
 };
@@ -357,9 +406,11 @@ export const deleteStorageNode = async (params: DeleteNodeRequest): Promise<Dele
   } catch (error) {
     console.error('Error deleting storage node:', error);
     return {
-      result: 'error',
-      status: {},
-      message: 'Failed to delete storage node'
+      MatterProxy: {
+        result: 'error',
+        status: {},
+        message: 'Failed to delete storage node'
+      }
     };
   }
 };
@@ -381,8 +432,10 @@ export const writeACL = async (params: WriteACLRequest): Promise<BindingResponse
   } catch (error) {
     console.error('Error writing ACL:', error);
     return {
-      result: 'error',
-      message: 'Failed to write ACL'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to write ACL'
+      }
     };
   }
 };
@@ -403,8 +456,10 @@ export const writeBinding = async (params: WriteBindingRequest): Promise<Binding
   } catch (error) {
     console.error('Error writing binding:', error);
     return {
-      result: 'error',
-      message: 'Failed to write binding'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to write binding'
+      }
     };
   }
 };
@@ -426,8 +481,10 @@ export const sendLauncherCommand = async (params: LauncherRequest): Promise<Medi
   } catch (error) {
     console.error('Error sending launcher command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send launcher command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send launcher command'
+      }
     };
   }
 };
@@ -448,8 +505,10 @@ export const sendMediaControlCommand = async (params: MediaControlRequest): Prom
   } catch (error) {
     console.error('Error sending media control command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send media control command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send media control command'
+      }
     };
   }
 };
@@ -470,8 +529,10 @@ export const sendMediaReadCommand = async (params: MediaReadRequest): Promise<Me
   } catch (error) {
     console.error('Error sending media read command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send media read command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send media read command'
+      }
     };
   }
 };
@@ -493,8 +554,10 @@ export const sendEevseEventCommand = async (params: EevseEventRequest): Promise<
   } catch (error) {
     console.error('Error sending EEVSE event command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send EEVSE event command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send EEVSE event command'
+      }
     };
   }
 };
@@ -515,8 +578,10 @@ export const sendEevseControlCommand = async (params: EevseControlRequest): Prom
   } catch (error) {
     console.error('Error sending EEVSE control command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send EEVSE control command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send EEVSE control command'
+      }
     };
   }
 };
@@ -537,8 +602,10 @@ export const sendEevseReadCommand = async (params: EevseReadRequest): Promise<Ee
   } catch (error) {
     console.error('Error sending EEVSE read command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send EEVSE read command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send EEVSE read command'
+      }
     };
   }
 };
@@ -551,8 +618,10 @@ export interface QRScannerRequest {
 }
 
 export interface QRScannerResponse {
-  result: string;
-  message?: string;
+  MatterQRScanner: {
+    result: string;
+    message?: string;
+  };
 }
 
 export const sendQRScanResult = async (scanResult: string): Promise<QRScannerResponse> => {
@@ -560,8 +629,10 @@ export const sendQRScanResult = async (scanResult: string): Promise<QRScannerRes
     await new Promise(resolve => setTimeout(resolve, 500));
     console.log('Mock QR scan result sent:', scanResult);
     return {
-      result: 'successful',
-      message: 'QR scan result processed successfully'
+      MatterQRScanner: {
+        result: 'successful',
+        message: 'QR scan result processed successfully'
+      }
     };
   }
 
@@ -587,8 +658,10 @@ export const sendQRScanResult = async (scanResult: string): Promise<QRScannerRes
   } catch (error) {
     console.error('Error sending QR scan result:', error);
     return {
-      result: 'error',
-      message: error instanceof Error ? error.message : 'Failed to send QR scan result'
+      MatterQRScanner: {
+        result: 'error',
+        message: error instanceof Error ? error.message : 'Failed to send QR scan result'
+      }
     };
   }
 };
@@ -615,8 +688,10 @@ export const sendOnOffReportCommand = async (params: {
   } catch (error) {
     console.error('Error sending OnOff report command:', error);
     return {
-      result: 'error',
-      message: 'Failed to send OnOff report command'
+      MatterProxy: {
+        result: 'error',
+        message: 'Failed to send OnOff report command'
+      }
     };
   }
 };

@@ -56,15 +56,15 @@ const fetchStatus = async () => {
   try {
     const response: GetStatusResponse = await getMatterStatus();
     
-    if (response.result === 'successful' && response.status) {
-      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+    if (response.MatterProxy.result === 'successful' && response.MatterProxy.status) {
+      const nodes = Object.entries(response.MatterProxy.status).map(([alias, id]) => ({
         alias,
         id: String(id)
       }));
       
       availableNodes.value = nodes;
     } else {
-      error.value = 'No nodes available';
+      error.value = response.MatterProxy.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
     }
   } catch (err) {
     console.error('Error fetching status:', err);
@@ -123,10 +123,10 @@ const handleWriteACL = async () => {
 
     const response = await writeACL(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Write ACL successful. Please write the binding by pressing the Write Binding button.';
     } else {
-      error.value = response.message || 'Failed to write ACL';
+      error.value = response.MatterProxy.message || 'Failed to write ACL';
     }
   } catch (err) {
     console.error('Error:', err);
@@ -169,10 +169,10 @@ const handleWriteBinding = async () => {
 
     const response = await writeBinding(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Write Binding successful. Please register the binding entry on switch device.';
     } else {
-      error.value = response.message || 'Failed to write binding';
+      error.value = response.MatterProxy.message || 'Failed to write binding';
     }
   } catch (err) {
     console.error('Error:', err);

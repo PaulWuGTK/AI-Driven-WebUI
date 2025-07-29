@@ -24,8 +24,8 @@ const fetchStatus = async () => {
   try {
     const response: GetStatusResponse = await getMatterStatus();
     
-    if (response.result === 'successful' && response.status) {
-      const nodes = Object.entries(response.status).map(([alias, id]) => ({
+    if (response.MatterProxy.result === 'successful' && response.MatterProxy.status) {
+      const nodes = Object.entries(response.MatterProxy.status).map(([alias, id]) => ({
         alias,
         id: String(id)
       }));
@@ -39,7 +39,7 @@ const fetchStatus = async () => {
       }
     } else {
       availableNodes.value = [];
-      error.value = 'No nodes available';
+      error.value = response.MatterProxy.result === 'error' ? 'Failed to fetch node status' : 'No nodes available';
     }
   } catch (err) {
     console.error('Error fetching status:', err);
@@ -82,14 +82,14 @@ const handleDeleteStorageNode = async () => {
 
     const response = await deleteStorageNode(request);
 
-    if (response.result === 'successful') {
+    if (response.MatterProxy.result === 'successful') {
       result.value = 'Delete Provisioned NodeId successful';
       selectedNodeAlias.value = '';
       selectedNodeId.value = '';
       // Refresh the status list
       await fetchStatus();
     } else {
-      error.value = response.message || 'Failed to delete provisioned NodeId';
+      error.value = response.MatterProxy.message || 'Failed to delete provisioned NodeId';
     }
   } catch (err) {
     console.error('Error:', err);

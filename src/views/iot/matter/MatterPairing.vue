@@ -227,7 +227,7 @@ const getDataset = async () => {
             <!-- Loading Indicator -->
             <div v-if="loading" class="loading-indicator">
               <div class="spinner"></div>
-              <span>{{ t('matter.pairing.processing') }}</span>
+              <span>{{ t('matter.processing') }}</span>
             </div>
 
             <!-- Error Message -->
