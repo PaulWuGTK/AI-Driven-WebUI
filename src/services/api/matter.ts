@@ -614,6 +614,7 @@ export const sendEevseReadCommand = async (params: EevseReadRequest): Promise<Ee
 export interface QRScannerRequest {
   MatterQRScanner: {
     ScanResult: string;
+    ConnectionType: string;
   };
 }
 
@@ -624,10 +625,10 @@ export interface QRScannerResponse {
   };
 }
 
-export const sendQRScanResult = async (scanResult: string): Promise<QRScannerResponse> => {
+export const sendQRScanResult = async (scanResult: string, connectionType: string = 'wifi'): Promise<QRScannerResponse> => {
   if (isDevelopment) {
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('Mock QR scan result sent:', scanResult);
+    console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType);
     return {
       MatterQRScanner: {
         result: 'successful',
@@ -644,7 +645,8 @@ export const sendQRScanResult = async (scanResult: string): Promise<QRScannerRes
       },
       body: JSON.stringify({
         MatterQRScanner: {
-          ScanResult: scanResult
+          ScanResult: scanResult,
+          ConnectionType: connectionType
         }
       }),
     });

@@ -8,6 +8,7 @@ const { t } = useI18n();
 
 // Scanner state
 const scannerMode = ref<'camera' | 'file'>('camera');
+const connectionType = ref<'wifi' | 'thread'>('wifi');
 const isScanning = ref(false);
 const scanResult = ref<string>('');
 const error = ref<string>('');
@@ -138,7 +139,7 @@ const onScanSuccess = (decodedText: string, decodedResult: any) => {
   error.value = '';
   
   // Send scan result to API
-  sendQRScanResult(decodedText);
+  sendQRScanResult(decodedText, connectionType.value);
   
   // Optionally stop scanning after successful scan
   stopScanning();
@@ -166,7 +167,7 @@ const handleFileUpload = async (file: File) => {
     addToHistory(result, 'file');
     
     // Send scan result to API
-    sendQRScanResult(result);
+    sendQRScanResult(result, connectionType.value);
     
     console.log('File scan successful:', result);
     stopScanning();
@@ -308,6 +309,31 @@ onUnmounted(async () => {
               <span class="material-icons">upload_file</span>
               {{ t('matter.scanFromFile') }}
             </button>
+          </div>
+          
+          <!-- Connection Type Selection -->
+          <div class="connection-type-selector">
+            <label class="connection-type-label">Connection Type:</label>
+            <div class="connection-type-options">
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  value="wifi" 
+                  v-model="connectionType"
+                  name="connectionType"
+                />
+                <span class="radio-label">WiFi</span>
+              </label>
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  value="thread" 
+                  v-model="connectionType"
+                  name="connectionType"
+                />
+                <span class="radio-label">Thread</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -502,6 +528,41 @@ onUnmounted(async () => {
   border-color: var(--primary-color);
   background-color: var(--primary-color);
   color: white;
+}
+
+.connection-type-selector {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.connection-type-label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.connection-type-options {
+  display: flex;
+  gap: 2rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+
+.radio-label {
+  font-size: 1rem;
+  color: var(--text-primary);
 }
 
 .form-group {
@@ -819,6 +880,11 @@ select {
   .mode-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .connection-type-options {
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .camera-controls {
