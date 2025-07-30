@@ -612,14 +612,12 @@ export const sendEevseReadCommand = async (params: EevseReadRequest): Promise<Ee
 
 // QR Scanner API
 export interface QRScannerRequest {
-  MatterQRScanner: {
-    ScanResult: string;
-    ConnectionType: string;
-  };
+  ScanResult: string;
+  ConnectionType: string;
 }
 
 export interface QRScannerResponse {
-  MatterQRScanner: {
+  MatterProxy: {
     result: string;
     message?: string;
   };
@@ -630,7 +628,7 @@ export const sendQRScanResult = async (scanResult: string, connectionType: strin
     await new Promise(resolve => setTimeout(resolve, 500));
     console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType);
     return {
-      MatterQRScanner: {
+      MatterProxy: {
         result: 'successful',
         message: 'QR scan result processed successfully'
       }
@@ -638,29 +636,24 @@ export const sendQRScanResult = async (scanResult: string, connectionType: strin
   }
 
   try {
-    const response = await fetch('/API/Info?list=MatterQRScanner', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        MatterQRScanner: {
+    const response = await axios.post(API_ENDPOINT, {
+      MatterProxy: {
+        method: "POST",
+        action: "qrcode_pairing",
+        data: {
           ScanResult: scanResult,
           ConnectionType: connectionType
         }
-      }),
+      }
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     console.error('Error sending QR scan result:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      return error.response.data as QRScannerResponse;
+    }
     return {
-      MatterQRScanner: {
+      MatterProxy: {
         result: 'error',
         message: error instanceof Error ? error.message : 'Failed to send QR scan result'
       }

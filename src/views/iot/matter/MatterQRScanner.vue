@@ -38,12 +38,21 @@ const initializeCameras = async () => {
     }));
     
     if (cameras.value.length > 0) {
-      // Prefer back camera if available
-      const backCamera = cameras.value.find(camera => 
-        camera.label.toLowerCase().includes('back') || 
-        camera.label.toLowerCase().includes('rear')
-      );
+      // Prefer back/rear camera for QR scanning
+      const backCamera = cameras.value.find(camera => {
+        const label = camera.label.toLowerCase();
+        return label.includes('back') || 
+               label.includes('rear') || 
+               label.includes('environment') ||
+               label.includes('後') ||
+               label.includes('背面');
+      });
+      
+      // If no back camera found, use the first available camera
       selectedCamera.value = backCamera ? backCamera.id : cameras.value[0].id;
+      
+      console.log('Available cameras:', cameras.value);
+      console.log('Selected camera:', selectedCamera.value);
     }
   } catch (err) {
     console.error('Error getting cameras:', err);
@@ -81,14 +90,20 @@ const startCameraScanning = async () => {
       fps: 10,
       qrbox: { width: 250, height: 250 },
       aspectRatio: 1.0,
-      disableFlip: false,
-      videoConstraints: {
-        facingMode: "environment"
-      }
+      disableFlip: false
     };
     
-    // Use camera ID or fallback to environment facing
-    const cameraConfig = selectedCamera.value || { facingMode: "environment" };
+    // Determine camera configuration
+    let cameraConfig;
+    if (selectedCamera.value) {
+      // Use specific camera ID
+      cameraConfig = selectedCamera.value;
+    } else {
+      // Fallback to environment facing mode (back camera)
+      cameraConfig = { facingMode: "environment" };
+    }
+    
+    console.log('Camera config:', cameraConfig);
     
     await html5Qrcode.start(
       cameraConfig,
@@ -102,6 +117,31 @@ const startCameraScanning = async () => {
     console.log('Camera scanning started successfully');
   } catch (err) {
     console.error('Error starting camera:', err);
+    // Try fallback to environment facing mode if specific camera fails
+    if (selectedCamera.value) {
+      console.log('Retrying with environment facing mode...');
+      selectedCamera.value = '';
+      try {
+        const fallbackConfig = { facingMode: "environment" };
+        await html5Qrcode?.start(
+          fallbackConfig,
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false
+          },
+          onScanSuccess,
+          onScanFailure
+        );
+        isScanning.value = true;
+        console.log('Fallback camera started successfully');
+        return;
+      } catch (fallbackErr) {
+        console.error('Fallback camera also failed:', fallbackErr);
+      }
+    }
+    
     error.value = `${t('matter.cameraError')}: ${err}`;
     isScanning.value = false;
   }
@@ -343,9 +383,10 @@ onUnmounted(async () => {
         <div class="section-title">{{ t('matter.scanFromCamera') }}</div>
         <div class="card-content">
           <!-- Camera Selection -->
-          <div v-if="cameras.length > 1" class="form-group">
+          <div v-if="cameras.length > 0" class="form-group">
             <label>{{ t('matter.selectCamera') }}</label>
             <select v-model="selectedCamera" :disabled="isScanning">
+              <option value="">{{ t('matter.selectCamera') }} (Auto)</option>
               <option v-for="camera in cameras" :key="camera.id" :value="camera.id">
                 {{ camera.label }}
               </option>
@@ -386,11 +427,19 @@ onUnmounted(async () => {
           </div>
 
           <!-- Debug Information -->
-          <div v-if="error" class="debug-info">
-            <p><strong>Error:</strong> {{ error }}</p>
+          <div v-if="error || cameras.length > 0" class="debug-info">
+            <p v-if="error"><strong>Error:</strong> {{ error }}</p>
             <p><strong>Cameras found:</strong> {{ cameras.length }}</p>
             <p><strong>Selected camera:</strong> {{ selectedCamera }}</p>
             <p><strong>Is scanning:</strong> {{ isScanning }}</p>
+            <div v-if="cameras.length > 0">
+              <p><strong>Available cameras:</strong></p>
+              <ul>
+                <li v-for="camera in cameras" :key="camera.id">
+                  {{ camera.label }} (ID: {{ camera.id }})
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -881,7 +930,7 @@ select {
     width: 100%;
     justify-content: center;
   }
-
+  
   .connection-type-options {
     flex-direction: column;
     gap: 1rem;
