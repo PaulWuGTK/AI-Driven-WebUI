@@ -240,6 +240,7 @@ export interface Translations {
     mloModeDisabled: string;
     mloMeshDisabled: string;
     meshMloDisabled: string;
+    mloMeshWarning: string;
   };
   guest: {
     title: string;

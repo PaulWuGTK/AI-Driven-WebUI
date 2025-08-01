@@ -75,7 +75,7 @@ onMounted(fetchMeshConfig);
       <div v-if="isMeshDisabledByMLO" class="mlo-status">
         <div class="info-banner">
           <span class="material-icons">info</span>
-          <span>{{ t('wireless.mloMeshDisabled') }}</span>
+          <span>{{ t('wireless.mloMeshWarning') }}</span>
         </div>
       </div>
 
@@ -87,7 +87,6 @@ onMounted(fetchMeshConfig);
             v-model="meshData.WlanMesh.MeshEnable"
             :true-value="1"
             :false-value="0"
-            :disabled="isMeshDisabledByMLO"
           >
           <span class="slider"></span>
         </label>
@@ -111,7 +110,7 @@ onMounted(fetchMeshConfig);
         <button class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading || isMeshDisabledByMLO">
+        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>

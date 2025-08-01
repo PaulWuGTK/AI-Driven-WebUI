@@ -237,7 +237,8 @@ export default {
     mloEnable: '启用 MLO',
     mloModeDisabled: 'MLO 已启用，无法更改模式。',
     mloMeshDisabled: '一个或多个 AP（基本或访客）已启用 MLO – 无法更改 Mesh 设置。',
-    meshMloDisabled: 'Mesh 已启用 – 无法更改 MLO 设置。'
+    meshMloDisabled: 'Mesh 已启用 – 无法更改 MLO 设置。',
+    mloMeshWarning: "一个或多个 AP（主用或访客）已启用 MLO。应用 Mesh 设置时将自动禁用 MLO。"
   },
   guest: {
     title: '访客访问',

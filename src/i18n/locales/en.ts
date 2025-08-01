@@ -240,7 +240,8 @@ const translations: Translations = {
     mloEnable: 'MLO Enable',
     mloModeDisabled: 'MLO is enabled – Mode cannot be changed.',
     mloMeshDisabled: 'MLO is enabled on one or more APs (Basic or Guest) – Mesh Settings cannot be changed.',
-    meshMloDisabled: 'Mesh is enabled – MLO settings cannot be changed.'
+    meshMloDisabled: 'Mesh is enabled – MLO settings cannot be changed.',
+    mloMeshWarning: 'MLO is currently enabled on one or more APs (Basic or Guest). It will be disabled automatically when applying Mesh settings.'
   },
   guest: {
     title: 'Guest Access',
