@@ -614,6 +614,11 @@ export const sendEevseReadCommand = async (params: EevseReadRequest): Promise<Ee
 export interface QRScannerRequest {
   ScanResult: string;
   ConnectionType: string;
+  dataset?: string;
+  nodeId?: string;
+  nodeAlias?: string;
+  ssId?: string;
+  password?: string;
 }
 
 export interface QRScannerResponse {
@@ -623,10 +628,20 @@ export interface QRScannerResponse {
   };
 }
 
-export const sendQRScanResult = async (scanResult: string, connectionType: string = 'wifi'): Promise<QRScannerResponse> => {
+export const sendQRScanResult = async (
+  scanResult: string, 
+  connectionType: string = 'wifi',
+  additionalData?: {
+    dataset?: string;
+    nodeId?: string;
+    nodeAlias?: string;
+    ssId?: string;
+    password?: string;
+  }
+): Promise<QRScannerResponse> => {
   if (isDevelopment) {
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType);
+    console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType, 'Additional data:', additionalData);
     return {
       MatterProxy: {
         result: 'successful',
@@ -642,7 +657,8 @@ export const sendQRScanResult = async (scanResult: string, connectionType: strin
         action: "qrcode_pairing",
         data: {
           ScanResult: scanResult,
-          ConnectionType: connectionType
+          ConnectionType: connectionType,
+          ...additionalData
         }
       }
     });
