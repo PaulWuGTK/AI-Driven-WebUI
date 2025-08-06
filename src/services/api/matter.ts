@@ -631,17 +631,11 @@ export interface QRScannerResponse {
 export const sendQRScanResult = async (
   scanResult: string, 
   connectionType: string = 'wifi',
-  additionalData?: {
-    dataset?: string;
-    nodeId?: string;
-    nodeAlias?: string;
-    ssId?: string;
-    password?: string;
-  }
+  apiData: any
 ): Promise<QRScannerResponse> => {
   if (isDevelopment) {
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType, 'Additional data:', additionalData);
+    console.log('Mock QR scan result sent:', scanResult, 'Connection type:', connectionType, 'API data:', apiData);
     return {
       MatterProxy: {
         result: 'successful',
@@ -655,11 +649,7 @@ export const sendQRScanResult = async (
       MatterProxy: {
         method: "POST",
         action: "qrcode_pairing",
-        data: {
-          ScanResult: scanResult,
-          ConnectionType: connectionType,
-          ...additionalData
-        }
+        data: apiData
       }
     });
     return response.data;

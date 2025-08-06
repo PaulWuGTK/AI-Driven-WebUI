@@ -1,381 +1,518 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
-import { parseAndAnalyzeMatterQR } from '../../../utils/matterQRParser';
+import { sendQRScanResult } from '../../../services/api/matter';
+import axios from 'axios';
 
 const { t } = useI18n();
 
+// Current step in the pairing process
+const currentStep = ref<'scan' | 'configure' | 'pairing'>('scan');
+
 // Scanner state
-const scanMode = ref<'camera' | 'file'>('camera');
+const scannerMode = ref<'camera' | 'file'>('camera');
+const connectionType = ref<'wifi' | 'thread'>('wifi');
 const isScanning = ref(false);
 const scanResult = ref<string>('');
 const error = ref<string>('');
+const scanHistory = ref<{ result: string; timestamp: string; type: string }[]>([]);
+const apiResult = ref<string>('');
+const isProcessing = ref(false);
+
+// Device configuration state
+const deviceInfo = ref<{
+  qrCode: string;
+  deviceType: string;
+}>({
+  qrCode: '',
+  deviceType: '',
+});
+
+// Pairing configuration
+const pairingConfig = ref<{
+  nodeAlias: string;
+  connectionType: 'wifi' | 'thread';
+  ssid: string;
+  password: string;
+  dataset: string;
+}>({
+  nodeAlias: '',
+  connectionType: 'wifi',
+  ssid: '',
+  password: '',
+  dataset: ''
+});
+
+// Device type options
+const deviceTypes = [
+  { value: 'light', labelKey: 'matter.smartLight', icon: 'lightbulb' },
+  { value: 'switch', labelKey: 'matter.smartSwitch', icon: 'toggle_on' },
+  { value: 'sensor', labelKey: 'matter.sensor', icon: 'sensors' },
+  { value: 'outlet', labelKey: 'matter.smartOutlet', icon: 'power' },
+  { value: 'thermostat', labelKey: 'matter.thermostat', icon: 'thermostat' },
+  { value: 'lock', labelKey: 'matter.smartLock', icon: 'lock' },
+  { value: 'camera', labelKey: 'matter.securityCamera', icon: 'videocam' },
+  { value: 'speaker', labelKey: 'matter.smartSpeaker', icon: 'speaker' },
+  { value: 'other', labelKey: 'matter.otherDevice', icon: 'device_hub' }
+];
+
+// Computed properties
+const selectedDeviceType = computed(() => {
+  return deviceTypes.find(type => type.value === deviceInfo.value.deviceType);
+});
+
+const canProceedToConfig = computed(() => {
+  return scanResult.value && deviceInfo.value.deviceType;
+});
+
+const canStartPairing = computed(() => {
+  return pairingConfig.value.nodeAlias && 
+         ((pairingConfig.value.connectionType === 'wifi' && pairingConfig.value.ssid && pairingConfig.value.password) ||
+          (pairingConfig.value.connectionType === 'thread' && pairingConfig.value.dataset));
+});
+
+// Validate Node Alias (only alphanumeric and underscore)
+const isNodeAliasValid = computed(() => {
+  const alias = pairingConfig.value.nodeAlias;
+  return alias && /^[a-zA-Z0-9_]+$/.test(alias);
+});
+
+// Camera scanner
+let html5QrcodeScanner: Html5QrcodeScanner | null = null;
+let html5Qrcode: Html5Qrcode | null = null;
+
+// File upload
 const fileInput = ref<HTMLInputElement | null>(null);
-const scannerContainer = ref<HTMLDivElement | null>(null);
+const isDragging = ref(false);
 
-// Scanner instances
-let qrScanner: Html5QrcodeScanner | null = null;
-let fileScanner: Html5Qrcode | null = null;
+// Camera selection
+const cameras = ref<{ id: string; label: string }[]>([]);
+const selectedCamera = ref<string>('');
 
-// Scan history
-const scanHistory = ref<Array<{ result: string; timestamp: string; analysis: any }>>([]);
-
-// Step 2: Device Information
-const deviceAlias = ref('');
-const nodeId = ref('1');
-const deviceTypeIcons: Record<string, string> = {
-  light: 'lightbulb',
-  switch: 'toggle_on',
-  sensor: 'sensors',
-  outlet: 'power',
-  thermostat: 'thermostat',
-  lock: 'lock',
-  camera: 'videocam',
-  speaker: 'speaker',
-  other: 'device_hub'
-};
-
-// Step 3: Connection Settings
-const connectionType = ref<'wifi' | 'thread'>('wifi');
-const ssid = ref('');
-const password = ref('');
-const dataset = ref('');
-
-// UI state
-const currentStep = ref(1);
-const loading = ref(false);
-const analysisResult = ref<any>(null);
-
-// Initialize camera scanner
-const initCameraScanner = () => {
-  if (!scannerContainer.value) return;
-
-  qrScanner = new Html5QrcodeScanner(
-    'qr-scanner-container',
-    {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
-      showTorchButtonIfSupported: true,
-      showZoomSliderIfSupported: true,
-      defaultZoomValueIfSupported: 2
-    },
-    false
-  );
-
-  qrScanner.render(
-    (decodedText) => {
-      handleScanSuccess(decodedText);
-    },
-    (errorMessage) => {
-      // Ignore frequent scanning errors
-      if (!errorMessage.includes('No QR code found')) {
-        console.warn('QR scan error:', errorMessage);
-      }
+// Initialize camera list
+const initializeCameras = async () => {
+  try {
+    const devices = await Html5Qrcode.getCameras();
+    cameras.value = devices.map(device => ({
+      id: device.id,
+      label: device.label || `Camera ${device.id}`
+    }));
+    
+    if (cameras.value.length > 0) {
+      // Prefer back/rear camera for QR scanning
+      const backCamera = cameras.value.find(camera => {
+        const label = camera.label.toLowerCase();
+        return label.includes('back') || 
+               label.includes('rear') || 
+               label.includes('environment') ||
+               label.includes('後') ||
+               label.includes('背面');
+      });
+      
+      // If no back camera found, use the first available camera
+      selectedCamera.value = backCamera ? backCamera.id : cameras.value[0].id;
+      
     }
-  );
-};
-
-// Handle successful scan
-const handleScanSuccess = (result: string) => {
-  console.log('QR Code scanned:', result);
-  scanResult.value = result;
-  error.value = '';
-  
-  // Parse and analyze the QR code
-  const analysis = parseAndAnalyzeMatterQR(result);
-  analysisResult.value = analysis;
-  
-  // Auto-generate device alias based on analysis or default
-  const timestamp = Date.now().toString().slice(-4);
-  if (analysis.isValid && analysis.deviceType) {
-    deviceAlias.value = `Device_${analysis.deviceType}_${timestamp}`;
-  } else {
-    deviceAlias.value = `Device_other_${timestamp}`;
+  } catch (err) {
+    console.error('Error getting cameras:', err);
+    error.value = t('matter.cameraError');
   }
-  
-  // Add to history
-  scanHistory.value.unshift({
-    result,
-    timestamp: new Date().toLocaleTimeString(),
-    analysis
-  });
-  
-  // Keep only last 10 scans
-  if (scanHistory.value.length > 10) {
-    scanHistory.value = scanHistory.value.slice(0, 10);
-  }
-  
-  // Move to step 2
-  currentStep.value = 2;
 };
 
 // Start camera scanning
-const startCamera = () => {
-  scanMode.value = 'camera';
-  isScanning.value = true;
-  error.value = '';
+const startCameraScanning = async () => {
+  if (isScanning.value) return;
   
-  setTimeout(() => {
-    initCameraScanner();
-  }, 100);
+  try {
+    error.value = '';
+    
+    // Clean up any existing scanner first
+    await stopScanning();
+    
+    // Wait for DOM to be ready
+    await nextTick();
+    
+    const qrReaderElement = document.getElementById("qr-reader");
+    if (!qrReaderElement) {
+      console.error('QR reader element not found');
+      error.value = 'QR reader element not found';
+      return;
+    }
+    
+    // Create new scanner instance
+    html5Qrcode = new Html5Qrcode("qr-reader");
+    
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+      aspectRatio: 1.0,
+      disableFlip: false
+    };
+    
+    // Determine camera configuration
+    let cameraConfig;
+    if (selectedCamera.value) {
+      // Use specific camera ID
+      cameraConfig = selectedCamera.value;
+    } else {
+      // Fallback to environment facing mode (back camera)
+      cameraConfig = { facingMode: "environment" };
+    }
+        
+    await html5Qrcode.start(
+      cameraConfig,
+      config,
+      onScanSuccess,
+      onScanFailure
+    );
+    
+    isScanning.value = true;
+    
+  } catch (err) {
+    console.error('Error starting camera:', err);
+    // Try fallback to environment facing mode if specific camera fails
+    if (selectedCamera.value) {
+      selectedCamera.value = '';
+      try {
+        const fallbackConfig = { facingMode: "environment" };
+        await html5Qrcode?.start(
+          fallbackConfig,
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false
+          },
+          onScanSuccess,
+          onScanFailure
+        );
+        isScanning.value = true;
+        return;
+      } catch (fallbackErr) {
+        console.error('Fallback camera also failed:', fallbackErr);
+      }
+    }
+    
+    error.value = `${t('matter.cameraError')}: ${err}`;
+    isScanning.value = false;
+  }
 };
 
-// Stop camera scanning
-const stopCamera = () => {
-  if (qrScanner) {
-    qrScanner.clear();
-    qrScanner = null;
+// Stop scanning
+const stopScanning = async () => {
+  try {
+    
+    if (html5Qrcode && isScanning.value) {
+      await html5Qrcode.stop();
+      html5Qrcode.clear();
+      html5Qrcode = null;
+    }
+    
+    if (html5QrcodeScanner) {
+      html5QrcodeScanner.clear();
+      html5QrcodeScanner = null;
+    }
+    
+    isScanning.value = false;
+  } catch (err) {
+    console.error('Error stopping scanner:', err);
+    isScanning.value = false;
   }
-  isScanning.value = false;
+};
+
+// Handle successful scan
+const onScanSuccess = (decodedText: string, decodedResult: any) => {
+  scanResult.value = decodedText;
+  addToHistory(decodedText, 'camera');
+  error.value = '';
+  
+  // Parse QR code and extract device information
+  parseQRCode(decodedText);
+  
+  // Optionally stop scanning after successful scan
+  stopScanning();
+  
+  // Move to configuration step
+  currentStep.value = 'configure';
+};
+
+// Handle scan failure (this is called frequently, so we don't show errors)
+const onScanFailure = (error: string) => {
+  // Don't show errors for scan failures as they happen frequently
+  // console.log('Scan failure:', error);
 };
 
 // Handle file upload
-const handleFileUpload = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  
+const handleFileUpload = async (file: File) => {
   if (!file) return;
   
-  console.log('Scanning file:', file.name);
-  error.value = '';
-  loading.value = true;
-  
   try {
-    if (!fileScanner) {
-      fileScanner = new Html5Qrcode('file-scanner');
-    }
+    error.value = '';
     
-    const result = await fileScanner.scanFile(file, true);
-    console.log('File scan successful:', result);
-    handleScanSuccess(result);
+    // Create temporary Html5Qrcode instance for file scanning
+    const tempScanner = new Html5Qrcode("temp-qr-reader");
+    
+    const result = await tempScanner.scanFile(file, true);
+    scanResult.value = result;
+    addToHistory(result, 'file');
+    
+    // Parse QR code and extract device information
+    parseQRCode(result);
+    
+    stopScanning();
+    
+    // Move to configuration step
+    currentStep.value = 'configure';
+    
+    // Clean up
+    tempScanner.clear();
   } catch (err) {
-    console.error('File scan error:', err);
+    console.error('Error scanning file:', err);
     error.value = t('matter.fileError');
-  } finally {
-    loading.value = false;
-    // Reset file input
-    if (input) input.value = '';
+    scanResult.value = '';
   }
 };
 
-// Switch to file mode
-const switchToFileMode = () => {
-  stopCamera();
-  scanMode.value = 'file';
+// Handle file input change
+const handleFileSelect = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    handleFileUpload(input.files[0]);
+  }
 };
 
-// Generate device alias based on device type
-const generateDeviceAlias = (deviceType: string) => {
-  const timestamp = Date.now().toString().slice(-4);
-  return `Device_${deviceType}_${timestamp}`;
-};
-
-// Handle device type icon click
-const handleDeviceTypeClick = (deviceType: string) => {
-  deviceAlias.value = generateDeviceAlias(deviceType);
-};
-
-// Validate device alias
-const validateDeviceAlias = (alias: string): boolean => {
-  // Check if empty
-  if (!alias.trim()) return false;
+// Handle drag and drop
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = false;
   
-  // Check for special characters (only allow letters, numbers, underscore)
-  const validPattern = /^[a-zA-Z0-9_]+$/;
-  return validPattern.test(alias);
+  if (event.dataTransfer?.files.length) {
+    handleFileUpload(event.dataTransfer.files[0]);
+  }
 };
 
-// Handle device alias input
-const handleDeviceAliasInput = (event: Event) => {
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
+
+const handleDragLeave = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = false;
+};
+
+// Parse QR code to extract device information
+const parseQRCode = (qrCode: string) => {
+  deviceInfo.value.qrCode = qrCode;
+  // Set default device type and alias
+  deviceInfo.value.deviceType = 'other';
+  pairingConfig.value.nodeAlias = `Device_other_${Date.now().toString().slice(-4)}`;
+};
+
+// Handle device type selection and update alias
+const handleDeviceTypeChange = (deviceType: string) => {
+  deviceInfo.value.deviceType = deviceType;
+  // Update alias with new device type
+  const timestamp = Date.now().toString().slice(-4);
+  pairingConfig.value.nodeAlias = `Device_${deviceType}_${timestamp}`;
+};
+
+// Handle node alias input with validation
+const handleNodeAliasInput = (event: Event) => {
   const input = event.target as HTMLInputElement;
   const value = input.value;
   
-  // Remove invalid characters as user types
-  const cleanValue = value.replace(/[^a-zA-Z0-9_]/g, '');
-  if (cleanValue !== value) {
-    input.value = cleanValue;
-    deviceAlias.value = cleanValue;
+  // Only allow alphanumeric characters and underscore
+  const sanitized = value.replace(/[^a-zA-Z0-9_]/g, '');
+  
+  if (sanitized !== value) {
+    input.value = sanitized;
+  }
+  
+  pairingConfig.value.nodeAlias = sanitized;
+};
+
+// Go back to scanning
+const goBackToScan = () => {
+  currentStep.value = 'scan';
+  scanResult.value = '';
+  error.value = '';
+  deviceInfo.value = {
+    qrCode: '',
+    deviceType: '',
+  };
+};
+
+// Proceed to pairing configuration
+const proceedToConfig = () => {
+  if (!canProceedToConfig.value) return;
+  currentStep.value = 'pairing';
+};
+
+// Start device pairing
+const startPairing = async () => {
+  if (!canStartPairing.value) return;
+  
+  isProcessing.value = true;
+  error.value = '';
+  
+  try {
+    // Prepare API data based on connection type
+    const apiData: any = {
+      ScanResult: deviceInfo.value.qrCode,
+      ConnectionType: pairingConfig.value.connectionType,
+      nodeAlias: pairingConfig.value.nodeAlias
+    };
+
+    // Add connection-specific parameters
+    if (pairingConfig.value.connectionType === 'wifi') {
+      apiData.ssId = pairingConfig.value.ssid;
+      apiData.password = pairingConfig.value.password;
+    } else if (pairingConfig.value.connectionType === 'thread') {
+      apiData.dataset = pairingConfig.value.dataset;
+    }
+
+    // Send API request
+    const response = await sendQRScanResult(
+      deviceInfo.value.qrCode, 
+      pairingConfig.value.connectionType,
+      apiData
+    );
+    
+    if (response.MatterProxy.result === 'successful') {
+      // Show success and reset to scan step
+      alert(`Device "${pairingConfig.value.nodeAlias}" paired successfully!`);
+      resetToScan();
+    } else {
+      error.value = response.MatterProxy.message || 'Pairing failed';
+    }
+  } catch (err) {
+    console.error('Error during pairing:', err);
+    error.value = 'An error occurred during pairing';
+  } finally {
+    isProcessing.value = false;
   }
 };
 
-// Copy result to clipboard
-const copyResult = async (result: string) => {
+// Reset to scan step
+const resetToScan = () => {
+  currentStep.value = 'scan';
+  scanResult.value = '';
+  error.value = '';
+  deviceInfo.value = {
+    qrCode: '',
+    deviceType: '',
+  };
+  pairingConfig.value = {
+    nodeAlias: '',
+    connectionType: 'wifi',
+    ssid: '',
+    password: '',
+    dataset: ''
+  };
+};
+
+// Get Thread dataset from Thread API
+const getDataset = async () => {
   try {
-    await navigator.clipboard.writeText(result);
-    // Show temporary feedback
-    const originalText = result;
-    setTimeout(() => {
-      // Could show a toast notification here
-    }, 1000);
+    isProcessing.value = true;
+    error.value = '';
+    
+    // Use the same API endpoint as Matter Pairing
+    const response = await axios.post('/API/info?list=matterProxy', {
+      MatterProxy: {
+        method: "GET",
+        action: "get_dataset",
+        data: {}
+      }
+    });
+    
+    if (response.data.MatterProxy?.result === 'successful') {
+      pairingConfig.value.dataset = response.data.MatterProxy.dataset || '';
+    } else if (response.data.MatterProxy?.result === 'failed') {
+      error.value = response.data.MatterProxy.message || 'Failed to get Thread dataset';
+    } else {
+      error.value = 'Unexpected response format when getting Thread dataset';
+    }
   } catch (err) {
-    console.error('Failed to copy:', err);
+    console.error('Error getting Thread dataset:', err);
+    error.value = 'Failed to get Thread dataset';
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
+// Add scan result to history
+const addToHistory = (result: string, type: string) => {
+  const historyItem = {
+    result,
+    timestamp: new Date().toLocaleString(),
+    type
+  };
+  
+  scanHistory.value.unshift(historyItem);
+  
+  // Keep only last 20 results
+  if (scanHistory.value.length > 20) {
+    scanHistory.value = scanHistory.value.slice(0, 20);
+  }
+  
+  // Save to localStorage
+  localStorage.setItem('qr-scan-history', JSON.stringify(scanHistory.value));
+};
+
+// Load history from localStorage
+const loadHistory = () => {
+  try {
+    const saved = localStorage.getItem('qr-scan-history');
+    if (saved) {
+      scanHistory.value = JSON.parse(saved);
+    }
+  } catch (err) {
+    console.error('Error loading scan history:', err);
   }
 };
 
 // Clear scan history
 const clearHistory = () => {
   scanHistory.value = [];
+  localStorage.removeItem('qr-scan-history');
 };
 
-// Go to next step
-const goToNextStep = () => {
-  if (currentStep.value === 2) {
-    // Validate device alias
-    if (!validateDeviceAlias(deviceAlias.value)) {
-      error.value = 'Device alias cannot be empty and can only contain letters, numbers, and underscores';
-      return;
-    }
-    error.value = '';
-    currentStep.value = 3;
-  }
-};
-
-// Go to previous step
-const goToPreviousStep = () => {
-  if (currentStep.value > 1) {
-    currentStep.value--;
-    error.value = '';
-  }
-};
-
-// Reset to step 1
-const resetToStep1 = () => {
-  currentStep.value = 1;
-  scanResult.value = '';
-  analysisResult.value = null;
-  deviceAlias.value = '';
-  nodeId.value = '1';
-  ssid.value = '';
-  password.value = '';
-  dataset.value = '';
-  error.value = '';
-};
-
-// Get Thread dataset
-const getDataset = async () => {
-  loading.value = true;
-  error.value = '';
-  
+// Copy result to clipboard
+const copyToClipboard = async (text: string) => {
   try {
-    const response = await fetch('/API/info?list=matterProxy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        MatterProxy: {
-          method: "GET",
-          action: "get_dataset",
-          data: {}
-        }
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to get dataset');
-    }
-    
-    const data = await response.json();
-    
-    if (data.MatterProxy?.result === 'successful') {
-      dataset.value = data.MatterProxy.dataset || '';
-    } else {
-      error.value = data.MatterProxy?.message || 'Failed to get dataset';
-    }
+    await navigator.clipboard.writeText(text);
+    // Show temporary success message
+    const originalError = error.value;
+    error.value = '';
+    const originalResult = scanResult.value;
+    scanResult.value = t('matter.copied');
+    setTimeout(() => {
+      scanResult.value = originalResult;
+      error.value = originalError;
+    }, 1000);
   } catch (err) {
-    console.error('Error getting dataset:', err);
-    error.value = 'Failed to get dataset';
-  } finally {
-    loading.value = false;
+    console.error('Error copying to clipboard:', err);
   }
 };
 
-// Submit pairing request
-const submitPairing = async () => {
-  if (!scanResult.value || !deviceAlias.value) return;
-  
-  // Validate device alias one more time
-  if (!validateDeviceAlias(deviceAlias.value)) {
-    error.value = 'Invalid device alias format';
-    return;
-  }
-  
-  // Validate connection settings
-  if (connectionType.value === 'wifi') {
-    if (!ssid.value || !password.value) {
-      error.value = 'SSID and password are required for WiFi connection';
-      return;
-    }
-  } else if (connectionType.value === 'thread') {
-    if (!dataset.value) {
-      error.value = 'Dataset is required for Thread connection';
-      return;
-    }
-  }
-  
-  loading.value = true;
+// Switch scanner mode
+const switchMode = async (mode: 'camera' | 'file') => {
+  await stopScanning();
+  scannerMode.value = mode;
   error.value = '';
-  
-  try {
-    const response = await fetch('/API/info?list=matterProxy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        MatterProxy: {
-          method: "POST",
-          action: "qrcode_pairing",
-          data: {
-            ScanResult: scanResult.value,
-            ConnectionType: connectionType.value,
-            nodeId: nodeId.value,
-            nodeAlias: deviceAlias.value,
-            ...(connectionType.value === 'wifi' ? {
-              ssId: ssid.value,
-              password: password.value
-            } : {
-              dataset: dataset.value
-            })
-          }
-        }
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to send pairing request');
-    }
-    
-    const data = await response.json();
-    
-    if (data.MatterProxy.result === 'successful') {
-      // Show success and reset
-      alert('Pairing request sent successfully!');
-      resetToStep1();
-    } else {
-      error.value = data.MatterProxy.message || 'Failed to send pairing request';
-    }
-  } catch (err) {
-    console.error('Error submitting pairing request:', err);
-    error.value = 'Failed to submit pairing request';
-  } finally {
-    loading.value = false;
-  }
 };
 
-// Cleanup on unmount
-onUnmounted(() => {
-  stopCamera();
-  if (fileScanner) {
-    fileScanner.clear();
-  }
+// Component lifecycle
+onMounted(async () => {
+  await initializeCameras();
+  loadHistory();
 });
 
-onMounted(() => {
-  // Auto-start camera on mount
-  startCamera();
+onUnmounted(async () => {
+  await stopScanning();
 });
 </script>
 
@@ -383,336 +520,422 @@ onMounted(() => {
   <div class="page-container">
     <h1 class="page-title">{{ t('matter.qrScannerTitle') }}</h1>
 
-    <!-- Progress Steps -->
-    <div class="progress-steps">
-      <div class="step" :class="{ active: currentStep >= 1, completed: currentStep > 1 }">
-        <div class="step-number">1</div>
-        <div class="step-label">Scan QR Code</div>
-      </div>
-      <div class="step-line" :class="{ completed: currentStep > 1 }"></div>
-      <div class="step" :class="{ active: currentStep >= 2, completed: currentStep > 2 }">
-        <div class="step-number">2</div>
-        <div class="step-label">Configure Device</div>
-      </div>
-      <div class="step-line" :class="{ completed: currentStep > 2 }"></div>
-      <div class="step" :class="{ active: currentStep >= 3 }">
-        <div class="step-number">3</div>
-        <div class="step-label">Start Pairing</div>
-      </div>
-    </div>
-
     <div class="status-content">
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step" :class="{ active: currentStep === 'scan', completed: currentStep !== 'scan' }">
+          <div class="step-number">1</div>
+          <div class="step-label">{{ t('matter.stepScanQR') }}</div>
+        </div>
+        <div class="step-line" :class="{ active: currentStep !== 'scan' }"></div>
+        <div class="step" :class="{ active: currentStep === 'configure', completed: currentStep === 'pairing' }">
+          <div class="step-number">2</div>
+          <div class="step-label">{{ t('matter.stepConfigureDevice') }}</div>
+        </div>
+        <div class="step-line" :class="{ active: currentStep === 'pairing' }"></div>
+        <div class="step" :class="{ active: currentStep === 'pairing' }">
+          <div class="step-number">3</div>
+          <div class="step-label">{{ t('matter.stepStartPairing') }}</div>
+        </div>
+      </div>
+
       <!-- Step 1: QR Code Scanning -->
-      <div v-if="currentStep === 1" class="panel-section">
-        <div class="section-title">Step 1: Scan QR Code</div>
-        
+      <div v-if="currentStep === 'scan'" class="panel-section">
+        <div class="section-title">{{ t('matter.stepScanTitle') }}</div>
         <div class="card-content">
-          <!-- Mode Selection -->
-          <div class="mode-selection">
+          <div class="mode-selector">
             <button 
-              class="mode-button"
-              :class="{ active: scanMode === 'camera' }"
-              @click="startCamera"
+              class="btn mode-btn"
+              :class="{ active: scannerMode === 'camera' }"
+              @click="switchMode('camera')"
             >
               <span class="material-icons">camera_alt</span>
               {{ t('matter.scanFromCamera') }}
             </button>
             <button 
-              class="mode-button"
-              :class="{ active: scanMode === 'file' }"
-              @click="switchToFileMode"
+              class="btn mode-btn"
+              :class="{ active: scannerMode === 'file' }"
+              @click="switchMode('file')"
             >
               <span class="material-icons">upload_file</span>
               {{ t('matter.scanFromFile') }}
             </button>
           </div>
+        </div>
+      </div>
 
-          <!-- Camera Scanner -->
-          <div v-if="scanMode === 'camera'" class="scanner-section">
-            <div v-if="isScanning" class="camera-container">
-              <div id="qr-scanner-container" ref="scannerContainer"></div>
+      <!-- Camera Scanner (only show in scan step) -->
+      <div v-if="currentStep === 'scan' && scannerMode === 'camera'" class="panel-section">
+        <div class="section-title">{{ t('matter.scanFromCamera') }}</div>
+        <div class="card-content">
+          <!-- Camera Selection -->
+          <div v-if="cameras.length > 0" class="form-group">
+            <label>{{ t('matter.selectCamera') }}</label>
+            <select v-model="selectedCamera" :disabled="isScanning">
+              <option value="">{{ t('matter.selectCamera') }} (Auto)</option>
+              <option v-for="camera in cameras" :key="camera.id" :value="camera.id">
+                {{ camera.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Camera Controls -->
+          <div class="camera-controls">
+            <button 
+              v-if="!isScanning"
+              class="btn btn-primary"
+              @click="startCameraScanning"
+              :disabled="cameras.length === 0"
+            >
+              <span class="material-icons">camera_alt</span>
+              {{ t('matter.startCamera') }}
+            </button>
+            <button 
+              v-else
+              class="btn btn-secondary"
+              @click="stopScanning"
+            >
+              <span class="material-icons">stop</span>
+              {{ t('matter.stopCamera') }}
+            </button>
+          </div>
+
+          <!-- QR Reader Container -->
+          <div class="qr-reader-container">
+            <div 
+              id="qr-reader" 
+              class="qr-reader"
+            ></div>
+            <div v-if="!isScanning" class="qr-reader-placeholder">
+              <span class="material-icons">qr_code_scanner</span>
+              <p>{{ t('matter.startCamera') }}</p>
             </div>
           </div>
 
-          <!-- File Scanner -->
-          <div v-if="scanMode === 'file'" class="file-scanner-section">
-            <div class="file-upload-area">
-              <div class="upload-content">
-                <span class="material-icons">qr_code_scanner</span>
-                <p>{{ t('matter.dragDropFile') }}</p>
-                <button class="btn btn-secondary" @click="() => fileInput?.click()">
-                  {{ t('matter.chooseFile') }}
-                </button>
-              </div>
-            </div>
-            <input 
-              type="file" 
-              ref="fileInput"
-              @change="handleFileUpload"
-              accept="image/*"
-              style="display: none"
-            />
-            <div id="file-scanner" style="display: none;"></div>
-          </div>
-
-          <!-- Error Display -->
-          <div v-if="error" class="error-message">
-            {{ error }}
-          </div>
-
-          <!-- Scan History -->
-          <div v-if="scanHistory.length > 0" class="scan-history">
-            <div class="history-header">
-              <h3>{{ t('matter.scanHistory') }}</h3>
-              <button class="btn btn-secondary" @click="clearHistory">
-                {{ t('matter.clearHistory') }}
-              </button>
-            </div>
-            <div class="history-list">
-              <div 
-                v-for="(item, index) in scanHistory" 
-                :key="index"
-                class="history-item"
-                @click="handleScanSuccess(item.result)"
-              >
-                <div class="history-time">{{ item.timestamp }}</div>
-                <div class="history-result">{{ item.result }}</div>
-                <button 
-                  class="btn-copy"
-                  @click.stop="copyResult(item.result)"
-                  :title="t('matter.copyResult')"
-                >
-                  <span class="material-icons">content_copy</span>
-                </button>
-              </div>
+          <!-- Debug Information -->
+          <div v-if="error || cameras.length > 0" class="debug-info">
+            <p v-if="error"><strong>Error:</strong> {{ error }}</p>
+            <p><strong>Cameras found:</strong> {{ cameras.length }}</p>
+            <p><strong>Selected camera:</strong> {{ selectedCamera }}</p>
+            <p><strong>Is scanning:</strong> {{ isScanning }}</p>
+            <div v-if="cameras.length > 0">
+              <p><strong>Available cameras:</strong></p>
+              <ul>
+                <li v-for="camera in cameras" :key="camera.id">
+                  {{ camera.label }} (ID: {{ camera.id }})
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 2: Device Information -->
-      <div v-if="currentStep === 2" class="panel-section">
-        <div class="section-title">Step 2: Configure Device</div>
-        
+      <!-- File Scanner (only show in scan step) -->
+      <div v-if="currentStep === 'scan' && scannerMode === 'file'" class="panel-section">
+        <div class="section-title">{{ t('matter.scanFromFile') }}</div>
+        <div class="card-content">
+          <div 
+            class="file-drop-zone"
+            :class="{ dragging: isDragging }"
+            @drop="handleDrop"
+            @dragover="handleDragOver"
+            @dragleave="handleDragLeave"
+          >
+            <div class="drop-zone-content">
+              <span class="material-icons">qr_code_scanner</span>
+              <p>{{ t('matter.dragDropFile') }}</p>
+              <button 
+                class="btn btn-primary"
+                @click="() => fileInput?.click()"
+              >
+                {{ t('matter.chooseFile') }}
+              </button>
+            </div>
+          </div>
+
+          <input 
+            type="file" 
+            ref="fileInput"
+            @change="handleFileSelect"
+            accept="image/*"
+            style="display: none"
+          >
+
+          <!-- Temporary container for file scanning -->
+          <div id="temp-qr-reader" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Device Configuration -->
+      <div v-if="currentStep === 'configure'" class="panel-section">
+        <div class="section-title">{{ t('matter.stepConfigureTitle') }}</div>
         <div class="card-content">
           <!-- QR Code Result Display -->
           <div class="qr-result-display">
             <div class="result-header">
               <span class="material-icons">qr_code</span>
-              <span>{{ scanResult }}</span>
+              <span>{{ t('matter.scannedQRCode') }}</span>
             </div>
+            <div class="result-content">{{ scanResult }}</div>
           </div>
-
-          <!-- Device Information Display -->
-          <div v-if="analysisResult && analysisResult.isValid" class="device-info-display">
-            <div class="device-card">
-              <div class="device-icon">
-                <span class="material-icons">{{ deviceTypeIcons[analysisResult.deviceType as keyof typeof deviceTypeIcons] || 'device_hub' }}</span>
-              </div>
-              <div class="device-details">
-                <div class="device-name">{{ analysisResult.deviceAlias }}</div>
-                <div class="device-type">{{ analysisResult.deviceInfo?.label || 'Other Device' }}</div>
-                <div class="device-vendor">{{ analysisResult.vendorName }}</div>
-                <div class="device-id">Node ID: {{ nodeId }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Device Type Selection Icons -->
+          
+          <!-- Device Type Selection -->
           <div class="device-type-section">
-            <div class="section-subtitle">Quick Device Type Selection</div>
-            <div class="device-type-icons">
-              <button 
-                v-for="(icon, type) in deviceTypeIcons" 
-                :key="type"
-                class="device-type-icon"
-                @click="handleDeviceTypeClick(type)"
-                :title="type"
+            <h3>{{ t('matter.selectDeviceType') }}</h3>
+            <div class="device-type-grid">
+              <div 
+                v-for="type in deviceTypes" 
+                :key="type.value"
+                class="device-type-card"
+                :class="{ selected: deviceInfo.deviceType === type.value }"
+                @click="handleDeviceTypeChange(type.value)"
               >
-                <span class="material-icons">{{ icon }}</span>
-              </button>
+                <div class="device-icon">
+                  <span class="material-icons">{{ type.icon }}</span>
+                </div>
+                <div class="device-label">{{ t(type.labelKey) }}</div>
+              </div>
             </div>
           </div>
-
-          <!-- Device Configuration -->
-          <div class="device-config">
+          
+          <!-- Device Information -->
+          <div class="device-info-section">
+            <h3>{{ t('matter.deviceInformation') }}</h3>
             <div class="form-group">
-              <label>Device Alias</label>
+              <label>{{ t('matter.deviceAlias') }}</label>
               <input 
                 type="text" 
-                v-model="deviceAlias"
-                @input="handleDeviceAliasInput"
-                placeholder="Device_light_1234"
-                required
-                pattern="[a-zA-Z0-9_]+"
-                title="Only letters, numbers, and underscores are allowed"
+                v-model="pairingConfig.nodeAlias"
+                @input="handleNodeAliasInput"
+                :placeholder="t('matter.deviceAliasPlaceholder')"
+                :class="{ 'invalid': pairingConfig.nodeAlias && !isNodeAliasValid }"
               />
-              <small class="form-hint">Only letters, numbers, and underscores are allowed</small>
-            </div>
-
-            <div class="form-group">
-              <label>Node ID</label>
-              <input 
-                type="text" 
-                v-model="nodeId"
-                required
-              />
+              <div v-if="pairingConfig.nodeAlias && !isNodeAliasValid" class="validation-error">
+                {{ t('matter.deviceAliasValidation') }}
+              </div>
+              <div class="alias-hint">
+                <span>{{ t('matter.deviceAliasHint') }}</span>
+              </div>
             </div>
           </div>
-
+          
           <!-- Navigation Buttons -->
           <div class="step-navigation">
-            <button class="btn btn-secondary" @click="goToPreviousStep">
+            <button class="btn btn-secondary" @click="goBackToScan">
               <span class="material-icons">arrow_back</span>
-              Back
+              {{ t('matter.backToScan') }}
             </button>
             <button 
               class="btn btn-primary" 
-              @click="goToNextStep"
-              :disabled="!deviceAlias || !validateDeviceAlias(deviceAlias)"
+              @click="proceedToConfig"
+              :disabled="!canProceedToConfig"
             >
-              Next
+              {{ t('matter.nextConfigureConnection') }}
               <span class="material-icons">arrow_forward</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Step 3: Connection Settings -->
-      <div v-if="currentStep === 3" class="panel-section">
-        <div class="section-title">Step 3: Start Pairing</div>
-        
+      <!-- Step 3: Pairing Configuration -->
+      <div v-if="currentStep === 'pairing'" class="panel-section">
+        <div class="section-title">{{ t('matter.stepPairingTitle') }}</div>
         <div class="card-content">
           <!-- Device Summary -->
           <div class="device-summary">
-            <div class="summary-card">
-              <div class="summary-icon">
-                <span class="material-icons">{{ deviceTypeIcons[analysisResult?.deviceType as keyof typeof deviceTypeIcons] || 'device_hub' }}</span>
+            <div class="summary-header">
+              <div class="device-icon-large">
+                <span class="material-icons">{{ selectedDeviceType?.icon || 'device_hub' }}</span>
               </div>
-              <div class="summary-details">
-                <div class="summary-name">{{ deviceAlias }}</div>
-                <div class="summary-type">{{ analysisResult?.deviceInfo?.label || 'Other Device' }}</div>
-                <div class="summary-id">Node ID: {{ nodeId }}</div>
+              <div class="device-details">
+                <h3>{{ pairingConfig.nodeAlias }}</h3>
+                <p>{{ selectedDeviceType ? t(selectedDeviceType.labelKey) : t('matter.otherDevice') }}</p>
               </div>
             </div>
           </div>
-
-          <!-- Connection Configuration -->
+          
+          <!-- Connection Type Selection -->
           <div class="connection-config">
-            <div class="section-subtitle">Connection Configuration</div>
-            
-            <!-- Connection Type Selection -->
-            <div class="form-group">
-              <label>Connection Type</label>
-              <div class="connection-type-selection">
-                <label class="connection-option">
-                  <input type="radio" v-model="connectionType" value="wifi" />
-                  <div class="option-content">
-                    <span class="material-icons">wifi</span>
-                    <span>WiFi Connection</span>
-                  </div>
-                </label>
-                <label class="connection-option">
-                  <input type="radio" v-model="connectionType" value="thread" />
-                  <div class="option-content">
-                    <span class="material-icons">hub</span>
-                    <span>Thread Network</span>
-                  </div>
-                </label>
-              </div>
+            <h3>{{ t('matter.connectionConfiguration') }}</h3>
+            <div class="connection-type-selector">
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  value="wifi" 
+                  v-model="pairingConfig.connectionType"
+                  name="connectionType"
+                />
+                <span class="radio-label">
+                  <span class="material-icons">wifi</span>
+                  {{ t('matter.wifiConnection') }}
+                </span>
+              </label>
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  value="thread" 
+                  v-model="pairingConfig.connectionType"
+                  name="connectionType"
+                />
+                <span class="radio-label">
+                  <span class="material-icons">hub</span>
+                  {{ t('matter.threadNetwork') }}
+                </span>
+              </label>
             </div>
-
-            <!-- WiFi Settings -->
-            <template v-if="connectionType === 'wifi'">
-              <div class="form-group">
-                <label>WiFi Network (SSID)</label>
-                <input 
-                  type="text" 
-                  v-model="ssid"
-                  placeholder="Matter_Test"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label>WiFi Password</label>
-                <input 
-                  type="password" 
-                  v-model="password"
-                  placeholder="12345678"
-                  required
-                />
-              </div>
-            </template>
-
-            <!-- Thread Settings -->
-            <template v-if="connectionType === 'thread'">
-              <div class="form-group">
-                <label>Dataset</label>
-                <div class="dataset-input-group">
-                  <textarea 
-                    v-model="dataset"
-                    placeholder="Enter Thread dataset..."
-                    rows="3"
-                    required
-                  ></textarea>
-                  <button 
-                    type="button"
-                    class="btn btn-secondary get-dataset-btn"
-                    @click="getDataset"
-                    :disabled="loading"
-                  >
-                    <span class="material-icons" v-if="loading">sync</span>
-                    GET DATASET
-                  </button>
-                </div>
-              </div>
-            </template>
           </div>
-
+          
+          <!-- WiFi Configuration -->
+          <div v-if="pairingConfig.connectionType === 'wifi'" class="wifi-config">
+            <div class="form-group">
+              <label>{{ t('matter.wifiNetworkSSID') }}</label>
+              <input 
+                type="text" 
+                v-model="pairingConfig.ssid"
+                :placeholder="t('matter.wifiNetworkPlaceholder')"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>{{ t('matter.password') }}</label>
+              <input 
+                type="password" 
+                v-model="pairingConfig.password"
+                :placeholder="t('matter.wifiPasswordPlaceholder')"
+                required
+              />
+            </div>
+          </div>
+          
+          <!-- Thread Configuration -->
+          <div v-if="pairingConfig.connectionType === 'thread'" class="thread-config">
+            <div class="form-group">
+              <label>{{ t('matter.threadDataset') }}</label>
+              <input 
+                type="text" 
+                v-model="pairingConfig.dataset"
+                :placeholder="t('matter.threadDatasetPlaceholder')"
+                required
+              />
+              <button 
+                type="button" 
+                class="btn btn-secondary get-dataset-btn"
+                @click="getDataset"
+                :disabled="isProcessing"
+              >
+                <span class="material-icons" v-if="isProcessing">sync</span>
+                {{ isProcessing ? t('matter.gettingDataset') : t('matter.getDataset') }}
+              </button>
+            </div>
+          </div>
+          
+          <!-- Error Display -->
+          <div v-if="error" class="error-message">
+            <span class="material-icons">error</span>
+            {{ error }}
+          </div>
+          
           <!-- Navigation Buttons -->
           <div class="step-navigation">
-            <button class="btn btn-secondary" @click="goToPreviousStep">
+            <button class="btn btn-secondary" @click="currentStep = 'configure'">
               <span class="material-icons">arrow_back</span>
-              Back
+              {{ t('matter.back') }}
             </button>
             <button 
-              class="btn btn-primary" 
-              @click="submitPairing"
-              :disabled="loading || (connectionType === 'wifi' && (!ssid || !password)) || (connectionType === 'thread' && !dataset)"
+              class="btn btn-primary pairing-btn" 
+              @click="startPairing"
+              :disabled="!canStartPairing || !isNodeAliasValid || isProcessing"
             >
-              <span class="material-icons" v-if="loading">sync</span>
-              Submit Pairing
+              <span class="material-icons" v-if="isProcessing">sync</span>
+              <span class="material-icons" v-else>link</span>
+              {{ isProcessing ? t('matter.pairing') : t('matter.startPairing') }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Error Display -->
-      <div v-if="error && currentStep > 1" class="error-message">
-        {{ error }}
+      <!-- Scan Result (only show in scan step when there's a result) -->
+      <div v-if="currentStep === 'scan' && (scanResult || error)" class="panel-section">
+        <div class="section-title">{{ t('matter.scanResult') }}</div>
+        <div class="card-content">
+          <div v-if="error && !scanResult" class="error-message">
+            <span class="material-icons">error</span>
+            {{ error }}
+          </div>
+          
+          <div v-if="scanResult" class="result-container">
+            <div class="result-header">
+              <span class="material-icons">qr_code</span>
+              <button 
+                class="btn-copy"
+                @click="copyToClipboard(scanResult)"
+                :title="t('matter.copyResult')"
+              >
+                <span class="material-icons">content_copy</span>
+              </button>
+            </div>
+            <div class="result-content">{{ scanResult }}</div>
+            
+            <!-- Quick action to proceed -->
+            <div class="quick-action">
+              <button class="btn btn-primary" @click="parseQRCode(scanResult); currentStep = 'configure'">
+                <span class="material-icons">settings</span>
+                {{ t('matter.configureThisDevice') }}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Reset Button (always visible) -->
-      <div class="reset-container">
-        <button class="btn btn-secondary" @click="resetToStep1">
-          <span class="material-icons">refresh</span>
-          Reset
-        </button>
+      <!-- Scan History (only show in scan step) -->
+      <div v-if="currentStep === 'scan' && scanHistory.length > 0" class="panel-section">
+        <div class="header-row">
+          <div class="section-title-sp">{{ t('matter.scanHistory') }}</div>
+          <button class="btn btn-secondary" @click="clearHistory">
+            <span class="material-icons">clear_all</span>
+            {{ t('matter.clearHistory') }}
+          </button>
+        </div>
+        
+        <div class="card-content">
+          <div class="history-container">
+            <div 
+              v-for="(item, index) in scanHistory" 
+              :key="index"
+              class="history-item"
+            >
+              <div class="history-header">
+                <div class="history-info">
+                  <span class="material-icons">
+                    {{ item.type === 'camera' ? 'camera_alt' : 'upload_file' }}
+                  </span>
+                  <span class="history-timestamp">{{ item.timestamp }}</span>
+                </div>
+                <button 
+                  class="btn-copy"
+                  @click="copyToClipboard(item.result)"
+                  :title="t('matter.copyResult')"
+                >
+                  <span class="material-icons">content_copy</span>
+                </button>
+              </div>
+              <div class="history-content">{{ item.result }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Progress Steps */
-.progress-steps {
+.step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
   background-color: white;
-  margin-bottom: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -735,7 +958,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .step.active .step-number {
@@ -759,222 +982,271 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.step.completed .step-label {
-  color: #4caf50;
-}
-
 .step-line {
   flex: 1;
   height: 2px;
   background-color: #e0e0e0;
   margin: 0 1rem;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-.step-line.completed {
-  background-color: #4caf50;
+.step-line.active {
+  background-color: var(--primary-color);
 }
 
-/* Mode Selection */
-.mode-selection {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.mode-button {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.mode-button:hover {
-  border-color: var(--primary-color);
-}
-
-.mode-button.active {
-  border-color: var(--primary-color);
-  background-color: rgba(0, 112, 187, 0.1);
-}
-
-.mode-button .material-icons {
-  font-size: 2rem;
-  color: var(--primary-color);
-}
-
-/* Scanner sections */
-.scanner-section {
-  margin-bottom: 2rem;
-}
-
-.camera-container {
-  display: flex;
-  justify-content: center;
-  margin: 2rem 0;
-}
-
-.file-scanner-section {
-  margin-bottom: 2rem;
-}
-
-.file-upload-area {
-  border: 2px dashed var(--border-color);
-  border-radius: 8px;
-  padding: 2rem;
-  text-align: center;
-  background-color: var(--bg-secondary);
-  transition: border-color 0.3s;
-}
-
-.file-upload-area:hover {
-  border-color: var(--primary-color);
-}
-
-.upload-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.upload-content .material-icons {
-  font-size: 3rem;
-  color: var(--primary-color);
-}
-
-/* QR Result Display */
 .qr-result-display {
   margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.result-header {
+.qr-result-display .result-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: var(--text-primary);
   padding: 1rem;
   background-color: var(--bg-secondary);
-  border-radius: 8px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* Device Information Display */
-.device-info-display {
-  margin-bottom: 2rem;
-}
-
-.device-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
+.qr-result-display .result-content {
+  padding: 1rem;
   background-color: white;
-  border: 2px solid var(--primary-color);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 112, 187, 0.1);
-}
-
-.device-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: rgba(0, 112, 187, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.device-icon .material-icons {
-  font-size: 2rem;
-  color: var(--primary-color);
-}
-
-.device-details {
-  flex: 1;
-}
-
-.device-name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-}
-
-.device-type {
-  font-size: 1rem;
-  color: var(--primary-color);
-  margin-bottom: 0.25rem;
-}
-
-.device-vendor {
+  word-break: break-all;
+  font-family: monospace;
   font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.25rem;
+  line-height: 1.4;
 }
 
-.device-id {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-/* Device Type Selection */
 .device-type-section {
   margin-bottom: 2rem;
 }
 
-.section-subtitle {
-  font-size: 1rem;
+.device-type-section h3 {
+  margin: 0 0 1rem 0;
   color: var(--text-primary);
-  margin-bottom: 1rem;
-  font-weight: 500;
 }
 
-.device-type-icons {
-  display: flex;
+.device-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 1.5rem 0;
 }
 
-.device-type-icon {
+.device-type-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
+  gap: 0.5rem;
+  padding: 1rem;
   border: 2px solid var(--border-color);
-  border-radius: 12px;
-  background: white;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  background-color: white;
 }
 
-.device-type-icon:hover {
+.device-type-card:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+}
+
+.device-type-card.selected {
   border-color: var(--primary-color);
   background-color: rgba(0, 112, 187, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 112, 187, 0.2);
 }
 
-.device-type-icon .material-icons {
-  font-size: 2.5rem;
+.device-icon {
   color: var(--primary-color);
 }
 
-/* Device Configuration */
-.device-config {
+.device-icon .material-icons {
+  font-size: 2rem;
+}
+
+.device-label {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.device-info-section {
+  margin-bottom: 2rem;
+}
+
+.device-info-section h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.device-type-hint {
+  margin: 0 0 1rem 0;
+  padding: 0.75rem;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  color: #0070BB;
+  font-size: 0.9rem;
+}
+
+.readonly-input {
+  background-color: var(--bg-secondary) !important;
+  cursor: not-allowed !important;
+  color: var(--text-secondary) !important;
+}
+
+.validation-error {
+  color: #f44336;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.node-id-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.alias-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.form-group input.invalid {
+  border-color: #f44336;
+  background-color: #ffebee;
+}
+
+.device-summary {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.device-icon-large {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-icon-large .material-icons {
+  font-size: 2rem;
+}
+
+.device-details h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.device-details p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.node-id {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.connection-config {
+  margin-bottom: 2rem;
+}
+
+.connection-config h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.connection-type-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.radio-option:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+}
+
+.radio-option input[type="radio"]:checked + .radio-label {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.radio-option input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.wifi-config, .thread-config {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.get-dataset-btn {
+  margin-top: 0.5rem;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pairing-btn {
+  background-color: #4caf50;
+}
+
+.pairing-btn:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.quick-action {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
 }
 
 .form-group {
@@ -988,13 +1260,7 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.form-hint {
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
-
-input, textarea {
+.form-group input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -1002,125 +1268,261 @@ input, textarea {
   font-size: 1rem;
 }
 
-input:invalid {
-  border-color: #dc3545;
+.mode-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
-/* Device Summary */
-.device-summary {
-  margin-bottom: 2rem;
-}
-
-.summary-card {
+.mode-btn {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background-color: var(--bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--border-color);
+  background-color: white;
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.summary-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+.mode-btn:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+}
+
+.mode-btn.active {
+  border-color: var(--primary-color);
   background-color: var(--primary-color);
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.camera-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.qr-reader-container {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.qr-reader {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+.qr-reader-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.qr-reader-placeholder .material-icons {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.qr-reader-placeholder p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.file-drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary);
+}
+
+.file-drop-zone.dragging {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.drop-zone-content .material-icons {
+  font-size: 4rem;
+  color: var(--primary-color);
+}
+
+.drop-zone-content p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #ffebee;
+  color: #f44336;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.debug-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.debug-info p {
+  margin: 0.25rem 0;
+}
+
+.result-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.result-header .material-icons {
+  color: var(--primary-color);
+}
+
+.btn-copy {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.summary-icon .material-icons {
-  font-size: 1.5rem;
-  color: white;
-}
-
-.summary-details {
-  flex: 1;
-}
-
-.summary-name {
-  font-size: 1.1rem;
-  font-weight: 600;
+.btn-copy:hover {
+  background-color: rgba(0, 0, 0, 0.05);
   color: var(--text-primary);
-  margin-bottom: 0.25rem;
 }
 
-.summary-type {
-  font-size: 0.9rem;
-  color: var(--primary-color);
-  margin-bottom: 0.25rem;
-}
-
-.summary-id {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-/* Connection Configuration */
-.connection-config {
-  margin-bottom: 2rem;
-}
-
-.connection-type-selection {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.connection-option {
-  flex: 1;
-  cursor: pointer;
-}
-
-.connection-option input[type="radio"] {
-  display: none;
-}
-
-.option-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+.result-content {
   padding: 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background: white;
-  transition: all 0.2s;
-}
-
-.connection-option input[type="radio"]:checked + .option-content {
-  border-color: var(--primary-color);
-  background-color: rgba(0, 112, 187, 0.1);
-}
-
-.option-content .material-icons {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-}
-
-.dataset-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.get-dataset-btn {
-  align-self: flex-end;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  background-color: white;
+  word-break: break-all;
+  font-family: monospace;
   font-size: 0.9rem;
+  line-height: 1.4;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-/* Navigation */
-.step-navigation {
+.section-title-sp {
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.5rem 0;
+}
+
+.history-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.history-item {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.history-item:last-child {
+  margin-bottom: 0;
+}
+
+.history-header {
   display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
-  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.history-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.history-info .material-icons {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.history-timestamp {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.history-content {
+  padding: 1rem;
+  background-color: white;
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .btn {
@@ -1131,13 +1533,9 @@ input:invalid {
   border: none;
   border-radius: 4px;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
@@ -1150,191 +1548,146 @@ input:invalid {
   color: var(--text-primary);
 }
 
-/* Scan History */
-.scan-history {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.history-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--text-primary);
+/* Override html5-qrcode styles */
+:deep(#qr-reader) {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px !important;
+  border: none !important;
 }
 
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-height: 200px;
-  overflow-y: auto;
+:deep(#qr-reader > div) {
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.history-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+:deep(#qr-reader__scan_region) {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
 }
 
-.history-item:hover {
-  background-color: var(--bg-secondary);
+:deep(#qr-reader__scan_region > img, #qr-reader__scan_region > video) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
 }
 
-.history-time {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  min-width: 80px;
+:deep(#qr-reader__dashboard_section) {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  color: white !important;
+  padding: 1rem !important;
+  margin: 0 !important;
+  width: 100% !important;
 }
 
-.history-result {
-  flex: 1;
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+:deep(#qr-reader__dashboard_section_csr) {
+  text-align: center !important;
+  padding: 0.5rem !important;
 }
 
-.btn-copy {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: 4px;
+:deep(#qr-reader__dashboard_section_csr > div) {
+  color: white !important;
 }
 
-.btn-copy:hover {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.error-message {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #ffebee;
-  color: #f44336;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.reset-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-/* QR Scanner specific styles */
-:deep(#qr-scanner-container) {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-:deep(#qr-scanner-container video) {
-  border-radius: 8px;
-}
-
-:deep(#qr-scanner-container button) {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
-  .progress-steps {
-    padding: 1rem;
+  .step-indicator {
+    flex-direction: column;
+    gap: 1rem;
   }
-
-  .step {
-    min-width: 80px;
-  }
-
-  .step-number {
-    width: 32px;
-    height: 32px;
-    font-size: 0.9rem;
-  }
-
-  .step-label {
-    font-size: 0.8rem;
-  }
-
+  
   .step-line {
-    margin: 0 0.5rem;
+    width: 2px;
+    height: 20px;
+    margin: 0;
   }
-
-  .mode-selection {
+  
+  .device-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .summary-header {
     flex-direction: column;
+    text-align: center;
   }
-
-  .connection-type-selection {
-    flex-direction: column;
-  }
-
-  .device-type-icons {
-    gap: 0.75rem;
-    margin: 1rem 0;
-  }
-
-  .device-type-icon {
-    width: 70px;
-    height: 70px;
-  }
-
-  .device-type-icon .material-icons {
-    font-size: 2rem;
-  }
-
+  
   .step-navigation {
     flex-direction: column;
   }
-
+  
   .step-navigation .btn {
     width: 100%;
     justify-content: center;
   }
 
-  .history-item {
+  .mode-selector {
+    flex-direction: column;
+  }
+
+  .mode-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .camera-controls {
+    margin-bottom: 1rem;
+  }
+
+  .camera-controls .btn {
+    width: 100%;
+  }
+
+  .file-drop-zone {
+    padding: 2rem 1rem;
+  }
+
+  .qr-reader-container {
+    min-height: 300px;
+  }
+
+  .drop-zone-content .material-icons {
+    font-size: 3rem;
+  }
+
+  .header-row {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .section-title-sp {
+    padding: 0;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .history-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .history-time {
-    min-width: auto;
-  }
-
-  .btn-copy {
-    align-self: flex-end;
-  }
-
-  .device-card {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .summary-card {
-    flex-direction: column;
-    text-align: center;
+  .history-info {
+    width: 100%;
   }
 }
 </style>
