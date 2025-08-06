@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const showBlockingOverlay = ref(false);
 
 // Computed property to check if Mesh is disabled by MLO
 const isMeshDisabledByMLO = computed(() => {
@@ -35,6 +39,12 @@ const showSuccessMessage = () => {
   }, 3000);
 };
 
+const handleBlockingComplete = () => {
+  showBlockingOverlay.value = false;
+  // Redirect back to the current page to refresh data
+  router.go(0);
+};
+
 const handleSubmit = async () => {
   if (!meshData.value) return;
   
@@ -47,7 +57,9 @@ const handleSubmit = async () => {
       }
     });
     showSuccessMessage();
-    await fetchMeshConfig();
+    
+    // Show blocking overlay instead of immediate refresh
+    showBlockingOverlay.value = true;
   } catch (err) {
     console.error('Error updating mesh config:', err);
     error.value = 'Failed to update mesh config';
@@ -119,6 +131,14 @@ onMounted(fetchMeshConfig);
     <div v-if="showSuccess" class="success-message">
       {{ t('common.apply') }} successful
     </div>
+
+    <!-- Blocking Overlay -->
+    <BlockingOverlay
+      :is-visible="showBlockingOverlay"
+      message="Applying WiFi Mesh Settings..."
+      :duration="30"
+      @complete="handleBlockingComplete"
+    />
   </div>
 </template>
 
