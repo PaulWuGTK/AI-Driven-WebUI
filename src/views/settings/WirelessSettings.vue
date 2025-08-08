@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import WirelessBasicConfig from './wireless/WirelessBasicConfig.vue';
 import WirelessAdvancedConfig from './wireless/WirelessAdvancedConfig.vue';
@@ -7,6 +8,8 @@ import WirelessWpsConfig from './wireless/WirelessWpsConfig.vue';
 import WirelessMeshConfig from './wireless/WirelessMeshConfig.vue';
 
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const activeTab = ref('basic');
 
 // 使用 computed 來動態生成 tabs,這樣在語言改變時會自動更新
@@ -16,6 +19,30 @@ const tabs = computed(() => [
   { id: 'wps', label: t('wireless.wpsConfig') },
   { id: 'mesh', label: t('wireless.meshNetwork') }
 ]);
+
+// 監聽路由參數變化來設定活動分頁
+watch(() => route.query.tab, (newTab) => {
+  if (newTab && typeof newTab === 'string' && tabs.value.some(tab => tab.id === newTab)) {
+    activeTab.value = newTab;
+  }
+}, { immediate: true });
+
+// 當分頁改變時更新 URL 參數
+const handleTabChange = (tabId: string) => {
+  activeTab.value = tabId;
+  router.replace({ 
+    path: route.path, 
+    query: { ...route.query, tab: tabId } 
+  });
+};
+
+// 初始化時檢查 URL 參數
+onMounted(() => {
+  const tabFromQuery = route.query.tab;
+  if (tabFromQuery && typeof tabFromQuery === 'string' && tabs.value.some(tab => tab.id === tabFromQuery)) {
+    activeTab.value = tabFromQuery;
+  }
+});
 </script>
 
 <template>
@@ -30,7 +57,7 @@ const tabs = computed(() => [
             :key="tab.id"
             class="tab-button"
             :class="{ active: activeTab === tab.id }"
-            @click="activeTab = tab.id"
+            @click="handleTabChange(tab.id)"
           >
             {{ tab.label }}
           </button>

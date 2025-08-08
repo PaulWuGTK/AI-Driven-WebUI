@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
@@ -41,8 +42,11 @@ const showSuccessMessage = () => {
 
 const handleBlockingComplete = () => {
   showBlockingOverlay.value = false;
-  // Redirect back to the current page to refresh data
-  router.go(0);
+  // 保持在 mesh 分頁並重新載入頁面
+  const currentPath = route.path;
+  router.replace({ path: currentPath, query: { tab: 'mesh' } }).then(() => {
+    router.go(0);
+  });
 };
 
 const handleSubmit = async () => {
