@@ -28,7 +28,14 @@ const sortedEntries = computed(() => {
 // Selected SSID and its corresponding entry
 const selectedSSID = ref(sortedEntries.value.length > 0 ? sortedEntries.value[0].SSID : '');
 const selectedEntry = computed(() => {
-  return sortedEntries.value.find(entry => entry.SSID === selectedSSID.value) || sortedEntries.value[0];
+  const entry = sortedEntries.value.find(entry => entry.SSID === selectedSSID.value);
+  return entry || sortedEntries.value[0] || null;
+});
+
+// Add a reactive flag to control MAC list visibility
+const showMacList = computed(() => {
+  if (!selectedEntry.value) return false;
+  return selectedEntry.value.ACLMode !== 'Off';
 });
 
 // MAC address list management
@@ -70,7 +77,7 @@ const initializeMacAddresses = () => {
 // Watch for changes in selected entry
 watch(selectedEntry, () => {
   initializeMacAddresses();
-});
+}, { deep: true, immediate: true });
 
 // Watch for changes in selected SSID
 watch(selectedSSID, () => {
@@ -165,16 +172,18 @@ const cancelEdit = () => {
 const updateACLMode = (mode: string) => {
   if (!selectedEntry.value) return;
   
-  // If changing from Off to another mode or vice versa, show confirmation
-  if ((selectedEntry.value.ACLMode === 'Off' && mode !== 'Off') || 
-      (selectedEntry.value.ACLMode !== 'Off' && mode === 'Off')) {
+  // 只有從 Off 改為 WhiteList 或 BlackList 時才顯示確認對話框
+  // 但 6G 頻段不需要顯示確認對話框（因為沒有 WPS）
+  if (props.band !== '6G' &&
+      selectedEntry.value.ACLMode === 'Off' && 
+      (mode === 'WhiteList' || mode === 'BlackList')) {
     pendingACLMode.value = mode;
     confirmDialogAction.value = 'mode';
     showConfirmDialog.value = true;
     return;
   }
   
-  // Otherwise, apply directly
+  // 其他情況直接套用
   applyACLModeChange(mode);
 };
 
@@ -220,7 +229,9 @@ const updateEntryMacList = () => {
 
 // Initialize on component mount
 onMounted(() => {
-  initializeMacAddresses();
+  if (sortedEntries.value.length > 0) {
+    selectedSSID.value = sortedEntries.value[0].SSID;
+  }
 });
 </script>
 
@@ -248,7 +259,7 @@ onMounted(() => {
       </select>
     </div>
 
-    <div v-if="selectedEntry?.ACLMode !== 'Off'">
+    <div v-if="showMacList">
       <div class="mac-list-header">
         <h3>{{ t('macfilter.macAddressList') }}</h3>
         <div v-if="editingIndex === null" class="add-mac-form">
