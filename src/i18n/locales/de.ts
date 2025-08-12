@@ -694,6 +694,7 @@ export default {
     joinButton: 'Beitreten',
     joinSuccess: 'Erfolgreich dem Netzwerk beigetreten',
     joinFailed: 'Netzwerkbeitritt fehlgeschlagen',
+    networkJoinRequired: 'Muss zuerst dem Netzwerk beitreten, um den Kommissionierer zu aktivieren',
     commissionerEnable: 'Kommissionierer aktivieren',
     availableJoiner: 'Verfügbare Teilnehmer',
     eui64OrDiscerner: 'EUI-64 oder Discerner',

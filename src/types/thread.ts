@@ -145,6 +145,7 @@ export interface ThreadJoiner {
 export interface ThreadCommissionerResponse {
   ThreadCommissioner: {
     Enable: boolean;
+    InNetwork: boolean;
     Joiners: ThreadJoiner[];
   };
 }
@@ -152,6 +153,7 @@ export interface ThreadCommissionerResponse {
 export interface ThreadCommissionerUpdateRequest {
   ThreadCommissioner: {
     Enable: boolean;
+    InNetwork?: boolean;
     Operation: 'Add' | 'Delete';
     JoinerId: string;
     Pskd: string;

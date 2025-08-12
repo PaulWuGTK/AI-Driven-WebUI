@@ -694,6 +694,7 @@ export default {
     joinButton: '参加',
     joinSuccess: 'ネットワークへの参加に成功しました',
     joinFailed: 'ネットワークへの参加に失敗しました',
+    networkJoinRequired: 'コミッショナーを有効にするには、まずネットワークに参加する必要があります',
     commissionerEnable: 'コミッショナーを有効化',
     availableJoiner: '参加可能なデバイス',
     eui64OrDiscerner: 'EUI-64またはDiscerner',

@@ -697,6 +697,7 @@ const translations: Translations = {
     joinButton: 'Join',
     joinSuccess: 'Successfully joined the network',
     joinFailed: 'Failed to join the network',
+    networkJoinRequired: 'Must join network first to enable Commissioner',
     commissionerEnable: 'Enable Commissioner',
     availableJoiner: 'Available Joiner',
     eui64OrDiscerner: 'EUI-64 or Discerner',

@@ -696,6 +696,7 @@ export interface Translations {
     joinButton: string;
     joinSuccess: string;
     joinFailed: string;
+    networkJoinRequired: string;
     commissionerEnable: string;
     availableJoiner: string;
     eui64OrDiscerner: string;

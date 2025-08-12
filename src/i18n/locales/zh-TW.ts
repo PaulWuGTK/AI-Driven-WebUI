@@ -694,6 +694,7 @@ export default {
     joinButton: '加入',
     joinSuccess: '成功加入網路',
     joinFailed: '加入網路失敗',
+    networkJoinRequired: '必須先加入網路才能啟用委派器',
     commissionerEnable: '啟用委派器',
     availableJoiner: '可加入裝置',
     eui64OrDiscerner: 'EUI-64 或識別器',

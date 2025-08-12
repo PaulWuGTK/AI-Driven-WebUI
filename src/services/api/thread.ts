@@ -140,6 +140,7 @@ const mockThreadConfiguration: ThreadConfigurationResponse = {
 const mockThreadCommissioner: ThreadCommissionerResponse = {
   ThreadCommissioner: {
     Enable: true,
+    InNetwork: true,
     Joiners: [
       {
         JoinerId: '*',

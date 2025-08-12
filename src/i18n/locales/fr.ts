@@ -694,6 +694,7 @@ export default {
     joinButton: 'Rejoindre',
     joinSuccess: 'Connexion réussie au réseau',
     joinFailed: 'Échec de la connexion au réseau',
+    networkJoinRequired: 'Doit d\'abord rejoindre le réseau pour activer le commissaire',
     commissionerEnable: 'Activer le commissaire',
     availableJoiner: 'Périphériques à rejoindre disponibles',
     eui64OrDiscerner: 'EUI-64 ou Discerner',

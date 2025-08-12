@@ -693,6 +693,7 @@ export default {
     joinButton: '참여',
     joinSuccess: '네트워크에 성공적으로 연결됨',
     joinFailed: '네트워크 연결 실패',
+    networkJoinRequired: '커미셔너를 활성화하려면 먼저 네트워크에 참여해야 합니다',
     commissionerEnable: '커미셔너 활성화',
     availableJoiner: '사용 가능한 조이너',
     eui64OrDiscerner: 'EUI-64 또는 식별자',

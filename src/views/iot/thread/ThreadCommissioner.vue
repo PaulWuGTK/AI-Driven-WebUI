@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { 
   ThreadCommissionerResponse, 
@@ -18,6 +18,7 @@ const showAddJoinerModal = ref(false);
 
 // Commissioner enabled state
 const commissionerEnabled = ref(false);
+const inNetwork = ref(false);
 
 // New joiner form data
 const newJoiner = ref<{
@@ -30,6 +31,15 @@ const newJoiner = ref<{
   timeout: 60
 });
 
+// Computed property to check if commissioner can be enabled
+const canEnableCommissioner = computed(() => {
+  return inNetwork.value;
+});
+
+// Computed property to check if apply is disabled
+const isApplyDisabled = computed(() => {
+  return !inNetwork.value || loading.value;
+});
 // Fetch commissioner data
 const fetchCommissionerData = async () => {
   loading.value = true;
@@ -38,6 +48,7 @@ const fetchCommissionerData = async () => {
     const response = await getThreadCommissioner();
     commissionerData.value = response;
     commissionerEnabled.value = response.ThreadCommissioner.Enable;
+    inNetwork.value = response.ThreadCommissioner.InNetwork;
   } catch (err) {
     console.error('Error fetching Thread commissioner data:', err);
     error.value = 'Failed to fetch Thread commissioner data';
@@ -181,6 +192,14 @@ onMounted(() => {
         <div class="section-title">{{ t('thread.commissioner') }}</div>
         
         <div class="card-content">
+          <!-- Network Status Warning -->
+          <div v-if="!inNetwork" class="network-warning">
+            <div class="warning-banner">
+              <span class="material-icons">warning</span>
+              <span>{{ t('thread.networkJoinRequired') }}</span>
+            </div>
+          </div>
+
           <div class="form-group">
             <div class="switch-label">
               <span>{{ t('thread.commissionerEnable') }}</span>
@@ -189,6 +208,7 @@ onMounted(() => {
                   type="checkbox"
                   v-model="commissionerEnabled"
                   @change="updateCommissionerEnabled"
+                  :disabled="!canEnableCommissioner"
                 >
                 <span class="slider"></span>
               </label>
@@ -251,7 +271,7 @@ onMounted(() => {
                 v-else
                 class="table-card" 
                 v-for="(joiner, index) in commissionerData.ThreadCommissioner.Joiners" 
-                :key="index"
+                :disabled="isApplyDisabled"
               >
                 <div class="card-row">
                   <span class="card-label">{{ t('thread.no') }}</span>

@@ -694,6 +694,7 @@ export default {
     joinButton: '加入',
     joinSuccess: '成功加入网络',
     joinFailed: '加入网络失败',
+    networkJoinRequired: '必须先加入网络才能启用委托者',
     commissionerEnable: '启用委托者',
     availableJoiner: '可加入设备',
     eui64OrDiscerner: 'EUI-64 或识别符',
