@@ -28,7 +28,7 @@ export const backupConfiguration = async (): Promise<BackupResponse[]> => {
           CreationDate: new Date().toISOString(),
           Alias: 'cpe-BackupFile-1',
         },
-        executed: 'Device.X_PRPL-COM_PersistentConfiguration.Backup()',
+        executed: 'Device.X_PRPLWARE-COM_PersistentConfiguration.Backup()',
       },
     ];
   }
@@ -54,7 +54,7 @@ export const backupConfiguration = async (): Promise<BackupResponse[]> => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      command: 'Device.X_PRPL-COM_PersistentConfiguration.Backup()',
+      command: 'Device.X_PRPLWARE-COM_PersistentConfiguration.Backup()',
       commandKey: '',
       sendresp: true,
       inputArgs: {
@@ -108,7 +108,7 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
       outputArgs: {
         Status: 'Success',
       },
-      executed: 'Device.X_PRPL-COM_PersistentConfiguration.AddBackupFile()',
+      executed: 'Device.X_PRPLWARE-COM_PersistentConfiguration.AddBackupFile()',
     };
   }
 
@@ -123,7 +123,7 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      command: 'Device.X_PRPL-COM_PersistentConfiguration.AddBackupFile()',
+      command: 'Device.X_PRPLWARE-COM_PersistentConfiguration.AddBackupFile()',
       commandKey: '',
       sendresp: true,
       inputArgs: {
@@ -170,7 +170,7 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      command: 'Device.X_PRPL-COM_PersistentConfiguration.Restore()',
+      command: 'Device.X_PRPLWARE-COM_PersistentConfiguration.Restore()',
       commandKey: '',
       sendresp: true,
       inputArgs: {
