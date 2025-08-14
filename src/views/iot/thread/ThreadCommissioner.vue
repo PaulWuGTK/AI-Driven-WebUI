@@ -193,9 +193,9 @@ onMounted(() => {
         
         <div class="card-content">
           <!-- Network Status Warning -->
-          <div v-if="!inNetwork" class="network-warning">
-            <div class="warning-banner">
-              <span class="material-icons">warning</span>
+          <div v-if="!inNetwork" class="network-status">
+            <div class="info-banner">
+              <span class="material-icons">info</span>
               <span>{{ t('thread.networkJoinRequired') }}</span>
             </div>
           </div>
@@ -598,6 +598,25 @@ input:checked + .slider:before {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
+}
+
+.network-status {
+  margin-bottom: 1.5rem;
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid #0070BB;
+  border-radius: 4px;
+  color: #0070BB;
+}
+
+.info-banner .material-icons {
+  font-size: 1.25rem;
 }
 
 @keyframes fadeInOut {
