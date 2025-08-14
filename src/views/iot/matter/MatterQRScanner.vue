@@ -2,9 +2,11 @@
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
-import { sendQRScanResult } from '../../../services/api/matter';
+import { sendQRScanResult, getMatterPairingInfo } from '../../../services/api/matter';
+import type { MatterPairingResponse } from '../../../services/api/matter';
 import axios from 'axios';
 
+const isDevelopment = import.meta.env.DEV;
 const { t } = useI18n();
 
 // Current step in the pairing process
@@ -19,6 +21,13 @@ const error = ref<string>('');
 const scanHistory = ref<{ result: string; timestamp: string; type: string }[]>([]);
 const apiResult = ref<string>('');
 const isProcessing = ref(false);
+
+// Pairing information from API
+const pairingInfo = ref<MatterPairingResponse['MatterPairing']>({
+  WiFiEnable: false,
+  WiFiSSID: '',
+  WiFiPassword: ''
+});
 
 // Device configuration state
 const deviceInfo = ref<{
@@ -64,6 +73,10 @@ const selectedDeviceType = computed(() => {
 
 const canProceedToConfig = computed(() => {
   return scanResult.value && deviceInfo.value.deviceType;
+});
+
+const isWiFiAvailable = computed(() => {
+  return pairingInfo.value.WiFiEnable;
 });
 
 const canStartPairing = computed(() => {
@@ -308,6 +321,68 @@ const parseQRCode = (qrCode: string) => {
   // Set default device type and alias
   deviceInfo.value.deviceType = 'other';
   pairingConfig.value.nodeAlias = `Device_other_${Date.now().toString().slice(-4)}`;
+  
+  // Auto-fill connection information
+  autoFillConnectionInfo();
+};
+
+// Load pairing information from API
+const loadPairingInfo = async () => {
+  try {
+    const response = await getMatterPairingInfo();
+    pairingInfo.value = response.MatterPairing;
+  } catch (err) {
+    console.error('Error loading pairing info:', err);
+    // Set default values if API fails
+    pairingInfo.value = {
+      WiFiEnable: false,
+      WiFiSSID: '',
+      WiFiPassword: ''
+    };
+  }
+};
+
+// Auto-fill connection information
+const autoFillConnectionInfo = async () => {
+  try {
+    // Auto-fill WiFi information
+    if (pairingInfo.value.WiFiEnable) {
+      pairingConfig.value.ssid = pairingInfo.value.WiFiSSID;
+      pairingConfig.value.password = pairingInfo.value.WiFiPassword;
+    }else{
+      pairingConfig.value.connectionType = 'thread';
+    }
+    
+    // Auto-fill Thread dataset
+    await autoFillDataset();
+  } catch (err) {
+    console.error('Error auto-filling connection info:', err);
+  }
+};
+
+// Auto-fill Thread dataset
+const autoFillDataset = async () => {
+  try {
+    if (isDevelopment) {
+      // Mock dataset for development
+      pairingConfig.value.dataset = '0e08000000000001000000030000104a0300001335060004001fffe0020867f20416ec6613210708fddce818f6018e09051080dd708d25f4f8ed06285a11054a708c030f4f70656e5468726561642d3065306501020e0e041073cbad3301792b5b16e277d2a96b45730c0402a0f7f8';
+      return;
+    }
+  
+    const response = await axios.post('/API/info?list=matterProxy', {
+      MatterProxy: {
+        method: "GET",
+        action: "get_dataset",
+        data: {}
+      }
+    });
+    
+    if (response.data.MatterProxy?.result === 'successful') {
+      pairingConfig.value.dataset = response.data.MatterProxy.dataset || '';
+    }
+  } catch (err) {
+    console.error('Error auto-filling dataset:', err);
+  }
 };
 
 // Handle device type selection and update alias
@@ -509,6 +584,8 @@ const switchMode = async (mode: 'camera' | 'file') => {
 onMounted(async () => {
   await initializeCameras();
   loadHistory();
+  // Load pairing info on component mount
+  await loadPairingInfo();
 });
 
 onUnmounted(async () => {
@@ -764,6 +841,7 @@ onUnmounted(async () => {
                   value="wifi" 
                   v-model="pairingConfig.connectionType"
                   name="connectionType"
+                  :disabled="!isWiFiAvailable"
                 />
                 <span class="radio-label">
                   <span class="material-icons">wifi</span>
@@ -794,6 +872,7 @@ onUnmounted(async () => {
                 v-model="pairingConfig.ssid"
                 :placeholder="t('matter.wifiNetworkPlaceholder')"
                 required
+                disabled
               />
             </div>
             <div class="form-group">
@@ -803,6 +882,7 @@ onUnmounted(async () => {
                 v-model="pairingConfig.password"
                 :placeholder="t('matter.wifiPasswordPlaceholder')"
                 required
+                disabled
               />
             </div>
           </div>
@@ -816,16 +896,17 @@ onUnmounted(async () => {
                 v-model="pairingConfig.dataset"
                 :placeholder="t('matter.threadDatasetPlaceholder')"
                 required
+                disabled
               />
-              <button 
+              <!--button 
                 type="button" 
                 class="btn btn-secondary get-dataset-btn"
                 @click="getDataset"
                 :disabled="isProcessing"
-              >
+            >
                 <span class="material-icons" v-if="isProcessing">sync</span>
                 {{ isProcessing ? t('matter.gettingDataset') : t('matter.getDataset') }}
-              </button>
+              </button-->
             </div>
           </div>
           
@@ -1217,14 +1298,6 @@ onUnmounted(async () => {
   border-radius: 8px;
 }
 
-.get-dataset-btn {
-  margin-top: 0.5rem;
-  width: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .step-navigation {
   display: flex;
   justify-content: space-between;
@@ -1554,6 +1627,17 @@ select {
 }
 
 .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: var(--text-secondary);
+}
+
+.radio-option input[type="radio"]:disabled + .radio-label {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.radio-option:has(input[type="radio"]:disabled) {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;

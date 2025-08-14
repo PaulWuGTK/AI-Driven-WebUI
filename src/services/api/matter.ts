@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_ENDPOINT = '/API/info?list=matterProxy';
+const PAIRING_ENDPOINT = '/API/info?list=MatterPairing';
 const isDevelopment = import.meta.env.DEV;
 
 // Mock data for development
@@ -628,6 +629,14 @@ export interface QRScannerResponse {
   };
 }
 
+export interface MatterPairingResponse {
+  MatterPairing: {
+    WiFiEnable: boolean;
+    WiFiSSID: string;
+    WiFiPassword: string;
+  };
+}
+
 export const sendQRScanResult = async (
   scanResult: string, 
   connectionType: string = 'wifi',
@@ -666,6 +675,37 @@ export const sendQRScanResult = async (
     };
   }
 };
+
+// Get Matter Pairing Info API
+export const getMatterPairingInfo = async (): Promise<MatterPairingResponse> => {
+  if (isDevelopment) {
+    return {
+      MatterPairing: {
+        WiFiEnable: true,
+        WiFiSSID: "Gemtek_prplmesh",
+        WiFiPassword: "12345678"
+      }
+    };
+  }
+
+  try {
+    const response = await axios.get(PAIRING_ENDPOINT);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting Matter pairing info:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      return error.response.data as MatterPairingResponse;
+    }
+    return {
+      MatterPairing: {
+        WiFiEnable: false,
+        WiFiSSID: "",
+        WiFiPassword: ""
+      }
+    };
+  }
+};
+
 // OnOff Report API
 export const sendOnOffReportCommand = async (params: {
   attr: string;
