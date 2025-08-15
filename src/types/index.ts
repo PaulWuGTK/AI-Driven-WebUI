@@ -1,5 +1,6 @@
 export * from './auth';
 export * from './dashboard';
+export * from './dashboardThings';
 export * from './ddns';
 export * from './lan';
 export * from './lcm';
