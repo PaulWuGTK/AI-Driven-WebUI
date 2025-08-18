@@ -78,7 +78,18 @@ export default {
     primaryDNS: 'プライマリ DNS',
     secondaryDNS: 'セカンダリ DNS',
     macAddress: 'MAC アドレス',
-    password: 'パスワード'
+    password: 'パスワード',
+    connectedDevices: '接続されたデバイス',
+    noConnectedDevices: '接続されたデバイスがありません',
+    deviceName: 'デバイス名',
+    nodeId: 'ノードID',
+    deviceType: 'デバイスタイプ',
+    onOff: 'オン / オフ',
+    on: 'オン',
+    off: 'オフ',
+    wifiIsDisabled: 'WiFiは現在無効になっています',
+    addDevice: 'デバイスを追加',
+    scanQRCode: 'QRコードをスキャン'
   },
   wan: {
     title: 'WAN ステータス',

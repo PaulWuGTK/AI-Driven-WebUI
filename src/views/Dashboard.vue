@@ -11,7 +11,7 @@ const { t } = useI18n();
     
     <div class="status-content">
       <div class="panel-section">
-        <div class="section-title">Connected Devices</div>
+        <div class="section-title">{{ t('dashboard.connectedDevices') }}</div>
         <div class="card-content">
           <DashboardThings />
         </div>

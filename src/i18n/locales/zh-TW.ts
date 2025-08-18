@@ -78,7 +78,18 @@ export default {
     primaryDNS: '主要 DNS',
     secondaryDNS: '次要 DNS',
     macAddress: 'MAC 位址',
-    password: '密碼'
+    password: '密碼',
+    connectedDevices: '已連接設備',
+    noConnectedDevices: '無已連接設備',
+    deviceName: '設備名稱',
+    nodeId: '節點 ID',
+    deviceType: '設備類型',
+    onOff: '開 / 關',
+    on: '開',
+    off: '關',
+    wifiIsDisabled: 'WiFi 目前已停用',
+    addDevice: '新增設備',
+    scanQRCode: '掃描 QR 碼'
   },
   wan: {
     title: 'WAN 狀態',

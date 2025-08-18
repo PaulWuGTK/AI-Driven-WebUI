@@ -78,7 +78,18 @@ export default {
     primaryDNS: '主 DNS',
     secondaryDNS: '备用 DNS',
     macAddress: 'MAC 地址',
-    password: '密码'
+    password: '密码',
+    connectedDevices: '已连接设备',
+    noConnectedDevices: '无已连接设备',
+    deviceName: '设备名称',
+    nodeId: '节点 ID',
+    deviceType: '设备类型',
+    onOff: '开 / 关',
+    on: '开',
+    off: '关',
+    wifiIsDisabled: 'WiFi 目前已停用',
+    addDevice: '新增设备',
+    scanQRCode: '扫描 QR 码'
   },
   wan: {
     title: '广域网状态',

@@ -78,7 +78,18 @@ export default {
     primaryDNS: 'DNS primaire',
     secondaryDNS: 'DNS secondaire',
     macAddress: 'Adresse MAC',
-    password: 'Mot de passe'
+    password: 'Mot de passe',
+    connectedDevices: 'Appareils connectés',
+    noConnectedDevices: 'Aucun appareil connecté',
+    deviceName: 'Nom de l\'appareil',
+    nodeId: 'ID du nœud',
+    deviceType: 'Type d\'appareil',
+    onOff: 'Marche / Arrêt',
+    on: 'MARCHE',
+    off: 'ARRÊT',
+    wifiIsDisabled: 'Le WiFi est actuellement désactivé',
+    addDevice: 'Ajouter un appareil',
+    scanQRCode: 'Scanner le code QR'
   },
   wan: {
     title: 'État du WAN',

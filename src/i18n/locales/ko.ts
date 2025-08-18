@@ -78,7 +78,18 @@ export default {
     primaryDNS: '기본 DNS',
     secondaryDNS: '보조 DNS',
     macAddress: 'MAC 주소',
-    password: '비밀번호'
+    password: '비밀번호',
+    connectedDevices: '연결된 장치',
+    noConnectedDevices: '연결된 장치 없음',
+    deviceName: '장치 이름',
+    nodeId: '노드 ID',
+    deviceType: '장치 유형',
+    onOff: '켜기 / 끄기',
+    on: '켜짐',
+    off: '꺼짐',
+    wifiIsDisabled: 'WiFi가 현재 비활성화되어 있습니다',
+    addDevice: '장치 추가',
+    scanQRCode: 'QR 코드 스캔'
   },
   wan: {
     title: 'WAN 상태',

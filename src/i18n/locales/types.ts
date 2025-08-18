@@ -81,6 +81,17 @@ export interface Translations {
     secondaryDNS: string;
     macAddress: string;
     password: string;
+    connectedDevices: string;
+    noConnectedDevices: string;
+    deviceName: string;
+    nodeId: string;
+    deviceType: string;
+    onOff: string;
+    on: string;
+    off: string;
+    wifiIsDisabled: string;
+    addDevice: string;
+    scanQRCode: string;
   };
   wan: {
     title: string;

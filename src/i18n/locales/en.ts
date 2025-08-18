@@ -81,7 +81,18 @@ const translations: Translations = {
     primaryDNS: 'Primary DNS',
     secondaryDNS: 'Secondary DNS',
     macAddress: 'MAC Address',
-    password: 'Password'
+    password: 'Password',
+    connectedDevices: 'Connected Devices',
+    noConnectedDevices: 'No connected devices',
+    deviceName: 'Device Name',
+    nodeId: 'Node ID',
+    deviceType: 'Device Type',
+    onOff: 'On / Off',
+    on: 'ON',
+    off: 'OFF',
+    wifiIsDisabled: 'WiFi is currently disabled',
+    addDevice: 'Add Device',
+    scanQRCode: 'Scan QR Code'
   },
   wan: {
     title: 'WAN Status',

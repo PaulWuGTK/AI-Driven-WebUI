@@ -64,7 +64,7 @@ const requiresPassword = (securityMode: string): boolean => {
     
     <div v-else class="no-wifi-enabled">
       <span class="material-icons">wifi_off</span>
-      <p>WiFi is currently disabled</p>
+      <p>{{ t('dashboard.wifiIsDisabled') }}</p>
     </div>
   </div>
 </template>

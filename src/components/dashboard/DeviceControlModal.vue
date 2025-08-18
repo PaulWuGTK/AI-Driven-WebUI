@@ -80,7 +80,7 @@ watch(() => props.device.Onoff, (newValue) => {
                 :checked="localOnoffState === 1"
                 @change="handleToggle"
               >
-              <span class="toggle-slider"></span>
+              <span class="toggle-slider" :data-on="t('dashboard.on')" :data-off="t('dashboard.off')"></span>
             </label>
           </div>
         </div>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import type { DashboardThingsResponse, DashboardDevice } from '../../types/dashboardThings';
 import { getDashboardThings, updateDashboardThing } from '../../services/api/dashboardThings';
 import DeviceControlModal from './DeviceControlModal.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const devicesData = ref<DashboardThingsResponse | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -94,6 +96,11 @@ const closeModal = () => {
   selectedDevice.value = null;
 };
 
+// Navigate to Matter QR Scanner
+const navigateToQRScanner = () => {
+  router.push('/matter/qrscanner');
+};
+
 onMounted(() => {
   fetchDashboardThings();
   // Refresh every 10 seconds
@@ -121,7 +128,7 @@ onUnmounted(() => {
     <template v-else-if="devicesData">
       <div v-if="devicesData.DashboardThings.Devices.length === 0" class="no-devices">
         <span class="material-icons">device_hub</span>
-        <p>No connected devices</p>
+        <p>{{ t('dashboard.noConnectedDevices') }}</p>
       </div>
 
       <div v-else class="devices-grid">
@@ -144,6 +151,19 @@ onUnmounted(() => {
             <div class="device-name">{{ device.Name }}</div>
             <div class="device-type">{{ device.Type }}</div>
             <div class="device-node-id">Node ID: {{ device.NodeId }}</div>
+          </div>
+        </div>
+
+        <!-- Add Device Panel -->
+        <div class="device-card add-device-card" @click="navigateToQRScanner">
+          <div class="add-device-content">
+            <div class="add-device-icon">
+              <span class="material-icons">add</span>
+            </div>
+            <div class="add-device-text">
+              <div class="add-device-title">{{ t('dashboard.addDevice') }}</div>
+              <div class="add-device-subtitle">{{ t('dashboard.scanQRCode') }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -226,7 +246,7 @@ onUnmounted(() => {
 
 .devices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -245,6 +265,66 @@ onUnmounted(() => {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   border-color: var(--primary-color);
+}
+
+.add-device-card {
+  border: 2px dashed var(--border-color);
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.add-device-card:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+  transform: translateY(-2px);
+}
+
+.add-device-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.add-device-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.add-device-card:hover .add-device-icon {
+  transform: scale(1.1);
+}
+
+.add-device-icon .material-icons {
+  font-size: 1.5rem;
+}
+
+.add-device-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.add-device-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.add-device-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 .device-header {
@@ -338,6 +418,11 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .devices-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
   .dashboard-things {
     padding: 1rem;
   }
@@ -354,6 +439,12 @@ onUnmounted(() => {
   .refresh-button .btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .devices-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
