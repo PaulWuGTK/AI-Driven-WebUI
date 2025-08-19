@@ -126,12 +126,12 @@ onUnmounted(() => {
     </div>
 
     <template v-else-if="devicesData">
-      <div v-if="devicesData.DashboardThings.Devices.length === 0" class="no-devices">
+      <!--div v-if="devicesData.DashboardThings.Devices.length === 0" class="no-devices">
         <span class="material-icons">device_hub</span>
         <p>{{ t('dashboard.noConnectedDevices') }}</p>
-      </div>
+      </div-->
 
-      <div v-else class="devices-grid">
+      <div class="devices-grid">
         <div 
           v-for="device in devicesData.DashboardThings.Devices" 
           :key="device.NodeId"
