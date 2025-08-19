@@ -101,7 +101,7 @@ const getDataset = async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('matter.pairingTitle') }}</h1>
+    <h1 class="page-title">{{ t('matter.manualPairingTitle') }}</h1>
     
     <div class="status-content">
       <div class="panel-section">

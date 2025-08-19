@@ -18,8 +18,8 @@ const toggleMobileMenu = () => {
 import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
 import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
 import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
-import threadIcon from '/src/assets/icons/icon-1/menu-iot.svg';
-import matterIcon from '/src/assets/icons/icon-1/menu-iot.svg';
+import threadIcon from '/src/assets/icons/icon-1/menu-iot-thread.svg';
+import matterIcon from '/src/assets/icons/icon-1/menu-iot-matter.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
 
 // Define types for menu items
@@ -45,24 +45,24 @@ const baseMenuItems: MenuItem[] = [
     path: '/dashboard',
     translationKey: 'menu.dashboard'
   },
-  {
-    name: 'Basic Setting',
-    icon: basicIcon,
-    translationKey: 'menu.basicSetting',
-    subItems: [
-      { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
-      { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
-      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
-    ]
-  },
+  // {
+  //   name: 'Basic Setting',
+  //   icon: basicIcon,
+  //   translationKey: 'menu.basicSetting',
+  //   subItems: [
+  //     { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
+  //     { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
+  //   ]
+  // },
   {
     name: 'Wi-Fi',
     icon: wifiIcon,
     translationKey: 'menu.wifi',
     subItems: [
-      { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
-      { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
-      { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
+      // { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
+      // { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
+      // { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
+      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
     ]
   },
   {
@@ -76,26 +76,26 @@ const baseMenuItems: MenuItem[] = [
     icon: matterIcon,
     translationKey: 'menu.matter',
     subItems: [
-      { name: 'Home', path: '/matter/home', translationKey: 'menu.matterHome' },
-      { name: 'Pairing', path: '/matter/pairing', translationKey: 'menu.matterPairing' },
+      // { name: 'Home', path: '/matter/home', translationKey: 'menu.matterHome' },
+      { name: 'QRScanner', path: '/matter/qrscanner', translationKey: 'menu.matterQuickSetup' },
+      { name: 'Pairing', path: '/matter/pairing', translationKey: 'menu.matterManualPairing' },
       { name: 'OnOff', path: '/matter/onoff', translationKey: 'menu.matterOnoff' },
       { name: 'MultiAdmin', path: '/matter/multiadmin', translationKey: 'menu.matterMultiadmin' },
       { name: 'Subscribe', path: '/matter/subscribe', translationKey: 'menu.matterSubscribe' },
-      { name: 'GetStatus', path: '/matter/getstatus', translationKey: 'menu.matterGetstatus' },
-      { name: 'Binding', path: '/matter/binding', translationKey: 'menu.matterBinding' },
-      { name: 'MediaControl', path: '/matter/mediacontrol', translationKey: 'menu.matterMediacontrol' },
-      { name: 'EevseControl', path: '/matter/eevsecontrol', translationKey: 'menu.matterEevsecontrol' },
-      { name: 'QRScanner', path: '/matter/qrscanner', translationKey: 'menu.matterQrscanner' }
-    ]
-  },
-  { 
-    name: 'Management',
-    icon: managementIcon,
-    translationKey: 'menu.management',
-    subItems: [
-      { name: 'Firmware Upgrade', path: '/management/firmware', translationKey: 'menu.firmware' }
+      { name: 'GetStatus', path: '/matter/getstatus', translationKey: 'menu.matterGetstatus' }
+      // { name: 'Binding', path: '/matter/binding', translationKey: 'menu.matterBinding' },
+      // { name: 'MediaControl', path: '/matter/mediacontrol', translationKey: 'menu.matterMediacontrol' },
+      // { name: 'EevseControl', path: '/matter/eevsecontrol', translationKey: 'menu.matterEevsecontrol' },
     ]
   }
+  // { 
+  //   name: 'Management',
+  //   icon: managementIcon,
+  //   translationKey: 'menu.management',
+  //   subItems: [
+  //     { name: 'Firmware Upgrade', path: '/management/firmware', translationKey: 'menu.firmware' }
+  //   ]
+  // }
 ];
 
 // Filter menu items based on device mode and app availability

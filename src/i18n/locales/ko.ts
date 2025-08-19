@@ -44,7 +44,9 @@ export default {
     matterBinding: '바인딩',
     matterMediacontrol: '미디어 제어',
     matterEevsecontrol: 'EEVSE 제어',
-    matterQrscanner: 'QR 스캐너'
+    matterQrscanner: 'QR 스캐너',
+    matterQuickSetup: '빠른 설정',
+    matterManualPairing: '수동 페어링'
   },
   header: {
     account: '계정',
@@ -89,7 +91,8 @@ export default {
     off: '꺼짐',
     wifiIsDisabled: 'WiFi가 현재 비활성화되어 있습니다',
     addDevice: '장치 추가',
-    scanQRCode: 'QR 코드 스캔'
+    scanQRCode: 'QR 코드 스캔',
+    quickSetup: '빠른 설정'
   },
   wan: {
     title: 'WAN 상태',
@@ -874,7 +877,9 @@ export default {
     smartLock: '스마트 도어락',
     securityCamera: '보안 카메라',
     smartSpeaker: '스마트 스피커',
-    otherDevice: '기타 장치'
+    otherDevice: '기타 장치',
+    quickSetupTitle: '빠른 설정',
+    manualPairingTitle: '수동 페어링'
   },
   login: {
     title: '로그인',

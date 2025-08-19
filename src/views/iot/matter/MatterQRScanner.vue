@@ -595,7 +595,7 @@ onUnmounted(async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('matter.qrScannerTitle') }}</h1>
+    <h1 class="page-title">{{ t('matter.quickSetupTitle') }}</h1>
 
     <div class="status-content">
       <!-- Step Indicator -->

@@ -47,6 +47,8 @@ export interface Translations {
     matterMediacontrol: string;
     matterEevsecontrol: string;
     matterQrscanner: string;
+    matterQuickSetup: string;
+    matterManualPairing: string;
   };
   header: {
     account: string;
@@ -92,6 +94,7 @@ export interface Translations {
     wifiIsDisabled: string;
     addDevice: string;
     scanQRCode: string;
+    quickSetup: string;
   };
   wan: {
     title: string;
@@ -878,6 +881,8 @@ export interface Translations {
     securityCamera: string;
     smartSpeaker: string;
     otherDevice: string;
+    quickSetupTitle: string;
+    manualPairingTitle: string;
   };
   login: {
     title: string;

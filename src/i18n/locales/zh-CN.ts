@@ -44,7 +44,9 @@ export default {
     matterBinding: '绑定',
     matterMediacontrol: '媒体控制',
     matterEevsecontrol: 'EEVSE 控制',
-    matterQrscanner: 'QR 扫描器'
+    matterQrscanner: 'QR 扫描器',
+    matterQuickSetup: '快速设置',
+    matterManualPairing: '手动配对'
   },
   header: {
     account: '帐户',
@@ -89,7 +91,8 @@ export default {
     off: '关',
     wifiIsDisabled: 'WiFi 目前已停用',
     addDevice: '新增设备',
-    scanQRCode: '扫描 QR 码'
+    scanQRCode: '扫描 QR 码',
+    quickSetup: '快速设置'
   },
   wan: {
     title: '广域网状态',
@@ -875,7 +878,9 @@ export default {
     smartLock: '智能门锁',
     securityCamera: '监控摄像头',
     smartSpeaker: '智能音箱',
-    otherDevice: '其他设备'
+    otherDevice: '其他设备',
+    quickSetupTitle: '快速设置',
+    manualPairingTitle: '手动配对'
   },
   login: {
     title: '登录',

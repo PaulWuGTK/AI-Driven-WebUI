@@ -44,7 +44,9 @@ export default {
     matterBinding: 'Liaison',
     matterMediacontrol: 'Contrôle multimédia',
     matterEevsecontrol: 'Contrôle EEVSE',
-    matterQrscanner: 'Scanner QR'
+    matterQrscanner: 'Scanner QR',
+    matterQuickSetup: 'Configuration rapide',
+    matterManualPairing: 'Appairage manuel'
   },
   header: {
     account: 'Compte',
@@ -89,7 +91,8 @@ export default {
     off: 'ARRÊT',
     wifiIsDisabled: 'Le WiFi est actuellement désactivé',
     addDevice: 'Ajouter un appareil',
-    scanQRCode: 'Scanner le code QR'
+    scanQRCode: 'Scanner le code QR',
+    quickSetup: 'Configuration rapide'
   },
   wan: {
     title: 'État du WAN',
@@ -875,7 +878,9 @@ export default {
     smartLock: 'Serrure intelligente',
     securityCamera: 'Caméra de sécurité',
     smartSpeaker: 'Haut-parleur intelligent',
-    otherDevice: 'Autre appareil'
+    otherDevice: 'Autre appareil',
+    quickSetupTitle: 'Configuration rapide',
+    manualPairingTitle: 'Appairage manuel'
   },
   login: {
     title: 'Connexion',

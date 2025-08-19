@@ -44,7 +44,9 @@ export default {
     matterBinding: 'バインディング',
     matterMediacontrol: 'メディア制御',
     matterEevsecontrol: 'EEVSE制御',
-    matterQrscanner: 'QRスキャナー'
+    matterQrscanner: 'QRスキャナー',
+    matterQuickSetup: 'クイックセットアップ',
+    matterManualPairing: '手動ペアリング'
   },
   header: {
     account: 'アカウント',
@@ -89,7 +91,8 @@ export default {
     off: 'オフ',
     wifiIsDisabled: 'WiFiは現在無効になっています',
     addDevice: 'デバイスを追加',
-    scanQRCode: 'QRコードをスキャン'
+    scanQRCode: 'QRコードをスキャン',
+    quickSetup: 'クイックセットアップ'
   },
   wan: {
     title: 'WAN ステータス',
@@ -875,7 +878,9 @@ export default {
     smartLock: 'スマートロック',
     securityCamera: '監視カメラ',
     smartSpeaker: 'スマートスピーカー',
-    otherDevice: 'その他のデバイス'
+    otherDevice: 'その他のデバイス',
+    quickSetupTitle: 'クイックセットアップ',
+    manualPairingTitle: '手動ペアリング'
   },
   login: {
     title: 'ログイン',

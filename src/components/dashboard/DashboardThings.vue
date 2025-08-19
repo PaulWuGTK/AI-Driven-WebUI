@@ -162,7 +162,7 @@ onUnmounted(() => {
             </div>
             <div class="add-device-text">
               <div class="add-device-title">{{ t('dashboard.addDevice') }}</div>
-              <div class="add-device-subtitle">{{ t('dashboard.scanQRCode') }}</div>
+              <div class="add-device-subtitle">{{ t('dashboard.quickSetup') }}</div>
             </div>
           </div>
         </div>

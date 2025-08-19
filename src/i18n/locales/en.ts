@@ -47,7 +47,9 @@ const translations: Translations = {
     matterBinding : 'Binding',
     matterMediacontrol : 'MediaControl',
     matterEevsecontrol : 'EevseControl',
-    matterQrscanner : 'QR Scanner'
+    matterQrscanner : 'QR Scanner',
+    matterQuickSetup: 'Quick Setup',
+    matterManualPairing: 'Manual Pairing'
   },
   header: {
     account: 'Account',
@@ -92,7 +94,8 @@ const translations: Translations = {
     off: 'OFF',
     wifiIsDisabled: 'WiFi is currently disabled',
     addDevice: 'Add Device',
-    scanQRCode: 'Scan QR Code'
+    scanQRCode: 'Scan QR Code',
+    quickSetup: 'Quick Setup'
   },
   wan: {
     title: 'WAN Status',
@@ -878,7 +881,9 @@ const translations: Translations = {
     smartLock: 'Smart Lock',
     securityCamera: 'Security Camera',
     smartSpeaker: 'Smart Speaker',
-    otherDevice: 'Other Device'
+    otherDevice: 'Other Device',
+    quickSetupTitle: 'Quick Setup',
+    manualPairingTitle: 'Manual Pairing'
   },
   login: {
     title: 'Login',

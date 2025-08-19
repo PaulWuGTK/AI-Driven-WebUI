@@ -44,7 +44,9 @@ export default {
     matterBinding: '綁定',
     matterMediacontrol: '媒體控制',
     matterEevsecontrol: 'EEVSE 控制',
-    matterQrscanner: 'QR 掃描器'
+    matterQrscanner: 'QR 掃描器',
+    matterQuickSetup: '快速設定',
+    matterManualPairing: '手動配對'
   },
   header: {
     account: '帳號',
@@ -89,7 +91,8 @@ export default {
     off: '關',
     wifiIsDisabled: 'WiFi 目前已停用',
     addDevice: '新增設備',
-    scanQRCode: '掃描 QR 碼'
+    scanQRCode: '掃描 QR 碼',
+    quickSetup: '快速設定'
   },
   wan: {
     title: 'WAN 狀態',
@@ -875,7 +878,9 @@ export default {
     smartLock: '智慧鎖',
     securityCamera: '監控攝影機',
     smartSpeaker: '智慧喇叭',
-    otherDevice: '其他裝置'
+    otherDevice: '其他裝置',
+    quickSetupTitle: '快速設定',
+    manualPairingTitle: '手動配對'
   },
   login: {
     title: '登入',
