@@ -880,7 +880,16 @@ export default {
     smartSpeaker: 'スマートスピーカー',
     otherDevice: 'その他のデバイス',
     quickSetupTitle: 'クイックセットアップ',
-    manualPairingTitle: '手動ペアリング'
+    manualPairingTitle: '手動ペアリング',
+    pairingDevice: 'デバイス「{alias}」をペアリングしています…',
+    deviceType: 'デバイスタイプ',
+    connectionType: '接続方式',
+    wifiNetwork: 'Wi-Fi ネットワーク',
+    pairingResult: 'ペアリング結果',
+    deviceName: 'デバイス名',
+    pairingTime: 'ペアリング時刻',
+    pairAnotherDevice: '別のデバイスをペアリング',
+    controlDevice: 'デバイスを操作'
   },
   login: {
     title: 'ログイン',

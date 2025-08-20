@@ -879,7 +879,16 @@ export default {
     smartSpeaker: '스마트 스피커',
     otherDevice: '기타 장치',
     quickSetupTitle: '빠른 설정',
-    manualPairingTitle: '수동 페어링'
+    manualPairingTitle: '수동 페어링',
+    pairingDevice: '장치 “{alias}” 페어링 중…',
+    deviceType: '장치 유형',
+    connectionType: '연결 방식',
+    wifiNetwork: 'Wi-Fi 네트워크',
+    pairingResult: '페어링 결과',
+    deviceName: '장치 이름',
+    pairingTime: '페어링 시간',
+    pairAnotherDevice: '다른 장치 페어링',
+    controlDevice: '장치 제어'
   },
   login: {
     title: '로그인',

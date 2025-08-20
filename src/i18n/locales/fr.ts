@@ -880,7 +880,16 @@ export default {
     smartSpeaker: 'Haut-parleur intelligent',
     otherDevice: 'Autre appareil',
     quickSetupTitle: 'Configuration rapide',
-    manualPairingTitle: 'Appairage manuel'
+    manualPairingTitle: 'Appairage manuel',
+    pairingDevice: 'Appairage de l’appareil « {alias} »…',
+    deviceType: 'Type d’appareil',
+    connectionType: 'Type de connexion',
+    wifiNetwork: 'Réseau Wi-Fi',
+    pairingResult: 'Résultat de l’appairage',
+    deviceName: 'Nom de l’appareil',
+    pairingTime: 'Heure d’appairage',
+    pairAnotherDevice: 'Appairer un autre appareil',
+    controlDevice: 'Contrôler l’appareil'
   },
   login: {
     title: 'Connexion',

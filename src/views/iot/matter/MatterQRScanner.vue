@@ -10,7 +10,7 @@ const isDevelopment = import.meta.env.DEV;
 const { t } = useI18n();
 
 // Current step in the pairing process
-const currentStep = ref<'scan' | 'configure' | 'pairing'>('scan');
+const currentStep = ref<'scan' | 'configure' | 'pairing' | 'pairing-progress' | 'pairing-result'>('scan');
 
 // Scanner state
 const scannerMode = ref<'camera' | 'file'>('camera');
@@ -21,6 +21,13 @@ const error = ref<string>('');
 const scanHistory = ref<{ result: string; timestamp: string; type: string }[]>([]);
 const apiResult = ref<string>('');
 const isProcessing = ref(false);
+
+// Pairing result state
+const pairingResult = ref<{
+  success: boolean;
+  message: string;
+  deviceAlias: string;
+} | null>(null);
 
 // Pairing information from API
 const pairingInfo = ref<MatterPairingResponse['MatterPairing']>({
@@ -429,7 +436,8 @@ const proceedToConfig = () => {
 const startPairing = async () => {
   if (!canStartPairing.value) return;
   
-  isProcessing.value = true;
+  // Move to pairing progress step
+  currentStep.value = 'pairing-progress';
   error.value = '';
   
   try {
@@ -456,15 +464,31 @@ const startPairing = async () => {
     );
     
     if (response.MatterProxy.result === 'successful') {
-      // Show success and reset to scan step
-      alert(`Device "${pairingConfig.value.nodeAlias}" paired successfully!`);
-      resetToScan();
+      // Show success result
+      pairingResult.value = {
+        success: true,
+        message: 'Device paired successfully!',
+        deviceAlias: pairingConfig.value.nodeAlias
+      };
+      currentStep.value = 'pairing-result';
     } else {
-      error.value = response.MatterProxy.message || 'Pairing failed';
+      // Show error result
+      pairingResult.value = {
+        success: false,
+        message: response.MatterProxy.message || 'Pairing failed',
+        deviceAlias: pairingConfig.value.nodeAlias
+      };
+      currentStep.value = 'pairing-result';
     }
   } catch (err) {
     console.error('Error during pairing:', err);
-    error.value = 'An error occurred during pairing';
+    // Show error result
+    pairingResult.value = {
+      success: false,
+      message: 'An error occurred during pairing',
+      deviceAlias: pairingConfig.value.nodeAlias
+    };
+    currentStep.value = 'pairing-result';
   } finally {
     isProcessing.value = false;
   }
@@ -475,6 +499,7 @@ const resetToScan = () => {
   currentStep.value = 'scan';
   scanResult.value = '';
   error.value = '';
+  pairingResult.value = null;
   deviceInfo.value = {
     qrCode: '',
     deviceType: '',
@@ -600,17 +625,17 @@ onUnmounted(async () => {
     <div class="status-content">
       <!-- Step Indicator -->
       <div class="step-indicator">
-        <div class="step" :class="{ active: currentStep === 'scan', completed: currentStep !== 'scan' }">
+        <div class="step" :class="{ active: currentStep === 'scan', completed: ['configure', 'pairing', 'pairing-progress', 'pairing-result'].includes(currentStep) }">
           <div class="step-number">1</div>
           <div class="step-label">{{ t('matter.stepScanQR') }}</div>
         </div>
-        <div class="step-line" :class="{ active: currentStep !== 'scan' }"></div>
-        <div class="step" :class="{ active: currentStep === 'configure', completed: currentStep === 'pairing' }">
+        <div class="step-line" :class="{ active: ['configure', 'pairing', 'pairing-progress', 'pairing-result'].includes(currentStep) }"></div>
+        <div class="step" :class="{ active: currentStep === 'configure', completed: ['pairing', 'pairing-progress', 'pairing-result'].includes(currentStep) }">
           <div class="step-number">2</div>
           <div class="step-label">{{ t('matter.stepConfigureDevice') }}</div>
         </div>
-        <div class="step-line" :class="{ active: currentStep === 'pairing' }"></div>
-        <div class="step" :class="{ active: currentStep === 'pairing' }">
+        <div class="step-line" :class="{ active: ['pairing', 'pairing-progress', 'pairing-result'].includes(currentStep) }"></div>
+        <div class="step" :class="{ active: ['pairing','pairing-progress'].includes(currentStep), completed: currentStep === 'pairing-result' }">
           <div class="step-number">3</div>
           <div class="step-label">{{ t('matter.stepStartPairing') }}</div>
         </div>
@@ -925,12 +950,101 @@ onUnmounted(async () => {
             <button 
               class="btn btn-primary pairing-btn" 
               @click="startPairing"
-              :disabled="!canStartPairing || !isNodeAliasValid || isProcessing"
+              :disabled="!canStartPairing || !isNodeAliasValid"
             >
-              <span class="material-icons" v-if="isProcessing">sync</span>
-              <span class="material-icons" v-else>link</span>
-              {{ isProcessing ? t('matter.pairing') : t('matter.startPairing') }}
+              <span class="material-icons">link</span>
+              {{ t('matter.startPairing') }}
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Pairing Progress -->
+      <div v-if="currentStep === 'pairing-progress'" class="panel-section">
+        <div class="section-title">{{ t('matter.pairing') }}</div>
+        <div class="card-content">
+          <div class="pairing-progress">
+            <div class="progress-animation">
+              <div class="progress-circle">
+                <div class="progress-spinner"></div>
+                <div class="progress-icon">
+                  <span class="material-icons">link</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="progress-content">
+              <h3 class="progress-title">{{ t('matter.pairing') }}</h3>
+              <p class="progress-message">{{ t('matter.pairingDevice', { alias: pairingConfig.nodeAlias }) }}</p>
+              <div class="progress-details">
+                <div class="detail-item">
+                  <span class="detail-label">{{ t('matter.deviceType') }}:</span>
+                  <span class="detail-value">{{ selectedDeviceType ? t(selectedDeviceType.labelKey) : t('matter.otherDevice') }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">{{ t('matter.connectionType') }}:</span>
+                  <span class="detail-value">{{ pairingConfig.connectionType === 'wifi' ? 'WiFi' : 'Thread' }}</span>
+                </div>
+                <div v-if="pairingConfig.connectionType === 'wifi'" class="detail-item">
+                  <span class="detail-label">{{ t('matter.wifiNetwork') }}:</span>
+                  <span class="detail-value">{{ pairingConfig.ssid }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Pairing Result -->
+      <div v-if="currentStep === 'pairing-result'" class="panel-section">
+        <div class="section-title">{{ t('matter.pairingResult') }}</div>
+        <div class="card-content">
+          <div class="pairing-result">
+            <div class="result-animation">
+              <div class="result-circle" :class="{ success: pairingResult?.success, error: !pairingResult?.success }">
+                <div class="result-icon">
+                  <span class="material-icons">
+                    {{ pairingResult?.success ? 'check' : 'error' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="result-content">
+              <h3 class="result-title" :class="{ success: pairingResult?.success, error: !pairingResult?.success }">
+                  {{ pairingResult?.success
+                      ? t('matter.pairingSuccessful', { alias: pairingResult?.deviceAlias || pairingConfig.nodeAlias })
+                      : t('matter.pairingFailed')
+                  }}
+              </h3>
+              <p class="result-message">{{ pairingResult?.message }}</p>
+              
+              <div v-if="pairingResult?.success" class="success-details">
+                <div class="detail-item">
+                  <span class="detail-label">{{ t('matter.deviceName') }}:</span>
+                  <span class="detail-value">{{ pairingResult.deviceAlias }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">{{ t('matter.deviceType') }}:</span>
+                  <span class="detail-value">{{ selectedDeviceType ? t(selectedDeviceType.labelKey) : t('matter.otherDevice') }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">{{ t('matter.pairingTime') }}:</span>
+                  <span class="detail-value">{{ new Date().toLocaleString() }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="result-actions">
+              <button class="btn btn-primary" @click="resetToScan">
+                <span class="material-icons">add</span>
+                {{ t('matter.pairAnotherDevice') }}
+              </button>
+              <button class="btn btn-secondary" @click="$router.push('/matter/onoff')">
+                <span class="material-icons">toggle_on</span>
+                {{ t('matter.controlDevice') }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1315,6 +1429,191 @@ onUnmounted(async () => {
   background-color: #45a049;
 }
 
+.pairing-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.progress-animation {
+  position: relative;
+}
+
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-spinner {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 4px solid transparent;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.progress-icon {
+  color: var(--primary-color);
+}
+
+.progress-icon .material-icons {
+  font-size: 3rem;
+}
+
+.progress-content {
+  max-width: 400px;
+}
+
+.progress-title {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+}
+
+.progress-message {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem 0;
+}
+
+.progress-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.pairing-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.result-animation {
+  position: relative;
+}
+
+.result-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.result-circle.success {
+  background-color: #e8f5e9;
+  border: 4px solid #4caf50;
+}
+
+.result-circle.error {
+  background-color: #ffebee;
+  border: 4px solid #f44336;
+}
+
+.result-icon .material-icons {
+  font-size: 3rem;
+}
+
+.result-circle.success .result-icon {
+  color: #4caf50;
+}
+
+.result-circle.error .result-icon {
+  color: #f44336;
+}
+
+.result-content {
+  max-width: 400px;
+}
+
+.result-title {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.result-title.success {
+  color: #4caf50;
+}
+
+.result-title.error {
+  color: #f44336;
+}
+
+.result-message {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem 0;
+}
+
+.success-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .quick-action {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -1538,7 +1837,6 @@ select {
   font-family: monospace;
   font-size: 0.9rem;
   line-height: 1.4;
-  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -1718,6 +2016,41 @@ select {
   .step-navigation .btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .pairing-progress,
+  .pairing-result {
+    padding: 1.5rem 1rem;
+  }
+  
+  .progress-circle,
+  .result-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .progress-icon .material-icons,
+  .result-icon .material-icons {
+    font-size: 2.5rem;
+  }
+  
+  .progress-title,
+  .result-title {
+    font-size: 1.25rem;
+  }
+  
+  .progress-message,
+  .result-message {
+    font-size: 1rem;
+  }
+  
+  .result-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .result-actions .btn {
+    width: 100%;
   }
 
   .mode-selector {

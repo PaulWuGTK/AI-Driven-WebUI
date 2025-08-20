@@ -883,7 +883,16 @@ const translations: Translations = {
     smartSpeaker: 'Smart Speaker',
     otherDevice: 'Other Device',
     quickSetupTitle: 'Quick Setup',
-    manualPairingTitle: 'Manual Pairing'
+    manualPairingTitle: 'Manual Pairing',
+    pairingDevice: 'Pairing device "{alias}"...',
+    deviceType: 'Device Type',
+    connectionType: 'Connection Type',
+    wifiNetwork: 'Wi-Fi Network',
+    pairingResult: 'Pairing Result',
+    deviceName: 'Device Name',
+    pairingTime: 'Pairing Time',
+    pairAnotherDevice: 'Pair another device',
+    controlDevice: 'Control device'
   },
   login: {
     title: 'Login',

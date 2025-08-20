@@ -883,6 +883,15 @@ export interface Translations {
     otherDevice: string;
     quickSetupTitle: string;
     manualPairingTitle: string;
+    pairingDevice: string;
+    deviceType: string;
+    connectionType: string;
+    wifiNetwork: string;
+    pairingResult: string;
+    deviceName: string;
+    pairingTime: string;
+    pairAnotherDevice: string;
+    controlDevice: string;
   };
   login: {
     title: string;

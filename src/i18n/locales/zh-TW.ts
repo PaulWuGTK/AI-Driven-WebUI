@@ -880,7 +880,16 @@ export default {
     smartSpeaker: '智慧喇叭',
     otherDevice: '其他裝置',
     quickSetupTitle: '快速設定',
-    manualPairingTitle: '手動配對'
+    manualPairingTitle: '手動配對',
+    pairingDevice: '正在配對裝置「{alias}」…',
+    deviceType: '裝置類型',
+    connectionType: '連線方式',
+    wifiNetwork: 'Wi-Fi 網路',
+    pairingResult: '配對結果',
+    deviceName: '裝置名稱',
+    pairingTime: '配對時間',
+    pairAnotherDevice: '配對其他裝置',
+    controlDevice: '控制裝置'
   },
   login: {
     title: '登入',

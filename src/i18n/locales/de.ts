@@ -880,7 +880,16 @@ export default {
     smartSpeaker: 'Intelligenter Lautsprecher',
     otherDevice: 'Anderes Gerät',
     quickSetupTitle: 'Schnelleinrichtung',
-    manualPairingTitle: 'Manuelle Kopplung'
+    manualPairingTitle: 'Manuelle Kopplung',
+    pairingDevice: 'Gerät „{alias}“ wird gekoppelt…',
+    deviceType: 'Gerätetyp',
+    connectionType: 'Verbindungsart',
+    wifiNetwork: 'WLAN-Netzwerk',
+    pairingResult: 'Kopplungsergebnis',
+    deviceName: 'Gerätename',
+    pairingTime: 'Kopplungszeit',
+    pairAnotherDevice: 'Weiteres Gerät koppeln',
+    controlDevice: 'Gerät steuern'
   },
   login: {
     title: 'Login',

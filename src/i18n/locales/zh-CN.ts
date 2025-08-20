@@ -880,7 +880,16 @@ export default {
     smartSpeaker: '智能音箱',
     otherDevice: '其他设备',
     quickSetupTitle: '快速设置',
-    manualPairingTitle: '手动配对'
+    manualPairingTitle: '手动配对',
+    pairingDevice: '正在配对设备“{alias}”…',
+    deviceType: '设备类型',
+    connectionType: '连接方式',
+    wifiNetwork: 'Wi-Fi 网络',
+    pairingResult: '配对结果',
+    deviceName: '设备名称',
+    pairingTime: '配对时间',
+    pairAnotherDevice: '配对其他设备',
+    controlDevice: '控制设备'
   },
   login: {
     title: '登录',
