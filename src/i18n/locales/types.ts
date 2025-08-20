@@ -570,6 +570,7 @@ export interface Translations {
     processing: string;
     upgrading: string;
     activating: string;
+    rebooting: string;
     powerOffWarning: string;
     rebootWarning: string;
   };

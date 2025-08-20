@@ -568,6 +568,7 @@ export default {
     processing: '处理中...',
     upgrading: '固件升级中...',
     activating: '固件激活中...',
+    rebooting: '正在重启…',
     powerOffWarning: '请勿关闭电源。',
     rebootWarning: '激活后设备将重新启动。'
   },

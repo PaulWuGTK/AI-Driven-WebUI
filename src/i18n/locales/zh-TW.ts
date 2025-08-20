@@ -568,6 +568,7 @@ export default {
     processing: '處理中...',
     upgrading: '韌體升級中...',
     activating: '韌體啟用中...',
+    rebooting: '重新啟動中…',
     powerOffWarning: '請勿關閉電源。',
     rebootWarning: '啟用後裝置將重新啟動。'
   },

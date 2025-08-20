@@ -567,6 +567,7 @@ export default {
     processing: '처리 중...',
     upgrading: '펌웨어 업그레이드 중...',
     activating: '펌웨어 활성화 중...',
+    rebooting: '재부팅 중…',
     powerOffWarning: '전원을 끄지 마세요.',
     rebootWarning: '활성화 후 장치가 재부팅됩니다.'
   },

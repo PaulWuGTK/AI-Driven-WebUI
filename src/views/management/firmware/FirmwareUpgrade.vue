@@ -15,9 +15,10 @@ const isDragging = ref(false);
 const firmwareBanks = ref<FirmwareBank[]>([]);
 const uploadedFileName = ref<string | null>(null);
 const isUpgrading = ref(false);
-const countdown = ref(120);
+const countdown = ref(60);
 const countdownTimer = ref<number | null>(null);
 const isActivating = ref(false);
+const isRebootPhase = ref(false);
 
 const fetchFirmwareStatus = async () => {
   try {
@@ -58,22 +59,46 @@ const handleDragLeave = (event: DragEvent) => {
 
 const startUpgradeCountdown = () => {
   isUpgrading.value = true;
-  countdown.value = 120;
-  
-  countdownTimer.value = window.setInterval(() => {
+
+  // 如果是「啟用分割槽」流程，直接進入重開機階段；否則先跑升級階段
+  isRebootPhase.value = isActivating.value;
+
+  // 先清掉舊的計時器（避免多重計時）
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+    countdownTimer.value = null;
+  }
+
+  // 第一階段 60s（升級）→ 第二階段 90s（重開機）
+  countdown.value = isRebootPhase.value ? 90 : 60;
+
+  const tick = () => {
     countdown.value--;
     if (countdown.value <= 0) {
       if (countdownTimer.value) {
         clearInterval(countdownTimer.value);
+        countdownTimer.value = null;
       }
-      router.push('/login');
+
+      if (!isRebootPhase.value) {
+        // 第一段結束 → 進入「重開機」第二段 90 秒
+        isRebootPhase.value = true;
+        countdown.value = 90;
+        countdownTimer.value = window.setInterval(tick, 1000);
+      } else {
+        // 第二段結束 → 導回登入（或你要的頁面）
+        router.push('/login');
+      }
     }
-  }, 1000);
+  };
+
+  countdownTimer.value = window.setInterval(tick, 1000);
 };
 
 const clearUpgradeState = () => {
   isUpgrading.value = false;
   isActivating.value = false;
+  isRebootPhase.value = false;
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
     countdownTimer.value = null;
@@ -297,9 +322,9 @@ onMounted(fetchFirmwareStatus);
     <div v-if="isUpgrading" class="upgrade-overlay">
       <div class="upgrade-content">
         <div class="spinner"></div>
-        <h2>{{ isActivating ? t('firmware.activating') : t('firmware.upgrading') }}</h2>
+        <h2>{{ isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading')) }}</h2>
         <p>{{ t('firmware.powerOffWarning') }}</p>
-        <p v-if="isActivating">{{ t('firmware.rebootWarning') }}</p>
+        <p v-if="isRebootPhase">{{ t('firmware.rebootWarning') }}</p>
         <div class="countdown">{{ countdown }}s</div>
       </div>
     </div>

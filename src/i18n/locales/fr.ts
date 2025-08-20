@@ -568,6 +568,7 @@ export default {
     processing: 'Traitement en cours...',
     upgrading: 'Mise à jour du firmware en cours...',
     activating: 'Activation du firmware en cours...',
+    rebooting: 'Redémarrage en cours…',
     powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.',
     rebootWarning: 'L\'appareil redémarrera après l\'activation.'
   },

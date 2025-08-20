@@ -571,6 +571,7 @@ const translations: Translations = {
     processing: 'Processing...',
     upgrading: 'Firmware Upgrading...',
     activating: 'Activating Firmware...',
+    rebooting: 'Rebooting…',
     powerOffWarning: 'Please do not power off the device.',
     rebootWarning: 'Device will reboot after activation.'
   },

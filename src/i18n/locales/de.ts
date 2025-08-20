@@ -568,6 +568,7 @@ export default {
     processing: 'Verarbeitung...',
     upgrading: 'Firmware wird aktualisiert...',
     activating: 'Firmware wird aktiviert...',
+    rebooting: 'Neustart…',
     powerOffWarning: 'Bitte schalten Sie das Gerät nicht aus.',
     rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.'
   },
