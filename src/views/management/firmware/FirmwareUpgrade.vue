@@ -69,8 +69,8 @@ const startUpgradeCountdown = () => {
     countdownTimer.value = null;
   }
 
-  // 第一階段 60s（升級）→ 第二階段 90s（重開機）
-  countdown.value = isRebootPhase.value ? 90 : 60;
+  // 第一階段 60s（升級）→ 第二階段 100s（重開機）
+  countdown.value = isRebootPhase.value ? 100 : 60;
 
   const tick = () => {
     countdown.value--;
@@ -81,9 +81,9 @@ const startUpgradeCountdown = () => {
       }
 
       if (!isRebootPhase.value) {
-        // 第一段結束 → 進入「重開機」第二段 90 秒
+        // 第一段結束 → 進入「重開機」第二段 100 秒
         isRebootPhase.value = true;
-        countdown.value = 90;
+        countdown.value = 100;
         countdownTimer.value = window.setInterval(tick, 1000);
       } else {
         // 第二段結束 → 導回登入（或你要的頁面）
