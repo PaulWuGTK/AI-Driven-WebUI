@@ -296,7 +296,7 @@ onMounted(fetchFirmwareStatus);
               ref="fileInput"
               @change="handleFileSelect"
               style="display: none"
-              accept=".bin,.img,.fw"
+              accept=".bin,.img,.swu"
             >
 
             <div v-if="error" class="error-message">
