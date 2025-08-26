@@ -479,11 +479,6 @@ input:checked + .slider:before {
   opacity: 0.6;
 }
 
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
 .btn-secondary {
   background-color: #f0f0f0;
   color: #666;

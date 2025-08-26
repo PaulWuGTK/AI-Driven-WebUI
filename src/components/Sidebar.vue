@@ -57,13 +57,8 @@ const baseMenuItems: MenuItem[] = [
   {
     name: 'Wi-Fi',
     icon: wifiIcon,
-    translationKey: 'menu.wifi',
-    subItems: [
-      // { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
-      // { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
-      // { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }
-      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
-    ]
+    path: '/settings/wireless',
+    translationKey: 'menu.wifi'
   },
   {
     name: 'Thread',
@@ -220,7 +215,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: #006BC4;
+  background-color: #a300c4;
   display: none;
   align-items: center;
   padding: 0 1rem;
@@ -253,7 +248,7 @@ onMounted(() => {
 .sidebar {
   width: var(--sidebar-width);
   min-height: 100vh;
-  background: linear-gradient(to bottom, #006BC4 8%, #45B1E4 100%);
+  background: linear-gradient(to bottom, #0F172A 8%, #1F2937 100%);
   color: white;
   padding: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -268,7 +263,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  background-color: #006BC4;
+  background-color: #0F172A;
   flex-shrink: 0;
 }
 
@@ -360,7 +355,7 @@ onMounted(() => {
 }
 
 .submenu-item.active {
-  background-color: #409FD5;
+  background-color: #323b4e;
   color: #ffffff;
   font-weight: 500;
 }

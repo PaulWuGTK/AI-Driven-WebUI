@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
 const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const showBlockingOverlay = ref(false);
 
 // Computed property to check if Mesh is disabled by MLO
 const isMeshDisabledByMLO = computed(() => {
@@ -35,6 +40,15 @@ const showSuccessMessage = () => {
   }, 3000);
 };
 
+const handleBlockingComplete = () => {
+  showBlockingOverlay.value = false;
+  // 保持在 mesh 分頁並重新載入頁面
+  const currentPath = route.path;
+  router.replace({ path: currentPath, query: { tab: 'mesh' } }).then(() => {
+    router.go(0);
+  });
+};
+
 const handleSubmit = async () => {
   if (!meshData.value) return;
   
@@ -47,7 +61,9 @@ const handleSubmit = async () => {
       }
     });
     showSuccessMessage();
-    await fetchMeshConfig();
+    
+    // Show blocking overlay instead of immediate refresh
+    showBlockingOverlay.value = true;
   } catch (err) {
     console.error('Error updating mesh config:', err);
     error.value = 'Failed to update mesh config';
@@ -75,7 +91,7 @@ onMounted(fetchMeshConfig);
       <div v-if="isMeshDisabledByMLO" class="mlo-status">
         <div class="info-banner">
           <span class="material-icons">info</span>
-          <span>{{ t('wireless.mloMeshDisabled') }}</span>
+          <span>{{ t('wireless.mloMeshWarning') }}</span>
         </div>
       </div>
 
@@ -87,7 +103,6 @@ onMounted(fetchMeshConfig);
             v-model="meshData.WlanMesh.MeshEnable"
             :true-value="1"
             :false-value="0"
-            :disabled="isMeshDisabledByMLO"
           >
           <span class="slider"></span>
         </label>
@@ -111,7 +126,7 @@ onMounted(fetchMeshConfig);
         <button class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading || isMeshDisabledByMLO">
+        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
@@ -120,6 +135,14 @@ onMounted(fetchMeshConfig);
     <div v-if="showSuccess" class="success-message">
       {{ t('common.apply') }} successful
     </div>
+
+    <!-- Blocking Overlay -->
+    <BlockingOverlay
+      :is-visible="showBlockingOverlay"
+      message="Applying WiFi Mesh Settings..."
+      :duration="30"
+      @complete="handleBlockingComplete"
+    />
   </div>
 </template>
 
