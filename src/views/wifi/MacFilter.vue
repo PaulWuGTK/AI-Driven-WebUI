@@ -27,6 +27,11 @@ const wifi6gEntries = computed(() =>
   macFilteringData.value?.MACFiltering.wifi6g || []
 );
 
+// Store original entries to compare for off-to-on transitions
+const originalWifi2gEntries = ref<MACFilteringEntry[]>([]);
+const originalWifi5gEntries = ref<MACFilteringEntry[]>([]);
+const originalWifi6gEntries = ref<MACFilteringEntry[]>([]);
+
 // Fetch MAC filtering data
 const fetchMACFiltering = async () => {
   loading.value = true;
@@ -34,6 +39,11 @@ const fetchMACFiltering = async () => {
   try {
     const response = await getMACFiltering();
     macFilteringData.value = response;
+    
+    // Store original entries for comparison
+    originalWifi2gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi2g));
+    originalWifi5gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi5g));
+    originalWifi6gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi6g));
   } catch (err) {
     console.error('Error fetching MAC filtering data:', err);
     error.value = 'Failed to fetch MAC filtering data';
@@ -70,7 +80,37 @@ const showSuccessMessage = () => {
 
 // Apply changes
 const handleApply = () => {
-  showConfirmDialog.value = true;
+  // Check if any band is changing from 'Off' to 'Allow' or 'Deny'
+  const hasOffToOnTransition = checkOffToOnTransition();
+  
+  if (hasOffToOnTransition) {
+    showConfirmDialog.value = true;
+  } else {
+    showConfirmDialog.value = false;
+    // If no off-to-on transitions, apply directly without confirmation
+    confirmApply();
+  }
+};
+
+// Check if there are any transitions from 'Off' to 'Allow' or 'Deny'
+const checkOffToOnTransition = (): boolean => {
+  if (!macFilteringData.value) return false;
+  
+  // Check each band for off-to-on transitions (only 2.4G and 5G since 6G doesn't have WPS)
+  const checkBandTransitions = (currentEntries: MACFilteringEntry[], originalEntries: MACFilteringEntry[]): boolean => {
+    return currentEntries.some(currentEntry => {
+      const originalEntry = originalEntries.find(orig => orig.Path === currentEntry.Path);
+      if (!originalEntry) return false;
+      
+      // Only off to on transitions (Off -> WhiteList or Off -> BlackList)
+      return originalEntry.ACLMode === 'Off' && 
+             (currentEntry.ACLMode === 'WhiteList' || currentEntry.ACLMode === 'BlackList');
+    });
+  };
+  
+  // Only check 2.4G and 5G bands (6G doesn't have WPS)
+  return checkBandTransitions(macFilteringData.value.MACFiltering.wifi2g, originalWifi2gEntries.value) ||
+         checkBandTransitions(macFilteringData.value.MACFiltering.wifi5g, originalWifi5gEntries.value);
 };
 
 // Confirm apply changes
@@ -84,6 +124,8 @@ const confirmApply = async () => {
       MACFiltering: macFilteringData.value.MACFiltering
     });
     showSuccessMessage();
+    // 重新獲取最新資料並更新原始資料基準
+    await fetchMACFiltering();
   } catch (err) {
     console.error('Error updating MAC filtering:', err);
     error.value = 'Failed to update MAC filtering';

@@ -261,7 +261,8 @@ export default {
     mloEnable: 'Activer MLO',
     mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.',
     mloMeshDisabled: 'Le MLO est activé sur un ou plusieurs points d’accès (Standard ou Invité) – les paramètres Mesh ne peuvent pas être modifiés.',
-    meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.'
+    meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.',
+    mloMeshWarning: "Le MLO est actuellement activé sur un ou plusieurs points d'accès (principal ou invité). Il sera automatiquement désactivé lors de l'application des paramètres Mesh."
   },
   guest: {
     title: 'Accès invité',
@@ -591,6 +592,7 @@ export default {
     processing: 'Traitement en cours...',
     upgrading: 'Mise à jour du firmware en cours...',
     activating: 'Activation du firmware en cours...',
+    rebooting: 'Redémarrage en cours…',
     powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.',
     rebootWarning: 'L\'appareil redémarrera après l\'activation.'
   },

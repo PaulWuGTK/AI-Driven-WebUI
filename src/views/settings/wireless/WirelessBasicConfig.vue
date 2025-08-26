@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { getWlanBasic, updateWlanBasic } from '../../../services/api/wireless';
 import type { WlanBasicResponse } from '../../../types/wireless';
 import WirelessBandConfig from './basic/WirelessBandConfig.vue';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const wlanBasicData = ref<WlanBasicResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const showPassword = ref(false);
+const showBlockingOverlay = ref(false);
 
 // Computed property to check if MLO is disabled by Mesh
 const isMloDisabledByMesh = computed(() => {
@@ -32,6 +36,12 @@ const showSuccessMessage = () => {
   setTimeout(() => {
     showSuccess.value = false;
   }, 3000);
+};
+
+const handleBlockingComplete = () => {
+  showBlockingOverlay.value = false;
+  // Redirect back to the current page to refresh data
+  router.go(0);
 };
 
 const handleSubmit = async () => {
@@ -72,7 +82,9 @@ const handleSubmit = async () => {
     
     await updateWlanBasic(postData);
     showSuccessMessage();
-    await fetchBasicConfig();
+    
+    // Show blocking overlay instead of immediate refresh
+    showBlockingOverlay.value = true;
   } catch (error) {
     console.error('Error updating wireless basic config:', error);
   } finally {
@@ -222,6 +234,14 @@ onMounted(fetchBasicConfig);
         </button>
       </div>
     </form>
+
+    <!-- Blocking Overlay -->
+    <BlockingOverlay
+      :is-visible="showBlockingOverlay"
+      message="Applying WiFi Basic Settings..."
+      :duration="30"
+      @complete="handleBlockingComplete"
+    />
   </div>
 </template>
 

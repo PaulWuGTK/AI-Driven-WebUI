@@ -51,7 +51,7 @@ const handleBlockingComplete = () => {
 
 const handleSubmit = async () => {
   if (!meshData.value) return;
-  
+  showBlockingOverlay.value = true;
   loading.value = true;
   try {
     await updateWlanMesh({
@@ -63,7 +63,6 @@ const handleSubmit = async () => {
     showSuccessMessage();
     
     // Show blocking overlay instead of immediate refresh
-    showBlockingOverlay.value = true;
   } catch (err) {
     console.error('Error updating mesh config:', err);
     error.value = 'Failed to update mesh config';

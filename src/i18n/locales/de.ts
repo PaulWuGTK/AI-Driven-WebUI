@@ -261,7 +261,8 @@ export default {
     mloEnable: 'MLO aktivieren',
     mloModeDisabled: 'MLO ist aktiviert – Modus kann nicht geändert werden.',
     mloMeshDisabled: 'MLO ist auf einem oder mehreren APs (Basis oder Gast) aktiviert – Mesh-Einstellungen können nicht geändert werden.',
-    meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.'
+    meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.',
+    mloMeshWarning: "MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert."
   },
   guest: {
     title: 'Gastzugang',
@@ -591,6 +592,7 @@ export default {
     processing: 'Verarbeitung...',
     upgrading: 'Firmware wird aktualisiert...',
     activating: 'Firmware wird aktiviert...',
+    rebooting: 'Neustart…',
     powerOffWarning: 'Bitte schalten Sie das Gerät nicht aus.',
     rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.'
   },

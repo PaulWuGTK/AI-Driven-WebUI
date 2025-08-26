@@ -264,6 +264,7 @@ export interface Translations {
     mloModeDisabled: string;
     mloMeshDisabled: string;
     meshMloDisabled: string;
+    mloMeshWarning: string;
   };
   guest: {
     title: string;
@@ -593,6 +594,7 @@ export interface Translations {
     processing: string;
     upgrading: string;
     activating: string;
+    rebooting: string;
     powerOffWarning: string;
     rebootWarning: string;
   };

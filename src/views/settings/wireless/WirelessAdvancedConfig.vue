@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { getWlanAdvanced, updateWlanAdvanced } from '../../../services/api/wireless';
 import type { WlanAdvancedResponse } from '../../../types/wireless';
 import WirelessAdvancedBandConfig from './advanced/WirelessAdvancedBandConfig.vue';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const advancedData = ref<WlanAdvancedResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
+const showBlockingOverlay = ref(false);
 
 const fetchAdvancedConfig = async () => {
   loading.value = true;
@@ -26,6 +30,12 @@ const showSuccessMessage = () => {
   setTimeout(() => {
     showSuccess.value = false;
   }, 3000);
+};
+
+const handleBlockingComplete = () => {
+  showBlockingOverlay.value = false;
+  // Redirect back to the current page to refresh data
+  router.go(0);
 };
 
 const handleSubmit = async () => {
@@ -60,7 +70,9 @@ const handleSubmit = async () => {
 
     await updateWlanAdvanced(postData);
     showSuccessMessage();
-    await fetchAdvancedConfig();
+    
+    // Show blocking overlay instead of immediate refresh
+    showBlockingOverlay.value = true;
   } catch (error) {
     console.error('Error updating wireless advanced config:', error);
   } finally {
@@ -117,6 +129,14 @@ onMounted(fetchAdvancedConfig);
         </button>
       </div>
     </form>
+
+    <!-- Blocking Overlay -->
+    <BlockingOverlay
+      :is-visible="showBlockingOverlay"
+      message="Applying WiFi Advanced Settings..."
+      :duration="30"
+      @complete="handleBlockingComplete"
+    />
   </div>
 </template>
 
@@ -221,7 +241,6 @@ onMounted(fetchAdvancedConfig);
   cursor: not-allowed;
   opacity: 0.6;
 }
-
 
 .btn-secondary {
   background-color: #f0f0f0;

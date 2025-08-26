@@ -57,8 +57,11 @@ const baseMenuItems: MenuItem[] = [
   {
     name: 'Wi-Fi',
     icon: wifiIcon,
-    path: '/settings/wireless',
-    translationKey: 'menu.wifi'
+    translationKey: 'menu.wifi',
+    subItems: [
+      { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' },
+      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
+    ]
   },
   {
     name: 'Thread',
@@ -215,7 +218,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: #a300c4;
+  background-color: #0F172A;
   display: none;
   align-items: center;
   padding: 0 1rem;

@@ -261,7 +261,8 @@ export default {
     mloEnable: '啟用 MLO',
     mloModeDisabled: 'MLO 已啟用，無法變更模式。',
     mloMeshDisabled: '一或多個 AP（基本或訪客）已啟用 MLO – 無法變更 Mesh 設定。',
-    meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。'
+    meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。',
+    mloMeshWarning: "一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。"
   },
   guest: {
     title: '訪客存取',
@@ -591,6 +592,7 @@ export default {
     processing: '處理中...',
     upgrading: '韌體升級中...',
     activating: '韌體啟用中...',
+    rebooting: '重新啟動中…',
     powerOffWarning: '請勿關閉電源。',
     rebootWarning: '啟用後裝置將重新啟動。'
   },

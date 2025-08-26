@@ -260,7 +260,8 @@ export default {
     mloEnable: 'MLO 활성화',
     mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.',
     mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
-    meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.'
+    meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
+    mloMeshWarning: "하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다."
   },
   guest: {
     title: '게스트 액세스',
@@ -590,6 +591,7 @@ export default {
     processing: '처리 중...',
     upgrading: '펌웨어 업그레이드 중...',
     activating: '펌웨어 활성화 중...',
+    rebooting: '재부팅 중…',
     powerOffWarning: '전원을 끄지 마세요.',
     rebootWarning: '활성화 후 장치가 재부팅됩니다.'
   },

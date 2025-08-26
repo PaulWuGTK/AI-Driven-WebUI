@@ -12,6 +12,10 @@ const router = createRouter({
       component: () => import('../views/Dashboard.vue'),
     },
     {
+      path: '/status/mesh',
+      component: () => import('../views/status/MeshInfo.vue'),
+    },
+    {
       path: '/settings/wireless',
       component: () => import('../views/settings/WirelessSettings.vue'),
     },

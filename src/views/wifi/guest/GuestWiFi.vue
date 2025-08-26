@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import type { GuestWiFiResponse } from '../../../types/guest';
 import { getGuestWiFi, updateGuestWiFi } from '../../../services/api/guestAccess';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
+const router = useRouter();
 const guestWiFiData = ref<GuestWiFiResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showPassword = ref(false);
+const showBlockingOverlay = ref(false);
 
 // Computed property to check if MLO is disabled by Mesh
 const isMLODisabledByMesh = computed(() => {
@@ -42,6 +46,12 @@ const showSuccessMessage = () => {
   }, 3000);
 };
 
+const handleBlockingComplete = () => {
+  showBlockingOverlay.value = false;
+  // Redirect back to the current page to refresh data
+  router.go(0);
+};
+
 const handleSubmit = async () => {
   if (!guestWiFiData.value) return;
   
@@ -58,7 +68,9 @@ const handleSubmit = async () => {
       }
     });
     showSuccessMessage();
-    await fetchGuestWiFi();
+    
+    // Show blocking overlay instead of immediate refresh
+    showBlockingOverlay.value = true;
   } catch (err) {
     console.error('Error updating Guest WiFi settings:', err);
     error.value = 'Failed to update Guest WiFi settings';
@@ -178,6 +190,14 @@ onMounted(fetchGuestWiFi);
     <div v-if="showSuccess" class="success-message">
       {{ t('common.apply') }} successful
     </div>
+
+    <!-- Blocking Overlay -->
+    <BlockingOverlay
+      :is-visible="showBlockingOverlay"
+      message="Applying Guest WiFi Settings..."
+      :duration="30"
+      @complete="handleBlockingComplete"
+    />
   </div>
 </template>
 

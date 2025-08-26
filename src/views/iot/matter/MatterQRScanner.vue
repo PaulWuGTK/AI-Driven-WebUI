@@ -1040,7 +1040,7 @@ onUnmounted(async () => {
                 <span class="material-icons">add</span>
                 {{ t('matter.pairAnotherDevice') }}
               </button>
-              <button class="btn btn-secondary" @click="$router.push('/matter/onoff')">
+              <button class="btn btn-secondary" @click="$router.push('/dashboard')">
                 <span class="material-icons">toggle_on</span>
                 {{ t('matter.controlDevice') }}
               </button>
