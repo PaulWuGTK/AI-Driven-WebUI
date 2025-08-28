@@ -37,6 +37,18 @@ export interface Translations {
     iot: string;
     thread: string;
     matter: string;
+    matterHome: string;
+    matterPairing: string;
+    matterOnoff: string;
+    matterMultiadmin: string;
+    matterSubscribe: string;
+    matterGetstatus: string;
+    matterBinding: string;
+    matterMediacontrol: string;
+    matterEevsecontrol: string;
+    matterQrscanner: string;
+    matterQuickSetup: string;
+    matterManualPairing: string;
   };
   header: {
     account: string;
@@ -71,6 +83,18 @@ export interface Translations {
     secondaryDNS: string;
     macAddress: string;
     password: string;
+    connectedDevices: string;
+    noConnectedDevices: string;
+    deviceName: string;
+    nodeId: string;
+    deviceType: string;
+    onOff: string;
+    on: string;
+    off: string;
+    wifiIsDisabled: string;
+    addDevice: string;
+    scanQRCode: string;
+    quickSetup: string;
   };
   wan: {
     title: string;
@@ -688,6 +712,7 @@ export interface Translations {
     joinButton: string;
     joinSuccess: string;
     joinFailed: string;
+    networkJoinRequired: string;
     commissionerEnable: string;
     availableJoiner: string;
     eui64OrDiscerner: string;

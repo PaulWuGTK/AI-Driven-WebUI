@@ -18,19 +18,19 @@ defineProps<{
       <div class="info-grid">
         <div class="info-row">
           <span class="info-label">{{ t('wan.operationMode') }}</span>
-          <span class="info-value">{{ status.OperationMode }}</span>
+          <span class="info-value" :id="`wan-opMode-value`">{{ status.OperationMode }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">{{ t('wan.sensingPolicy') }}</span>
-          <span class="info-value">{{ status.SensingPolicy }}</span>
+          <span class="info-value" :id="`wan-sensingPolicy-value`">{{ status.SensingPolicy }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">{{ t('wan.sensingTimeout') }}</span>
-          <span class="info-value">{{ status.SensingTimeout }}</span>
+          <span class="info-value" :id="`wan-sensingTimeout-value`">{{ status.SensingTimeout }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">{{ t('wan.wanMode') }}</span>
-          <span class="info-value">{{ status.WANMode }}</span>
+          <span class="info-value" :id="`wan-mode-value`">{{ status.WANMode }}</span>
         </div>
       </div>
     </div>

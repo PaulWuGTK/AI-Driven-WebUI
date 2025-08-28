@@ -11,7 +11,7 @@ const loading = ref({
   factory: false
 });
 const showCountdown = ref(false);
-const countdown = ref(60);
+const countdown = ref(100);
 const countdownTimer = ref<number | null>(null);
 const showSuccess = ref(false);
 
@@ -53,7 +53,7 @@ const handleFactoryReset = async () => {
 
 const startCountdown = () => {
   showCountdown.value = true;
-  countdown.value = 90;
+  countdown.value = 100;
   
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
