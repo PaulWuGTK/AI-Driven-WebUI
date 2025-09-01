@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { AuthService } from '../services/auth';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 
 const router = useRouter();
@@ -92,26 +94,27 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="header">
-    <div class="header-controls">
-      <div class="language-select-container">
-        <span class="material-icons">language</span>
+  <header class="header" :data-testid="qa('header')">
+    <div class="header-controls" :data-testid="qa('header-controls')">
+      <div class="language-select-container" :data-testid="qa('header-language-container')">
+        <span class="material-icons" :data-testid="qa('header-language-icon')">language</span>
         <select 
           class="language-select" 
+          :data-testid="qa('header-language-select')"
           :value="locale" 
           @change="handleLanguageChange"
         >
-          <option v-for="lang in availableLanguages" :key="lang.code" :value="lang.code">
+          <option v-for="lang in availableLanguages" :key="lang.code" :value="lang.code" :data-testid="qa(`header-language-option-${lang.code}`)">
             {{ lang.label }}
           </option>
         </select>
       </div>
-      <button class="header-btn">
-        <span class="material-icons">person</span>
+      <button class="header-btn" :data-testid="qa('header-account-button')">
+        <span class="material-icons" :data-testid="qa('header-account-icon')">person</span>
         {{ username }}
       </button>
-      <button class="header-btn" @click="handleLogout">
-        <span class="material-icons">logout</span>
+      <button class="header-btn" :data-testid="qa('header-logout-button')" @click="handleLogout">
+        <span class="material-icons" :data-testid="qa('header-logout-icon')">logout</span>
         {{ t('header.logout') }}
       </button>
     </div>

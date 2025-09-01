@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { StatisticsResponse, StatisticsEntry } from '../../types/statistics';
 import { getStatistics } from '../../services/api';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const statisticsData = ref<StatisticsResponse | null>(null);
@@ -106,21 +108,22 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('statistics.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('statistics-title')">{{ t('statistics.title') }}</h1>
 
-    <div v-if="statisticsData" class="status-content">
+    <div v-if="statisticsData" class="status-content" :data-testid="qa('statistics-content')">
       <!-- Ethernet Statistics -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('statistics.ethernet') }}</div>
+      <div class="panel-section" :data-testid="qa('statistics-ethernet-section')">
+        <div class="section-title" :data-testid="qa('statistics-ethernet-title')">{{ t('statistics.ethernet') }}</div>
         
         <div class="card-content">
-          <div class="table-container">
+          <div class="table-container" :data-testid="qa('statistics-ethernet-table')">
             <table>
               <thead>
                 <tr>
                   <th 
                     v-for="key in ['Port', 'RxBytes', 'RxPackets', 'RxError', 'RxDiscard', 'TxBytes', 'TxPackets', 'TxError', 'TxDiscard']" 
                     :key="key"
+                    :data-testid="qa(`statistics-ethernet-header-${slug(key)}`)"
                     @click="handleSort('ethernet', key as SortKey)"
                     :class="{ 
                       sortable: true,
@@ -137,63 +140,63 @@ onMounted(() => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="entry in getSortedData('ethernet')" :key="entry.Port">
-                  <td>{{ entry.Port }}</td>
-                  <td>{{ entry.RxBytes }}</td>
-                  <td>{{ entry.RxPackets }}</td>
-                  <td>{{ entry.RxError }}</td>
-                  <td>{{ entry.RxDiscard }}</td>
-                  <td>{{ entry.TxBytes }}</td>
-                  <td>{{ entry.TxPackets }}</td>
-                  <td>{{ entry.TxError }}</td>
-                  <td>{{ entry.TxDiscard }}</td>
+                <tr v-for="(entry, entryIndex) in getSortedData('ethernet')" :key="entry.Port" :data-testid="qa(`statistics-ethernet-row-${slug(entry.Port)}`)">
+                  <td :data-testid="qa(`statistics-ethernet-port-${slug(entry.Port)}`)">{{ entry.Port }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-rxbytes-${slug(entry.Port)}`)">{{ entry.RxBytes }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-rxpackets-${slug(entry.Port)}`)">{{ entry.RxPackets }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-rxerror-${slug(entry.Port)}`)">{{ entry.RxError }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-rxdiscard-${slug(entry.Port)}`)">{{ entry.RxDiscard }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-txbytes-${slug(entry.Port)}`)">{{ entry.TxBytes }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-txpackets-${slug(entry.Port)}`)">{{ entry.TxPackets }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-txerror-${slug(entry.Port)}`)">{{ entry.TxError }}</td>
+                  <td :data-testid="qa(`statistics-ethernet-txdiscard-${slug(entry.Port)}`)">{{ entry.TxDiscard }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="mobile-cards">
-            <div class="table-card" v-for="entry in getSortedData('ethernet')" :key="entry.Port">
+          <div class="mobile-cards" :data-testid="qa('statistics-ethernet-mobile')">
+            <div class="table-card" v-for="(entry, entryIndex) in getSortedData('ethernet')" :key="entry.Port" :data-testid="qa(`statistics-ethernet-card-${slug(entry.Port)}`)">
               <div class="card-row">
-                <span class="card-label">{{ t('statistics.port') }}</span>
-                <span class="card-value">{{ entry.Port }}</span>
+                <span class="card-label" :data-testid="qa(`statistics-ethernet-card-port-label-${slug(entry.Port)}`)">{{ t('statistics.port') }}</span>
+                <span class="card-value" :data-testid="qa(`statistics-ethernet-card-port-value-${slug(entry.Port)}`)">{{ entry.Port }}</span>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Rx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxbytes') }}</span>
-                  <span class="card-value">{{ entry.RxBytes }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-rxbytes-label-${slug(entry.Port)}`)">{{ t('statistics.rxbytes') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-rxbytes-value-${slug(entry.Port)}`)">{{ entry.RxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxpackets') }}</span>
-                  <span class="card-value">{{ entry.RxPackets }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-rxpackets-label-${slug(entry.Port)}`)">{{ t('statistics.rxpackets') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-rxpackets-value-${slug(entry.Port)}`)">{{ entry.RxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxerror') }}</span>
-                  <span class="card-value">{{ entry.RxError }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-rxerror-label-${slug(entry.Port)}`)">{{ t('statistics.rxerror') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-rxerror-value-${slug(entry.Port)}`)">{{ entry.RxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxdiscard') }}</span>
-                  <span class="card-value">{{ entry.RxDiscard }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-rxdiscard-label-${slug(entry.Port)}`)">{{ t('statistics.rxdiscard') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-rxdiscard-value-${slug(entry.Port)}`)">{{ entry.RxDiscard }}</span>
                 </div>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Tx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txbytes') }}</span>
-                  <span class="card-value">{{ entry.TxBytes }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-txbytes-label-${slug(entry.Port)}`)">{{ t('statistics.txbytes') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-txbytes-value-${slug(entry.Port)}`)">{{ entry.TxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txpackets') }}</span>
-                  <span class="card-value">{{ entry.TxPackets }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-txpackets-label-${slug(entry.Port)}`)">{{ t('statistics.txpackets') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-txpackets-value-${slug(entry.Port)}`)">{{ entry.TxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txerror') }}</span>
-                  <span class="card-value">{{ entry.TxError }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-txerror-label-${slug(entry.Port)}`)">{{ t('statistics.txerror') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-txerror-value-${slug(entry.Port)}`)">{{ entry.TxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txdiscard') }}</span>
-                  <span class="card-value">{{ entry.TxDiscard }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-ethernet-card-txdiscard-label-${slug(entry.Port)}`)">{{ t('statistics.txdiscard') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-ethernet-card-txdiscard-value-${slug(entry.Port)}`)">{{ entry.TxDiscard }}</span>
                 </div>
               </div>
             </div>
@@ -202,17 +205,18 @@ onMounted(() => {
       </div>
 
       <!-- WLAN Statistics -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('statistics.wlan') }}</div>
+      <div class="panel-section" :data-testid="qa('statistics-wlan-section')">
+        <div class="section-title" :data-testid="qa('statistics-wlan-title')">{{ t('statistics.wlan') }}</div>
         
         <div class="card-content">
-          <div class="table-container">
+          <div class="table-container" :data-testid="qa('statistics-wlan-table')">
             <table>
               <thead>
                 <tr>
                   <th 
                     v-for="key in ['Port', 'RxBytes', 'RxPackets', 'RxError', 'RxDiscard', 'TxBytes', 'TxPackets', 'TxError', 'TxDiscard']" 
                     :key="key"
+                    :data-testid="qa(`statistics-wlan-header-${slug(key)}`)"
                     @click="handleSort('wlan', key as SortKey)"
                     :class="{ 
                       sortable: true,
@@ -229,63 +233,63 @@ onMounted(() => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="entry in getSortedData('wlan')" :key="entry.Port">
-                  <td>{{ entry.Port }}</td>
-                  <td>{{ entry.RxBytes }}</td>
-                  <td>{{ entry.RxPackets }}</td>
-                  <td>{{ entry.RxError }}</td>
-                  <td>{{ entry.RxDiscard }}</td>
-                  <td>{{ entry.TxBytes }}</td>
-                  <td>{{ entry.TxPackets }}</td>
-                  <td>{{ entry.TxError }}</td>
-                  <td>{{ entry.TxDiscard }}</td>
+                <tr v-for="(entry, entryIndex) in getSortedData('wlan')" :key="entry.Port" :data-testid="qa(`statistics-wlan-row-${slug(entry.Port)}`)">
+                  <td :data-testid="qa(`statistics-wlan-port-${slug(entry.Port)}`)">{{ entry.Port }}</td>
+                  <td :data-testid="qa(`statistics-wlan-rxbytes-${slug(entry.Port)}`)">{{ entry.RxBytes }}</td>
+                  <td :data-testid="qa(`statistics-wlan-rxpackets-${slug(entry.Port)}`)">{{ entry.RxPackets }}</td>
+                  <td :data-testid="qa(`statistics-wlan-rxerror-${slug(entry.Port)}`)">{{ entry.RxError }}</td>
+                  <td :data-testid="qa(`statistics-wlan-rxdiscard-${slug(entry.Port)}`)">{{ entry.RxDiscard }}</td>
+                  <td :data-testid="qa(`statistics-wlan-txbytes-${slug(entry.Port)}`)">{{ entry.TxBytes }}</td>
+                  <td :data-testid="qa(`statistics-wlan-txpackets-${slug(entry.Port)}`)">{{ entry.TxPackets }}</td>
+                  <td :data-testid="qa(`statistics-wlan-txerror-${slug(entry.Port)}`)">{{ entry.TxError }}</td>
+                  <td :data-testid="qa(`statistics-wlan-txdiscard-${slug(entry.Port)}`)">{{ entry.TxDiscard }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="mobile-cards">
-            <div class="table-card" v-for="entry in getSortedData('wlan')" :key="entry.Port">
+          <div class="mobile-cards" :data-testid="qa('statistics-wlan-mobile')">
+            <div class="table-card" v-for="(entry, entryIndex) in getSortedData('wlan')" :key="entry.Port" :data-testid="qa(`statistics-wlan-card-${slug(entry.Port)}`)">
               <div class="card-row">
-                <span class="card-label">{{ t('statistics.port') }}</span>
-                <span class="card-value">{{ entry.Port }}</span>
+                <span class="card-label" :data-testid="qa(`statistics-wlan-card-port-label-${slug(entry.Port)}`)">{{ t('statistics.port') }}</span>
+                <span class="card-value" :data-testid="qa(`statistics-wlan-card-port-value-${slug(entry.Port)}`)">{{ entry.Port }}</span>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Rx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxbytes') }}</span>
-                  <span class="card-value">{{ entry.RxBytes }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-rxbytes-label-${slug(entry.Port)}`)">{{ t('statistics.rxbytes') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-rxbytes-value-${slug(entry.Port)}`)">{{ entry.RxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxpackets') }}</span>
-                  <span class="card-value">{{ entry.RxPackets }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-rxpackets-label-${slug(entry.Port)}`)">{{ t('statistics.rxpackets') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-rxpackets-value-${slug(entry.Port)}`)">{{ entry.RxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxerror') }}</span>
-                  <span class="card-value">{{ entry.RxError }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-rxerror-label-${slug(entry.Port)}`)">{{ t('statistics.rxerror') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-rxerror-value-${slug(entry.Port)}`)">{{ entry.RxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.rxdiscard') }}</span>
-                  <span class="card-value">{{ entry.RxDiscard }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-rxdiscard-label-${slug(entry.Port)}`)">{{ t('statistics.rxdiscard') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-rxdiscard-value-${slug(entry.Port)}`)">{{ entry.RxDiscard }}</span>
                 </div>
               </div>
               <div class="card-section">
                 <div class="section-subtitle">Tx</div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txbytes') }}</span>
-                  <span class="card-value">{{ entry.TxBytes }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-txbytes-label-${slug(entry.Port)}`)">{{ t('statistics.txbytes') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-txbytes-value-${slug(entry.Port)}`)">{{ entry.TxBytes }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txpackets') }}</span>
-                  <span class="card-value">{{ entry.TxPackets }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-txpackets-label-${slug(entry.Port)}`)">{{ t('statistics.txpackets') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-txpackets-value-${slug(entry.Port)}`)">{{ entry.TxPackets }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txerror') }}</span>
-                  <span class="card-value">{{ entry.TxError }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-txerror-label-${slug(entry.Port)}`)">{{ t('statistics.txerror') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-txerror-value-${slug(entry.Port)}`)">{{ entry.TxError }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('statistics.txdiscard') }}</span>
-                  <span class="card-value">{{ entry.TxDiscard }}</span>
+                  <span class="card-label" :data-testid="qa(`statistics-wlan-card-txdiscard-label-${slug(entry.Port)}`)">{{ t('statistics.txdiscard') }}</span>
+                  <span class="card-value" :data-testid="qa(`statistics-wlan-card-txdiscard-value-${slug(entry.Port)}`)">{{ entry.TxDiscard }}</span>
                 </div>
               </div>
             </div>

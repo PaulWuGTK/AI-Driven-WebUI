@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DiagnosticsResponse, Interface, PingRequest } from '../../../types/diagnostics';
 import { getDiagnostics, startPing } from '../../../services/api/diagnostics';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const interfaces = ref<Interface[]>([]);
@@ -77,84 +79,84 @@ onMounted(fetchInterfaces);
 </script>
 
 <template>
-  <div class="ping-tool">
-    <form @submit.prevent="handlePing">
+  <div class="ping-tool" :data-testid="qa('ping-tool-content')">
+    <form @submit.prevent="handlePing" :data-testid="qa('ping-tool-form')">
       <div class="form-group">
-        <label>{{ t('diagnostics.interface') }}</label>
-        <select v-model="selectedInterface" required>
-          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface">
+        <label :data-testid="qa('ping-tool-interface-label')">{{ t('diagnostics.interface') }}</label>
+        <select v-model="selectedInterface" :data-testid="qa('ping-tool-interface-select')" required>
+          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface" :data-testid="qa(`ping-tool-interface-option-${slug(iface.Name)}`)">
             {{ iface.Name }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.protocol') }}</label>
-        <select v-model="protocolVersion" required>
+        <label :data-testid="qa('ping-tool-protocol-label')">{{ t('diagnostics.protocol') }}</label>
+        <select v-model="protocolVersion" :data-testid="qa('ping-tool-protocol-select')" required>
           <option value="IPv4">IPv4</option>
           <option value="IPv6">IPv6</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.repeatTimes') }}</label>
-        <input type="number" v-model="repeatTimes" min="1" max="10" required />
+        <label :data-testid="qa('ping-tool-repeat-times-label')">{{ t('diagnostics.repeatTimes') }}</label>
+        <input type="number" v-model="repeatTimes" :data-testid="qa('ping-tool-repeat-times-input')" min="1" max="10" required />
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.targetHost') }}</label>
-        <input type="text" v-model="targetHost" required />
+        <label :data-testid="qa('ping-tool-target-host-label')">{{ t('diagnostics.targetHost') }}</label>
+        <input type="text" v-model="targetHost" :data-testid="qa('ping-tool-target-host-input')" required />
       </div>
 
       <div class="button-group">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('ping-tool-start-button')" :disabled="loading">
           {{ loading ? t('diagnostics.processing') : t('diagnostics.start') }}
         </button>
       </div>
     </form>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" :data-testid="qa('ping-tool-error')">
       {{ error }}
     </div>
 
-    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section">
-      <h3>{{ t('diagnostics.results') }}</h3>
+    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section" :data-testid="qa('ping-tool-results-section')">
+      <h3 :data-testid="qa('ping-tool-results-title')">{{ t('diagnostics.results') }}</h3>
       
       <!-- Show error state if not Complete -->
-      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state">
+      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state" :data-testid="qa('ping-tool-results-error')">
         {{ t('diagnostics.errorState', { state: results.DiagnosticsState }) }}
       </div>
 
       <!-- Show results only if Complete -->
-      <div v-else-if="results.DiagnosticsState === 'Complete'" class="result-grid">
+      <div v-else-if="results.DiagnosticsState === 'Complete'" class="result-grid" :data-testid="qa('ping-tool-results-grid')">
         <div class="result-item">
-          <span class="label">{{ t('diagnostics.hostAddress') }}</span>
-          <span class="value">{{ results.Host }}</span>
+          <span class="label" :data-testid="qa('ping-tool-results-host-label')">{{ t('diagnostics.hostAddress') }}</span>
+          <span class="value" :data-testid="qa('ping-tool-results-host-value')">{{ results.Host }}</span>
         </div>
         <div class="result-item">
-          <span class="label">{{ t('diagnostics.packetsInfo') }}</span>
-          <span class="value">
+          <span class="label" :data-testid="qa('ping-tool-results-packets-label')">{{ t('diagnostics.packetsInfo') }}</span>
+          <span class="value" :data-testid="qa('ping-tool-results-packets-value')">
             {{ t('diagnostics.sent') }}: {{ results.NumberOfRepetitions }},
             {{ t('diagnostics.received') }}: {{ results.SuccessCount }},
             {{ t('diagnostics.lost') }}: {{ results.FailureCount }}
           </span>
         </div>
         <div class="result-item">
-          <span class="label">{{ t('diagnostics.minRoundTrip') }}</span>
-          <span class="value">{{ (results.MinimumResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
+          <span class="label" :data-testid="qa('ping-tool-results-min-rtt-label')">{{ t('diagnostics.minRoundTrip') }}</span>
+          <span class="value" :data-testid="qa('ping-tool-results-min-rtt-value')">{{ (results.MinimumResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
         </div>
         <div class="result-item">
-          <span class="label">{{ t('diagnostics.maxRoundTrip') }}</span>
-          <span class="value">{{ (results.MaximumResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
+          <span class="label" :data-testid="qa('ping-tool-results-max-rtt-label')">{{ t('diagnostics.maxRoundTrip') }}</span>
+          <span class="value" :data-testid="qa('ping-tool-results-max-rtt-value')">{{ (results.MaximumResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
         </div>
         <div class="result-item">
-          <span class="label">{{ t('diagnostics.avgRoundTrip') }}</span>
-          <span class="value">{{ (results.AverageResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
+          <span class="label" :data-testid="qa('ping-tool-results-avg-rtt-label')">{{ t('diagnostics.avgRoundTrip') }}</span>
+          <span class="value" :data-testid="qa('ping-tool-results-avg-rtt-value')">{{ (results.AverageResponseTimeDetailed / 1000 ).toFixed(2) }} ms</span>
         </div>
       </div>
 
       <!-- Show processing state -->
-      <div v-else class="processing-state">
+      <div v-else class="processing-state" :data-testid="qa('ping-tool-results-processing')">
         <div class="loading-spinner"></div>
         <span>{{ t('diagnostics.processing') }}</span>
       </div>

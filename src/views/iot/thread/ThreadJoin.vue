@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadJoinNetworkRequest } from '../../../types/thread';
 import { joinThreadNetwork } from '../../../services/api/thread';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const loading = ref(false);
@@ -58,26 +60,27 @@ const showSuccessNotification = (message: string) => {
 </script>
 
 <template>
-  <div class="thread-content">
-    <div class="panel-section">
-      <div class="section-title">{{ t('thread.join') }}</div>
+  <div class="thread-content" :data-testid="qa('thread-join-content')">
+    <div class="panel-section" :data-testid="qa('thread-join-section')">
+      <div class="section-title" :data-testid="qa('thread-join-title')">{{ t('thread.join') }}</div>
       
       <div class="card-content">
         <div class="join-container">
           <!-- Network Key Join -->
-          <div class="join-section">
+          <div class="join-section" :data-testid="qa('thread-join-form-section')">
             <div class="credential-type">
-              <div class="credential-label">{{ t('thread.credentialType') }}:</div>
-              <select v-model="credentialType" class="credential-select">
+              <div class="credential-label" :data-testid="qa('thread-join-credential-type-label')">{{ t('thread.credentialType') }}:</div>
+              <select v-model="credentialType" class="credential-select" :data-testid="qa('thread-join-credential-type-select')">
                 <option value="NetworkKey">{{ t('thread.networkKey') }}</option>
                 <option value="PSKd">{{ t('thread.pskc') }}</option>
               </select>
             </div>
             
             <div class="credential-value">
-              <div class="credential-label">{{ credentialType }}:</div>
+              <div class="credential-label" :data-testid="qa('thread-join-credential-value-label')">{{ credentialType }}:</div>
               <input 
                 type="text" 
+                :data-testid="qa('thread-join-credential-value-input')"
                 v-model="credentialValue" 
                 class="credential-input"
                 :placeholder="credentialType === 'NetworkKey' ? '80DD708D25F4F8ED06285A11054A708C' : 'J01NME'"
@@ -88,6 +91,7 @@ const showSuccessNotification = (message: string) => {
           <div class="join-button-container">
             <button 
               class="btn btn-primary join-button" 
+              :data-testid="qa('thread-join-button')"
               @click="handleJoin"
               :disabled="loading || !credentialValue"
             >
@@ -97,14 +101,14 @@ const showSuccessNotification = (message: string) => {
           </div>
         </div>
 
-        <div v-if="error" class="error-message">
+        <div v-if="error" class="error-message" :data-testid="qa('thread-join-error')">
           {{ error }}
         </div>
       </div>
     </div>
 
     <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-join-success-message')">
       {{ successMessage }}
     </div>
   </div>

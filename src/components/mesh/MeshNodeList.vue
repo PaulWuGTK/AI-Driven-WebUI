@@ -2,6 +2,8 @@
 import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -15,31 +17,31 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="table-list">
-    <table>
+  <div class="table-list" :data-testid="qa('mesh-node-list-container')">
+    <table :data-testid="qa('mesh-node-list-table')">
       <thead>
         <tr>
-          <th>{{ t('mesh.name') }}</th>
-          <th>{{ t('mesh.mode') }}</th>
-          <th>{{ t('mesh.ipAddress') }}</th>
-          <th>{{ t('mesh.macAddress') }}</th>
-          <th>{{ t('mesh.mediaType') }}</th>
-          <th>{{ t('mesh.supportedBand') }}</th>
-          <th>{{ t('mesh.upstream') }}</th>
-          <th v-if="nodes.some(node => node.Mode === 'Client')">{{ t('mesh.action') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-name')">{{ t('mesh.name') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-mode')">{{ t('mesh.mode') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-ip')">{{ t('mesh.ipAddress') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-mac')">{{ t('mesh.macAddress') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-media-type')">{{ t('mesh.mediaType') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-supported-band')">{{ t('mesh.supportedBand') }}</th>
+          <th :data-testid="qa('mesh-node-list-header-upstream')">{{ t('mesh.upstream') }}</th>
+          <th v-if="nodes.some(node => node.Mode === 'Client')" :data-testid="qa('mesh-node-list-header-action')">{{ t('mesh.action') }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="node in nodes" :key="node.MACAddress">
-          <td>{{ node.Name }}</td>
-          <td>{{ node.Mode }}</td>
-          <td>{{ node.ipv4 }}</td>
-          <td>{{ node.MACAddress }}</td>
-          <td>{{ node.MediaType }}</td>
-          <td>{{ node.SupportedBand || '-' }}</td>
-          <td>{{ node.Upstream === '-' ? '-' : node.Upstream }}</td>
+        <tr v-for="(node, index) in nodes" :key="node.MACAddress" :data-testid="qa(`mesh-node-list-row-${index}`)">
+          <td :data-testid="qa(`mesh-node-list-name-${index}`)">{{ node.Name }}</td>
+          <td :data-testid="qa(`mesh-node-list-mode-${index}`)">{{ node.Mode }}</td>
+          <td :data-testid="qa(`mesh-node-list-ip-${index}`)">{{ node.ipv4 }}</td>
+          <td :data-testid="qa(`mesh-node-list-mac-${index}`)">{{ node.MACAddress }}</td>
+          <td :data-testid="qa(`mesh-node-list-media-type-${index}`)">{{ node.MediaType }}</td>
+          <td :data-testid="qa(`mesh-node-list-supported-band-${index}`)">{{ node.SupportedBand || '-' }}</td>
+          <td :data-testid="qa(`mesh-node-list-upstream-${index}`)">{{ node.Upstream === '-' ? '-' : node.Upstream }}</td>
           <td v-if="node.Mode === 'Client'">
-            <button class="action-button" @click="$emit('action', node)">
+            <button class="action-button" :data-testid="qa(`mesh-node-list-action-${index}`)" @click="$emit('action', node)">
               {{ t('mesh.action') }}
             </button>
           </td>

@@ -6,6 +6,8 @@ import type { WlanWpsResponse } from '../../../types/wireless';
 import WpsVapInfo from './wps/WpsVapInfo.vue';
 import WpsActions from './wps/WpsActions.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const wpsData = ref<WlanWpsResponse | null>(null);
@@ -141,13 +143,14 @@ onMounted(fetchWpsConfig);
 </script>
 
 <template>
-  <div class="wireless-wps-config">
-    <div class="wps-enable">
+  <div class="wireless-wps-config" :data-testid="qa('wireless-wps-config-content')">
+    <div class="wps-enable" :data-testid="qa('wireless-wps-config-enable-section')">
       <div class="switch-label">
-        <span>{{ t('wireless.wpsConfiguration') }}</span>
+        <span :data-testid="qa('wireless-wps-config-enable-label')">{{ t('wireless.wpsConfiguration') }}</span>
         <label class="switch">
           <input
             type="checkbox"
+            :data-testid="qa('wireless-wps-config-enable-toggle')"
             :checked="tempWpsEnabled === 1"
             @change="handleEnableToggle(($event.target as HTMLInputElement).checked)"
           >
@@ -156,60 +159,63 @@ onMounted(fetchWpsConfig);
       </div>
     </div>
 
-    <div class="button-group">
-      <button type="button" class="btn btn-secondary" @click="handleCancel">
+    <div class="button-group" :data-testid="qa('wireless-wps-config-button-group')">
+      <button type="button" class="btn btn-secondary" :data-testid="qa('wireless-wps-config-cancel-button')" @click="handleCancel">
         {{ t('common.cancel') }}
       </button>
-      <button type="button" class="btn btn-primary" @click="handleApply" :disabled="loading">
+      <button type="button" class="btn btn-primary" :data-testid="qa('wireless-wps-config-apply-button')" @click="handleApply" :disabled="loading">
         {{ t('common.apply') }}
       </button>
     </div>
 
     <template v-if="wpsData?.WlanWps.Enable === 1">
       <WpsActions 
+        :data-testid="qa('wireless-wps-config-actions')"
         :pin-code="wpsData.WlanWps.PINCode"
         @refresh="fetchWpsConfig"
       />
       <WpsVapInfo 
+        :data-testid="qa('wireless-wps-config-vap-info')"
         :bands="wpsData.WlanWps.Band"
       />
     </template>
 
     <!-- Pairing In Progress Overlay -->
-    <div v-if="pairingInProgress" class="pairing-overlay">
-      <div class="pairing-content">
+    <div v-if="pairingInProgress" class="pairing-overlay" :data-testid="qa('wireless-wps-config-pairing-overlay')">
+      <div class="pairing-content" :data-testid="qa('wireless-wps-config-pairing-content')">
         <div class="spinner"></div>
-        <h3>{{ t('wireless.wpsStatus') }}</h3>
-        <p>{{ t('diagnostics.processing') }}</p>
+        <h3 :data-testid="qa('wireless-wps-config-pairing-title')">{{ t('wireless.wpsStatus') }}</h3>
+        <p :data-testid="qa('wireless-wps-config-pairing-text')">{{ t('diagnostics.processing') }}</p>
       </div>
     </div>
 
     <!-- Pairing Result Modal -->
-    <div v-if="pairingResult" class="pairing-overlay">
-      <div class="pairing-content result">
-        <div v-if="pairingResult === 'Success'" class="success-icon">
+    <div v-if="pairingResult" class="pairing-overlay" :data-testid="qa('wireless-wps-config-result-overlay')">
+      <div class="pairing-content result" :data-testid="qa('wireless-wps-config-result-content')">
+        <div v-if="pairingResult === 'Success'" class="success-icon" :data-testid="qa('wireless-wps-config-result-success-icon')">
           <span class="material-icons">check_circle</span>
         </div>
-        <div v-else class="error-icon">
+        <div v-else class="error-icon" :data-testid="qa('wireless-wps-config-result-error-icon')">
           <span class="material-icons">error</span>
         </div>
         
-        <h3>{{ t('wireless.wpsStatus') }}</h3>
-        <p>{{ pairingResult === 'Success' ? 'Connection successful' : 'Connection failed' }}</p>
+        <h3 :data-testid="qa('wireless-wps-config-result-title')">{{ t('wireless.wpsStatus') }}</h3>
+        <p :data-testid="qa('wireless-wps-config-result-text')">{{ pairingResult === 'Success' ? 'Connection successful' : 'Connection failed' }}</p>
         
-        <button class="btn btn-primary" @click="handlePairingComplete">
+        <button class="btn btn-primary" :data-testid="qa('wireless-wps-config-result-close-button')" @click="handlePairingComplete">
           {{ t('common.close') }}
         </button>
       </div>
     </div>
 
     <!-- Success Message -->
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-wps-config-success-message')">
       {{ t('common.apply') }} successful
     </div>
 
     <!-- Confirmation Dialog -->
     <ConfirmationDialog
+      :data-testid="qa('wireless-wps-config-confirmation-dialog')"
       :is-open="showConfirmDialog"
       :title="t('wireless.enableWpsConfirm')"
       :message="t('wireless.enableWpsMessage')"

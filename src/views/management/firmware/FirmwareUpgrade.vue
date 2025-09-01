@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../types/firmware';
 import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } from '../../../services/api/firmware';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -173,47 +175,49 @@ onMounted(fetchFirmwareStatus);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('firmware.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('firmware-title')">{{ t('firmware.title') }}</h1>
 
-    <div class="status-content">
-      <div class="panel-section">
+    <div class="status-content" :data-testid="qa('firmware-content')">
+      <div class="panel-section" :data-testid="qa('firmware-panel')">
         <!-- Firmware Banks Section -->
-        <div class="section-title">{{ t('firmware.firmwareBank') }}</div>
+        <div class="section-title" :data-testid="qa('firmware-bank-title')">{{ t('firmware.firmwareBank') }}</div>
         
         <div class="card-content">
           <!-- PC Version -->
-          <div class="table-container">
+          <div class="table-container" :data-testid="qa('firmware-bank-table')">
             <table>
               <thead>
                 <tr>
-                  <th>{{ t('firmware.firmwareBank') }}</th>
-                  <th>{{ t('firmware.status') }}</th>
-                  <th>{{ t('firmware.firmwareVersion') }}</th>
-                  <th>{{ t('firmware.action') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-bank')">{{ t('firmware.firmwareBank') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-status')">{{ t('firmware.status') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-version')">{{ t('firmware.firmwareVersion') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-action')">{{ t('firmware.action') }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="bank in firmwareBanks" :key="bank.Alias">
-                  <td>{{ bank.Alias }}</td>
+                <tr v-for="(bank, bankIndex) in firmwareBanks" :key="bank.Alias" :data-testid="qa(`firmware-bank-row-${bankIndex}`)">
+                  <td :data-testid="qa(`firmware-bank-alias-${bankIndex}`)">{{ bank.Alias }}</td>
                   <td>
-                    <div class="status-wrapper">
+                    <div class="status-wrapper" :data-testid="qa(`firmware-bank-status-wrapper-${bankIndex}`)">
                       <span 
                         class="status-indicator"
                         :class="{ active: bank.Status === 'Active' }"
+                        :data-testid="qa(`firmware-bank-status-indicator-${bankIndex}`)"
                       ></span>
-                      {{ bank.Status }}
+                      <span :data-testid="qa(`firmware-bank-status-text-${bankIndex}`)">{{ bank.Status }}</span>
                     </div>
                   </td>
-                  <td>{{ bank.Version || 'N/A' }}</td>
+                  <td :data-testid="qa(`firmware-bank-version-${bankIndex}`)">{{ bank.Version || 'N/A' }}</td>
                   <td>
                     <button 
                       v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'"
                       class="btn btn-primary btn-activate"
+                      :data-testid="qa(`firmware-bank-activate-button-${bankIndex}`)"
                       @click="handleActivate(bank)"
                     >
                       {{ t('firmware.activate') }}
                     </button>
-                    <span v-else>-</span>
+                    <span v-else :data-testid="qa(`firmware-bank-no-action-${bankIndex}`)">-</span>
                   </td>
                 </tr>
               </tbody>
@@ -221,31 +225,33 @@ onMounted(fetchFirmwareStatus);
           </div>
 
           <!-- Mobile Version -->
-          <div class="mobile-cards">
-            <div class="table-card" v-for="bank in firmwareBanks" :key="bank.Alias">
+          <div class="mobile-cards" :data-testid="qa('firmware-bank-mobile')">
+            <div class="table-card" v-for="(bank, bankIndex) in firmwareBanks" :key="bank.Alias" :data-testid="qa(`firmware-bank-card-${bankIndex}`)">
               <div class="card-row">
-                <span class="card-label">{{ t('firmware.firmwareBank') }}</span>
-                <span class="card-value">{{ bank.Alias }}</span>
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-bank-label-${bankIndex}`)">{{ t('firmware.firmwareBank') }}</span>
+                <span class="card-value" :data-testid="qa(`firmware-bank-card-bank-value-${bankIndex}`)">{{ bank.Alias }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('firmware.status') }}</span>
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-status-label-${bankIndex}`)">{{ t('firmware.status') }}</span>
                 <span class="card-value">
                   <div class="status-wrapper">
                     <span 
                       class="status-indicator"
                       :class="{ active: bank.Status === 'Active' }"
+                      :data-testid="qa(`firmware-bank-card-status-indicator-${bankIndex}`)"
                     ></span>
-                    {{ bank.Status }}
+                    <span :data-testid="qa(`firmware-bank-card-status-text-${bankIndex}`)">{{ bank.Status }}</span>
                   </div>
                 </span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('firmware.firmwareVersion') }}</span>
-                <span class="card-value">{{ bank.Version || 'N/A' }}</span>
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-version-label-${bankIndex}`)">{{ t('firmware.firmwareVersion') }}</span>
+                <span class="card-value" :data-testid="qa(`firmware-bank-card-version-value-${bankIndex}`)">{{ bank.Version || 'N/A' }}</span>
               </div>
               <div class="card-actions" v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'">
                 <button 
                   class="btn btn-primary btn-activate"
+                  :data-testid="qa(`firmware-bank-card-activate-button-${bankIndex}`)"
                   @click="handleActivate(bank)"
                 >
                   {{ t('firmware.activate') }}
@@ -256,23 +262,25 @@ onMounted(fetchFirmwareStatus);
         </div>
 
         <!-- Upload Section -->
-        <div class="upload-section">
-          <div class="section-title">{{ t('firmware.uploadFirmware') }}</div>
+        <div class="upload-section" :data-testid="qa('firmware-upload-section')">
+          <div class="section-title" :data-testid="qa('firmware-upload-title')">{{ t('firmware.uploadFirmware') }}</div>
           
           <div class="card-content">
             <div 
               class="drop-zone"
               :class="{ dragging: isDragging }"
+              :data-testid="qa('firmware-upload-drop-zone')"
               @drop="handleDrop"
               @dragover="handleDragOver"
               @dragleave="handleDragLeave"
             >
               <div class="drop-zone-content">
                 <span class="material-icons">cloud_upload</span>
-                <p class="drop-text">{{ t('firmware.dragAndDrop') }}</p>
-                <p class="separator">{{ t('firmware.selectFromComputer') }}</p>
+                <p class="drop-text" :data-testid="qa('firmware-upload-drop-text')">{{ t('firmware.dragAndDrop') }}</p>
+                <p class="separator" :data-testid="qa('firmware-upload-separator-text')">{{ t('firmware.selectFromComputer') }}</p>
                 <button 
                   class="btn btn-secondary"
+                  :data-testid="qa('firmware-upload-choose-file-button')"
                   @click="() => fileInput?.click()"
                 >
                   {{ t('firmware.chooseFile') }}
@@ -280,11 +288,12 @@ onMounted(fetchFirmwareStatus);
               </div>
             </div>
 
-            <div v-if="selectedFile" class="selected-file">
+            <div v-if="selectedFile" class="selected-file" :data-testid="qa('firmware-upload-selected-file')">
               <span class="material-icons">description</span>
-              <span class="file-name">{{ selectedFile.name }}</span>
+              <span class="file-name" :data-testid="qa('firmware-upload-selected-file-name')">{{ selectedFile.name }}</span>
               <button 
                 class="btn-clear"
+                :data-testid="qa('firmware-upload-clear-file-button')"
                 @click="selectedFile = null"
               >
                 <span class="material-icons">close</span>
@@ -294,18 +303,20 @@ onMounted(fetchFirmwareStatus);
             <input 
               type="file" 
               ref="fileInput"
+              :data-testid="qa('firmware-upload-file-input')"
               @change="handleFileSelect"
               style="display: none"
               accept=".bin,.img,.swu"
             >
 
-            <div v-if="error" class="error-message">
+            <div v-if="error" class="error-message" :data-testid="qa('firmware-upload-error-message')">
               {{ error }}
             </div>
 
             <div class="button-group">
               <button 
                 class="btn btn-primary"
+                :data-testid="qa('firmware-upload-button')"
                 @click="handleUpgrade"
                 :disabled="!selectedFile || loading"
               >
@@ -319,13 +330,13 @@ onMounted(fetchFirmwareStatus);
     </div>
 
     <!-- Upgrade/Activation Overlay -->
-    <div v-if="isUpgrading" class="upgrade-overlay">
-      <div class="upgrade-content">
+    <div v-if="isUpgrading" class="upgrade-overlay" :data-testid="qa('firmware-upgrade-overlay')">
+      <div class="upgrade-content" :data-testid="qa('firmware-upgrade-content')">
         <div class="spinner"></div>
-        <h2>{{ isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading')) }}</h2>
-        <p>{{ t('firmware.powerOffWarning') }}</p>
-        <p v-if="isRebootPhase">{{ t('firmware.rebootWarning') }}</p>
-        <div class="countdown">{{ countdown }}s</div>
+        <h2 :data-testid="qa('firmware-upgrade-status-text')">{{ isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading')) }}</h2>
+        <p :data-testid="qa('firmware-upgrade-warning-text')">{{ t('firmware.powerOffWarning') }}</p>
+        <p v-if="isRebootPhase" :data-testid="qa('firmware-upgrade-reboot-warning')">{{ t('firmware.rebootWarning') }}</p>
+        <div class="countdown" :data-testid="qa('firmware-upgrade-countdown')">{{ countdown }}s</div>
       </div>
     </div>
   </div>

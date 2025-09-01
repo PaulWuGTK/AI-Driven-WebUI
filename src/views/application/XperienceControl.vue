@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import type { SpeedTestResponse } from '../../types/speedtest';
 import { runSpeedTest } from '../../services/api/speedtest';
 import streambowLogo from '/src/assets/Logo_Streambow_Primary-Black-Positive SB.png';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const loading = ref(false);
@@ -34,29 +36,30 @@ const handleSpeedTest = async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title flex items-center gap-3">
+    <h1 class="page-title flex items-center gap-3" :data-testid="qa('xperience-control-title')">
       {{ t('xperienceControl.title') }} - 
       <span class="text-base font-normal text-gray-600">
         {{ t('xperienceControl.tagline') }}
       </span>
     </h1>
 
-    <div class="status-content">
-      <div class="panel-section">
-        <div class="section-title flex items-center gap-2 flex-wrap">
+    <div class="status-content" :data-testid="qa('xperience-control-content')">
+      <div class="panel-section" :data-testid="qa('xperience-control-panel')">
+        <div class="section-title flex items-center gap-2 flex-wrap" :data-testid="qa('xperience-control-section-title')">
           <span>{{ t('xperienceControl.title') }} -</span>
           <span class="text-sm text-gray-500 whitespace-nowrap">{{ t('xperienceControl.poweredBy') }}</span>
-          <img :src="streambowLogo" alt="Streambow" class="logo-streambow ml-auto" />
+          <img :src="streambowLogo" alt="Streambow" class="logo-streambow ml-auto" :data-testid="qa('xperience-control-streambow-logo')" />
         </div>
         
         <div class="card-content">
-          <div class="description">
+          <div class="description" :data-testid="qa('xperience-control-description')">
             {{ t('xperienceControl.description') }}
           </div>
           
           <div class="button-container">
             <button 
               class="btn btn-primary" 
+              :data-testid="qa('xperience-control-start-test-button')"
               @click="handleSpeedTest"
               :disabled="loading"
             >
@@ -65,57 +68,57 @@ const handleSpeedTest = async () => {
             </button>
           </div>
 
-          <div v-if="error" class="error-message">
+          <div v-if="error" class="error-message" :data-testid="qa('xperience-control-error-message')">
             {{ error }}
           </div>
 
-          <div v-if="testResults && !error" class="results-container">
+          <div v-if="testResults && !error" class="results-container" :data-testid="qa('xperience-control-results')">
             <!-- Download Speed Card -->
-            <div class="result-card">
-              <div class="result-icon">
+            <div class="result-card" :data-testid="qa('xperience-control-download-card')">
+              <div class="result-icon" :data-testid="qa('xperience-control-download-icon')">
                 <span class="material-icons">download</span>
               </div>
-              <div class="result-title">{{ t('xperienceControl.downloadSpeed') }}</div>
-              <div class="result-value">
+              <div class="result-title" :data-testid="qa('xperience-control-download-title')">{{ t('xperienceControl.downloadSpeed') }}</div>
+              <div class="result-value" :data-testid="qa('xperience-control-download-value')">
                 {{ testResults.AppXperienceControl.data.download_udp.throughput }}
                 <span class="result-unit">{{ t('xperienceControl.mbps') }}</span>
               </div>
             </div>
 
             <!-- Upload Speed Card -->
-            <div class="result-card">
-              <div class="result-icon">
+            <div class="result-card" :data-testid="qa('xperience-control-upload-card')">
+              <div class="result-icon" :data-testid="qa('xperience-control-upload-icon')">
                 <span class="material-icons">upload</span>
               </div>
-              <div class="result-title">{{ t('xperienceControl.uploadSpeed') }}</div>
-              <div class="result-value">
+              <div class="result-title" :data-testid="qa('xperience-control-upload-title')">{{ t('xperienceControl.uploadSpeed') }}</div>
+              <div class="result-value" :data-testid="qa('xperience-control-upload-value')">
                 {{ testResults.AppXperienceControl.data.upload_udp.throughput }}
                 <span class="result-unit">{{ t('xperienceControl.mbps') }}</span>
               </div>
             </div>
 
             <!-- Ping Info Card -->
-            <div class="result-card">
-              <div class="result-icon">
+            <div class="result-card" :data-testid="qa('xperience-control-ping-card')">
+              <div class="result-icon" :data-testid="qa('xperience-control-ping-icon')">
                 <span class="material-icons">network_ping</span>
               </div>
-              <div class="result-title">{{ t('xperienceControl.pingInfo') }}</div>
-              <div class="ping-details">
+              <div class="result-title" :data-testid="qa('xperience-control-ping-title')">{{ t('xperienceControl.pingInfo') }}</div>
+              <div class="ping-details" :data-testid="qa('xperience-control-ping-details')">
                 <div class="ping-row">
-                  <span class="ping-label">{{ t('xperienceControl.packetLoss') }}</span>
-                  <span class="ping-value">{{ testResults.AppXperienceControl.data.ping.packet_loss }}%</span>
+                  <span class="ping-label" :data-testid="qa('xperience-control-ping-packet-loss-label')">{{ t('xperienceControl.packetLoss') }}</span>
+                  <span class="ping-value" :data-testid="qa('xperience-control-ping-packet-loss-value')">{{ testResults.AppXperienceControl.data.ping.packet_loss }}%</span>
                 </div>
                 <div class="ping-row">
-                  <span class="ping-label">{{ t('xperienceControl.minEchoTime') }}</span>
-                  <span class="ping-value">{{ testResults.AppXperienceControl.data.ping.min_echo_time }} {{ t('xperienceControl.ms') }}</span>
+                  <span class="ping-label" :data-testid="qa('xperience-control-ping-min-echo-label')">{{ t('xperienceControl.minEchoTime') }}</span>
+                  <span class="ping-value" :data-testid="qa('xperience-control-ping-min-echo-value')">{{ testResults.AppXperienceControl.data.ping.min_echo_time }} {{ t('xperienceControl.ms') }}</span>
                 </div>
                 <div class="ping-row">
-                  <span class="ping-label">{{ t('xperienceControl.meanEchoTime') }}</span>
-                  <span class="ping-value">{{ testResults.AppXperienceControl.data.ping.mean_echo_time }} {{ t('xperienceControl.ms') }}</span>
+                  <span class="ping-label" :data-testid="qa('xperience-control-ping-mean-echo-label')">{{ t('xperienceControl.meanEchoTime') }}</span>
+                  <span class="ping-value" :data-testid="qa('xperience-control-ping-mean-echo-value')">{{ testResults.AppXperienceControl.data.ping.mean_echo_time }} {{ t('xperienceControl.ms') }}</span>
                 </div>
                 <div class="ping-row">
-                  <span class="ping-label">{{ t('xperienceControl.maxEchoTime') }}</span>
-                  <span class="ping-value">{{ testResults.AppXperienceControl.data.ping.max_echo_time }} {{ t('xperienceControl.ms') }}</span>
+                  <span class="ping-label" :data-testid="qa('xperience-control-ping-max-echo-label')">{{ t('xperienceControl.maxEchoTime') }}</span>
+                  <span class="ping-value" :data-testid="qa('xperience-control-ping-max-echo-value')">{{ testResults.AppXperienceControl.data.ping.max_echo_time }} {{ t('xperienceControl.ms') }}</span>
                 </div>
               </div>
             </div>

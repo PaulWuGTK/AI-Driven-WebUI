@@ -5,6 +5,8 @@ import type { NtpResponse, NtpUpdateRequest } from '../../types/ntp';
 import type { TimezoneEntry } from '../../types/timezone';
 import { getNtpSettings, updateNtpSettings } from '../../services/api';
 import TimeZoneSelect from '../../components/management/TimeZoneSelect.vue';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const ntpData = ref<NtpResponse | null>(null);
@@ -92,40 +94,42 @@ onMounted(fetchNtpSettings);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('ntp.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('ntp-title')">{{ t('ntp.title') }}</h1>
 
-    <div class="status-content">
-      <div v-if="loading" class="loading-state">
+    <div class="status-content" :data-testid="qa('ntp-content')">
+      <div v-if="loading" class="loading-state" :data-testid="qa('ntp-loading')">
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
 
-      <div v-else-if="error" class="error-state">
+      <div v-else-if="error" class="error-state" :data-testid="qa('ntp-error')">
         {{ error }}
       </div>
 
       <template v-else>
-        <div class="panel-section">
+        <div class="panel-section" :data-testid="qa('ntp-panel')">
           <div class="card-content">
             <div class="form-group">
-              <label>{{ t('ntp.currentTime') }}</label>
-              <div class="current-time">{{ ntpData?.Ntp.CurrentLocalTime.split('.')[0] }}</div>
+              <label :data-testid="qa('ntp-current-time-label')">{{ t('ntp.currentTime') }}</label>
+              <div class="current-time" :data-testid="qa('ntp-current-time-value')">{{ ntpData?.Ntp.CurrentLocalTime.split('.')[0] }}</div>
             </div>
 
             <div class="form-group">
-              <label>{{ t('ntp.timeZoneSelect') }}</label>
+              <label :data-testid="qa('ntp-timezone-label')">{{ t('ntp.timeZoneSelect') }}</label>
               <TimeZoneSelect 
                 v-model="timeZone" 
+                :data-testid="qa('ntp-timezone-select')"
                 @timezone-change="handleTimezoneChange"
               />
             </div>
 
             <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
               <div class="switch-label">
-                {{ t('ntp.automaticDaylight') }}
+                <span :data-testid="qa('ntp-daylight-saving-label')">{{ t('ntp.automaticDaylight') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
+                    :data-testid="qa('ntp-daylight-saving-toggle')"
                     v-model="daylightSaving"
                   >
                   <span class="slider"></span>
@@ -135,10 +139,11 @@ onMounted(fetchNtpSettings);
 
             <div class="form-group">
               <div class="switch-label">
-                {{ t('ntp.enableNtp') }}
+                <span :data-testid="qa('ntp-enable-label')">{{ t('ntp.enableNtp') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
+                    :data-testid="qa('ntp-enable-toggle')"
                     v-model="ntpEnabled"
                   >
                   <span class="slider"></span>
@@ -146,20 +151,21 @@ onMounted(fetchNtpSettings);
               </div>
             </div>
 
-            <div v-for="(server, index) in ntpServers" :key="index" class="form-group">
-              <label>{{ t('ntp.ntpServer') }}{{ index + 1 }}</label>
+            <div v-for="(server, index) in ntpServers" :key="index" class="form-group" :data-testid="qa(`ntp-server-group-${index}`)">
+              <label :data-testid="qa(`ntp-server-label-${index}`)">{{ t('ntp.ntpServer') }}{{ index + 1 }}</label>
               <input
                 type="text"
+                :data-testid="qa(`ntp-server-input-${index}`)"
                 v-model="ntpServers[index]"
                 :placeholder="t('ntp.placeholder')"
               >
             </div>
 
             <div class="button-group">
-              <button class="btn btn-secondary" @click="fetchNtpSettings" :disabled="loading">
+              <button class="btn btn-secondary" :data-testid="qa('ntp-cancel-button')" @click="fetchNtpSettings" :disabled="loading">
                 {{ t('ntp.cancel') }}
               </button>
-              <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
+              <button class="btn btn-primary" :data-testid="qa('ntp-apply-button')" @click="handleSubmit" :disabled="loading">
                 {{ t('ntp.apply') }}
               </button>
             </div>
@@ -167,7 +173,7 @@ onMounted(fetchNtpSettings);
         </div>
       </template>
 
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('ntp-success-message')">
         {{ t('common.apply') }} successful
       </div>
     </div>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { WlanBand } from '../../types/wlan';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 defineProps<{
@@ -9,23 +11,23 @@ defineProps<{
 </script>
 
 <template>
-  <div class="band-info">
-    <div class="info-grid">
+  <div class="band-info" :data-testid="qa('wlan-band-info-container')">
+    <div class="info-grid" :data-testid="qa('wlan-band-info-grid')">
       <div class="info-row">
-        <span class="info-label">{{ t('wlan.status') }}</span>
-        <span class="info-value">{{ band.Enable ? t('wlan.enable') : t('wlan.disable') }}</span>
+        <span class="info-label" :data-testid="qa('wlan-band-info-status-label')">{{ t('wlan.status') }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-status-value')">{{ band.Enable ? t('wlan.enable') : t('wlan.disable') }}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">{{ t('wlan.channel') }}</span>
-        <span class="info-value">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
+        <span class="info-label" :data-testid="qa('wlan-band-info-channel-label')">{{ t('wlan.channel') }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-channel-value')">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">{{ t('wlan.bandwidth') }}</span>
-        <span class="info-value">{{ band.Bandwidth }}</span>
+        <span class="info-label" :data-testid="qa('wlan-band-info-bandwidth-label')">{{ t('wlan.bandwidth') }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-bandwidth-value')">{{ band.Bandwidth }}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">{{ t('wlan.macAddress') }}</span>
-        <span class="info-value">{{ band.MACAddress }}</span>
+        <span class="info-label" :data-testid="qa('wlan-band-info-mac-label')">{{ t('wlan.macAddress') }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-mac-value')">{{ band.MACAddress }}</span>
       </div>
     </div>
   </div>

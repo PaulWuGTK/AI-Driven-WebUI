@@ -2,6 +2,8 @@
 import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardWiFi } from '../../types/dashboard';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -39,32 +41,32 @@ const requiresPassword = (securityMode: string): boolean => {
 </script>
 
 <template>
-  <div class="wifi-status" v-if="wifiInfo">
-    <h2 class="card-title">{{ t('dashboard.wifi') }}</h2>
+  <div class="wifi-status" v-if="wifiInfo" :data-testid="qa('dashboard-wifi-status-content')">
+    <h2 class="card-title" :data-testid="qa('dashboard-wifi-status-title')">{{ t('dashboard.wifi') }}</h2>
     
-    <div v-if="hasEnabledWifi" class="wifi-networks">
-      <div v-for="band in enabledBands" :key="band.key" class="wifi-network">
-        <div class="network-row">
-          <div class="row-label">SSID</div>
-          <div class="row-value">
-            <span class="text-truncate" :title="band.SSID">{{ band.SSID }}</span>
-            <span v-if="requiresPassword(band.SecurityMode)" class="security-icon material-icons">lock</span>
+    <div v-if="hasEnabledWifi" class="wifi-networks" :data-testid="qa('dashboard-wifi-status-networks')">
+      <div v-for="(band, index) in enabledBands" :key="band.key" class="wifi-network" :data-testid="qa(`dashboard-wifi-status-network-${index}`)">
+        <div class="network-row" :data-testid="qa(`dashboard-wifi-status-network-ssid-row-${index}`)">
+          <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-ssid-label-${index}`)">SSID</div>
+          <div class="row-value" :data-testid="qa(`dashboard-wifi-status-network-ssid-value-${index}`)">
+            <span class="text-truncate" :data-testid="qa(`dashboard-wifi-status-network-ssid-text-${index}`)" :title="band.SSID">{{ band.SSID }}</span>
+            <span v-if="requiresPassword(band.SecurityMode)" class="security-icon material-icons" :data-testid="qa(`dashboard-wifi-status-network-security-icon-${index}`)">lock</span>
           </div>
         </div>
-        <div class="network-row">
-          <div class="row-label">{{ t('wireless.band') }}</div>
-          <div class="row-value">{{ band.displayName }}</div>
+        <div class="network-row" :data-testid="qa(`dashboard-wifi-status-network-band-row-${index}`)">
+          <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-band-label-${index}`)">{{ t('wireless.band') }}</div>
+          <div class="row-value" :data-testid="qa(`dashboard-wifi-status-network-band-value-${index}`)">{{ band.displayName }}</div>
         </div>
-        <div class="network-row" v-if="requiresPassword(band.SecurityMode)">
-          <div class="row-label">{{ t('dashboard.password') }}</div>
-          <div class="row-value password text-truncate" :title="band.Password">{{ band.Password }}</div>
+        <div class="network-row" v-if="requiresPassword(band.SecurityMode)" :data-testid="qa(`dashboard-wifi-status-network-password-row-${index}`)">
+          <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-password-label-${index}`)">{{ t('dashboard.password') }}</div>
+          <div class="row-value password text-truncate" :data-testid="qa(`dashboard-wifi-status-network-password-value-${index}`)" :title="band.Password">{{ band.Password }}</div>
         </div>
       </div>
     </div>
     
-    <div v-else class="no-wifi-enabled">
-      <span class="material-icons">wifi_off</span>
-      <p>WiFi is currently disabled</p>
+    <div v-else class="no-wifi-enabled" :data-testid="qa('dashboard-wifi-status-disabled')">
+      <span class="material-icons" :data-testid="qa('dashboard-wifi-status-disabled-icon')">wifi_off</span>
+      <p :data-testid="qa('dashboard-wifi-status-disabled-text')">WiFi is currently disabled</p>
     </div>
   </div>
 </template>

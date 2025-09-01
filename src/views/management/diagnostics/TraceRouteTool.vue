@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DiagnosticsResponse, Interface, TraceRouteRequest } from '../../../types/diagnostics';
 import { getDiagnostics, startTraceRoute } from '../../../services/api/diagnostics';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const interfaces = ref<Interface[]>([]);
@@ -128,69 +130,69 @@ onMounted(fetchInterfaces);
 </script>
 
 <template>
-  <div class="traceroute-tool">
-    <form @submit.prevent="handleTraceRoute">
+  <div class="traceroute-tool" :data-testid="qa('traceroute-tool-content')">
+    <form @submit.prevent="handleTraceRoute" :data-testid="qa('traceroute-tool-form')">
       <div class="form-group">
-        <label>{{ t('diagnostics.interface') }}</label>
-        <select v-model="selectedInterface" required>
-          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface">
+        <label :data-testid="qa('traceroute-tool-interface-label')">{{ t('diagnostics.interface') }}</label>
+        <select v-model="selectedInterface" :data-testid="qa('traceroute-tool-interface-select')" required>
+          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface" :data-testid="qa(`traceroute-tool-interface-option-${slug(iface.Name)}`)">
             {{ iface.Name }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.protocol') }}</label>
-        <select v-model="protocolVersion" required>
+        <label :data-testid="qa('traceroute-tool-protocol-label')">{{ t('diagnostics.protocol') }}</label>
+        <select v-model="protocolVersion" :data-testid="qa('traceroute-tool-protocol-select')" required>
           <option value="IPv4">IPv4</option>
           <option value="IPv6">IPv6</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.targetHost') }}</label>
-        <input type="text" v-model="targetHost" required />
+        <label :data-testid="qa('traceroute-tool-target-host-label')">{{ t('diagnostics.targetHost') }}</label>
+        <input type="text" v-model="targetHost" :data-testid="qa('traceroute-tool-target-host-input')" required />
       </div>
 
       <div class="button-group">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('traceroute-tool-start-button')" :disabled="loading">
           {{ loading ? t('diagnostics.processing') : t('diagnostics.start') }}
         </button>
       </div>
     </form>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" :data-testid="qa('traceroute-tool-error')">
       {{ error }}
     </div>
 
-    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section">
-      <h3>{{ t('diagnostics.results') }}</h3>
+    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section" :data-testid="qa('traceroute-tool-results-section')">
+      <h3 :data-testid="qa('traceroute-tool-results-title')">{{ t('diagnostics.results') }}</h3>
       
       <!-- Show error state if not Complete -->
-      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state">
+      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state" :data-testid="qa('traceroute-tool-results-error')">
         {{ t('diagnostics.errorState', { state: results.DiagnosticsState }) }}
       </div>
 
       <!-- Show processing state -->
-      <div v-else-if="results.DiagnosticsState === 'Not_Complete'" class="processing-state">
+      <div v-else-if="results.DiagnosticsState === 'Not_Complete'" class="processing-state" :data-testid="qa('traceroute-tool-results-processing')">
         <div class="loading-spinner"></div>
         <span>{{ t('diagnostics.processing') }}</span>
       </div>
 
       <!-- Show results only if Complete -->
-      <div v-else-if="results.DiagnosticsState === 'Complete'" class="trace-results">
-        <div class="trace-header">
-          <div class="hop">{{ t('diagnostics.hop') }}</div>
-          <div class="host">{{ t('diagnostics.host') }}</div>
-          <div class="address">{{ t('diagnostics.address') }}</div>
-          <div class="rtt">{{ t('diagnostics.rtt') }}</div>
+      <div v-else-if="results.DiagnosticsState === 'Complete'" class="trace-results" :data-testid="qa('traceroute-tool-results-table')">
+        <div class="trace-header" :data-testid="qa('traceroute-tool-results-header')">
+          <div class="hop" :data-testid="qa('traceroute-tool-results-header-hop')">{{ t('diagnostics.hop') }}</div>
+          <div class="host" :data-testid="qa('traceroute-tool-results-header-host')">{{ t('diagnostics.host') }}</div>
+          <div class="address" :data-testid="qa('traceroute-tool-results-header-address')">{{ t('diagnostics.address') }}</div>
+          <div class="rtt" :data-testid="qa('traceroute-tool-results-header-rtt')">{{ t('diagnostics.rtt') }}</div>
         </div>
 
-        <div v-for="(hop, index) in results.RouteHops" :key="index" class="trace-row">
-          <div class="hop">{{ index + 1 }}</div>
-          <div class="host">{{ hop.Host }}</div>
-          <div class="address">{{ hop.HostAddress }}</div>
-          <div class="rtt">{{ hop.RTTimes }}</div>
+        <div v-for="(hop, index) in results.RouteHops" :key="index" class="trace-row" :data-testid="qa(`traceroute-tool-results-row-${index}`)">
+          <div class="hop" :data-testid="qa(`traceroute-tool-results-hop-${index}`)">{{ index + 1 }}</div>
+          <div class="host" :data-testid="qa(`traceroute-tool-results-host-${index}`)">{{ hop.Host }}</div>
+          <div class="address" :data-testid="qa(`traceroute-tool-results-address-${index}`)">{{ hop.HostAddress }}</div>
+          <div class="rtt" :data-testid="qa(`traceroute-tool-results-rtt-${index}`)">{{ hop.RTTimes }}</div>
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ import { getWlanBasic, updateWlanBasic } from '../../../services/api/wireless';
 import type { WlanBasicResponse } from '../../../types/wireless';
 import WirelessBandConfig from './basic/WirelessBandConfig.vue';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -96,36 +98,37 @@ onMounted(fetchBasicConfig);
 </script>
 
 <template>
-  <div class="wireless-basic-config">
-    <form @submit.prevent="handleSubmit" :class="{ 'loading': loading }">
-      <div v-if="loading" class="loading-overlay">
+  <div class="wireless-basic-config" :data-testid="qa('wireless-basic-config-content')">
+    <form @submit.prevent="handleSubmit" :class="{ 'loading': loading }" :data-testid="qa('wireless-basic-config-form')">
+      <div v-if="loading" class="loading-overlay" :data-testid="qa('wireless-basic-config-loading-overlay')">
         <div class="loading-spinner"></div>
       </div>
 
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-basic-config-success-message')">
         {{ t('common.apply') }} successful
       </div>
 
-      <div v-if="wlanBasicData" class="band-sections">
+      <div v-if="wlanBasicData" class="band-sections" :data-testid="qa('wireless-basic-config-band-sections')">
         <!-- Show info banner when MLO is disabled by Mesh -->
-        <div class="mesh-status" v-if="isMloDisabledByMesh">
-          <div class="info-banner">
+        <div class="mesh-status" v-if="isMloDisabledByMesh" :data-testid="qa('wireless-basic-config-mesh-status')">
+          <div class="info-banner" :data-testid="qa('wireless-basic-config-mesh-info-banner')">
             <span class="material-icons">info</span>
             <span>{{ t('wireless.meshMloDisabled') }}</span>
           </div>
         </div>
         
         <!-- MLO Settings Section -->
-        <div class="panel-section">
-          <div class="section-title">{{ t('wireless.mloSettings') }}</div>
-          <div class="card-content">
+        <div class="panel-section" :data-testid="qa('wireless-basic-config-mlo-section')">
+          <div class="section-title" :data-testid="qa('wireless-basic-config-mlo-title')">{{ t('wireless.mloSettings') }}</div>
+          <div class="card-content" :data-testid="qa('wireless-basic-config-mlo-content')">
             <!-- MLO Enable Toggle -->
             <div class="form-group">
               <div class="switch-label">
-                <span>{{ t('wireless.mloEnable') }}</span>
+                <span :data-testid="qa('wireless-basic-config-mlo-enable-label')">{{ t('wireless.mloEnable') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
+                    :data-testid="qa('wireless-basic-config-mlo-enable-toggle')"
                     v-model="wlanBasicData.WlanBasic.MLOEnable"
                     :true-value="1"
                     :false-value="0"
@@ -139,18 +142,19 @@ onMounted(fetchBasicConfig);
         </div>
 
         <!-- MLO Settings Section -->
-        <div v-if="wlanBasicData.WlanBasic.MLOEnable === 1" class="panel-section">
+        <div v-if="wlanBasicData.WlanBasic.MLOEnable === 1" class="panel-section" :data-testid="qa('wireless-basic-config-mlo-band-section')">
           <div class="band-header">
-            <div class="section-title-sp">2.4GHz / 5GHz / 6GHz {{ t('wireless.settings') }}</div>
+            <div class="section-title-sp" :data-testid="qa('wireless-basic-config-mlo-band-title')">2.4GHz / 5GHz / 6GHz {{ t('wireless.settings') }}</div>
           </div>
           
-          <div class="band-content">
+          <div class="band-content" :data-testid="qa('wireless-basic-config-mlo-band-content')">
             <div class="form-group">
               <div class="switch-label">
-                <span>{{ t('common.enable') }}</span>
+                <span :data-testid="qa('wireless-basic-config-mlo-band-enable-label')">{{ t('common.enable') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
+                    :data-testid="qa('wireless-basic-config-mlo-band-enable-toggle')"
                     v-model="wlanBasicData.WlanBasic.wifimlo.Enable"
                     :true-value="1"
                     :false-value="0"
@@ -161,23 +165,26 @@ onMounted(fetchBasicConfig);
             </div>
             
             <div class="form-group">
-              <label>{{ t('wireless.ssid') }}</label>
+              <label :data-testid="qa('wireless-basic-config-mlo-band-ssid-label')">{{ t('wireless.ssid') }}</label>
               <input
                 type="text"
+                :data-testid="qa('wireless-basic-config-mlo-band-ssid-input')"
                 v-model="wlanBasicData.WlanBasic.wifimlo.SSID"
                 :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('wireless.authentication') }}</label>
+              <label :data-testid="qa('wireless-basic-config-mlo-band-authentication-label')">{{ t('wireless.authentication') }}</label>
               <select
+                :data-testid="qa('wireless-basic-config-mlo-band-authentication-select')"
                 v-model="wlanBasicData.WlanBasic.wifimlo.SecurityMode"
                 :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
               >
                 <option 
                   v-for="mode in (wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable ?? '').split(',')"
-                  :key="mode" 
+                  :key="mode"
+                  :data-testid="qa(`wireless-basic-config-mlo-band-authentication-option-${slug(mode)}`)"
                   :value="mode"
                 >
                   {{ mode }}
@@ -186,16 +193,18 @@ onMounted(fetchBasicConfig);
             </div>
 
             <div class="form-group">
-              <label>{{ t('wireless.password') }}</label>
-              <div class="password-input">
+              <label :data-testid="qa('wireless-basic-config-mlo-band-password-label')">{{ t('wireless.password') }}</label>
+              <div class="password-input" :data-testid="qa('wireless-basic-config-mlo-band-password-container')">
                 <input
                   :type="showPassword ? 'text' : 'password'"
+                  :data-testid="qa('wireless-basic-config-mlo-band-password-input')"
                   v-model="wlanBasicData.WlanBasic.wifimlo.Password"
                   :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
                 />
                 <button 
                   type="button" 
                   class="toggle-password"
+                  :data-testid="qa('wireless-basic-config-mlo-band-password-toggle')"
                   @click="showPassword = !showPassword"
                   :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
                 >
@@ -211,25 +220,28 @@ onMounted(fetchBasicConfig);
         <!-- Individual Band Configurations (only shown when MLO is disabled) -->
         <template v-if="wlanBasicData.WlanBasic.MLOEnable === 0">
           <WirelessBandConfig
+            :data-testid="qa('wireless-basic-config-2g-band')"
             title="2.4GHz"
             v-model="wlanBasicData.WlanBasic.wifi2g"
           />
           <WirelessBandConfig
+            :data-testid="qa('wireless-basic-config-5g-band')"
             title="5GHz"
             v-model="wlanBasicData.WlanBasic.wifi5g"
           />
           <WirelessBandConfig
+            :data-testid="qa('wireless-basic-config-6g-band')"
             title="6GHz"
             v-model="wlanBasicData.WlanBasic.wifi6g"
           />
         </template>
       </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchBasicConfig" :disabled="loading">
+      <div class="button-group" :data-testid="qa('wireless-basic-config-button-group')">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('wireless-basic-config-cancel-button')" @click="fetchBasicConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('wireless-basic-config-apply-button')" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
@@ -237,6 +249,7 @@ onMounted(fetchBasicConfig);
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
+      :data-testid="qa('wireless-basic-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       message="Applying WiFi Basic Settings..."
       :duration="30"

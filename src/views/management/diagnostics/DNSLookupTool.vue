@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DiagnosticsResponse, Interface, DNSLookupRequest } from '../../../types/diagnostics';
 import { getDiagnostics, startDNSLookup } from '../../../services/api/diagnostics';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const interfaces = ref<Interface[]>([]);
@@ -75,78 +77,78 @@ onMounted(fetchInterfaces);
 </script>
 
 <template>
-  <div class="dns-lookup-tool">
-    <form @submit.prevent="handleDNSLookup">
+  <div class="dns-lookup-tool" :data-testid="qa('dns-lookup-tool-content')">
+    <form @submit.prevent="handleDNSLookup" :data-testid="qa('dns-lookup-tool-form')">
       <div class="form-group">
-        <label>{{ t('diagnostics.interface') }}</label>
-        <select v-model="selectedInterface" required>
-          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface">
+        <label :data-testid="qa('dns-lookup-tool-interface-label')">{{ t('diagnostics.interface') }}</label>
+        <select v-model="selectedInterface" :data-testid="qa('dns-lookup-tool-interface-select')" required>
+          <option v-for="iface in interfaces" :key="iface.Interface" :value="iface.Interface" :data-testid="qa(`dns-lookup-tool-interface-option-${slug(iface.Name)}`)">
             {{ iface.Name }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.dnsServer') }}</label>
-        <input type="text" v-model="dnsServer" required />
+        <label :data-testid="qa('dns-lookup-tool-dns-server-label')">{{ t('diagnostics.dnsServer') }}</label>
+        <input type="text" v-model="dnsServer" :data-testid="qa('dns-lookup-tool-dns-server-input')" required />
       </div>
 
       <div class="form-group">
-        <label>{{ t('diagnostics.targetHost') }}</label>
-        <input type="text" v-model="targetHost" required />
+        <label :data-testid="qa('dns-lookup-tool-target-host-label')">{{ t('diagnostics.targetHost') }}</label>
+        <input type="text" v-model="targetHost" :data-testid="qa('dns-lookup-tool-target-host-input')" required />
       </div>
 
       <div class="button-group">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('dns-lookup-tool-start-button')" :disabled="loading">
           {{ loading ? t('diagnostics.processing') : t('diagnostics.start') }}
         </button>
       </div>
     </form>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message" :data-testid="qa('dns-lookup-tool-error')">
       {{ error }}
     </div>
 
-    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section">
-      <h3>{{ t('diagnostics.results') }}</h3>
+    <div v-if="results && results.DiagnosticsState !== 'None'" class="results-section" :data-testid="qa('dns-lookup-tool-results-section')">
+      <h3 :data-testid="qa('dns-lookup-tool-results-title')">{{ t('diagnostics.results') }}</h3>
       
       <!-- Show error state if not Complete -->
-      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state">
+      <div v-if="results.DiagnosticsState.startsWith('Error_')" class="error-state" :data-testid="qa('dns-lookup-tool-results-error')">
         {{ t('diagnostics.errorState', { state: results.DiagnosticsState }) }}
       </div>
 
       <!-- Show results only if Complete -->
-      <div v-else-if="results.DiagnosticsState === 'Complete'" class="dns-results">
-        <div v-for="(result, index) in results.Result" :key="index" class="result-card">
+      <div v-else-if="results.DiagnosticsState === 'Complete'" class="dns-results" :data-testid="qa('dns-lookup-tool-results-grid')">
+        <div v-for="(result, index) in results.Result" :key="index" class="result-card" :data-testid="qa(`dns-lookup-tool-results-card-${index}`)">
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.status') }}</span>
-            <span class="value">{{ result.Status }}</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-status-label-${index}`)">{{ t('diagnostics.status') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-status-value-${index}`)">{{ result.Status }}</span>
           </div>
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.answerType') }}</span>
-            <span class="value">{{ result.AnswerType }}</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-answer-type-label-${index}`)">{{ t('diagnostics.answerType') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-answer-type-value-${index}`)">{{ result.AnswerType }}</span>
           </div>
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.hostname') }}</span>
-            <span class="value">{{ result.HostNameReturned }}</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-hostname-label-${index}`)">{{ t('diagnostics.hostname') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-hostname-value-${index}`)">{{ result.HostNameReturned }}</span>
           </div>
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.ipAddresses') }}</span>
-            <span class="value">{{ result.IPAddresses }}</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-ip-addresses-label-${index}`)">{{ t('diagnostics.ipAddresses') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-ip-addresses-value-${index}`)">{{ result.IPAddresses }}</span>
           </div>
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.responseTime') }}</span>
-            <span class="value">{{ result.ResponseTime }} ms</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-response-time-label-${index}`)">{{ t('diagnostics.responseTime') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-response-time-value-${index}`)">{{ result.ResponseTime }} ms</span>
           </div>
           <div class="result-row">
-            <span class="label">{{ t('diagnostics.dnsServerIp') }}</span>
-            <span class="value">{{ result.DNSServerIP }}</span>
+            <span class="label" :data-testid="qa(`dns-lookup-tool-results-dns-server-ip-label-${index}`)">{{ t('diagnostics.dnsServerIp') }}</span>
+            <span class="value" :data-testid="qa(`dns-lookup-tool-results-dns-server-ip-value-${index}`)">{{ result.DNSServerIP }}</span>
           </div>
         </div>
       </div>
 
       <!-- Show processing state -->
-      <div v-else class="processing-state">
+      <div v-else class="processing-state" :data-testid="qa('dns-lookup-tool-results-processing')">
         <div class="loading-spinner"></div>
         <span>{{ t('diagnostics.processing') }}</span>
       </div>

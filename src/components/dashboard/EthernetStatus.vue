@@ -2,6 +2,8 @@
 import { defineProps,computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardEthernetPort } from '../../types/dashboard';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -17,21 +19,22 @@ const sortedEthernet = computed(() => {
 </script>
 
 <template>
-  <div class="ethernet-status" v-if="sortedEthernet.length">
-    <h2 class="card-title">{{ t('dashboard.ethernet') }}</h2>
-    <div class="ports-grid">
+  <div class="ethernet-status" v-if="sortedEthernet.length" :data-testid="qa('dashboard-ethernet-status-content')">
+    <h2 class="card-title" :data-testid="qa('dashboard-ethernet-status-title')">{{ t('dashboard.ethernet') }}</h2>
+    <div class="ports-grid" :data-testid="qa('dashboard-ethernet-status-grid')">
       <div 
-        v-for="port in sortedEthernet" 
+        v-for="(port, index) in sortedEthernet" 
         :key="port.Port"
         class="port-item"
+        :data-testid="qa(`dashboard-ethernet-status-port-${index}`)"
       >
-        <div class="port-icon" :class="{ active: port.Status === 'Up' }">
-          <span class="material-icons">settings_ethernet</span>
+        <div class="port-icon" :data-testid="qa(`dashboard-ethernet-status-port-icon-${index}`)" :class="{ active: port.Status === 'Up' }">
+          <span class="material-icons" :data-testid="qa(`dashboard-ethernet-status-port-icon-symbol-${index}`)">settings_ethernet</span>
         </div>
-        <div class="port-info">
-          <span class="port-name">{{ port.Port }}</span>
-          <span class="port-role">{{ port.Role.toUpperCase() }}</span>
-          <span class="port-speed">{{ port.Speed }} Mbps</span>
+        <div class="port-info" :data-testid="qa(`dashboard-ethernet-status-port-info-${index}`)">
+          <span class="port-name" :data-testid="qa(`dashboard-ethernet-status-port-name-${index}`)">{{ port.Port }}</span>
+          <span class="port-role" :data-testid="qa(`dashboard-ethernet-status-port-role-${index}`)">{{ port.Role.toUpperCase() }}</span>
+          <span class="port-speed" :data-testid="qa(`dashboard-ethernet-status-port-speed-${index}`)">{{ port.Speed }} Mbps</span>
         </div>
       </div>
     </div>

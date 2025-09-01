@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../../types/ssh';
 import { getSshServers, updateSshServers } from '../../../services/api/ssh';
 import SshServerEditForm from '../../../components/ssh/SshServerEditForm.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const servers = ref<SshServer[]>([]);
@@ -85,96 +87,96 @@ onMounted(fetchServers);
 </script>
 
 <template>
-  <div class="server-management">
+  <div class="server-management" :data-testid="qa('ssh-server-management-content')">
     <div class="header-row">
-      <div class="section-title-sp">{{ t('ssh.serverManagement') }}</div>
-      <button v-if="!isEditing" class="btn btn-primary" @click="handleAdd">
+      <div class="section-title-sp" :data-testid="qa('ssh-server-management-title')">{{ t('ssh.serverManagement') }}</div>
+      <button v-if="!isEditing" class="btn btn-primary" :data-testid="qa('ssh-server-management-add-button')" @click="handleAdd">
         <span class="material-icons">add</span>
         {{ t('ssh.addServer') }}
       </button>
     </div>
 
-    <div v-if="loading" class="loading-state">
+    <div v-if="loading" class="loading-state" :data-testid="qa('ssh-server-management-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="!isEditing" class="server-list">
+    <div v-else-if="!isEditing" class="server-list" :data-testid="qa('ssh-server-management-list')">
       <!-- PC版表格 -->
-      <div class="table-container">
+      <div class="table-container" :data-testid="qa('ssh-server-management-table')">
         <table>
           <thead>
             <tr>
-              <th>{{ t('ssh.id') }}</th>
-              <th>{{ t('ssh.interface') }}</th>
-              <th>{{ t('ssh.status') }}</th>
-              <th>{{ t('ssh.loginWithPassword') }}</th>
-              <th>{{ t('ssh.rootLogin') }}</th>
-              <th>{{ t('ssh.rootLoginWithPassword') }}</th>
-              <th>{{ t('ssh.action') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-id')">{{ t('ssh.id') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-interface')">{{ t('ssh.interface') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-status')">{{ t('ssh.status') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-password-login')">{{ t('ssh.loginWithPassword') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-root-login')">{{ t('ssh.rootLogin') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-root-password-login')">{{ t('ssh.rootLoginWithPassword') }}</th>
+              <th :data-testid="qa('ssh-server-management-header-action')">{{ t('ssh.action') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="server in servers" :key="server.ID">
-              <td>{{ server.ID }}</td>
-              <td>{{ server.Interface }}</td>
-              <td>{{ server.Status }}</td>
-              <td>{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
-              <td>{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
-              <td>{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
+            <tr v-for="(server, index) in servers" :key="server.ID" :data-testid="qa(`ssh-server-management-row-${index}`)">
+              <td :data-testid="qa(`ssh-server-management-id-${index}`)">{{ server.ID }}</td>
+              <td :data-testid="qa(`ssh-server-management-interface-${index}`)">{{ server.Interface }}</td>
+              <td :data-testid="qa(`ssh-server-management-status-${index}`)">{{ server.Status }}</td>
+              <td :data-testid="qa(`ssh-server-management-password-login-${index}`)">{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
+              <td :data-testid="qa(`ssh-server-management-root-login-${index}`)">{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
+              <td :data-testid="qa(`ssh-server-management-root-password-login-${index}`)">{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn-action" @click="handleEdit(server)" title="Edit">
+                  <button class="btn-action" :data-testid="qa(`ssh-server-management-edit-${index}`)" @click="handleEdit(server)" title="Edit">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="btn-action" @click="handleDelete(server.ID)" title="Delete">
+                  <button class="btn-action" :data-testid="qa(`ssh-server-management-delete-${index}`)" @click="handleDelete(server.ID)" title="Delete">
                     <span class="material-icons">delete</span>
                   </button>
                 </div>
               </td>
             </tr>
-            <tr v-if="servers.length === 0">
-              <td colspan="7" class="no-data">No servers configured</td>
+            <tr v-if="servers.length === 0" :data-testid="qa('ssh-server-management-no-data-row')">
+              <td colspan="7" class="no-data" :data-testid="qa('ssh-server-management-no-data')">No servers configured</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- 手機版卡片 -->
-      <div class="mobile-cards">
-        <div v-if="servers.length === 0" class="no-data-mobile">
+      <div class="mobile-cards" :data-testid="qa('ssh-server-management-mobile')">
+        <div v-if="servers.length === 0" class="no-data-mobile" :data-testid="qa('ssh-server-management-no-data-mobile')">
           No servers configured
         </div>
-        <div class="table-card" v-else v-for="server in servers" :key="server.ID">
+        <div class="table-card" v-else v-for="(server, index) in servers" :key="server.ID" :data-testid="qa(`ssh-server-management-card-${index}`)">
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.id') }}</span>
-            <span class="card-value">{{ server.ID }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-id-label-${index}`)">{{ t('ssh.id') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-id-value-${index}`)">{{ server.ID }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.interface') }}</span>
-            <span class="card-value">{{ server.Interface }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-interface-label-${index}`)">{{ t('ssh.interface') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-interface-value-${index}`)">{{ server.Interface }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.status') }}</span>
-            <span class="card-value">{{ server.Status }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-status-label-${index}`)">{{ t('ssh.status') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-status-value-${index}`)">{{ server.Status }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.loginWithPassword') }}</span>
-            <span class="card-value">{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-password-login-label-${index}`)">{{ t('ssh.loginWithPassword') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-password-login-value-${index}`)">{{ server.AllowPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.rootLogin') }}</span>
-            <span class="card-value">{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-root-login-label-${index}`)">{{ t('ssh.rootLogin') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-root-login-value-${index}`)">{{ server.AllowRootLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.rootLoginWithPassword') }}</span>
-            <span class="card-value">{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-root-password-login-label-${index}`)">{{ t('ssh.rootLoginWithPassword') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-server-management-card-root-password-login-value-${index}`)">{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
           <div class="card-actions">
-            <button class="btn-action" @click="handleEdit(server)" title="Edit">
+            <button class="btn-action" :data-testid="qa(`ssh-server-management-card-edit-${index}`)" @click="handleEdit(server)" title="Edit">
               <span class="material-icons">edit</span>
             </button>
-            <button class="btn-action" @click="handleDelete(server.ID)" title="Delete">
+            <button class="btn-action" :data-testid="qa(`ssh-server-management-card-delete-${index}`)" @click="handleDelete(server.ID)" title="Delete">
               <span class="material-icons">delete</span>
             </button>
           </div>
@@ -185,6 +187,7 @@ onMounted(fetchServers);
     <SshServerEditForm
       v-else
       v-if="editingServer"
+      :data-testid="qa('ssh-server-management-edit-form')"
       :server="editingServer"
       :interfaces="interfaces"
       @update:server="(server) => editingServer = server"

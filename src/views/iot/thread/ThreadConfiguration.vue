@@ -8,6 +8,8 @@ import type {
   ThreadSecurityPolicy
 } from '../../../types/thread';
 import { getThreadConfiguration, updateThreadConfiguration } from '../../../services/api/thread';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const threadConfig = ref<ThreadConfigurationResponse | null>(null);
@@ -230,26 +232,27 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="thread-content">
-    <div v-if="loading && !threadConfig" class="loading-state">
+  <div class="thread-content" :data-testid="qa('thread-config-content')">
+    <div v-if="loading && !threadConfig" class="loading-state" :data-testid="qa('thread-config-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('thread-config-error')">
       {{ error }}
     </div>
 
     <template v-else-if="threadConfig">
       <!-- Thread Enable Toggle -->
-      <div class="panel-section">
+      <div class="panel-section" :data-testid="qa('thread-config-enable-section')">
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('common.enable') }}</span>
+              <span :data-testid="qa('thread-config-enable-label')">{{ t('common.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('thread-config-enable-toggle')"
                   v-model="tempThreadEnabled"
                 >
                 <span class="slider"></span>
@@ -258,10 +261,10 @@ onMounted(() => {
           </div>
           
           <div class="button-group">
-            <button type="button" class="btn btn-secondary" @click="cancelEnableChanges">
+            <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-enable-cancel')" @click="cancelEnableChanges">
               {{ t('common.cancel') }}
             </button>
-            <button type="button" class="btn btn-primary" @click="updateThreadEnabled">
+            <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-enable-apply')" @click="updateThreadEnabled">
               {{ t('common.apply') }}
             </button>
           </div>
@@ -270,46 +273,50 @@ onMounted(() => {
 
       <template v-if="threadEnabled">
         <!-- Active Dataset Section -->
-        <div class="panel-section">
-          <div class="section-title">{{ t('thread.activeDataset') }}</div>
+        <div class="panel-section" :data-testid="qa('thread-config-active-dataset-section')">
+          <div class="section-title" :data-testid="qa('thread-config-active-dataset-title')">{{ t('thread.activeDataset') }}</div>
           
           <div class="card-content" v-if="activeDataset">
             <div class="dataset-header">
-              <button class="btn btn-secondary generate-btn" @click="generateDataset('Active')">
+              <button class="btn btn-secondary generate-btn" :data-testid="qa('thread-config-active-generate-button')" @click="generateDataset('Active')">
                 <span class="material-icons">autorenew</span>
                 <span>{{ t('thread.generateDataset') }}</span>
               </button>
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.activeTimestamp') }}</label>
+              <label :data-testid="qa('thread-config-active-timestamp-label')">{{ t('thread.activeTimestamp') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-active-timestamp-input')"
                 v-model="activeDataset['Active Timestamp']" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.networkName') }}</label>
+              <label :data-testid="qa('thread-config-active-network-name-label')">{{ t('thread.networkName') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-active-network-name-input')"
                 v-model="activeDataset.NetworkName" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.networkKey') }}</label>
+              <label :data-testid="qa('thread-config-active-network-key-label')">{{ t('thread.networkKey') }}</label>
               <div class="password-input">
                 <input 
                   :type="showActiveNetworkKey ? 'text' : 'password'" 
+                  :data-testid="qa('thread-config-active-network-key-input')"
                   v-model="activeDataset.NetworkKey" 
                   class="form-control"
                 />
                 <button 
                   type="button" 
                   class="toggle-password"
+                  :data-testid="qa('thread-config-active-network-key-toggle')"
                   @click="showActiveNetworkKey = !showActiveNetworkKey"
                 >
                   <span class="material-icons">
@@ -320,9 +327,10 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.channel') }}</label>
+              <label :data-testid="qa('thread-config-active-channel-label')">{{ t('thread.channel') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-active-channel-input')"
                 v-model="activeDataset.Channel" 
                 class="form-control"
                 min="11"
@@ -331,52 +339,58 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.channelMask') }}</label>
+              <label :data-testid="qa('thread-config-active-channel-mask-label')">{{ t('thread.channelMask') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-active-channel-mask-input')"
                 v-model="activeDataset.ChannelMask" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.panId') }}</label>
+              <label :data-testid="qa('thread-config-active-pan-id-label')">{{ t('thread.panId') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-active-pan-id-input')"
                 v-model="activeDataset.PanId" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.extendedPanId') }}</label>
+              <label :data-testid="qa('thread-config-active-extended-pan-id-label')">{{ t('thread.extendedPanId') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-active-extended-pan-id-input')"
                 v-model="activeDataset.ExtPanId" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.meshLocalPrefix') }}</label>
+              <label :data-testid="qa('thread-config-active-mesh-local-prefix-label')">{{ t('thread.meshLocalPrefix') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-active-mesh-local-prefix-input')"
                 v-model="activeDataset.MeshLocalPrefix" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.pskc') }}</label>
+              <label :data-testid="qa('thread-config-active-pskc-label')">{{ t('thread.pskc') }}</label>
               <div class="password-input">
                 <input 
                   :type="showActivePSKc ? 'text' : 'password'" 
+                  :data-testid="qa('thread-config-active-pskc-input')"
                   v-model="activeDataset.PSKc" 
                   class="form-control"
                 />
                 <button 
                   type="button" 
                   class="toggle-password"
+                  :data-testid="qa('thread-config-active-pskc-toggle')"
                   @click="showActivePSKc = !showActivePSKc"
                 >
                   <span class="material-icons">
@@ -388,13 +402,14 @@ onMounted(() => {
 
             <!-- Security Policy Section -->
             <div class="security-policy-section">
-              <label>{{ t('thread.securityPolicy') }}</label>
+              <label :data-testid="qa('thread-config-active-security-policy-label')">{{ t('thread.securityPolicy') }}</label>
               
-              <div class="security-policy-grid">
+              <div class="security-policy-grid" :data-testid="qa('thread-config-active-security-policy-grid')">
                 <div class="form-group">
-                  <label>{{ t('thread.rotationTime') }}</label>
+                  <label :data-testid="qa('thread-config-active-rotation-time-label')">{{ t('thread.rotationTime') }}</label>
                   <input 
                     type="number" 
+                    :data-testid="qa('thread-config-active-rotation-time-input')"
                     v-model="activeDataset.SecurityPolicy.RotationTime" 
                     class="form-control"
                   />
@@ -405,6 +420,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-autonomous-enrollment" 
+                      :data-testid="qa('thread-config-active-autonomous-enrollment')"
                       v-model="activeDataset.SecurityPolicy.AutonomousEnrollment"
                     />
                     <label for="active-autonomous-enrollment">
@@ -416,6 +432,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-commercial-commissioning" 
+                      :data-testid="qa('thread-config-active-commercial-commissioning')"
                       v-model="activeDataset.SecurityPolicy.CommercialCommissioning"
                     />
                     <label for="active-commercial-commissioning">
@@ -427,6 +444,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-external-commissioning" 
+                      :data-testid="qa('thread-config-active-external-commissioning')"
                       v-model="activeDataset.SecurityPolicy.ExternalCommissioning"
                     />
                     <label for="active-external-commissioning">
@@ -438,6 +456,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-native-commissioning" 
+                      :data-testid="qa('thread-config-active-native-commissioning')"
                       v-model="activeDataset.SecurityPolicy.NativeCommissioning"
                     />
                     <label for="active-native-commissioning">
@@ -449,6 +468,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-network-key-provisioning" 
+                      :data-testid="qa('thread-config-active-network-key-provisioning')"
                       v-model="activeDataset.SecurityPolicy.NetworkKeyProvisioning"
                     />
                     <label for="active-network-key-provisioning">
@@ -460,6 +480,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-non-ccm-routers" 
+                      :data-testid="qa('thread-config-active-non-ccm-routers')"
                       v-model="activeDataset.SecurityPolicy.NonCcmRouters"
                     />
                     <label for="active-non-ccm-routers">
@@ -471,6 +492,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-obtain-network-key" 
+                      :data-testid="qa('thread-config-active-obtain-network-key')"
                       v-model="activeDataset.SecurityPolicy.ObtainNetworkKey"
                     />
                     <label for="active-obtain-network-key">
@@ -482,6 +504,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-routers" 
+                      :data-testid="qa('thread-config-active-routers')"
                       v-model="activeDataset.SecurityPolicy.Routers"
                     />
                     <label for="active-routers">
@@ -493,6 +516,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="active-toble-link" 
+                      :data-testid="qa('thread-config-active-toble-link')"
                       v-model="activeDataset.SecurityPolicy.TobleLink"
                     />
                     <label for="active-toble-link">
@@ -504,10 +528,10 @@ onMounted(() => {
             </div>
 
             <div class="button-group">
-              <button type="button" class="btn btn-secondary" @click="fetchThreadConfiguration">
+              <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-active-cancel')" @click="fetchThreadConfiguration">
                 {{ t('common.cancel') }}
               </button>
-              <button type="button" class="btn btn-primary" @click="updateActiveDataset">
+              <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-active-update')" @click="updateActiveDataset">
                 {{ t('thread.update') }}
               </button>
             </div>
@@ -515,64 +539,70 @@ onMounted(() => {
         </div>
 
         <!-- Pending Dataset Section -->
-        <div class="panel-section">
-          <div class="section-title">{{ t('thread.pendingDataset') }}</div>
+        <div class="panel-section" :data-testid="qa('thread-config-pending-dataset-section')">
+          <div class="section-title" :data-testid="qa('thread-config-pending-dataset-title')">{{ t('thread.pendingDataset') }}</div>
           
           <div class="card-content" v-if="pendingDataset">
             <div class="dataset-header">
-              <button class="btn btn-secondary generate-btn" @click="generateDataset('Pending')">
+              <button class="btn btn-secondary generate-btn" :data-testid="qa('thread-config-pending-generate-button')" @click="generateDataset('Pending')">
                 <span class="material-icons">autorenew</span>
                 <span>{{ t('thread.generateDataset') }}</span>
               </button>
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.pendingTimestamp') }}</label>
+              <label :data-testid="qa('thread-config-pending-timestamp-label')">{{ t('thread.pendingTimestamp') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-pending-timestamp-input')"
                 v-model="pendingDataset['Pending Timestamp']" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.delay') }} (ms)</label>
+              <label :data-testid="qa('thread-config-pending-delay-label')">{{ t('thread.delay') }} (ms)</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-pending-delay-input')"
                 v-model="pendingDataset.Delay" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.activeTimestamp') }}</label>
+              <label :data-testid="qa('thread-config-pending-active-timestamp-label')">{{ t('thread.activeTimestamp') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-pending-active-timestamp-input')"
                 v-model="pendingDataset['Active Timestamp']" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.networkName') }}</label>
+              <label :data-testid="qa('thread-config-pending-network-name-label')">{{ t('thread.networkName') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-pending-network-name-input')"
                 v-model="pendingDataset.NetworkName" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.networkKey') }}</label>
+              <label :data-testid="qa('thread-config-pending-network-key-label')">{{ t('thread.networkKey') }}</label>
               <div class="password-input">
                 <input 
                   :type="showPendingNetworkKey ? 'text' : 'password'" 
+                  :data-testid="qa('thread-config-pending-network-key-input')"
                   v-model="pendingDataset.NetworkKey" 
                   class="form-control"
                 />
                 <button 
                   type="button" 
                   class="toggle-password"
+                  :data-testid="qa('thread-config-pending-network-key-toggle')"
                   @click="showPendingNetworkKey = !showPendingNetworkKey"
                 >
                   <span class="material-icons">
@@ -583,9 +613,10 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.channel') }}</label>
+              <label :data-testid="qa('thread-config-pending-channel-label')">{{ t('thread.channel') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-pending-channel-input')"
                 v-model="pendingDataset.Channel" 
                 class="form-control"
                 min="11"
@@ -594,52 +625,58 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.channelMask') }}</label>
+              <label :data-testid="qa('thread-config-pending-channel-mask-label')">{{ t('thread.channelMask') }}</label>
               <input 
                 type="number" 
+                :data-testid="qa('thread-config-pending-channel-mask-input')"
                 v-model="pendingDataset.ChannelMask" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.panId') }}</label>
+              <label :data-testid="qa('thread-config-pending-pan-id-label')">{{ t('thread.panId') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-pending-pan-id-input')"
                 v-model="pendingDataset.PanId" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.extendedPanId') }}</label>
+              <label :data-testid="qa('thread-config-pending-extended-pan-id-label')">{{ t('thread.extendedPanId') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-pending-extended-pan-id-input')"
                 v-model="pendingDataset.ExtPanId" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.meshLocalPrefix') }}</label>
+              <label :data-testid="qa('thread-config-pending-mesh-local-prefix-label')">{{ t('thread.meshLocalPrefix') }}</label>
               <input 
                 type="text" 
+                :data-testid="qa('thread-config-pending-mesh-local-prefix-input')"
                 v-model="pendingDataset.MeshLocalPrefix" 
                 class="form-control"
               />
             </div>
 
             <div class="form-group">
-              <label>{{ t('thread.pskc') }}</label>
+              <label :data-testid="qa('thread-config-pending-pskc-label')">{{ t('thread.pskc') }}</label>
               <div class="password-input">
                 <input 
                   :type="showPendingPSKc ? 'text' : 'password'" 
+                  :data-testid="qa('thread-config-pending-pskc-input')"
                   v-model="pendingDataset.PSKc" 
                   class="form-control"
                 />
                 <button 
                   type="button" 
                   class="toggle-password"
+                  :data-testid="qa('thread-config-pending-pskc-toggle')"
                   @click="showPendingPSKc = !showPendingPSKc"
                 >
                   <span class="material-icons">
@@ -651,13 +688,14 @@ onMounted(() => {
 
             <!-- Security Policy Section -->
             <div class="security-policy-section">
-              <label>{{ t('thread.securityPolicy') }}</label>
+              <label :data-testid="qa('thread-config-pending-security-policy-label')">{{ t('thread.securityPolicy') }}</label>
               
-              <div class="security-policy-grid">
+              <div class="security-policy-grid" :data-testid="qa('thread-config-pending-security-policy-grid')">
                 <div class="form-group">
-                  <label>{{ t('thread.rotationTime') }}</label>
+                  <label :data-testid="qa('thread-config-pending-rotation-time-label')">{{ t('thread.rotationTime') }}</label>
                   <input 
                     type="number" 
+                    :data-testid="qa('thread-config-pending-rotation-time-input')"
                     v-model="pendingDataset.SecurityPolicy.RotationTime" 
                     class="form-control"
                   />
@@ -668,6 +706,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-autonomous-enrollment" 
+                      :data-testid="qa('thread-config-pending-autonomous-enrollment')"
                       v-model="pendingDataset.SecurityPolicy.AutonomousEnrollment"
                     />
                     <label for="pending-autonomous-enrollment">
@@ -679,6 +718,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-commercial-commissioning" 
+                      :data-testid="qa('thread-config-pending-commercial-commissioning')"
                       v-model="pendingDataset.SecurityPolicy.CommercialCommissioning"
                     />
                     <label for="pending-commercial-commissioning">
@@ -690,6 +730,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-external-commissioning" 
+                      :data-testid="qa('thread-config-pending-external-commissioning')"
                       v-model="pendingDataset.SecurityPolicy.ExternalCommissioning"
                     />
                     <label for="pending-external-commissioning">
@@ -701,6 +742,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-native-commissioning" 
+                      :data-testid="qa('thread-config-pending-native-commissioning')"
                       v-model="pendingDataset.SecurityPolicy.NativeCommissioning"
                     />
                     <label for="pending-native-commissioning">
@@ -712,6 +754,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-network-key-provisioning" 
+                      :data-testid="qa('thread-config-pending-network-key-provisioning')"
                       v-model="pendingDataset.SecurityPolicy.NetworkKeyProvisioning"
                     />
                     <label for="pending-network-key-provisioning">
@@ -723,6 +766,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-non-ccm-routers" 
+                      :data-testid="qa('thread-config-pending-non-ccm-routers')"
                       v-model="pendingDataset.SecurityPolicy.NonCcmRouters"
                     />
                     <label for="pending-non-ccm-routers">
@@ -734,6 +778,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-obtain-network-key" 
+                      :data-testid="qa('thread-config-pending-obtain-network-key')"
                       v-model="pendingDataset.SecurityPolicy.ObtainNetworkKey"
                     />
                     <label for="pending-obtain-network-key">
@@ -745,6 +790,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-routers" 
+                      :data-testid="qa('thread-config-pending-routers')"
                       v-model="pendingDataset.SecurityPolicy.Routers"
                     />
                     <label for="pending-routers">
@@ -756,6 +802,7 @@ onMounted(() => {
                     <input 
                       type="checkbox" 
                       id="pending-toble-link" 
+                      :data-testid="qa('thread-config-pending-toble-link')"
                       v-model="pendingDataset.SecurityPolicy.TobleLink"
                     />
                     <label for="pending-toble-link">
@@ -767,10 +814,10 @@ onMounted(() => {
             </div>
 
             <div class="button-group">
-              <button type="button" class="btn btn-secondary" @click="fetchThreadConfiguration">
+              <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-pending-cancel')" @click="fetchThreadConfiguration">
                 {{ t('common.cancel') }}
               </button>
-              <button type="button" class="btn btn-primary" @click="updatePendingDataset">
+              <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-pending-update')" @click="updatePendingDataset">
                 {{ t('thread.update') }}
               </button>
             </div>
@@ -780,7 +827,7 @@ onMounted(() => {
     </template>
 
     <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-config-success-message')">
       {{ successMessage }}
     </div>
   </div>

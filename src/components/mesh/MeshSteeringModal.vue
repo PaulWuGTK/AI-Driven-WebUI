@@ -2,6 +2,8 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -31,27 +33,28 @@ const handleApply = () => {
 </script>
 
 <template>
-  <div class="modal-overlay">
-    <div class="modal">
+  <div class="modal-overlay" :data-testid="qa('mesh-steering-modal-overlay')">
+    <div class="modal" :data-testid="qa('mesh-steering-modal-content')">
       <div class="modal-header">
-        <h3>{{ t('mesh.steeringControl') }}</h3>
-        <button class="close-button" @click="$emit('close')">&times;</button>
+        <h3 :data-testid="qa('mesh-steering-modal-title')">{{ t('mesh.steeringControl') }}</h3>
+        <button class="close-button" :data-testid="qa('mesh-steering-modal-close')" @click="$emit('close')">&times;</button>
       </div>
 
-      <div class="modal-content">
+      <div class="modal-content" :data-testid="qa('mesh-steering-modal-body')">
         <div class="form-group">
-          <label>{{ t('mesh.selectedNode') }}</label>
-          <div class="selected-node">{{ node.Name }}</div>
+          <label :data-testid="qa('mesh-steering-modal-selected-node-label')">{{ t('mesh.selectedNode') }}</label>
+          <div class="selected-node" :data-testid="qa('mesh-steering-modal-selected-node-value')">{{ node.Name }}</div>
         </div>
 
         <div class="form-group">
-          <label>{{ t('mesh.destination') }}</label>
-          <select v-model="selectedDestination">
-            <option value="" disabled>{{ t('mesh.selectDestination') }}</option>
+          <label :data-testid="qa('mesh-steering-modal-destination-label')">{{ t('mesh.destination') }}</label>
+          <select v-model="selectedDestination" :data-testid="qa('mesh-steering-modal-destination-select')">
+            <option value="" disabled :data-testid="qa('mesh-steering-modal-destination-placeholder')">{{ t('mesh.selectDestination') }}</option>
             <option 
               v-for="dest in destinations" 
               :key="dest.MACAddress"
               :value="dest.MACAddress"
+              :data-testid="qa(`mesh-steering-modal-destination-option-${slug(dest.Name)}`)"
             >
               {{ dest.Name }}
             </option>
@@ -59,10 +62,10 @@ const handleApply = () => {
         </div>
 
         <div class="form-group">
-          <label>{{ t('mesh.band') }}</label>
-          <select v-model="selectedBand">
-            <option value="" disabled>{{ t('mesh.selectBand') }}</option>
-            <option v-for="band in bands" :key="band" :value="band">
+          <label :data-testid="qa('mesh-steering-modal-band-label')">{{ t('mesh.band') }}</label>
+          <select v-model="selectedBand" :data-testid="qa('mesh-steering-modal-band-select')">
+            <option value="" disabled :data-testid="qa('mesh-steering-modal-band-placeholder')">{{ t('mesh.selectBand') }}</option>
+            <option v-for="band in bands" :key="band" :value="band" :data-testid="qa(`mesh-steering-modal-band-option-${slug(band)}`)">
               {{ band }}
             </option>
           </select>
@@ -70,11 +73,12 @@ const handleApply = () => {
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" @click="$emit('close')">
+        <button class="btn btn-secondary" :data-testid="qa('mesh-steering-modal-cancel')" @click="$emit('close')">
           {{ t('common.close') }}
         </button>
         <button 
           class="btn btn-primary" 
+          :data-testid="qa('mesh-steering-modal-apply')"
           @click="handleApply"
           :disabled="!selectedDestination || !selectedBand"
         >

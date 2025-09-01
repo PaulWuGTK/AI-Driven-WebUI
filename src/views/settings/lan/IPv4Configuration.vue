@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const lanData = ref<LanBasicResponse | null>(null);
@@ -280,27 +282,28 @@ onMounted(fetchLanBasic);
 </script>
 
 <template>
-  <div class="ipv4-configuration">
-    <div v-if="loading" class="loading-state">
+  <div class="ipv4-configuration" :data-testid="qa('ipv4-configuration-content')">
+    <div v-if="loading" class="loading-state" :data-testid="qa('ipv4-configuration-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('ipv4-configuration-error')">
       {{ error }}
     </div>
 
     <template v-else-if="lanData">
       <!-- LAN IP Setting -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('lanBasic.lanIpSetting') }}</div>
-        <div class="card-content">
+      <div class="panel-section" :data-testid="qa('ipv4-configuration-lan-ip-section')">
+        <div class="section-title" :data-testid="qa('ipv4-configuration-lan-ip-title')">{{ t('lanBasic.lanIpSetting') }}</div>
+        <div class="card-content" :data-testid="qa('ipv4-configuration-lan-ip-content')">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('lanBasic.enable') }}</span>
+              <span :data-testid="qa('ipv4-configuration-lan-ip-enable-label')">{{ t('lanBasic.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('ipv4-configuration-lan-ip-enable-toggle')"
                   v-model="lanData.LanBasic.LANIPSetting.Enable"
                   :true-value="1"
                   :false-value="0"
@@ -311,9 +314,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.ipAddress') }}</label>
+            <label :data-testid="qa('ipv4-configuration-lan-ip-address-label')">{{ t('lanBasic.ipAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-lan-ip-address-input')"
               :value="lanData.LanBasic.LANIPSetting.IPAddress"
               @input="handleIPInput($event, 'lanIP')"
               :disabled="!lanData.LanBasic.LANIPSetting.Enable"
@@ -322,9 +326,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.subnetMask') }}</label>
+            <label :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-label')">{{ t('lanBasic.subnetMask') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-input')"
               v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
               :disabled="!lanData.LanBasic.LANIPSetting.Enable"
               placeholder="255.255.255.0"
@@ -334,15 +339,16 @@ onMounted(fetchLanBasic);
       </div>
 
       <!-- DHCPv4 Setting -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('lanBasic.dhcpv4Setting') }}</div>
-        <div class="card-content">
+      <div class="panel-section" :data-testid="qa('ipv4-configuration-dhcp-section')">
+        <div class="section-title" :data-testid="qa('ipv4-configuration-dhcp-title')">{{ t('lanBasic.dhcpv4Setting') }}</div>
+        <div class="card-content" :data-testid="qa('ipv4-configuration-dhcp-content')">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('lanBasic.enableDhcpServer') }}</span>
+              <span :data-testid="qa('ipv4-configuration-dhcp-enable-label')">{{ t('lanBasic.enableDhcpServer') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('ipv4-configuration-dhcp-enable-toggle')"
                   v-model="lanData.LanBasic.DHCPv4Setting.Enable"
                   :true-value="1"
                   :false-value="0"
@@ -353,9 +359,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.dnsServer') }}</label>
+            <label :data-testid="qa('ipv4-configuration-dhcp-dns-server-label')">{{ t('lanBasic.dnsServer') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-dhcp-dns-server-input')"
               :value="lanData.LanBasic.DHCPv4Setting.DNSServers"
               @input="handleIPInput($event, 'dnsServer')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
@@ -364,9 +371,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.beginAddress') }}</label>
+            <label :data-testid="qa('ipv4-configuration-dhcp-begin-address-label')">{{ t('lanBasic.beginAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-dhcp-begin-address-input')"
               :value="lanData.LanBasic.DHCPv4Setting.BeginAddress"
               @input="handleIPInput($event, 'beginAddress')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
@@ -375,9 +383,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.endAddress') }}</label>
+            <label :data-testid="qa('ipv4-configuration-dhcp-end-address-label')">{{ t('lanBasic.endAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-dhcp-end-address-input')"
               :value="lanData.LanBasic.DHCPv4Setting.EndAddress"
               @input="handleIPInput($event, 'endAddress')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
@@ -386,9 +395,10 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.subnetMask') }}</label>
+            <label :data-testid="qa('ipv4-configuration-dhcp-subnet-mask-label')">{{ t('lanBasic.subnetMask') }}</label>
             <input
               type="text"
+              :data-testid="qa('ipv4-configuration-dhcp-subnet-mask-input')"
               v-model="lanData.LanBasic.DHCPv4Setting.SubnetMask"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
               placeholder="255.255.255.0"
@@ -396,67 +406,71 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label>{{ t('lanBasic.leaseTime') }}</label>
-            <div class="input-with-unit">
+            <label :data-testid="qa('ipv4-configuration-dhcp-lease-time-label')">{{ t('lanBasic.leaseTime') }}</label>
+            <div class="input-with-unit" :data-testid="qa('ipv4-configuration-dhcp-lease-time-container')">
               <input
                 type="number"
+                :data-testid="qa('ipv4-configuration-dhcp-lease-time-input')"
                 v-model="lanData.LanBasic.DHCPv4Setting.LeaseTime"
                 :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
                 min="300"
                 max="604800"
               />
-              <span class="unit">{{ t('lanBasic.seconds') }}</span>
+              <span class="unit" :data-testid="qa('ipv4-configuration-dhcp-lease-time-unit')">{{ t('lanBasic.seconds') }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- IP Address Reservation -->
-      <div class="panel-section">
+      <div class="panel-section" :data-testid="qa('ipv4-configuration-reservation-section')">
         <div class="header-row">
-          <div class="section-title-sp">{{ t('lanBasic.ipAddressReservation') }}</div>
-          <button class="btn btn-primary" @click="handleAddReservation">
+          <div class="section-title-sp" :data-testid="qa('ipv4-configuration-reservation-title')">{{ t('lanBasic.ipAddressReservation') }}</div>
+          <button class="btn btn-primary" :data-testid="qa('ipv4-configuration-reservation-add-button')" @click="handleAddReservation">
             <span class="material-icons">add</span>
             {{ t('lanBasic.add') }}
           </button>
         </div>
 
-        <div class="card-content">
-          <div class="table-container">
-            <table>
+        <div class="card-content" :data-testid="qa('ipv4-configuration-reservation-content')">
+          <div class="table-container" :data-testid="qa('ipv4-configuration-reservation-table-container')">
+            <table :data-testid="qa('ipv4-configuration-reservation-table')">
               <thead>
                 <tr>
-                  <th>{{ t('lanBasic.macAddress') }}</th>
-                  <th>{{ t('lanBasic.ipAddress') }}</th>
-                  <th>{{ t('lanBasic.enable') }}</th>
-                  <th>{{ t('lanBasic.action') }}</th>
+                  <th :data-testid="qa('ipv4-configuration-reservation-header-mac')">{{ t('lanBasic.macAddress') }}</th>
+                  <th :data-testid="qa('ipv4-configuration-reservation-header-ip')">{{ t('lanBasic.ipAddress') }}</th>
+                  <th :data-testid="qa('ipv4-configuration-reservation-header-enable')">{{ t('lanBasic.enable') }}</th>
+                  <th :data-testid="qa('ipv4-configuration-reservation-header-action')">{{ t('lanBasic.action') }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(reservation, index) in reservations" :key="index">
+                <tr v-for="(reservation, resIndex) in reservations" :key="resIndex" :data-testid="qa(`ipv4-configuration-reservation-row-${resIndex}`)">
                   <td>
                     <input
-                      v-if="editingIndex === index"
+                      v-if="editingIndex === resIndex"
                       type="text"
+                      :data-testid="qa(`ipv4-configuration-reservation-mac-input-${resIndex}`)"
                       v-model="reservation.MACAddress"
                       placeholder="00:11:22:33:44:55"
                     />
-                    <span v-else>{{ reservation.MACAddress }}</span>
+                    <span v-else :data-testid="qa(`ipv4-configuration-reservation-mac-value-${resIndex}`)">{{ reservation.MACAddress }}</span>
                   </td>
                   <td>
                     <input
-                      v-if="editingIndex === index"
+                      v-if="editingIndex === resIndex"
                       type="text"
+                      :data-testid="qa(`ipv4-configuration-reservation-ip-input-${resIndex}`)"
                       v-model="reservation.IPAddress"
                       placeholder="192.168.1.100"
                     />
-                    <span v-else>{{ reservation.IPAddress }}</span>
+                    <span v-else :data-testid="qa(`ipv4-configuration-reservation-ip-value-${resIndex}`)">{{ reservation.IPAddress }}</span>
                   </td>
                   <td>
-                    <div class="switch-label">
+                    <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-enable-container-${resIndex}`)">
                       <label class="switch">
                         <input
                           type="checkbox"
+                          :data-testid="qa(`ipv4-configuration-reservation-enable-toggle-${resIndex}`)"
                           v-model="reservation.Enable"
                           :true-value="1"
                           :false-value="0"
@@ -466,20 +480,20 @@ onMounted(fetchLanBasic);
                     </div>
                   </td>
                   <td>
-                    <div class="action-buttons">
-                      <template v-if="editingIndex === index">
-                        <button class="btn-action" @click="handleConfirmReservation(index)">
+                    <div class="action-buttons" :data-testid="qa(`ipv4-configuration-reservation-actions-${resIndex}`)">
+                      <template v-if="editingIndex === resIndex">
+                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-confirm-${resIndex}`)" @click="handleConfirmReservation(resIndex)">
                           <span class="material-icons">check</span>
                         </button>
-                        <button class="btn-action" @click="handleCancelReservation(index)">
+                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-cancel-${resIndex}`)" @click="handleCancelReservation(resIndex)">
                           <span class="material-icons">close</span>
                         </button>
                       </template>
                       <template v-else>
-                        <button class="btn-action" @click="handleEditReservation(index)">
+                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-edit-${resIndex}`)" @click="handleEditReservation(resIndex)">
                           <span class="material-icons">edit</span>
                         </button>
-                        <button class="btn-action" @click="handleDeleteReservation(index)">
+                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-delete-${resIndex}`)" @click="handleDeleteReservation(resIndex)">
                           <span class="material-icons">delete</span>
                         </button>
                       </template>
@@ -490,42 +504,46 @@ onMounted(fetchLanBasic);
             </table>
           </div>
 
-          <div class="mobile-cards">
+          <div class="mobile-cards" :data-testid="qa('ipv4-configuration-reservation-mobile')">
             <div 
               class="table-card" 
-              v-for="(reservation, index) in reservations" 
-              :key="index"
+              v-for="(reservation, resIndex) in reservations" 
+              :key="resIndex"
+              :data-testid="qa(`ipv4-configuration-reservation-card-${resIndex}`)"
             >
               <div class="card-row">
-                <span class="card-label">{{ t('lanBasic.macAddress') }}</span>
+                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-mac-label-${resIndex}`)">{{ t('lanBasic.macAddress') }}</span>
                 <span class="card-value">
                   <input
-                    v-if="editingIndex === index"
+                    v-if="editingIndex === resIndex"
                     type="text"
+                    :data-testid="qa(`ipv4-configuration-reservation-card-mac-input-${resIndex}`)"
                     v-model="reservation.MACAddress"
                     placeholder="00:11:22:33:44:55"
                   />
-                  <span v-else>{{ reservation.MACAddress }}</span>
+                  <span v-else :data-testid="qa(`ipv4-configuration-reservation-card-mac-value-${resIndex}`)">{{ reservation.MACAddress }}</span>
                 </span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('lanBasic.ipAddress') }}</span>
+                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-ip-label-${resIndex}`)">{{ t('lanBasic.ipAddress') }}</span>
                 <span class="card-value">
                   <input
-                    v-if="editingIndex === index"
+                    v-if="editingIndex === resIndex"
                     type="text"
+                    :data-testid="qa(`ipv4-configuration-reservation-card-ip-input-${resIndex}`)"
                     v-model="reservation.IPAddress"
                     placeholder="192.168.1.100"
                   />
-                  <span v-else>{{ reservation.IPAddress }}</span>
+                  <span v-else :data-testid="qa(`ipv4-configuration-reservation-card-ip-value-${resIndex}`)">{{ reservation.IPAddress }}</span>
                 </span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('lanBasic.enable') }}</span>
-                <div class="switch-label">
+                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-label-${resIndex}`)">{{ t('lanBasic.enable') }}</span>
+                <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-container-${resIndex}`)">
                   <label class="switch">
                     <input
                       type="checkbox"
+                      :data-testid="qa(`ipv4-configuration-reservation-card-enable-toggle-${resIndex}`)"
                       v-model="reservation.Enable"
                       :true-value="1"
                       :false-value="0"
@@ -534,20 +552,20 @@ onMounted(fetchLanBasic);
                   </label>
                 </div>
               </div>
-              <div class="card-actions">
-                <template v-if="editingIndex === index">
-                  <button class="btn-action" @click="handleConfirmReservation(index)">
+              <div class="card-actions" :data-testid="qa(`ipv4-configuration-reservation-card-actions-${resIndex}`)">
+                <template v-if="editingIndex === resIndex">
+                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-confirm-${resIndex}`)" @click="handleConfirmReservation(resIndex)">
                     <span class="material-icons">check</span>
                   </button>
-                  <button class="btn-action" @click="handleCancelReservation(index)">
+                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-cancel-${resIndex}`)" @click="handleCancelReservation(resIndex)">
                     <span class="material-icons">close</span>
                   </button>
                 </template>
                 <template v-else>
-                  <button class="btn-action" @click="handleEditReservation(index)">
+                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-edit-${resIndex}`)" @click="handleEditReservation(resIndex)">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="btn-action" @click="handleDeleteReservation(index)">
+                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-delete-${resIndex}`)" @click="handleDeleteReservation(resIndex)">
                     <span class="material-icons">delete</span>
                   </button>
                 </template>
@@ -560,12 +578,14 @@ onMounted(fetchLanBasic);
       <div class="button-group">
         <button 
           class="btn btn-secondary" 
+          :data-testid="qa('ipv4-configuration-cancel-button')"
           @click="fetchLanBasic"
         >
           {{ t('lanBasic.cancel') }}
         </button>
         <button 
           class="btn btn-primary"
+          :data-testid="qa('ipv4-configuration-apply-button')"
           @click="handleApply"
         >
           {{ t('lanBasic.apply') }}
@@ -573,7 +593,7 @@ onMounted(fetchLanBasic);
       </div>
     </template>
 
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('ipv4-configuration-success-message')">
       {{ t('common.apply') }} successful
     </div>
   </div>

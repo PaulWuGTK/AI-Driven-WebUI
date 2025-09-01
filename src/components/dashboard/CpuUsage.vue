@@ -9,6 +9,8 @@ import {
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DashboardCPU } from '../../types/dashboard'
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -47,13 +49,13 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="memory-status" v-if="cpuInfo">
-    <h2 class="card-title">{{ t('dashboard.cpu') }}</h2>
-    <div class="cpu-chart-container">
+  <div class="memory-status" v-if="cpuInfo" :data-testid="qa('dashboard-cpu-usage-content')">
+    <h2 class="card-title" :data-testid="qa('dashboard-cpu-usage-title')">{{ t('dashboard.cpu') }}</h2>
+    <div class="cpu-chart-container" :data-testid="qa('dashboard-cpu-usage-chart-container')">
       
-      <div class="chart-wrapper">
-        <Doughnut :data="chartData" :options="chartOptions" />
-        <div class="center-label">{{ usage }}%</div>
+      <div class="chart-wrapper" :data-testid="qa('dashboard-cpu-usage-chart-wrapper')">
+        <Doughnut :data="chartData" :options="chartOptions" :data-testid="qa('dashboard-cpu-usage-chart')" />
+        <div class="center-label" :data-testid="qa('dashboard-cpu-usage-percentage')">{{ usage }}%</div>
       </div>
     </div>
   </div>

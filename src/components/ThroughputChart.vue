@@ -3,6 +3,8 @@ import { ref, onMounted, watch, defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Chart, registerables } from 'chart.js';
 import type { ChartDataSeries } from '../types/systemStats';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 Chart.register(...registerables);
 
@@ -119,19 +121,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="throughput-chart">
-    <h3 class="chart-title">{{ title }}</h3>
-    <div class="chart-container">
-      <canvas ref="chartRef"></canvas>
+  <div class="throughput-chart" :data-testid="qa('throughput-chart')">
+    <h3 class="chart-title" :data-testid="qa('throughput-chart-title')">{{ title }}</h3>
+    <div class="chart-container" :data-testid="qa('throughput-chart-container')">
+      <canvas ref="chartRef" :data-testid="qa('throughput-chart-canvas')"></canvas>
     </div>
-    <div class="chart-legend">
-      <div class="legend-item">
-        <span class="legend-color tx-color"></span>
-        <span class="legend-label">{{ labelTx }}</span>
+    <div class="chart-legend" :data-testid="qa('throughput-chart-legend')">
+      <div class="legend-item" :data-testid="qa('throughput-chart-legend-tx')">
+        <span class="legend-color tx-color" :data-testid="qa('throughput-chart-legend-tx-color')"></span>
+        <span class="legend-label" :data-testid="qa('throughput-chart-legend-tx-label')">{{ labelTx }}</span>
       </div>
-      <div class="legend-item">
-        <span class="legend-color rx-color"></span>
-        <span class="legend-label">{{ labelRx }}</span>
+      <div class="legend-item" :data-testid="qa('throughput-chart-legend-rx')">
+        <span class="legend-color rx-color" :data-testid="qa('throughput-chart-legend-rx-color')"></span>
+        <span class="legend-label" :data-testid="qa('throughput-chart-legend-rx-label')">{{ labelRx }}</span>
       </div>
     </div>
   </div>

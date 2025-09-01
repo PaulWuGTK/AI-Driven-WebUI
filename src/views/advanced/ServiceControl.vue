@@ -5,6 +5,8 @@ import type { ServiceControlRule, ServiceControlResponse } from '../../types/ser
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
 import ServiceControlModal from './serviceControl/ServiceControlModal.vue';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const serviceControlData = ref<ServiceControlResponse | null>(null);
@@ -173,47 +175,47 @@ onMounted(fetchServiceControl);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('serviceControl.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('service-control-title')">{{ t('serviceControl.title') }}</h1>
 
-    <div class="status-content">
-      <div v-if="loading && !serviceControlData" class="loading-state">
+    <div class="status-content" :data-testid="qa('service-control-content')">
+      <div v-if="loading && !serviceControlData" class="loading-state" :data-testid="qa('service-control-loading')">
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
 
-      <div v-else-if="error" class="error-state">
+      <div v-else-if="error" class="error-state" :data-testid="qa('service-control-error')">
         {{ error }}
       </div>
 
-      <div v-else-if="serviceControlData" class="panel-section">
+      <div v-else-if="serviceControlData" class="panel-section" :data-testid="qa('service-control-panel')">
         <div class="header-row">
-          <div class="section-title-sp">{{ t('serviceControl.management') }}</div>
-          <button class="btn btn-primary add-rule-btn" @click="handleAddRule">
+          <div class="section-title-sp" :data-testid="qa('service-control-management-title')">{{ t('serviceControl.management') }}</div>
+          <button class="btn btn-primary add-rule-btn" :data-testid="qa('service-control-add-rule-button')" @click="handleAddRule">
             <span class="material-icons">add</span>
             <span>{{ t('serviceControl.addRule') }}</span>
           </button>
         </div>
 
         <div class="card-content">
-          <div class="table-container">
+          <div class="table-container" :data-testid="qa('service-control-table')">
             <table>
               <thead>
                 <tr>
-                  <th>{{ t('serviceControl.serviceType') }}</th>
-                  <th>{{ t('ssh.port') }}</th>
-                  <th>{{ t('serviceControl.accessDirection') }}</th>
-                  <th>{{ t('serviceControl.protocol') }}</th>
-                  <th>{{ t('serviceControl.ipRange') }}</th>
-                  <th>{{ t('serviceControl.status') }}</th>
-                  <th>{{ t('serviceControl.action') }}</th>
+                  <th :data-testid="qa('service-control-header-service-type')">{{ t('serviceControl.serviceType') }}</th>
+                  <th :data-testid="qa('service-control-header-port')">{{ t('ssh.port') }}</th>
+                  <th :data-testid="qa('service-control-header-access-direction')">{{ t('serviceControl.accessDirection') }}</th>
+                  <th :data-testid="qa('service-control-header-protocol')">{{ t('serviceControl.protocol') }}</th>
+                  <th :data-testid="qa('service-control-header-ip-range')">{{ t('serviceControl.ipRange') }}</th>
+                  <th :data-testid="qa('service-control-header-status')">{{ t('serviceControl.status') }}</th>
+                  <th :data-testid="qa('service-control-header-action')">{{ t('serviceControl.action') }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="rule in serviceControlData.AdvancedServiceControl.Rules" :key="rule.Service">
-                  <td>{{ rule.Service }}</td>
-                  <td>{{ rule.DestPort }}</td>
-                  <td>{{ interfaceMap[rule.Interface] || rule.Interface }}</td>
-                  <td>{{ protocolMap[rule.Protocol] || rule.Protocol }}</td>
+                <tr v-for="(rule, ruleIndex) in serviceControlData.AdvancedServiceControl.Rules" :key="rule.Service" :data-testid="qa(`service-control-row-${ruleIndex}`)">
+                  <td :data-testid="qa(`service-control-service-${ruleIndex}`)">{{ rule.Service }}</td>
+                  <td :data-testid="qa(`service-control-port-${ruleIndex}`)">{{ rule.DestPort }}</td>
+                  <td :data-testid="qa(`service-control-access-direction-${ruleIndex}`)">{{ interfaceMap[rule.Interface] || rule.Interface }}</td>
+                  <td :data-testid="qa(`service-control-protocol-${ruleIndex}`)">{{ protocolMap[rule.Protocol] || rule.Protocol }}</td>
                   <td>
                     {{ formatIPVersion(rule.IPVersion) }}
                     <span v-if="rule.SourceIPStart && rule.SourceIPEnd">
@@ -221,55 +223,56 @@ onMounted(fetchServiceControl);
                     </span>
                   </td>
                   <td>
-                    <span :class="rule.Enable ? 'status-enabled' : 'status-disabled'">
+                    <span :class="rule.Enable ? 'status-enabled' : 'status-disabled'" :data-testid="qa(`service-control-status-${ruleIndex}`)">
                       {{ rule.Enable ? t('serviceControl.enabled') : t('serviceControl.disabled') }}
                     </span>
                   </td>
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-action" @click="handleEditRule(rule)" title="Edit">
+                      <button class="btn-action" :data-testid="qa(`service-control-edit-button-${ruleIndex}`)" @click="handleEditRule(rule)" title="Edit">
                         <span class="material-icons">edit</span>
                       </button>
-                      <button class="btn-action" @click="handleDeleteRule(rule.Service)" title="Delete">
+                      <button class="btn-action" :data-testid="qa(`service-control-delete-button-${ruleIndex}`)" @click="handleDeleteRule(rule.Service)" title="Delete">
                         <span class="material-icons">delete</span>
                       </button>
                     </div>
                   </td>
                 </tr>
-                <tr v-if="serviceControlData.AdvancedServiceControl.Rules.length === 0">
-                  <td colspan="7" class="no-data">No rules configured</td>
+                <tr v-if="serviceControlData.AdvancedServiceControl.Rules.length === 0" :data-testid="qa('service-control-no-data-row')">
+                  <td colspan="7" class="no-data" :data-testid="qa('service-control-no-data')">No rules configured</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="mobile-cards">
-            <div v-if="serviceControlData.AdvancedServiceControl.Rules.length === 0" class="no-data-mobile">
+          <div class="mobile-cards" :data-testid="qa('service-control-mobile')">
+            <div v-if="serviceControlData.AdvancedServiceControl.Rules.length === 0" class="no-data-mobile" :data-testid="qa('service-control-no-data-mobile')">
               No rules configured
             </div>
             <div 
               class="table-card" 
-              v-for="rule in serviceControlData.AdvancedServiceControl.Rules" 
+              v-for="(rule, ruleIndex) in serviceControlData.AdvancedServiceControl.Rules" 
               :key="rule.Service"
+              :data-testid="qa(`service-control-card-${ruleIndex}`)"
             >
               <div class="card-row">
-                <span class="card-label">{{ t('serviceControl.serviceType') }}</span>
-                <span class="card-value">{{ rule.Service }}</span>
+                <span class="card-label" :data-testid="qa(`service-control-card-service-label-${ruleIndex}`)">{{ t('serviceControl.serviceType') }}</span>
+                <span class="card-value" :data-testid="qa(`service-control-card-service-value-${ruleIndex}`)">{{ rule.Service }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('ssh.port') }}</span>
-                <span class="card-value">{{ rule.DestPort }}</span>
+                <span class="card-label" :data-testid="qa(`service-control-card-port-label-${ruleIndex}`)">{{ t('ssh.port') }}</span>
+                <span class="card-value" :data-testid="qa(`service-control-card-port-value-${ruleIndex}`)">{{ rule.DestPort }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('serviceControl.accessDirection') }}</span>
-                <span class="card-value">{{ interfaceMap[rule.Interface] || rule.Interface }}</span>
+                <span class="card-label" :data-testid="qa(`service-control-card-access-direction-label-${ruleIndex}`)">{{ t('serviceControl.accessDirection') }}</span>
+                <span class="card-value" :data-testid="qa(`service-control-card-access-direction-value-${ruleIndex}`)">{{ interfaceMap[rule.Interface] || rule.Interface }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('serviceControl.protocol') }}</span>
-                <span class="card-value">{{ protocolMap[rule.Protocol] || rule.Protocol }}</span>
+                <span class="card-label" :data-testid="qa(`service-control-card-protocol-label-${ruleIndex}`)">{{ t('serviceControl.protocol') }}</span>
+                <span class="card-value" :data-testid="qa(`service-control-card-protocol-value-${ruleIndex}`)">{{ protocolMap[rule.Protocol] || rule.Protocol }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('serviceControl.ipRange') }}</span>
+                <span class="card-label" :data-testid="qa(`service-control-card-ip-range-label-${ruleIndex}`)">{{ t('serviceControl.ipRange') }}</span>
                 <span class="card-value">
                   {{ formatIPVersion(rule.IPVersion) }}
                   <span v-if="rule.SourceIPStart && rule.SourceIPEnd">
@@ -278,16 +281,16 @@ onMounted(fetchServiceControl);
                 </span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('serviceControl.status') }}</span>
-                <span class="card-value" :class="rule.Enable ? 'status-enabled' : 'status-disabled'">
+                <span class="card-label" :data-testid="qa(`service-control-card-status-label-${ruleIndex}`)">{{ t('serviceControl.status') }}</span>
+                <span class="card-value" :class="rule.Enable ? 'status-enabled' : 'status-disabled'" :data-testid="qa(`service-control-card-status-value-${ruleIndex}`)">
                   {{ rule.Enable ? t('serviceControl.enabled') : t('serviceControl.disabled') }}
                 </span>
               </div>
               <div class="card-actions">
-                <button class="btn-action" @click="handleEditRule(rule)" title="Edit">
+                <button class="btn-action" :data-testid="qa(`service-control-card-edit-button-${ruleIndex}`)" @click="handleEditRule(rule)" title="Edit">
                   <span class="material-icons">edit</span>
                 </button>
-                <button class="btn-action" @click="handleDeleteRule(rule.Service)" title="Delete">
+                <button class="btn-action" :data-testid="qa(`service-control-card-delete-button-${ruleIndex}`)" @click="handleDeleteRule(rule.Service)" title="Delete">
                   <span class="material-icons">delete</span>
                 </button>
               </div>
@@ -297,13 +300,14 @@ onMounted(fetchServiceControl);
       </div>
 
       <!-- Success message -->
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('service-control-success-message')">
         Operation successful
       </div>
 
       <!-- Edit/Add Modal -->
       <ServiceControlModal
         v-if="showModal && editingRule && serviceControlData"
+        :data-testid="qa('service-control-modal')"
         :rule="editingRule"
         :options="serviceControlData.AdvancedServiceControl.ACLAvailableOptions"
         @save="handleSaveRule"
@@ -313,6 +317,7 @@ onMounted(fetchServiceControl);
       <!-- Confirmation Dialog -->
       <ConfirmationDialog
         :is-open="showConfirmDialog"
+        :data-testid="qa('service-control-confirm-dialog')"
         :title="t('serviceControl.confirmDelete')"
         :message="t('serviceControl.confirmDelete')"
         @confirm="confirmDeleteRule"

@@ -7,6 +7,8 @@ import MeshNodeTable from '../../components/mesh/MeshNodeTable.vue';
 import MeshClientTable from '../../components/mesh/MeshClientTable.vue';
 import MeshSteeringModal from '../../components/mesh/MeshSteeringModal.vue';
 import MeshTopologyMap from '../../components/mesh/MeshTopologyMap.vue';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const meshData = ref<MeshNode[]>([]);
@@ -114,28 +116,29 @@ onUnmounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('mesh.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('mesh-title')">{{ t('mesh.title') }}</h1>
 
-    <div class="status-content">
+    <div class="status-content" :data-testid="qa('mesh-content')">
       <!-- Loading State -->
-      <div v-if="loading" class="loading-state">
+      <div v-if="loading" class="loading-state" :data-testid="qa('mesh-loading')">
         <div class="loading-spinner"></div>
         {{ t('common.loading') }}
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="error-state">
+      <div v-else-if="error" class="error-state" :data-testid="qa('mesh-error')">
         {{ error }}
       </div>
 
       <!-- Content State -->
       <template v-else>
         <!-- Network Information Section -->
-        <div class="panel-section">
+        <div class="panel-section" :data-testid="qa('mesh-network-section')">
           <div class="header-row">
-            <div class="section-title-sp">{{ t('mesh.networkInformation') }}</div>
+            <div class="section-title-sp" :data-testid="qa('mesh-network-title')">{{ t('mesh.networkInformation') }}</div>
             <button 
               class="btn btn-primary"
+              :data-testid="qa('mesh-toggle-view-button')"
               @click="showMap = !showMap"
             >
               <span class="material-icons">{{ showMap ? 'list' : 'map' }}</span>
@@ -144,20 +147,21 @@ onUnmounted(() => {
           </div>
 
           <div class="card-content">
-            <template v-if="!showMap">
+            <template v-if="!showMap" :data-testid="qa('mesh-list-view')">
               <MeshNodeTable :nodes="nodes" />
               <MeshClientTable 
                 :clients="clients"
                 @action="handleAction"
               />
             </template>
-            <template v-else>
+            <template v-else :data-testid="qa('mesh-map-view')">
               <MeshTopologyMap :nodes="meshData" />
             </template>
 
             <div class="button-group">
               <button 
-                class="btn btn-primary" 
+                class="btn btn-primary"
+                :data-testid="qa('mesh-refresh-button')"
                 @click="fetchMeshData"
                 :disabled="loading"
               >
@@ -172,6 +176,7 @@ onUnmounted(() => {
 
     <MeshSteeringModal
       v-if="selectedClient"
+      :data-testid="qa('mesh-steering-modal')"
       :node="selectedClient"
       :destinations="getPossibleDestinations()"
       @close="selectedClient = null"

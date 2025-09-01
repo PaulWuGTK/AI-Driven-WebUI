@@ -5,6 +5,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -75,30 +77,31 @@ onMounted(fetchMeshConfig);
 </script>
 
 <template>
-  <div class="mesh-config">
-    <div v-if="loading" class="loading-state">
+  <div class="mesh-config" :data-testid="qa('wireless-mesh-config-content')">
+    <div v-if="loading" class="loading-state" :data-testid="qa('wireless-mesh-config-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('wireless-mesh-config-error')">
       {{ error }}
     </div>
 
     <template v-else-if="meshData">
       <!-- Show info banner when Mesh is disabled by MLO -->
-      <div v-if="isMeshDisabledByMLO" class="mlo-status">
-        <div class="info-banner">
+      <div v-if="isMeshDisabledByMLO" class="mlo-status" :data-testid="qa('wireless-mesh-config-mlo-status')">
+        <div class="info-banner" :data-testid="qa('wireless-mesh-config-mlo-info-banner')">
           <span class="material-icons">info</span>
           <span>{{ t('wireless.mloMeshWarning') }}</span>
         </div>
       </div>
 
       <div class="switch-label">
-        <span>{{ t('wireless.easyMesh') }}</span>
+        <span :data-testid="qa('wireless-mesh-config-enable-label')">{{ t('wireless.easyMesh') }}</span>
         <label class="switch">
           <input
             type="checkbox"
+            :data-testid="qa('wireless-mesh-config-enable-toggle')"
             v-model="meshData.WlanMesh.MeshEnable"
             :true-value="1"
             :false-value="0"
@@ -107,13 +110,14 @@ onMounted(fetchMeshConfig);
         </label>
       </div>
 
-      <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1">
-        <div class="section-title">{{ t('wireless.commonSsidConfig') }}</div>
-        <div class="ssid-content">
+      <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-ssid-section')">
+        <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.commonSsidConfig') }}</div>
+        <div class="ssid-content" :data-testid="qa('wireless-mesh-config-ssid-content')">
           <div class="form-group">
-            <label>SSID</label>
+            <label :data-testid="qa('wireless-mesh-config-ssid-label')">SSID</label>
             <input
               type="text"
+              :data-testid="qa('wireless-mesh-config-ssid-input')"
               v-model="meshData.WlanMesh.CommonSSID"
               required
             />
@@ -121,22 +125,23 @@ onMounted(fetchMeshConfig);
         </div>
       </div>
 
-      <div class="button-group">
-        <button class="btn btn-secondary" @click="fetchMeshConfig" :disabled="loading">
+      <div class="button-group" :data-testid="qa('wireless-mesh-config-button-group')">
+        <button class="btn btn-secondary" :data-testid="qa('wireless-mesh-config-cancel-button')" @click="fetchMeshConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button class="btn btn-primary" @click="handleSubmit" :disabled="loading">
+        <button class="btn btn-primary" :data-testid="qa('wireless-mesh-config-apply-button')" @click="handleSubmit" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
     </template>
 
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-mesh-config-success-message')">
       {{ t('common.apply') }} successful
     </div>
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
+      :data-testid="qa('wireless-mesh-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       message="Applying WiFi Mesh Settings..."
       :duration="30"

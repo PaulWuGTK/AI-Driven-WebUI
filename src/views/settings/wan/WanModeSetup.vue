@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeSetupResponse } from '../../../types/wanSetup';
 import { getWanModeSetup, updateWanModeSetup } from '../../../services/api/wanSetup';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const setupData = ref<WanModeSetupResponse | null>(null);
@@ -56,35 +58,37 @@ onMounted(fetchSetupData);
 </script>
 
 <template>
-  <div class="wan-mode-setup">
-    <div v-if="loading" class="loading-state">
+  <div class="wan-mode-setup" :data-testid="qa('wan-mode-setup-content')">
+    <div v-if="loading" class="loading-state" :data-testid="qa('wan-mode-setup-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('wan-mode-setup-error')">
       {{ error }}
     </div>
 
-    <form v-else-if="setupData" @submit.prevent="handleSubmit">
+    <form v-else-if="setupData" @submit.prevent="handleSubmit" :data-testid="qa('wan-mode-setup-form')">
       <div class="form-group">
-        <label>{{ t('wanSetup.operationMode') }}</label>
-        <select v-model="setupData.WanModeSetup.OperationMode">
-          <option value="Manual">{{ t('wanSetup.manual') }}</option>
-          <option value="Automatic">{{ t('wanSetup.auto') }}</option>
+        <label :data-testid="qa('wan-mode-setup-operation-mode-label')">{{ t('wanSetup.operationMode') }}</label>
+        <select v-model="setupData.WanModeSetup.OperationMode" :data-testid="qa('wan-mode-setup-operation-mode-select')">
+          <option value="Manual" :data-testid="qa('wan-mode-setup-operation-mode-manual')">{{ t('wanSetup.manual') }}</option>
+          <option value="Automatic" :data-testid="qa('wan-mode-setup-operation-mode-auto')">{{ t('wanSetup.auto') }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('wanSetup.wanMode') }}</label>
+        <label :data-testid="qa('wan-mode-setup-wan-mode-label')">{{ t('wanSetup.wanMode') }}</label>
         <select 
           v-model="setupData.WanModeSetup.WANMode"
+          :data-testid="qa('wan-mode-setup-wan-mode-select')"
           :disabled="setupData.WanModeSetup.OperationMode === 'Automatic'"
         >
           <option 
             v-for="mode in setupData.WanModeSetup.WANModeList" 
             :key="mode" 
             :value="mode"
+            :data-testid="qa(`wan-mode-setup-wan-mode-option-${slug(mode)}`)"
           >
             {{ mode }}
           </option>
@@ -92,16 +96,16 @@ onMounted(fetchSetupData);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchSetupData" :disabled="loading">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('wan-mode-setup-cancel-button')" @click="fetchSetupData" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('wan-mode-setup-apply-button')" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('wan-mode-setup-success-message')">
       {{ t('common.apply') }} successful
     </div>
   </div>

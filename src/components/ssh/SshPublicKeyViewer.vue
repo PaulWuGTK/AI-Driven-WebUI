@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -31,29 +33,29 @@ const getComment = (key: string): string => {
 </script>
 
 <template>
-  <div class="key-viewer-overlay">
-    <div class="key-viewer">
-      <h3 class="viewer-title">{{ t('ssh.publicKey') }}</h3>
+  <div class="key-viewer-overlay" :data-testid="qa('ssh-key-viewer-overlay')">
+    <div class="key-viewer" :data-testid="qa('ssh-key-viewer-content')">
+      <h3 class="viewer-title" :data-testid="qa('ssh-key-viewer-title')">{{ t('ssh.publicKey') }}</h3>
       
-      <div class="key-content">
+      <div class="key-content" :data-testid="qa('ssh-key-viewer-key-content')">
         <div class="info-row">
-          <label>{{ t('ssh.algorithm') }}</label>
-          <div class="value">{{ getAlgorithm(publicKey.Key) }}</div>
+          <label :data-testid="qa('ssh-key-viewer-algorithm-label')">{{ t('ssh.algorithm') }}</label>
+          <div class="value" :data-testid="qa('ssh-key-viewer-algorithm-value')">{{ getAlgorithm(publicKey.Key) }}</div>
         </div>
 
         <div class="info-row">
-          <label>{{ t('ssh.publicKey') }}</label>
-          <div class="value key-text">{{ getPublicKey(publicKey.Key) }}</div>
+          <label :data-testid="qa('ssh-key-viewer-public-key-label')">{{ t('ssh.publicKey') }}</label>
+          <div class="value key-text" :data-testid="qa('ssh-key-viewer-public-key-value')">{{ getPublicKey(publicKey.Key) }}</div>
         </div>
 
         <div class="info-row">
-          <label>{{ t('ssh.comment') }}</label>
-          <div class="value">{{ getComment(publicKey.Key) }}</div>
+          <label :data-testid="qa('ssh-key-viewer-comment-label')">{{ t('ssh.comment') }}</label>
+          <div class="value" :data-testid="qa('ssh-key-viewer-comment-value')">{{ getComment(publicKey.Key) }}</div>
         </div>
       </div>
 
       <div class="button-row">
-        <button class="btn btn-primary" @click="onClose">
+        <button class="btn btn-primary" :data-testid="qa('ssh-key-viewer-close-button')" @click="onClose">
           {{ t('common.close') }}
         </button>
       </div>

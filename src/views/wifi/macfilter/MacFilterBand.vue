@@ -3,6 +3,8 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MACFilteringEntry } from '../../../types/macFiltering';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -236,41 +238,44 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mac-filter-band">
+  <div class="mac-filter-band" :data-testid="qa(`mac-filter-band-${slug(band)}`)">
     <div class="form-group">
-      <label>{{ t('macfilter.ssid') }}</label>
-      <select v-model="selectedSSID" class="form-select">
-        <option v-for="entry in sortedEntries" :key="entry.Path" :value="entry.SSID">
+      <label :data-testid="qa(`mac-filter-band-ssid-label-${slug(band)}`)">{{ t('macfilter.ssid') }}</label>
+      <select v-model="selectedSSID" class="form-select" :data-testid="qa(`mac-filter-band-ssid-select-${slug(band)}`)">
+        <option v-for="entry in sortedEntries" :key="entry.Path" :value="entry.SSID" :data-testid="qa(`mac-filter-band-ssid-option-${slug(band)}-${slug(entry.SSID)}`)">
           {{ entry.SSID }}
         </option>
       </select>
     </div>
 
     <div class="form-group">
-      <label>{{ t('macfilter.aclMode') }}</label>
+      <label :data-testid="qa(`mac-filter-band-acl-mode-label-${slug(band)}`)">{{ t('macfilter.aclMode') }}</label>
       <select 
+        :data-testid="qa(`mac-filter-band-acl-mode-select-${slug(band)}`)"
         :value="selectedEntry?.ACLMode" 
         @change="updateACLMode(($event.target as HTMLSelectElement).value)"
         class="form-select"
       >
-        <option v-for="option in aclModeOptions" :key="option.value" :value="option.value">
+        <option v-for="option in aclModeOptions" :key="option.value" :value="option.value" :data-testid="qa(`mac-filter-band-acl-mode-option-${slug(band)}-${slug(option.value)}`)">
           {{ option.label }}
         </option>
       </select>
     </div>
 
-    <div v-if="showMacList">
-      <div class="mac-list-header">
-        <h3>{{ t('macfilter.macAddressList') }}</h3>
-        <div v-if="editingIndex === null" class="add-mac-form">
+    <div v-if="showMacList" :data-testid="qa(`mac-filter-band-mac-list-${slug(band)}`)">
+      <div class="mac-list-header" :data-testid="qa(`mac-filter-band-mac-list-header-${slug(band)}`)">
+        <h3 :data-testid="qa(`mac-filter-band-mac-list-title-${slug(band)}`)">{{ t('macfilter.macAddressList') }}</h3>
+        <div v-if="editingIndex === null" class="add-mac-form" :data-testid="qa(`mac-filter-band-add-mac-form-${slug(band)}`)">
           <input 
             type="text" 
+            :data-testid="qa(`mac-filter-band-add-mac-input-${slug(band)}`)"
             v-model="newMacAddress" 
             :placeholder="t('macfilter.enterMacAddress')"
             class="mac-input"
           />
           <button 
             type="button" 
+            :data-testid="qa(`mac-filter-band-add-mac-button-${slug(band)}`)"
             @click="addMacAddress" 
             class="btn btn-primary"
           >
@@ -279,31 +284,33 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-if="error" class="error-message">{{ error }}</div>
+      <div v-if="error" class="error-message" :data-testid="qa(`mac-filter-band-error-message-${slug(band)}`)">{{ error }}</div>
 
-      <div class="mac-list">
-        <div class="table-container">
-          <table>
+      <div class="mac-list" :data-testid="qa(`mac-filter-band-mac-list-container-${slug(band)}`)">
+        <div class="table-container" :data-testid="qa(`mac-filter-band-mac-table-container-${slug(band)}`)">
+          <table :data-testid="qa(`mac-filter-band-mac-table-${slug(band)}`)">
             <thead>
               <tr>
-                <th>{{ t('macfilter.no') }}</th>
-                <th>{{ t('macfilter.macAddress') }}</th>
-                <th>{{ t('macfilter.action') }}</th>
+                <th :data-testid="qa(`mac-filter-band-mac-header-no-${slug(band)}`)">{{ t('macfilter.no') }}</th>
+                <th :data-testid="qa(`mac-filter-band-mac-header-address-${slug(band)}`)">{{ t('macfilter.macAddress') }}</th>
+                <th :data-testid="qa(`mac-filter-band-mac-header-action-${slug(band)}`)">{{ t('macfilter.action') }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(mac, index) in macAddresses" :key="index">
-                <td>{{ index + 1 }}</td>
+              <tr v-for="(mac, index) in macAddresses" :key="index" :data-testid="qa(`mac-filter-band-mac-row-${slug(band)}-${index}`)">
+                <td :data-testid="qa(`mac-filter-band-mac-no-${slug(band)}-${index}`)">{{ index + 1 }}</td>
                 <td>
-                  <div v-if="editingIndex === index" class="edit-form">
+                  <div v-if="editingIndex === index" class="edit-form" :data-testid="qa(`mac-filter-band-mac-edit-form-${slug(band)}-${index}`)">
                     <input 
                       type="text" 
+                      :data-testid="qa(`mac-filter-band-mac-edit-input-${slug(band)}-${index}`)"
                       v-model="newMacAddress" 
                       class="mac-input"
                     />
-                    <div class="edit-actions">
+                    <div class="edit-actions" :data-testid="qa(`mac-filter-band-mac-edit-actions-${slug(band)}-${index}`)">
                       <button 
                         type="button" 
+                        :data-testid="qa(`mac-filter-band-mac-save-${slug(band)}-${index}`)"
                         @click="saveEditedMac" 
                         class="btn-icon"
                         title="Save"
@@ -312,6 +319,7 @@ onMounted(() => {
                       </button>
                       <button 
                         type="button" 
+                        :data-testid="qa(`mac-filter-band-mac-cancel-edit-${slug(band)}-${index}`)"
                         @click="cancelEdit" 
                         class="btn-icon"
                         title="Cancel"
@@ -320,12 +328,13 @@ onMounted(() => {
                       </button>
                     </div>
                   </div>
-                  <span v-else>{{ mac }}</span>
+                  <span v-else :data-testid="qa(`mac-filter-band-mac-address-${slug(band)}-${index}`)">{{ mac }}</span>
                 </td>
                 <td>
-                  <div v-if="editingIndex !== index" class="action-buttons">
+                  <div v-if="editingIndex !== index" class="action-buttons" :data-testid="qa(`mac-filter-band-mac-actions-${slug(band)}-${index}`)">
                     <button 
                       type="button" 
+                      :data-testid="qa(`mac-filter-band-mac-edit-${slug(band)}-${index}`)"
                       @click="startEditMac(index)" 
                       class="btn-icon"
                       title="Edit"
@@ -334,6 +343,7 @@ onMounted(() => {
                     </button>
                     <button 
                       type="button" 
+                      :data-testid="qa(`mac-filter-band-mac-delete-${slug(band)}-${index}`)"
                       @click="deleteMacAddress(index)" 
                       class="btn-icon"
                       title="Delete"
@@ -343,39 +353,42 @@ onMounted(() => {
                   </div>
                 </td>
               </tr>
-              <tr v-if="macAddresses.length === 0">
-                <td colspan="3" class="no-data">{{ t('macfilter.noMacAddresses') }}</td>
+              <tr v-if="macAddresses.length === 0" :data-testid="qa(`mac-filter-band-mac-no-data-row-${slug(band)}`)">
+                <td colspan="3" class="no-data" :data-testid="qa(`mac-filter-band-mac-no-data-${slug(band)}`)">{{ t('macfilter.noMacAddresses') }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="mobile-cards">
-          <div v-if="macAddresses.length === 0" class="no-data-mobile">
+        <div class="mobile-cards" :data-testid="qa(`mac-filter-band-mac-mobile-${slug(band)}`)">
+          <div v-if="macAddresses.length === 0" class="no-data-mobile" :data-testid="qa(`mac-filter-band-mac-no-data-mobile-${slug(band)}`)">
             {{ t('macfilter.noMacAddresses') }}
           </div>
           <div 
             v-else
             class="table-card" 
-            v-for="(mac, index) in macAddresses" 
+            v-for="(mac, index) in macAddresses"
             :key="index"
+            :data-testid="qa(`mac-filter-band-mac-card-${slug(band)}-${index}`)"
           >
             <div class="card-row">
-              <span class="card-label">{{ t('macfilter.no') }}</span>
-              <span class="card-value">{{ index + 1 }}</span>
+              <span class="card-label" :data-testid="qa(`mac-filter-band-mac-card-no-label-${slug(band)}-${index}`)">{{ t('macfilter.no') }}</span>
+              <span class="card-value" :data-testid="qa(`mac-filter-band-mac-card-no-value-${slug(band)}-${index}`)">{{ index + 1 }}</span>
             </div>
             <div class="card-row">
-              <span class="card-label">{{ t('macfilter.macAddress') }}</span>
+              <span class="card-label" :data-testid="qa(`mac-filter-band-mac-card-address-label-${slug(band)}-${index}`)">{{ t('macfilter.macAddress') }}</span>
               <span class="card-value">
-                <div v-if="editingIndex === index" class="edit-form">
+                <div v-if="editingIndex === index" class="edit-form" :data-testid="qa(`mac-filter-band-mac-card-edit-form-${slug(band)}-${index}`)">
                   <input 
                     type="text" 
+                    :data-testid="qa(`mac-filter-band-mac-card-edit-input-${slug(band)}-${index}`)"
                     v-model="newMacAddress" 
                     class="mac-input"
                   />
-                  <div class="edit-actions">
+                  <div class="edit-actions" :data-testid="qa(`mac-filter-band-mac-card-edit-actions-${slug(band)}-${index}`)">
                     <button 
                       type="button" 
+                      :data-testid="qa(`mac-filter-band-mac-card-save-${slug(band)}-${index}`)"
                       @click="saveEditedMac" 
                       class="btn-icon"
                       title="Save"
@@ -384,6 +397,7 @@ onMounted(() => {
                     </button>
                     <button 
                       type="button" 
+                      :data-testid="qa(`mac-filter-band-mac-card-cancel-edit-${slug(band)}-${index}`)"
                       @click="cancelEdit" 
                       class="btn-icon"
                       title="Cancel"
@@ -392,12 +406,13 @@ onMounted(() => {
                     </button>
                   </div>
                 </div>
-                <span v-else>{{ mac }}</span>
+                <span v-else :data-testid="qa(`mac-filter-band-mac-card-address-value-${slug(band)}-${index}`)">{{ mac }}</span>
               </span>
             </div>
-            <div v-if="editingIndex !== index" class="card-actions">
+            <div v-if="editingIndex !== index" class="card-actions" :data-testid="qa(`mac-filter-band-mac-card-actions-${slug(band)}-${index}`)">
               <button 
                 type="button" 
+                :data-testid="qa(`mac-filter-band-mac-card-edit-${slug(band)}-${index}`)"
                 @click="startEditMac(index)" 
                 class="btn-icon"
                 title="Edit"
@@ -406,6 +421,7 @@ onMounted(() => {
               </button>
               <button 
                 type="button" 
+                :data-testid="qa(`mac-filter-band-mac-card-delete-${slug(band)}-${index}`)"
                 @click="deleteMacAddress(index)" 
                 class="btn-icon"
                 title="Delete"
@@ -420,6 +436,7 @@ onMounted(() => {
 
     <!-- Confirmation Dialog -->
     <ConfirmationDialog
+      :data-testid="qa(`mac-filter-band-confirmation-dialog-${slug(band)}`)"
       :is-open="showConfirmDialog"
       :title="confirmDialogAction === 'mode' ? t('macfilter.changeModeTitle') : t('macfilter.deleteMacTitle')"
       :message="confirmDialogAction === 'mode' 

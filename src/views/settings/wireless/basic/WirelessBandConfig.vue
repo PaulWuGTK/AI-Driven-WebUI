@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanBasicConfig } from '../../../../types/wireless';
+import { useQA } from '../../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -28,19 +30,20 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
 </script>
 
 <template>
-  <div class="band-config">
+  <div class="band-config" :data-testid="qa(`wireless-band-config-${slug(title)}`)">
     <div class="band-header">
-      <div class="section-title-sp">{{ title }} {{ t('wireless.settings') }}</div>
+      <div class="section-title-sp" :data-testid="qa(`wireless-band-config-title-${slug(title)}`)">{{ title }} {{ t('wireless.settings') }}</div>
     </div>
 
-    <div class="band-content">
+    <div class="band-content" :data-testid="qa(`wireless-band-config-content-${slug(title)}`)">
       <!-- Only show Enable toggle for individual bands, not for MLO -->
       <div class="form-group" v-if="title !== 'MLO'">
         <div class="switch-label">
-          <span>{{ t('common.enable') }}</span>
+          <span :data-testid="qa(`wireless-band-config-enable-label-${slug(title)}`)">{{ t('common.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa(`wireless-band-config-enable-toggle-${slug(title)}`)"
               :checked="modelValue.Enable === 1"
               @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
             >
@@ -50,9 +53,10 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('wireless.ssid') }}</label>
+        <label :data-testid="qa(`wireless-band-config-ssid-label-${slug(title)}`)">{{ t('wireless.ssid') }}</label>
         <input
           type="text"
+          :data-testid="qa(`wireless-band-config-ssid-input-${slug(title)}`)"
           :value="modelValue.SSID"
           @input="updateConfig('SSID', ($event.target as HTMLInputElement).value)"
           :disabled="title !== 'MLO' && modelValue.Enable === 0"
@@ -60,23 +64,25 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('wireless.authentication') }}</label>
+        <label :data-testid="qa(`wireless-band-config-authentication-label-${slug(title)}`)">{{ t('wireless.authentication') }}</label>
         <select
+          :data-testid="qa(`wireless-band-config-authentication-select-${slug(title)}`)"
           :value="modelValue.SecurityMode"
           @change="updateConfig('SecurityMode', ($event.target as HTMLSelectElement).value)"
           :disabled="title !== 'MLO' && modelValue.Enable === 0"
         >
-          <option v-for="mode in securityModes" :key="mode" :value="mode">
+          <option v-for="mode in securityModes" :key="mode" :value="mode" :data-testid="qa(`wireless-band-config-authentication-option-${slug(title)}-${slug(mode)}`)">
             {{ mode }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('wireless.password') }}</label>
-        <div class="password-input">
+        <label :data-testid="qa(`wireless-band-config-password-label-${slug(title)}`)">{{ t('wireless.password') }}</label>
+        <div class="password-input" :data-testid="qa(`wireless-band-config-password-container-${slug(title)}`)">
           <input
             :type="showPassword ? 'text' : 'password'"
+            :data-testid="qa(`wireless-band-config-password-input-${slug(title)}`)"
             :value="modelValue.Password"
             @input="updateConfig('Password', ($event.target as HTMLInputElement).value)"
             :disabled="title !== 'MLO' && modelValue.Enable === 0"
@@ -84,6 +90,7 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
           <button 
             type="button" 
             class="toggle-password"
+            :data-testid="qa(`wireless-band-config-password-toggle-${slug(title)}`)"
             @click="showPassword = !showPassword"
             :disabled="title !== 'MLO' && modelValue.Enable === 0"
           >

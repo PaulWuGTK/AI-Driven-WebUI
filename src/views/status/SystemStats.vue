@@ -15,6 +15,8 @@ import {
   determineYAxisUnit,
   convertToUnit
 } from '../../utils/throughputUtils';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -202,14 +204,15 @@ onUnmounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('systemStats.title') }}</h1>
-    <div class="status-content">
-      <div class="panel-section">
+    <h1 class="page-title" :data-testid="qa('system-stats-title')">{{ t('systemStats.title') }}</h1>
+    <div class="status-content" :data-testid="qa('system-stats-content')">
+      <div class="panel-section" :data-testid="qa('system-stats-panel')">
         <!-- Navigation Tabs -->
-        <div class="tab-navigation">
+        <div class="tab-navigation" :data-testid="qa('system-stats-tabs')">
           <button
             class="tab-button"
             :class="{ active: activeTab === 'WAN' }"
+            :data-testid="qa('system-stats-wan-tab')"
             @click="activeTab = 'WAN'"
           >
             {{ t('systemStats.wanThroughput') }}
@@ -223,34 +226,36 @@ onUnmounted(() => {
           <button
             class="tab-button"
             :class="{ active: activeTab === 'WiFi' }"
+            :data-testid="qa('system-stats-wifi-tab')"
             @click="activeTab = 'WiFi'"
           >
             {{ t('systemStats.wifiThroughput') }}
           </button>
         </div>
 
-        <div class="tab-content">
+        <div class="tab-content" :data-testid="qa('system-stats-tab-content')">
           <!-- Loading and Error States -->
-          <div v-if="loading && !wanData.size && !wifiData.size" class="loading-state">
+          <div v-if="loading && !wanData.size && !wifiData.size" class="loading-state" :data-testid="qa('system-stats-loading')">
             <div class="loading-spinner"></div>
             <span>{{ t('common.loading') }}</span>
           </div>
           
-          <div v-else-if="error" class="error-state">
+          <div v-else-if="error" class="error-state" :data-testid="qa('system-stats-error')">
             {{ error }}
           </div>
 
           <!-- WAN Throughput Tab -->
-          <template v-else-if="activeTab === 'WAN'">
-            <div class="chart-header">
-              <h2>{{ t('systemStats.wanThroughput') }}</h2>
-              <select v-model="selectedWanInterface" class="interface-select">
+          <template v-else-if="activeTab === 'WAN'" :data-testid="qa('system-stats-wan-content')">
+            <div class="chart-header" :data-testid="qa('system-stats-wan-header')">
+              <h2 :data-testid="qa('system-stats-wan-title')">{{ t('systemStats.wanThroughput') }}</h2>
+              <select v-model="selectedWanInterface" class="interface-select" :data-testid="qa('system-stats-wan-interface-select')">
                 <option v-for="iface in wanInterfaces" :key="iface" :value="iface">
                   {{ iface }}
                 </option>
               </select>
             </div>
             <ThroughputChart
+              :data-testid="qa('system-stats-wan-chart')"
               :chart-data="wanChartData"
               :title="selectedWanInterface"
               :label-tx="t('systemStats.tx')"
@@ -260,16 +265,17 @@ onUnmounted(() => {
           </template>
 
           <!-- WiFi Throughput Tab -->
-          <template v-else-if="activeTab === 'WiFi'">
-            <div class="chart-header">
-              <h2>{{ t('systemStats.wifiThroughput') }}</h2>
-              <select v-model="selectedWifiBand" class="interface-select">
+          <template v-else-if="activeTab === 'WiFi'" :data-testid="qa('system-stats-wifi-content')">
+            <div class="chart-header" :data-testid="qa('system-stats-wifi-header')">
+              <h2 :data-testid="qa('system-stats-wifi-title')">{{ t('systemStats.wifiThroughput') }}</h2>
+              <select v-model="selectedWifiBand" class="interface-select" :data-testid="qa('system-stats-wifi-band-select')">
                 <option value="2.4G">2.4G</option>
                 <option value="5G">5G</option>
                 <option value="6G">6G</option>
               </select>
             </div>
             <ThroughputChart
+              :data-testid="qa('system-stats-wifi-chart')"
               :chart-data="wifiChartData"
               :title="selectedWifiBand"
               :label-tx="t('systemStats.tx')"

@@ -7,6 +7,8 @@ import type {
   ThreadJoiner
 } from '../../../types/thread';
 import { getThreadCommissioner, updateThreadCommissioner } from '../../../services/api/thread';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const commissionerData = ref<ThreadCommissionerResponse | null>(null);
@@ -166,27 +168,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="thread-content">
-    <div v-if="loading && !commissionerData" class="loading-state">
+  <div class="thread-content" :data-testid="qa('thread-commissioner-content')">
+    <div v-if="loading && !commissionerData" class="loading-state" :data-testid="qa('thread-commissioner-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('thread-commissioner-error')">
       {{ error }}
     </div>
 
     <template v-else-if="commissionerData">
-      <div class="panel-section">
-        <div class="section-title">{{ t('thread.commissioner') }}</div>
+      <div class="panel-section" :data-testid="qa('thread-commissioner-section')">
+        <div class="section-title" :data-testid="qa('thread-commissioner-title')">{{ t('thread.commissioner') }}</div>
         
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('thread.commissionerEnable') }}</span>
+              <span :data-testid="qa('thread-commissioner-enable-label')">{{ t('thread.commissionerEnable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('thread-commissioner-enable-toggle')"
                   v-model="commissionerEnabled"
                   @change="updateCommissionerEnabled"
                 >
@@ -195,56 +198,57 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="commissionerEnabled" class="joiners-section">
+          <div v-if="commissionerEnabled" class="joiners-section" :data-testid="qa('thread-commissioner-joiners-section')">
             <div class="header-row">
-              <div class="section-title-sp">{{ t('thread.availableJoiner') }}</div>
-              <div class="action-buttons">
-                <button class="btn btn-primary" @click="openAddJoinerModal">
+              <div class="section-title-sp" :data-testid="qa('thread-commissioner-joiners-title')">{{ t('thread.availableJoiner') }}</div>
+              <div class="action-buttons" :data-testid="qa('thread-commissioner-action-buttons')">
+                <button class="btn btn-primary" :data-testid="qa('thread-commissioner-add-joiner-button')" @click="openAddJoinerModal">
                   <span class="material-icons">add</span>
                   {{ t('thread.add') }}
                 </button>
-                <button class="btn btn-secondary" @click="fetchCommissionerData">
+                <button class="btn btn-secondary" :data-testid="qa('thread-commissioner-refresh-button')" @click="fetchCommissionerData">
                   <span class="material-icons">refresh</span>
                   {{ t('thread.refresh') }}
                 </button>
               </div>
             </div>
 
-            <div class="table-container">
+            <div class="table-container" :data-testid="qa('thread-commissioner-joiners-table')">
               <table>
                 <thead>
                   <tr>
-                    <th>{{ t('thread.no') }}</th>
-                    <th>{{ t('thread.eui64OrDiscerner') }}</th>
-                    <th>{{ t('thread.pskd') }}</th>
-                    <th>{{ t('thread.timeout') }}</th>
-                    <th>{{ t('thread.operation') }}</th>
+                    <th :data-testid="qa('thread-commissioner-joiners-header-no')">{{ t('thread.no') }}</th>
+                    <th :data-testid="qa('thread-commissioner-joiners-header-eui64')">{{ t('thread.eui64OrDiscerner') }}</th>
+                    <th :data-testid="qa('thread-commissioner-joiners-header-pskd')">{{ t('thread.pskd') }}</th>
+                    <th :data-testid="qa('thread-commissioner-joiners-header-timeout')">{{ t('thread.timeout') }}</th>
+                    <th :data-testid="qa('thread-commissioner-joiners-header-operation')">{{ t('thread.operation') }}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(joiner, index) in commissionerData.ThreadCommissioner.Joiners" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ joiner.JoinerId }}</td>
-                    <td>{{ joiner.Pskd }}</td>
-                    <td>{{ joiner.Timeout }}</td>
+                  <tr v-for="(joiner, index) in commissionerData.ThreadCommissioner.Joiners" :key="index" :data-testid="qa(`thread-commissioner-joiners-row-${index}`)">
+                    <td :data-testid="qa(`thread-commissioner-joiners-no-${index}`)">{{ index + 1 }}</td>
+                    <td :data-testid="qa(`thread-commissioner-joiners-eui64-${index}`)">{{ joiner.JoinerId }}</td>
+                    <td :data-testid="qa(`thread-commissioner-joiners-pskd-${index}`)">{{ joiner.Pskd }}</td>
+                    <td :data-testid="qa(`thread-commissioner-joiners-timeout-${index}`)">{{ joiner.Timeout }}</td>
                     <td>
                       <button 
                         class="btn-delete"
+                        :data-testid="qa(`thread-commissioner-joiners-delete-${index}`)"
                         @click="deleteJoiner(joiner.JoinerId)"
                       >
                         {{ t('common.delete') }}
                       </button>
                     </td>
                   </tr>
-                  <tr v-if="commissionerData.ThreadCommissioner.Joiners.length === 0">
-                    <td colspan="5" class="no-data">No joiners available</td>
+                  <tr v-if="commissionerData.ThreadCommissioner.Joiners.length === 0" :data-testid="qa('thread-commissioner-joiners-no-data-row')">
+                    <td colspan="5" class="no-data" :data-testid="qa('thread-commissioner-joiners-no-data')">No joiners available</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div class="mobile-cards">
-              <div v-if="commissionerData.ThreadCommissioner.Joiners.length === 0" class="no-data-mobile">
+            <div class="mobile-cards" :data-testid="qa('thread-commissioner-joiners-mobile')">
+              <div v-if="commissionerData.ThreadCommissioner.Joiners.length === 0" class="no-data-mobile" :data-testid="qa('thread-commissioner-joiners-no-data-mobile')">
                 No joiners available
               </div>
               <div 
@@ -252,26 +256,28 @@ onMounted(() => {
                 class="table-card" 
                 v-for="(joiner, index) in commissionerData.ThreadCommissioner.Joiners" 
                 :key="index"
+                :data-testid="qa(`thread-commissioner-joiners-card-${index}`)"
               >
                 <div class="card-row">
-                  <span class="card-label">{{ t('thread.no') }}</span>
-                  <span class="card-value">{{ index + 1 }}</span>
+                  <span class="card-label" :data-testid="qa(`thread-commissioner-joiners-card-no-label-${index}`)">{{ t('thread.no') }}</span>
+                  <span class="card-value" :data-testid="qa(`thread-commissioner-joiners-card-no-value-${index}`)">{{ index + 1 }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('thread.eui64OrDiscerner') }}</span>
-                  <span class="card-value">{{ joiner.JoinerId }}</span>
+                  <span class="card-label" :data-testid="qa(`thread-commissioner-joiners-card-eui64-label-${index}`)">{{ t('thread.eui64OrDiscerner') }}</span>
+                  <span class="card-value" :data-testid="qa(`thread-commissioner-joiners-card-eui64-value-${index}`)">{{ joiner.JoinerId }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('thread.pskd') }}</span>
-                  <span class="card-value">{{ joiner.Pskd }}</span>
+                  <span class="card-label" :data-testid="qa(`thread-commissioner-joiners-card-pskd-label-${index}`)">{{ t('thread.pskd') }}</span>
+                  <span class="card-value" :data-testid="qa(`thread-commissioner-joiners-card-pskd-value-${index}`)">{{ joiner.Pskd }}</span>
                 </div>
                 <div class="card-row">
-                  <span class="card-label">{{ t('thread.timeout') }}</span>
-                  <span class="card-value">{{ joiner.Timeout }}</span>
+                  <span class="card-label" :data-testid="qa(`thread-commissioner-joiners-card-timeout-label-${index}`)">{{ t('thread.timeout') }}</span>
+                  <span class="card-value" :data-testid="qa(`thread-commissioner-joiners-card-timeout-value-${index}`)">{{ joiner.Timeout }}</span>
                 </div>
                 <div class="card-actions">
                   <button 
                     class="btn-delete"
+                    :data-testid="qa(`thread-commissioner-joiners-card-delete-${index}`)"
                     @click="deleteJoiner(joiner.JoinerId)"
                   >
                     {{ t('common.delete') }}
@@ -285,29 +291,31 @@ onMounted(() => {
     </template>
 
     <!-- Add Joiner Modal -->
-    <div v-if="showAddJoinerModal" class="modal-overlay">
-      <div class="modal-content">
+    <div v-if="showAddJoinerModal" class="modal-overlay" :data-testid="qa('thread-commissioner-add-joiner-modal')">
+      <div class="modal-content" :data-testid="qa('thread-commissioner-add-joiner-modal-content')">
         <div class="modal-header">
-          <h3>{{ t('thread.add') }}</h3>
-          <button class="close-button" @click="closeAddJoinerModal">&times;</button>
+          <h3 :data-testid="qa('thread-commissioner-add-joiner-modal-title')">{{ t('thread.add') }}</h3>
+          <button class="close-button" :data-testid="qa('thread-commissioner-add-joiner-modal-close')" @click="closeAddJoinerModal">&times;</button>
         </div>
         
         <div class="modal-body">
           <div class="form-group">
-            <label>{{ t('thread.eui64OrDiscerner') }}</label>
+            <label :data-testid="qa('thread-commissioner-add-joiner-eui64-label')">{{ t('thread.eui64OrDiscerner') }}</label>
             <input 
               type="text" 
+              :data-testid="qa('thread-commissioner-add-joiner-eui64-input')"
               v-model="newJoiner.joinerId" 
               class="form-control"
               placeholder="* (any joiner)"
             />
-            <div class="form-hint">* for any joiner, or EUI-64 like cd771262388e44d1</div>
+            <div class="form-hint" :data-testid="qa('thread-commissioner-add-joiner-eui64-hint')">* for any joiner, or EUI-64 like cd771262388e44d1</div>
           </div>
           
           <div class="form-group">
-            <label>{{ t('thread.pskd') }}</label>
+            <label :data-testid="qa('thread-commissioner-add-joiner-pskd-label')">{{ t('thread.pskd') }}</label>
             <input 
               type="text" 
+              :data-testid="qa('thread-commissioner-add-joiner-pskd-input')"
               v-model="newJoiner.pskd" 
               class="form-control"
               placeholder="J01NME"
@@ -316,24 +324,26 @@ onMounted(() => {
           </div>
           
           <div class="form-group">
-            <label>{{ t('thread.timeout') }}</label>
+            <label :data-testid="qa('thread-commissioner-add-joiner-timeout-label')">{{ t('thread.timeout') }}</label>
             <input 
               type="number" 
+              :data-testid="qa('thread-commissioner-add-joiner-timeout-input')"
               v-model="newJoiner.timeout" 
               class="form-control"
               min="1"
               required
             />
-            <div class="form-hint">Timeout in seconds</div>
+            <div class="form-hint" :data-testid="qa('thread-commissioner-add-joiner-timeout-hint')">Timeout in seconds</div>
           </div>
         </div>
         
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeAddJoinerModal">
+          <button class="btn btn-secondary" :data-testid="qa('thread-commissioner-add-joiner-cancel')" @click="closeAddJoinerModal">
             {{ t('common.cancel') }}
           </button>
           <button 
             class="btn btn-primary" 
+            :data-testid="qa('thread-commissioner-add-joiner-save')"
             @click="addJoiner"
             :disabled="!newJoiner.pskd"
           >
@@ -344,7 +354,7 @@ onMounted(() => {
     </div>
 
     <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-commissioner-success-message')">
       {{ successMessage }}
     </div>
   </div>

@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanAdvancedConfig } from '../../../../types/wireless';
+import { useQA } from '../../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -27,18 +29,19 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 </script>
 
 <template>
-  <div class="band-config">
+  <div class="band-config" :data-testid="qa(`wireless-advanced-band-config-${slug(title)}`)">
     <div class="band-header">
-      <div class="section-title-sp">{{ title }} {{ t('wireless.settings') }}</div>
+      <div class="section-title-sp" :data-testid="qa(`wireless-advanced-band-config-title-${slug(title)}`)">{{ title }} {{ t('wireless.settings') }}</div>
     </div>
     
-    <div class="band-content">
+    <div class="band-content" :data-testid="qa(`wireless-advanced-band-config-content-${slug(title)}`)">
       <div class="form-group">
         <div class="switch-label">
-          <span>{{ t('common.enable') }}</span>
+          <span :data-testid="qa(`wireless-advanced-band-config-enable-label-${slug(title)}`)">{{ t('common.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa(`wireless-advanced-band-config-enable-toggle-${slug(title)}`)"
               :checked="modelValue.RadioEnable === 1"
               @change="updateConfig('RadioEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
             >
@@ -48,39 +51,42 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
       </div>
 
       <div class="form-group">
-        <label>{{ t('wireless.mode') }}</label>
+        <label :data-testid="qa(`wireless-advanced-band-config-mode-label-${slug(title)}`)">{{ t('wireless.mode') }}</label>
         <select
+          :data-testid="qa(`wireless-advanced-band-config-mode-select-${slug(title)}`)"
           :value="modelValue.Mode"
           @change="updateConfig('Mode', ($event.target as HTMLSelectElement).value)"
           :disabled="modelValue.RadioEnable === 0 || mloEnabled"
         >
-          <option v-for="mode in modes" :key="mode" :value="mode">
+          <option v-for="mode in modes" :key="mode" :value="mode" :data-testid="qa(`wireless-advanced-band-config-mode-option-${slug(title)}-${slug(mode)}`)">
             {{ mode.toUpperCase() }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('wireless.bandwidth') }}</label>
+        <label :data-testid="qa(`wireless-advanced-band-config-bandwidth-label-${slug(title)}`)">{{ t('wireless.bandwidth') }}</label>
         <select
+          :data-testid="qa(`wireless-advanced-band-config-bandwidth-select-${slug(title)}`)"
           :value="modelValue.ChannelBandwidth"
           @change="updateConfig('ChannelBandwidth', ($event.target as HTMLSelectElement).value)"
           :disabled="modelValue.RadioEnable === 0"
         >
-          <option v-for="bandwidth in bandwidths" :key="bandwidth" :value="bandwidth">
+          <option v-for="bandwidth in bandwidths" :key="bandwidth" :value="bandwidth" :data-testid="qa(`wireless-advanced-band-config-bandwidth-option-${slug(title)}-${slug(bandwidth)}`)">
             {{ bandwidth }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <div class="channel-header">
-          <label>{{ t('wireless.channel') }}</label>
+        <div class="channel-header" :data-testid="qa(`wireless-advanced-band-config-channel-header-${slug(title)}`)">
+          <label :data-testid="qa(`wireless-advanced-band-config-channel-label-${slug(title)}`)">{{ t('wireless.channel') }}</label>
           <div class="switch-label">
-            <span>{{ t('wireless.autoChannel') }}</span>
+            <span :data-testid="qa(`wireless-advanced-band-config-auto-channel-label-${slug(title)}`)">{{ t('wireless.autoChannel') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-${slug(title)}`)"
                 :checked="modelValue.AutoChannelEnable === 1"
                 @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
                 :disabled="modelValue.RadioEnable === 0"
@@ -90,11 +96,12 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
           </div>
         </div>
         <select
+          :data-testid="qa(`wireless-advanced-band-config-channel-select-${slug(title)}`)"
           :value="modelValue.Channel"
           @change="updateConfig('Channel', ($event.target as HTMLSelectElement).value)"
           :disabled="modelValue.RadioEnable === 0 || modelValue.AutoChannelEnable === 1"
         >
-          <option v-for="channel in channels" :key="channel" :value="channel">
+          <option v-for="channel in channels" :key="channel" :value="channel" :data-testid="qa(`wireless-advanced-band-config-channel-option-${slug(title)}-${channel}`)">
             {{ channel }}
           </option>
         </select>

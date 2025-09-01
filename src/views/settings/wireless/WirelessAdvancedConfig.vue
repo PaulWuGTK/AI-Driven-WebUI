@@ -6,6 +6,8 @@ import { getWlanAdvanced, updateWlanAdvanced } from '../../../services/api/wirel
 import type { WlanAdvancedResponse } from '../../../types/wireless';
 import WirelessAdvancedBandConfig from './advanced/WirelessAdvancedBandConfig.vue';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -84,47 +86,50 @@ onMounted(fetchAdvancedConfig);
 </script>
 
 <template>
-  <div class="wireless-advanced-config">
-    <form @submit.prevent="handleSubmit" :class="{ 'loading': loading }">
-      <div v-if="loading" class="loading-overlay">
+  <div class="wireless-advanced-config" :data-testid="qa('wireless-advanced-config-content')">
+    <form @submit.prevent="handleSubmit" :class="{ 'loading': loading }" :data-testid="qa('wireless-advanced-config-form')">
+      <div v-if="loading" class="loading-overlay" :data-testid="qa('wireless-advanced-config-loading-overlay')">
         <div class="loading-spinner"></div>
       </div>
 
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-advanced-config-success-message')">
         {{ t('common.apply') }} successful
       </div>
 
-      <div v-if="advancedData" class="band-sections">
+      <div v-if="advancedData" class="band-sections" :data-testid="qa('wireless-advanced-config-band-sections')">
         <!-- MLO Enable Status Information -->
-        <div class="mlo-status" v-if="advancedData.WlanAdvanced.MLOEnable === 1">
-          <div class="info-banner">
+        <div class="mlo-status" v-if="advancedData.WlanAdvanced.MLOEnable === 1" :data-testid="qa('wireless-advanced-config-mlo-status')">
+          <div class="info-banner" :data-testid="qa('wireless-advanced-config-mlo-info-banner')">
             <span class="material-icons">info</span>
             <span>{{ t('wireless.mloModeDisabled') }}</span>
           </div>
         </div>
 
         <WirelessAdvancedBandConfig
+          :data-testid="qa('wireless-advanced-config-2g-band')"
           title="2.4GHz"
           v-model="advancedData.WlanAdvanced.wifi2g"
           :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
         <WirelessAdvancedBandConfig
+          :data-testid="qa('wireless-advanced-config-5g-band')"
           title="5GHz"
           v-model="advancedData.WlanAdvanced.wifi5g"
           :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
         <WirelessAdvancedBandConfig
+          :data-testid="qa('wireless-advanced-config-6g-band')"
           title="6GHz"
           v-model="advancedData.WlanAdvanced.wifi6g"
           :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
       </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchAdvancedConfig" :disabled="loading">
+      <div class="button-group" :data-testid="qa('wireless-advanced-config-button-group')">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('wireless-advanced-config-cancel-button')" @click="fetchAdvancedConfig" :disabled="loading">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('wireless-advanced-config-apply-button')" :disabled="loading">
           {{ t('common.apply') }}
         </button>
       </div>
@@ -132,6 +137,7 @@ onMounted(fetchAdvancedConfig);
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
+      :data-testid="qa('wireless-advanced-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       message="Applying WiFi Advanced Settings..."
       :duration="30"

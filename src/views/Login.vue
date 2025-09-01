@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AuthService } from '../services/auth';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const router = useRouter();
 const username = ref('');
@@ -33,14 +35,15 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <div class="logo">Gemtek</div>
-      <form @submit.prevent="handleLogin" class="login-form">
+  <div class="login-container" :data-testid="qa('login-container')">
+    <div class="login-box" :data-testid="qa('login-box')">
+      <div class="logo" :data-testid="qa('login-logo')">Gemtek</div>
+      <form @submit.prevent="handleLogin" class="login-form" :data-testid="qa('login-form')">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username" :data-testid="qa('login-username-label')">Username</label>
           <input
             id="username"
+            :data-testid="qa('login-username-input')"
             v-model="username"
             type="text"
             required
@@ -49,9 +52,10 @@ const handleLogin = async () => {
           />
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password" :data-testid="qa('login-password-label')">Password</label>
           <input
             id="password"
+            :data-testid="qa('login-password-input')"
             v-model="password"
             type="password"
             required
@@ -59,8 +63,8 @@ const handleLogin = async () => {
             :disabled="loading"
           />
         </div>
-        <div v-if="error" class="error-message">{{ error }}</div>
-        <button type="submit" class="login-button" :disabled="loading">
+        <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">{{ error }}</div>
+        <button type="submit" class="login-button" :disabled="loading" :data-testid="qa('login-submit-button')">
           {{ loading ? 'Logging in...' : 'Login' }}
         </button>
       </form>

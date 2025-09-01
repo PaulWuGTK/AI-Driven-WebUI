@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR369Controller } from '../../../types/tr369';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -25,16 +27,17 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="controller-edit">
-    <h2>{{ controller.Alias ? t('device.editController') : t('device.addController') }}</h2>
+  <div class="controller-edit" :data-testid="qa('tr369-controller-edit-content')">
+    <h2 :data-testid="qa('tr369-controller-edit-title')">{{ controller.Alias ? t('device.editController') : t('device.addController') }}</h2>
 
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit" :data-testid="qa('tr369-controller-edit-form')">
       <div class="form-group">
         <div class="switch-label">
-          <span>{{ t('common.enable') }}</span>
+          <span :data-testid="qa('tr369-controller-edit-enable-label')">{{ t('common.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa('tr369-controller-edit-enable-toggle')"
               v-model="editingController.Enable"
               :true-value="1"
               :false-value="0"
@@ -45,54 +48,60 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.alias') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-alias-label')">{{ t('device.alias') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-alias-input')"
           v-model="editingController.Alias"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.endpointId') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-endpoint-id-label')">{{ t('device.endpointId') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-endpoint-id-input')"
           v-model="editingController.ControllerEndpointID"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.controllerTopic') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-controller-topic-label')">{{ t('device.controllerTopic') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-controller-topic-input')"
           v-model="editingController.ControllerTopic"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.agentTopic') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-agent-topic-label')">{{ t('device.agentTopic') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-agent-topic-input')"
           v-model="editingController.AgentTopic"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.brokerAddress') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-broker-address-label')">{{ t('device.brokerAddress') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-broker-address-input')"
           v-model="editingController.BrokerAddress"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.brokerPort') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-broker-port-label')">{{ t('device.brokerPort') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-broker-port-input')"
           v-model="editingController.BrokerPort"
           required
           pattern="[0-9]+"
@@ -100,34 +109,38 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.username') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-username-label')">{{ t('device.username') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-username-input')"
           v-model="editingController.Username"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.password') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-password-label')">{{ t('device.password') }}</label>
         <input
           type="password"
+          :data-testid="qa('tr369-controller-edit-password-input')"
           v-model="editingController.Password"
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.clientId') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-client-id-label')">{{ t('device.clientId') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr369-controller-edit-client-id-input')"
           v-model="editingController.ClientID"
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.periodicNotify') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-periodic-notify-label')">{{ t('device.periodicNotify') }}</label>
         <input
           type="number"
+          :data-testid="qa('tr369-controller-edit-periodic-notify-input')"
           v-model="editingController.PeriodicNotify"
           required
           min="1"
@@ -135,9 +148,10 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.keepAliveTime') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-keep-alive-time-label')">{{ t('device.keepAliveTime') }}</label>
         <input
           type="number"
+          :data-testid="qa('tr369-controller-edit-keep-alive-time-input')"
           v-model="editingController.KeepAliveTime"
           required
           min="1"
@@ -145,9 +159,10 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.connectRetryTime') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-connect-retry-time-label')">{{ t('device.connectRetryTime') }}</label>
         <input
           type="number"
+          :data-testid="qa('tr369-controller-edit-connect-retry-time-input')"
           v-model="editingController.ConnectRetryTime"
           required
           min="1"
@@ -155,9 +170,10 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.connectRetryMaxInterval') }}</label>
+        <label :data-testid="qa('tr369-controller-edit-connect-retry-max-interval-label')">{{ t('device.connectRetryMaxInterval') }}</label>
         <input
           type="number"
+          :data-testid="qa('tr369-controller-edit-connect-retry-max-interval-input')"
           v-model="editingController.ConnectRetryMaxInterval"
           required
           min="1"
@@ -165,28 +181,28 @@ const handleSubmit = () => {
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.protocolVersion') }}</label>
-        <select v-model="editingController.ProtocolVersion">
-          <option v-for="version in protocolVersions" :key="version" :value="version">
+        <label :data-testid="qa('tr369-controller-edit-protocol-version-label')">{{ t('device.protocolVersion') }}</label>
+        <select v-model="editingController.ProtocolVersion" :data-testid="qa('tr369-controller-edit-protocol-version-select')">
+          <option v-for="version in protocolVersions" :key="version" :value="version" :data-testid="qa(`tr369-controller-edit-protocol-version-option-${version}`)">
             {{ version }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.transportProtocol') }}</label>
-        <select v-model="editingController.TransportProtocol">
-          <option v-for="protocol in transportProtocols" :key="protocol" :value="protocol">
+        <label :data-testid="qa('tr369-controller-edit-transport-protocol-label')">{{ t('device.transportProtocol') }}</label>
+        <select v-model="editingController.TransportProtocol" :data-testid="qa('tr369-controller-edit-transport-protocol-select')">
+          <option v-for="protocol in transportProtocols" :key="protocol" :value="protocol" :data-testid="qa(`tr369-controller-edit-transport-protocol-option-${slug(protocol)}`)">
             {{ protocol }}
           </option>
         </select>
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('tr369-controller-edit-cancel-button')" @click="$emit('cancel')">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('tr369-controller-edit-save-button')">
           {{ t('common.save') }}
         </button>
       </div>

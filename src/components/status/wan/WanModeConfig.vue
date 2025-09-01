@@ -2,6 +2,8 @@
 import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeConfig } from '../../../types/wan';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -11,26 +13,26 @@ defineProps<{
 </script>
 
 <template>
-  <div class="wan-mode-config">
-    <div class="section-title">{{ t('wan.wanModeConfig') }}</div>
+  <div class="wan-mode-config" :data-testid="qa('wan-mode-config-container')">
+    <div class="section-title" :data-testid="qa('wan-mode-config-title')">{{ t('wan.wanModeConfig') }}</div>
     
-    <div class="card-content">
-      <div class="info-grid">
+    <div class="card-content" :data-testid="qa('wan-mode-config-content')">
+      <div class="info-grid" :data-testid="qa('wan-mode-config-grid')">
         <div class="info-row">
-          <span class="info-label">{{ t('wan.dnsMode') }}</span>
-          <span class="info-value">{{ config.DNSMode }}</span>
+          <span class="info-label" :data-testid="qa('wan-mode-config-dns-mode-label')">{{ t('wan.dnsMode') }}</span>
+          <span class="info-value" :data-testid="qa('wan-mode-config-dns-mode-value')">{{ config.DNSMode }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">{{ t('wan.physicalType') }}</span>
-          <span class="info-value">{{ config.PhysicalType }}</span>
+          <span class="info-label" :data-testid="qa('wan-mode-config-physical-type-label')">{{ t('wan.physicalType') }}</span>
+          <span class="info-value" :data-testid="qa('wan-mode-config-physical-type-value')">{{ config.PhysicalType }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">{{ t('wan.status') }}</span>
-          <span class="info-value">{{ config.Status }}</span>
+          <span class="info-label" :data-testid="qa('wan-mode-config-status-label')">{{ t('wan.status') }}</span>
+          <span class="info-value" :data-testid="qa('wan-mode-config-status-value')">{{ config.Status }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">{{ t('wan.origin') }}</span>
-          <span class="info-value">{{ config.Origin }}</span>
+          <span class="info-label" :data-testid="qa('wan-mode-config-origin-label')">{{ t('wan.origin') }}</span>
+          <span class="info-value" :data-testid="qa('wan-mode-config-origin-value')">{{ config.Origin }}</span>
         </div>
       </div>
     </div>

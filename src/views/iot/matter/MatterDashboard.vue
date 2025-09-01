@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -17,23 +19,23 @@ const openMatterDashboard = () => {
 </script>
 
 <template>
-  <h1 class="page-title">{{ t('matter.title') }}</h1>
-  <div class="matter-content">
-    <div class="panel-section">
-      <div class="section-title">{{ t('matter.title') }}</div>
+  <h1 class="page-title" :data-testid="qa('matter-title')">{{ t('matter.title') }}</h1>
+  <div class="matter-content" :data-testid="qa('matter-content')">
+    <div class="panel-section" :data-testid="qa('matter-panel')">
+      <div class="section-title" :data-testid="qa('matter-section-title')">{{ t('matter.title') }}</div>
       
       <div class="card-content">
-        <div class="matter-description">
+        <div class="matter-description" :data-testid="qa('matter-description')">
           <p>{{ t('matter.description') }}</p>
         </div>
         
-        <div class="dashboard-section">
-          <h3>{{ t('matter.openDashboard') }}</h3>
-          <p>{{ t('matter.dashboardDescription') }}</p>
-          <p class="port-info">{{ t('matter.dashboardPort') }}</p>
+        <div class="dashboard-section" :data-testid="qa('matter-dashboard-section')">
+          <h3 :data-testid="qa('matter-dashboard-title')">{{ t('matter.openDashboard') }}</h3>
+          <p :data-testid="qa('matter-dashboard-description')">{{ t('matter.dashboardDescription') }}</p>
+          <p class="port-info" :data-testid="qa('matter-dashboard-port-info')">{{ t('matter.dashboardPort') }}</p>
           
           <div class="button-container">
-            <button class="btn btn-primary" @click="openMatterDashboard">
+            <button class="btn btn-primary" :data-testid="qa('matter-open-dashboard-button')" @click="openMatterDashboard">
               <span class="material-icons">open_in_new</span>
               {{ t('matter.openDashboard') }}
             </button>

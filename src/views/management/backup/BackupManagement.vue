@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { backupConfiguration, restoreConfiguration } from '../../../services/api/backup';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -69,20 +71,21 @@ const handleRestore = async () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('backup.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('backup-title')">{{ t('backup.title') }}</h1>
 
-    <div class="status-content">
+    <div class="status-content" :data-testid="qa('backup-content')">
       <!-- Backup Section -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('backup.backupTitle') }}</div>
+      <div class="panel-section" :data-testid="qa('backup-section')">
+        <div class="section-title" :data-testid="qa('backup-section-title')">{{ t('backup.backupTitle') }}</div>
         
         <div class="card-content">
-          <div class="description">
+          <div class="description" :data-testid="qa('backup-description')">
             {{ t('backup.backupDescription') }}
           </div>
           <div class="button-container">
             <button 
               class="btn btn-primary"
+              :data-testid="qa('backup-button')"
               @click="handleBackup"
               :disabled="loading"
             >
@@ -94,27 +97,29 @@ const handleRestore = async () => {
       </div>
 
       <!-- Restore Section -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('backup.restoreTitle') }}</div>
+      <div class="panel-section" :data-testid="qa('restore-section')">
+        <div class="section-title" :data-testid="qa('restore-section-title')">{{ t('backup.restoreTitle') }}</div>
         
         <div class="card-content">
-          <div class="description">
+          <div class="description" :data-testid="qa('restore-description')">
             {{ t('backup.restoreDescription') }}
           </div>
 
           <div 
             class="drop-zone"
             :class="{ dragging: isDragging }"
+            :data-testid="qa('restore-drop-zone')"
             @drop="handleDrop"
             @dragover="handleDragOver"
             @dragleave="handleDragLeave"
           >
             <div class="drop-zone-content">
               <span class="material-icons">cloud_upload</span>
-              <p class="drop-text">{{ t('backup.dragAndDrop') }}</p>
-              <p class="separator">{{ t('backup.selectFromComputer') }}</p>
+              <p class="drop-text" :data-testid="qa('restore-drop-text')">{{ t('backup.dragAndDrop') }}</p>
+              <p class="separator" :data-testid="qa('restore-separator-text')">{{ t('backup.selectFromComputer') }}</p>
               <button 
                 class="btn btn-secondary"
+                :data-testid="qa('restore-choose-file-button')"
                 @click="() => fileInput?.click()"
               >
                 {{ t('backup.chooseFile') }}
@@ -122,11 +127,12 @@ const handleRestore = async () => {
             </div>
           </div>
 
-          <div v-if="selectedFile" class="selected-file">
+          <div v-if="selectedFile" class="selected-file" :data-testid="qa('restore-selected-file')">
             <span class="material-icons">description</span>
-            <span class="file-name">{{ selectedFile.name }}</span>
+            <span class="file-name" :data-testid="qa('restore-selected-file-name')">{{ selectedFile.name }}</span>
             <button 
               class="btn-clear"
+              :data-testid="qa('restore-clear-file-button')"
               @click="selectedFile = null"
             >
               <span class="material-icons">close</span>
@@ -136,18 +142,20 @@ const handleRestore = async () => {
           <input 
             type="file" 
             ref="fileInput"
+            :data-testid="qa('restore-file-input')"
             @change="handleFileSelect"
             style="display: none"
             accept=".bin"
           >
 
-          <div v-if="error" class="error-message">
+          <div v-if="error" class="error-message" :data-testid="qa('restore-error-message')">
             {{ error }}
           </div>
 
           <div class="button-container">
             <button 
               class="btn btn-primary"
+              :data-testid="qa('restore-button')"
               @click="handleRestore"
               :disabled="!selectedFile || loading"
             >

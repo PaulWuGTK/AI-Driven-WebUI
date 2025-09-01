@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
 import * as d3 from 'd3';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 // Define custom node type that extends SimulationNodeDatum
 interface D3Node extends d3.SimulationNodeDatum, MeshNode {
@@ -229,24 +231,25 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="topology-map">
-    <div ref="svgContainer" class="svg-container"></div>
+  <div class="topology-map" :data-testid="qa('mesh-topology-map-container')">
+    <div ref="svgContainer" class="svg-container" :data-testid="qa('mesh-topology-map-svg')"></div>
 
     <div 
       v-if="hoveredNode"
       class="node-tooltip"
+      :data-testid="qa('mesh-topology-map-tooltip')"
       :style="{
         left: `${hoverPosition.x + 10}px`,
         top: `${hoverPosition.y + 10}px`
       }"
     >
-      <div class="tooltip-content">
-        <div><strong>{{ hoveredNode.Name }}</strong></div>
-        <div>Mode: {{ hoveredNode.Mode }}</div>
-        <div>IP: {{ hoveredNode.ipv4 }}</div>
-        <div>MAC: {{ hoveredNode.MACAddress }}</div>
-        <div>Media Type: {{ hoveredNode.MediaType }}</div>
-        <div v-if="hoveredNode.SupportedBand">Band: {{ hoveredNode.SupportedBand }}</div>
+      <div class="tooltip-content" :data-testid="qa('mesh-topology-map-tooltip-content')">
+        <div :data-testid="qa('mesh-topology-map-tooltip-name')"><strong>{{ hoveredNode.Name }}</strong></div>
+        <div :data-testid="qa('mesh-topology-map-tooltip-mode')">Mode: {{ hoveredNode.Mode }}</div>
+        <div :data-testid="qa('mesh-topology-map-tooltip-ip')">IP: {{ hoveredNode.ipv4 }}</div>
+        <div :data-testid="qa('mesh-topology-map-tooltip-mac')">MAC: {{ hoveredNode.MACAddress }}</div>
+        <div :data-testid="qa('mesh-topology-map-tooltip-media-type')">Media Type: {{ hoveredNode.MediaType }}</div>
+        <div v-if="hoveredNode.SupportedBand" :data-testid="qa('mesh-topology-map-tooltip-band')">Band: {{ hoveredNode.SupportedBand }}</div>
       </div>
     </div>
   </div>

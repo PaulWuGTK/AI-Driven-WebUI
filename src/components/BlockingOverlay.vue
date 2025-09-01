@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -60,16 +62,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="isVisible" class="blocking-overlay">
-    <div class="blocking-content">
-      <div class="spinner"></div>
-      <h2>{{ message || 'Applying WiFi Settings...' }}</h2>
-      <p>Please wait while the WiFi configuration is being applied.</p>
-      <p>This process may take up to 30 seconds.</p>
-      <div class="countdown">{{ countdown }}s</div>
-      <div class="progress-bar">
+  <div v-if="isVisible" class="blocking-overlay" :data-testid="qa('blocking-overlay')">
+    <div class="blocking-content" :data-testid="qa('blocking-overlay-content')">
+      <div class="spinner" :data-testid="qa('blocking-overlay-spinner')"></div>
+      <h2 :data-testid="qa('blocking-overlay-title')">{{ message || 'Applying WiFi Settings...' }}</h2>
+      <p :data-testid="qa('blocking-overlay-description-1')">Please wait while the WiFi configuration is being applied.</p>
+      <p :data-testid="qa('blocking-overlay-description-2')">This process may take up to 30 seconds.</p>
+      <div class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ countdown }}s</div>
+      <div class="progress-bar" :data-testid="qa('blocking-overlay-progress-bar')">
         <div 
           class="progress-fill" 
+          :data-testid="qa('blocking-overlay-progress-fill')"
           :style="{ width: `${((duration || 30) - countdown) / (duration || 30) * 100}%` }"
         ></div>
       </div>

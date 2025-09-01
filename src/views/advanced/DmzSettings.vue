@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DmzResponse } from '../../types/dmz';
 import { getDmz, updateDmz } from '../../services/api/dmz';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const dmzData = ref<DmzResponse | null>(null);
@@ -78,26 +80,27 @@ onMounted(fetchDmz);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('dmz.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('dmz-title')">{{ t('dmz.title') }}</h1>
 
-    <div class="status-content">
-      <div v-if="loading && !dmzData" class="loading-state">
+    <div class="status-content" :data-testid="qa('dmz-content')">
+      <div v-if="loading && !dmzData" class="loading-state" :data-testid="qa('dmz-loading')">
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
 
-      <div v-else-if="error" class="error-state">
+      <div v-else-if="error" class="error-state" :data-testid="qa('dmz-error')">
         {{ error }}
       </div>
 
-      <div v-else-if="dmzData" class="panel-section">
+      <div v-else-if="dmzData" class="panel-section" :data-testid="qa('dmz-panel')">
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('dmz.enable') }}</span>
+              <span :data-testid="qa('dmz-enable-label')">{{ t('dmz.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('dmz-enable-toggle')"
                   v-model="dmzData.AdvancedDmz.Enable"
                 >
                 <span class="slider"></span>
@@ -106,9 +109,10 @@ onMounted(fetchDmz);
           </div>
 
           <div class="form-group" v-if="dmzData.AdvancedDmz.Enable">
-            <label>{{ t('dmz.ipAddress') }}</label>
+            <label :data-testid="qa('dmz-ip-address-label')">{{ t('dmz.ipAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('dmz-ip-address-input')"
               v-model="dmzData.AdvancedDmz.IPAddress"
               placeholder="192.168.101.168"
               required
@@ -116,17 +120,17 @@ onMounted(fetchDmz);
           </div>
 
           <div class="button-group">
-            <button type="button" class="btn btn-secondary" @click="fetchDmz">
+            <button type="button" class="btn btn-secondary" :data-testid="qa('dmz-cancel-button')" @click="fetchDmz">
               {{ t('common.cancel') }}
             </button>
-            <button type="button" class="btn btn-primary" @click="handleSubmit">
+            <button type="button" class="btn btn-primary" :data-testid="qa('dmz-apply-button')" @click="handleSubmit">
               {{ t('common.apply') }}
             </button>
           </div>
         </div>
       </div>
 
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('dmz-success-message')">
         {{ t('common.apply') }} successful
       </div>
     </div>

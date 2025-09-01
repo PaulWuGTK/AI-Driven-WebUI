@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -18,15 +20,15 @@ defineEmits<{
 </script>
 
 <template>
-  <div v-if="isOpen" class="dialog-overlay">
-    <div class="dialog-content">
-      <h3 class="dialog-title">{{ title }}</h3>
-      <p class="dialog-message">{{ message }}</p>
-      <div class="dialog-buttons">
-        <button class="btn btn-secondary" @click="$emit('cancel')">
+  <div v-if="isOpen" class="dialog-overlay" :data-testid="qa('confirmation-dialog-overlay')">
+    <div class="dialog-content" :data-testid="qa('confirmation-dialog-content')">
+      <h3 class="dialog-title" :data-testid="qa('confirmation-dialog-title')">{{ title }}</h3>
+      <p class="dialog-message" :data-testid="qa('confirmation-dialog-message')">{{ message }}</p>
+      <div class="dialog-buttons" :data-testid="qa('confirmation-dialog-buttons')">
+        <button class="btn btn-secondary" :data-testid="qa('confirmation-dialog-cancel-button')" @click="$emit('cancel')">
           {{ cancelText || t('common.no') }}
         </button>
-        <button class="btn btn-primary" @click="$emit('confirm')">
+        <button class="btn btn-primary" :data-testid="qa('confirmation-dialog-confirm-button')" @click="$emit('confirm')">
           {{ confirmText || t('common.yes') }}
         </button>
       </div>

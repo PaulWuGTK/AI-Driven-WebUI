@@ -2,6 +2,8 @@
 import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardMemory } from '../../types/dashboard';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -26,13 +28,14 @@ const formatBytes = (bytes: number) => {
 </script>
 
 <template>
-  <div class="memory-status" v-if="memoryInfo">
-    <h2 class="card-title">{{ t('dashboard.memory') }}</h2>
-    <div class="memory-container">
-      <div class="donut-chart">
-        <svg viewBox="0 0 36 36" class="donut">
+  <div class="memory-status" v-if="memoryInfo" :data-testid="qa('dashboard-memory-status-content')">
+    <h2 class="card-title" :data-testid="qa('dashboard-memory-status-title')">{{ t('dashboard.memory') }}</h2>
+    <div class="memory-container" :data-testid="qa('dashboard-memory-status-container')">
+      <div class="donut-chart" :data-testid="qa('dashboard-memory-status-chart')">
+        <svg viewBox="0 0 36 36" class="donut" :data-testid="qa('dashboard-memory-status-svg')">
           <circle
             class="donut-ring"
+            :data-testid="qa('dashboard-memory-status-ring')"
             cx="18"
             cy="18"
             r="15.91549430918954"
@@ -42,6 +45,7 @@ const formatBytes = (bytes: number) => {
           />
           <circle
             class="donut-segment"
+            :data-testid="qa('dashboard-memory-status-segment')"
             cx="18"
             cy="18"
             r="15.91549430918954"
@@ -52,19 +56,19 @@ const formatBytes = (bytes: number) => {
             stroke-dashoffset="25"
           />
         </svg>
-        <div class="donut-text">
-          <div class="percentage">{{ usedPercentage }}%</div>
-          <div class="label">{{ t('dashboard.used') }}</div>
+        <div class="donut-text" :data-testid="qa('dashboard-memory-status-text')">
+          <div class="percentage" :data-testid="qa('dashboard-memory-status-percentage')">{{ usedPercentage }}%</div>
+          <div class="label" :data-testid="qa('dashboard-memory-status-used-label')">{{ t('dashboard.used') }}</div>
         </div>
       </div>
-      <div class="memory-details">
-        <div class="detail-item">
-          <span class="label">{{ t('dashboard.total') }}</span>
-          <span class="value">{{ formatBytes(memoryInfo.Total) }}</span>
+      <div class="memory-details" :data-testid="qa('dashboard-memory-status-details')">
+        <div class="detail-item" :data-testid="qa('dashboard-memory-status-total')">
+          <span class="label" :data-testid="qa('dashboard-memory-status-total-label')">{{ t('dashboard.total') }}</span>
+          <span class="value" :data-testid="qa('dashboard-memory-status-total-value')">{{ formatBytes(memoryInfo.Total) }}</span>
         </div>
-        <div class="detail-item">
-          <span class="label">{{ t('dashboard.free') }}</span>
-          <span class="value">{{ formatBytes(memoryInfo.Free) }}</span>
+        <div class="detail-item" :data-testid="qa('dashboard-memory-status-free')">
+          <span class="label" :data-testid="qa('dashboard-memory-status-free-label')">{{ t('dashboard.free') }}</span>
+          <span class="value" :data-testid="qa('dashboard-memory-status-free-value')">{{ formatBytes(memoryInfo.Free) }}</span>
         </div>
       </div>
     </div>

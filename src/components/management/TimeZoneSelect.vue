@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getTimezones } from '../../services/api';
 import type { TimezoneEntry } from '../../types/timezone';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -44,16 +46,18 @@ onMounted(() => {
 <template>
   <select
     class="time-zone-select"
+    :data-testid="qa('timezone-select')"
     :value="modelValue"
     @change="handleChange"
     :disabled="loading"
   >
-    <option v-if="loading" value="">{{ t('common.loading') }}</option>
+    <option v-if="loading" value="" :data-testid="qa('timezone-select-loading-option')">{{ t('common.loading') }}</option>
     <option 
       v-else
       v-for="(timezone, index) in timezones" 
       :key="index" 
       :value="index + 1"
+      :data-testid="qa(`timezone-select-option-${index}`)"
     >
       {{ timezone.region }}
     </option>

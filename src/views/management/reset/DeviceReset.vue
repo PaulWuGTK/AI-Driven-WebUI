@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { restartDevice, factoryResetDevice } from '../../../services/api/reset';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -73,20 +75,21 @@ const startCountdown = () => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('reset.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('device-reset-title')">{{ t('reset.title') }}</h1>
 
-    <div class="status-content">
+    <div class="status-content" :data-testid="qa('device-reset-content')">
       <!-- Restart Section -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('reset.restartTitle') }}</div>
+      <div class="panel-section" :data-testid="qa('device-restart-section')">
+        <div class="section-title" :data-testid="qa('device-restart-title')">{{ t('reset.restartTitle') }}</div>
         
         <div class="card-content">
           <div class="reset-section">
-            <div class="description">
+            <div class="description" :data-testid="qa('device-restart-description')">
               {{ t('reset.restartDescription') }}
             </div>
             <button 
               class="btn btn-primary" 
+              :data-testid="qa('device-restart-button')"
               @click="handleRestart"
               :disabled="loading.restart || loading.factory || showCountdown"
             >
@@ -98,16 +101,17 @@ const startCountdown = () => {
       </div>
 
       <!-- Factory Reset Section -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('reset.factoryTitle') }}</div>
+      <div class="panel-section" :data-testid="qa('device-factory-reset-section')">
+        <div class="section-title" :data-testid="qa('device-factory-reset-title')">{{ t('reset.factoryTitle') }}</div>
         
         <div class="card-content">
           <div class="reset-section">
-            <div class="description">
+            <div class="description" :data-testid="qa('device-factory-reset-description')">
               {{ t('reset.factoryDescription') }}
             </div>
             <button 
               class="btn btn-danger" 
+              :data-testid="qa('device-factory-reset-button')"
               @click="handleFactoryReset"
               :disabled="loading.restart || loading.factory || showCountdown"
             >
@@ -120,15 +124,15 @@ const startCountdown = () => {
     </div>
 
     <!-- Countdown Overlay -->
-    <div v-if="showCountdown" class="countdown-overlay">
-      <div class="countdown-content">
+    <div v-if="showCountdown" class="countdown-overlay" :data-testid="qa('device-reset-countdown-overlay')">
+      <div class="countdown-content" :data-testid="qa('device-reset-countdown-content')">
         <div class="spinner"></div>
-        <p>{{ t('reset.countdown', { seconds: countdown }) }}</p>
+        <p :data-testid="qa('device-reset-countdown-text')">{{ t('reset.countdown', { seconds: countdown }) }}</p>
       </div>
     </div>
 
     <!-- Success Message -->
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('device-reset-success-message')">
       {{ t('reset.success') }}
     </div>
   </div>

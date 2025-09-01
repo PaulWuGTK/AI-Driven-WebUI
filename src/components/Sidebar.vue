@@ -4,6 +4,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 import { AuthService } from '../services/auth';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const router = useRouter();
 const route = useRoute();
@@ -348,47 +350,52 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mobile-top-header">
-    <button class="mobile-menu-toggle" @click="toggleMobileMenu">
-      <span class="material-icons">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+  <div class="mobile-top-header" :data-testid="qa('mobile-header')">
+    <button class="mobile-menu-toggle" :data-testid="qa('mobile-menu-toggle')" @click="toggleMobileMenu">
+      <span class="material-icons" :data-testid="qa('mobile-menu-icon')">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
     </button>
-    <span class="mobile-logo">Gemtek</span>
+    <span class="mobile-logo" :data-testid="qa('mobile-logo')">Gemtek</span>
   </div>
   
-  <aside class="sidebar" :class="{ 'mobile-open': isMobileMenuOpen }">
-    <div class="logo desktop-only">
-      <span class="logo-text">Gemtek</span>
+  <aside class="sidebar" :data-testid="qa('sidebar')" :class="{ 'mobile-open': isMobileMenuOpen }">
+    <div class="logo desktop-only" :data-testid="qa('sidebar-logo')">
+      <span class="logo-text" :data-testid="qa('sidebar-logo-text')">Gemtek</span>
     </div>
-    <nav class="menu">
+    <nav class="menu" :data-testid="qa('sidebar-menu')">
       <div 
         v-for="item in menuItems" 
         :key="item.name" 
         class="menu-item"
+        :data-testid="qa(`sidebar-menu-item-${slug(item.name)}`)"
         :class="{ active: activeMenu === item.name }"
       >
         <div 
           class="menu-header"
+          :data-testid="qa(`sidebar-menu-header-${slug(item.name)}`)"
           @click="handleMenuClick(item.name, item.path)"
         >
-          <span class="icon">
+          <span class="icon" :data-testid="qa(`sidebar-menu-icon-${slug(item.name)}`)">
             <img :src="item.icon" alt="icon" />
           </span>
           {{ t(item.translationKey) }}
           <span 
             v-if="item.subItems" 
             class="arrow"
+            :data-testid="qa(`sidebar-menu-arrow-${slug(item.name)}`)"
             :class="{ expanded: isMenuExpanded(item.name) }"
           >▶</span>
         </div>
         <div 
           v-if="item.subItems" 
           class="submenu"
+          :data-testid="qa(`sidebar-submenu-${slug(item.name)}`)"
           :class="{ expanded: isMenuExpanded(item.name) }"
         >
           <div 
             v-for="subItem in item.subItems" 
             :key="subItem.name" 
             class="submenu-item"
+            :data-testid="qa(`sidebar-submenu-item-${slug(item.name)}-${slug(subItem.name)}`)"
             :class="{ active: activeSubItem === subItem.name }"
             @click="handleSubItemClick(subItem)"
           >

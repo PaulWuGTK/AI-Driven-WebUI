@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR069Config } from '../../../types/device';
 import { getTR069Config, updateTR069Config, sendInformToACS } from '../../../services/api/device';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const config = ref<TR069Config | null>(null);
@@ -67,23 +69,24 @@ onMounted(fetchConfig);
 </script>
 
 <template>
-  <div class="tr069-config">
-    <div v-if="loading" class="loading-state">
+  <div class="tr069-config" :data-testid="qa('tr069-config-content')">
+    <div v-if="loading" class="loading-state" :data-testid="qa('tr069-config-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('tr069-config-error')">
       {{ error }}
     </div>
 
-    <form v-else-if="config" @submit.prevent="handleApply">
+    <form v-else-if="config" @submit.prevent="handleApply" :data-testid="qa('tr069-config-form')">
       <div class="form-group">
         <div class="switch-label">
-          <span>{{ t('device.enableCWMP') }}</span>
+          <span :data-testid="qa('tr069-config-enable-cwmp-label')">{{ t('device.enableCWMP') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa('tr069-config-enable-cwmp-toggle')"
               v-model="config.EnableCWMP"
               :true-value="1"
               :false-value="0"
@@ -94,44 +97,49 @@ onMounted(fetchConfig);
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.acsUrl') }}</label>
+        <label :data-testid="qa('tr069-config-acs-url-label')">{{ t('device.acsUrl') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr069-config-acs-url-input')"
           v-model="config.URL"
           required
         />
       </div>
 
       <div class="form-group">
-        <label>{{ t('device.connectionRequestUrl') }}</label>
+        <label :data-testid="qa('tr069-config-connection-request-url-label')">{{ t('device.connectionRequestUrl') }}</label>
         <input
           type="text"
+          :data-testid="qa('tr069-config-connection-request-url-input')"
           v-model="config.ConnectionRequestURL"
           disabled
         />
       </div>
 
-      <div class="credentials-section">
-        <h3>{{ t('device.acsCredentials') }}</h3>
+      <div class="credentials-section" :data-testid="qa('tr069-config-acs-credentials-section')">
+        <h3 :data-testid="qa('tr069-config-acs-credentials-title')">{{ t('device.acsCredentials') }}</h3>
         <div class="form-group">
-          <label>{{ t('device.username') }}</label>
+          <label :data-testid="qa('tr069-config-acs-username-label')">{{ t('device.username') }}</label>
           <input
             type="text"
+            :data-testid="qa('tr069-config-acs-username-input')"
             v-model="config.Username"
             required
           />
         </div>
         <div class="form-group">
-          <label>{{ t('device.password') }}</label>
-          <div class="password-input">
+          <label :data-testid="qa('tr069-config-acs-password-label')">{{ t('device.password') }}</label>
+          <div class="password-input" :data-testid="qa('tr069-config-acs-password-container')">
             <input
               :type="showPassword.acs ? 'text' : 'password'"
+              :data-testid="qa('tr069-config-acs-password-input')"
               v-model="config.Password"
               required
             />
             <button 
               type="button"
               class="toggle-password"
+              :data-testid="qa('tr069-config-acs-password-toggle')"
               @click="showPassword.acs = !showPassword.acs"
             >
               <span class="material-icons">
@@ -142,27 +150,30 @@ onMounted(fetchConfig);
         </div>
       </div>
 
-      <div class="credentials-section">
-        <h3>{{ t('device.connectionRequestCredentials') }}</h3>
+      <div class="credentials-section" :data-testid="qa('tr069-config-connection-credentials-section')">
+        <h3 :data-testid="qa('tr069-config-connection-credentials-title')">{{ t('device.connectionRequestCredentials') }}</h3>
         <div class="form-group">
-          <label>{{ t('device.username') }}</label>
+          <label :data-testid="qa('tr069-config-connection-username-label')">{{ t('device.username') }}</label>
           <input
             type="text"
+            :data-testid="qa('tr069-config-connection-username-input')"
             v-model="config.ConnectionRequestUsername"
             required
           />
         </div>
         <div class="form-group">
-          <label>{{ t('device.password') }}</label>
-          <div class="password-input">
+          <label :data-testid="qa('tr069-config-connection-password-label')">{{ t('device.password') }}</label>
+          <div class="password-input" :data-testid="qa('tr069-config-connection-password-container')">
             <input
               :type="showPassword.connection ? 'text' : 'password'"
+              :data-testid="qa('tr069-config-connection-password-input')"
               v-model="config.ConnectionRequestPassword"
               required
             />
             <button 
               type="button"
               class="toggle-password"
+              :data-testid="qa('tr069-config-connection-password-toggle')"
               @click="showPassword.connection = !showPassword.connection"
             >
               <span class="material-icons">
@@ -175,10 +186,11 @@ onMounted(fetchConfig);
 
       <div class="form-group">
         <div class="switch-label">
-          <span>{{ t('device.enablePeriodicInform') }}</span>
+          <span :data-testid="qa('tr069-config-periodic-inform-enable-label')">{{ t('device.enablePeriodicInform') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa('tr069-config-periodic-inform-enable-toggle')"
               v-model="config.PeriodicInformEnable"
               :true-value="1"
               :false-value="0"
@@ -189,9 +201,10 @@ onMounted(fetchConfig);
       </div>
 
       <div class="form-group" v-if="config.PeriodicInformEnable">
-        <label>{{ t('device.periodicInformInterval') }}</label>
+        <label :data-testid="qa('tr069-config-periodic-inform-interval-label')">{{ t('device.periodicInformInterval') }}</label>
         <input
           type="number"
+          :data-testid="qa('tr069-config-periodic-inform-interval-input')"
           v-model="config.PeriodicInformInterval"
           required
           min="1"
@@ -199,15 +212,16 @@ onMounted(fetchConfig);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchConfig">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('tr069-config-cancel-button')" @click="fetchConfig">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('tr069-config-apply-button')" :disabled="loading">
           {{ t('common.apply') }}
         </button>
         <button 
           type="button" 
           class="btn btn-primary"
+          :data-testid="qa('tr069-config-send-inform-button')"
           @click="handleSendInform"
           :disabled="loading || !config.EnableCWMP"
         >

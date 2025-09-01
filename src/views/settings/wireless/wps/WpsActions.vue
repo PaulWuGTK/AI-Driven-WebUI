@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { updateWlanWps } from '../../../../services/api/wireless';
 import ConfirmationDialog from '../../../../components/ConfirmationDialog.vue';
+import { useQA } from '../../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -66,15 +68,16 @@ const cancelConfirmation = () => {
 </script>
 
 <template>
-  <div class="wps-actions">
+  <div class="wps-actions" :data-testid="qa('wps-actions-content')">
     <!-- WPS Push Button Section -->
-    <div class="wps-section">
-      <div class="section-title-sp">{{ t('wireless.wpsPushButton') }}</div>
-      <div class="action-section">
-        <div class="description-title">{{ t('wireless.pushButtonTitle') }}</div>
-        <p>{{ t('wireless.wpsPushButtonDesc') }}</p>
+    <div class="wps-section" :data-testid="qa('wps-actions-push-button-section')">
+      <div class="section-title-sp" :data-testid="qa('wps-actions-push-button-title')">{{ t('wireless.wpsPushButton') }}</div>
+      <div class="action-section" :data-testid="qa('wps-actions-push-button-content')">
+        <div class="description-title" :data-testid="qa('wps-actions-push-button-description-title')">{{ t('wireless.pushButtonTitle') }}</div>
+        <p :data-testid="qa('wps-actions-push-button-description')">{{ t('wireless.wpsPushButtonDesc') }}</p>
         <button 
           class="btn btn-primary"
+          :data-testid="qa('wps-actions-push-button')"
           @click="handlePushButton"
           :disabled="loading"
         >
@@ -84,21 +87,23 @@ const cancelConfirmation = () => {
     </div>
 
     <!-- WPS PIN Code Connect Section -->
-    <div class="wps-section">
-      <div class="section-title-sp">{{ t('wireless.wpsPinConnect') }}</div>
-      <div class="action-section">
-        <div class="description-title">{{ t('wireless.pinConnectTitle') }}</div>
-        <p>{{ t('wireless.wpsPinConnectDesc') }}</p>
-        <div class="pin-section">
-          <div class="pin-label">{{ t('wireless.pinCodeOfClient') }}</div>
-          <div class="pin-input">
+    <div class="wps-section" :data-testid="qa('wps-actions-pin-connect-section')">
+      <div class="section-title-sp" :data-testid="qa('wps-actions-pin-connect-title')">{{ t('wireless.wpsPinConnect') }}</div>
+      <div class="action-section" :data-testid="qa('wps-actions-pin-connect-content')">
+        <div class="description-title" :data-testid="qa('wps-actions-pin-connect-description-title')">{{ t('wireless.pinConnectTitle') }}</div>
+        <p :data-testid="qa('wps-actions-pin-connect-description')">{{ t('wireless.wpsPinConnectDesc') }}</p>
+        <div class="pin-section" :data-testid="qa('wps-actions-pin-connect-pin-section')">
+          <div class="pin-label" :data-testid="qa('wps-actions-pin-connect-pin-label')">{{ t('wireless.pinCodeOfClient') }}</div>
+          <div class="pin-input" :data-testid="qa('wps-actions-pin-connect-pin-input-container')">
             <input
               type="text"
+              :data-testid="qa('wps-actions-pin-connect-pin-input')"
               v-model="clientPin"
               :placeholder="t('wireless.enterPin')"
             />
             <button 
               class="btn btn-primary"
+              :data-testid="qa('wps-actions-pin-connect-button')"
               @click="handlePinConnect"
               :disabled="loading || !clientPin"
             >
@@ -110,14 +115,14 @@ const cancelConfirmation = () => {
     </div>
 
     <!-- Generate PIN Code Section -->
-    <div class="wps-section">
-      <div class="section-title-sp">{{ t('wireless.generatePinCode') }}</div>
-      <div class="action-section">
-        <div class="description-title">{{ t('wireless.devicePinTitle') }}</div>
-        <p>{{ t('wireless.devicePinDesc') }}</p>
-        <div class="pin-section">
-          <div class="pin-label">{{ t('wireless.pinCode') }}</div>
-          <div class="pin-display">
+    <div class="wps-section" :data-testid="qa('wps-actions-generate-pin-section')">
+      <div class="section-title-sp" :data-testid="qa('wps-actions-generate-pin-title')">{{ t('wireless.generatePinCode') }}</div>
+      <div class="action-section" :data-testid="qa('wps-actions-generate-pin-content')">
+        <div class="description-title" :data-testid="qa('wps-actions-generate-pin-description-title')">{{ t('wireless.devicePinTitle') }}</div>
+        <p :data-testid="qa('wps-actions-generate-pin-description')">{{ t('wireless.devicePinDesc') }}</p>
+        <div class="pin-section" :data-testid="qa('wps-actions-generate-pin-pin-section')">
+          <div class="pin-label" :data-testid="qa('wps-actions-generate-pin-pin-label')">{{ t('wireless.pinCode') }}</div>
+          <div class="pin-display" :data-testid="qa('wps-actions-generate-pin-pin-display')">
             {{ props.pinCode }}
           </div>
         </div>
@@ -126,6 +131,7 @@ const cancelConfirmation = () => {
 
     <!-- Confirmation Dialog -->
     <ConfirmationDialog
+      :data-testid="qa('wps-actions-confirmation-dialog')"
       :is-open="showConfirmDialog"
       :title="t('wireless.enableWpsConfirm')"
       :message="t('wireless.enableWpsMessage')"

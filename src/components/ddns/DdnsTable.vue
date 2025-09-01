@@ -2,6 +2,8 @@
 import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DdnsService } from '../../types/ddns';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -16,31 +18,31 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="table-container">
-    <table>
+  <div class="table-container" :data-testid="qa('ddns-table-container')">
+    <table :data-testid="qa('ddns-table')">
       <thead>
         <tr>
-          <th>{{ t('ddns.no') }}</th>
-          <th>{{ t('ddns.provider') }}</th>
-          <th>{{ t('ddns.domain') }}</th>
-          <th>{{ t('ddns.status') }}</th>
-          <th>{{ t('ddns.lastUpdate') }}</th>
-          <th>{{ t('ddns.action') }}</th>
+          <th :data-testid="qa('ddns-table-header-no')">{{ t('ddns.no') }}</th>
+          <th :data-testid="qa('ddns-table-header-provider')">{{ t('ddns.provider') }}</th>
+          <th :data-testid="qa('ddns-table-header-domain')">{{ t('ddns.domain') }}</th>
+          <th :data-testid="qa('ddns-table-header-status')">{{ t('ddns.status') }}</th>
+          <th :data-testid="qa('ddns-table-header-last-update')">{{ t('ddns.lastUpdate') }}</th>
+          <th :data-testid="qa('ddns-table-header-action')">{{ t('ddns.action') }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(service, index) in services" :key="service.ID">
-          <td>{{ index + 1 }}</td>
-          <td>{{ service.ServProv }}</td>
-          <td>{{ service.DomainName }}</td>
-          <td>{{ service.Status }}</td>
-          <td>{{ service.LastUpdate }}</td>
+        <tr v-for="(service, index) in services" :key="service.ID" :data-testid="qa(`ddns-table-row-${index}`)">
+          <td :data-testid="qa(`ddns-table-no-${index}`)">{{ index + 1 }}</td>
+          <td :data-testid="qa(`ddns-table-provider-${index}`)">{{ service.ServProv }}</td>
+          <td :data-testid="qa(`ddns-table-domain-${index}`)">{{ service.DomainName }}</td>
+          <td :data-testid="qa(`ddns-table-status-${index}`)">{{ service.Status }}</td>
+          <td :data-testid="qa(`ddns-table-last-update-${index}`)">{{ service.LastUpdate }}</td>
           <td>
-            <div class="action-buttons">
-              <button class="btn btn-edit" @click="$emit('edit', service)" :title="t('common.edit')">
+            <div class="action-buttons" :data-testid="qa(`ddns-table-actions-${index}`)">
+              <button class="btn btn-edit" :data-testid="qa(`ddns-table-edit-${index}`)" @click="$emit('edit', service)" :title="t('common.edit')">
                 {{ t('common.edit') }}
               </button>
-              <button class="btn btn-delete" @click="$emit('delete', service.ID)" :title="t('common.delete')">
+              <button class="btn btn-delete" :data-testid="qa(`ddns-table-delete-${index}`)" @click="$emit('delete', service.ID)" :title="t('common.delete')">
                 {{ t('common.delete') }}
               </button>
             </div>

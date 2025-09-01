@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Chart, registerables } from 'chart.js';
 import { ref, onMounted, watch, defineProps } from 'vue';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 Chart.register(...registerables);
 
@@ -53,8 +55,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="chart-container">
-    <canvas ref="chartRef"></canvas>
+  <div class="chart-container" :data-testid="qa('line-chart-container')">
+    <canvas ref="chartRef" :data-testid="qa('line-chart-canvas')"></canvas>
   </div>
 </template>
 

@@ -10,6 +10,8 @@ import MemoryStatus from '../components/dashboard/MemoryStatus.vue';
 import WanStatus from '../components/dashboard/WanStatus.vue';
 import WifiStatus from '../components/dashboard/WifiStatus.vue';
 import EthernetStatus from '../components/dashboard/EthernetStatus.vue';
+import { useQA } from '../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -48,42 +50,48 @@ onUnmounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('menu.dashboard') }}</h1>
+    <h1 class="page-title" :data-testid="qa('dashboard-title')">{{ t('menu.dashboard') }}</h1>
     
-    <div class="status-content">
-    <div v-if="loading" class="loading-state">
+    <div class="status-content" :data-testid="qa('dashboard-content')">
+    <div v-if="loading" class="loading-state" :data-testid="qa('dashboard-loading')">
       <div class="loading-spinner"></div>
       <p>Loading dashboard data...</p>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('dashboard-error')">
       <p>{{ error }}</p>
-      <button @click="fetchData" class="retry-button">Retry</button>
+      <button @click="fetchData" class="retry-button" :data-testid="qa('dashboard-retry-button')">Retry</button>
     </div>
     
-    <div v-else class="dashboard-grid">
+    <div v-else class="dashboard-grid" :data-testid="qa('dashboard-grid')">
       <SystemInfo 
-        class="dashboard-item" 
+        class="dashboard-item"
+        :data-testid="qa('dashboard-system-info')"
         :system-info="dashboardData?.Dashboard.System"
       />
       <CpuUsage 
         class="dashboard-item"
+        :data-testid="qa('dashboard-cpu-usage')"
         :cpu-info="dashboardData?.Dashboard.CPU"
       />
       <MemoryStatus 
         class="dashboard-item"
+        :data-testid="qa('dashboard-memory-status')"
         :memory-info="dashboardData?.Dashboard.Memory"
       />
       <WanStatus 
         class="dashboard-item"
+        :data-testid="qa('dashboard-wan-status')"
         :wan-info="dashboardData?.Dashboard.WAN"
       />
       <WifiStatus 
         class="dashboard-item"
+        :data-testid="qa('dashboard-wifi-status')"
         :wifi-info="dashboardData?.Dashboard.WiFi"
       />
       <EthernetStatus 
         class="dashboard-item"
+        :data-testid="qa('dashboard-ethernet-status')"
         :ethernet-info="dashboardData?.Dashboard.Ethernet"
       />
     </div>

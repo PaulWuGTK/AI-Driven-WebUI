@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router';
 import type { GuestWiFiResponse } from '../../../types/guest';
 import { getGuestWiFi, updateGuestWiFi } from '../../../services/api/guestAccess';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const router = useRouter();
@@ -83,20 +85,20 @@ onMounted(fetchGuestWiFi);
 </script>
 
 <template>
-  <div class="guest-wifi">
-    <div v-if="loading && !guestWiFiData" class="loading-state">
+  <div class="guest-wifi" :data-testid="qa('guest-wifi-content')">
+    <div v-if="loading && !guestWiFiData" class="loading-state" :data-testid="qa('guest-wifi-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('guest-wifi-error')">
       {{ error }}
     </div>
 
-    <form v-else-if="guestWiFiData" @submit.prevent="handleSubmit">
+    <form v-else-if="guestWiFiData" @submit.prevent="handleSubmit" :data-testid="qa('guest-wifi-form')">
       <!-- Show info banner when MLO is disabled by Mesh -->
-      <div v-if="isMLODisabledByMesh" class="mesh-status">
-        <div class="info-banner">
+      <div v-if="isMLODisabledByMesh" class="mesh-status" :data-testid="qa('guest-wifi-mesh-status')">
+        <div class="info-banner" :data-testid="qa('guest-wifi-mesh-info-banner')">
           <span class="material-icons">info</span>
           <span>{{ t('wireless.meshMloDisabled') }}</span>
         </div>
@@ -104,10 +106,11 @@ onMounted(fetchGuestWiFi);
 
       <div class="form-group">
         <div class="switch-label">
-          <span>{{ t('guest.enable') }}</span>
+          <span :data-testid="qa('guest-wifi-enable-label')">{{ t('guest.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa('guest-wifi-enable-toggle')"
               v-model="guestWiFiData.GuestWiFi.Enable"
               :true-value="1"
               :false-value="0"
@@ -119,10 +122,11 @@ onMounted(fetchGuestWiFi);
 
       <div class="form-group">
         <div class="switch-label">
-          <span>MLO {{ t('guest.enable') }}</span>
+          <span :data-testid="qa('guest-wifi-mlo-enable-label')">MLO {{ t('guest.enable') }}</span>
           <label class="switch">
             <input
               type="checkbox"
+              :data-testid="qa('guest-wifi-mlo-enable-toggle')"
               v-model="guestWiFiData.GuestWiFi.MLOEnable"
               :true-value="1"
               :false-value="0"
@@ -134,9 +138,10 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="form-group">
-        <label>{{ t('guest.ssid') }}</label>
+        <label :data-testid="qa('guest-wifi-ssid-label')">{{ t('guest.ssid') }}</label>
         <input
           type="text"
+          :data-testid="qa('guest-wifi-ssid-input')"
           v-model="guestWiFiData.GuestWiFi.SSID"
           :disabled="guestWiFiData.GuestWiFi.Enable === 0"
           required
@@ -144,22 +149,24 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="form-group">
-        <label>{{ t('guest.authentication') }}</label>
+        <label :data-testid="qa('guest-wifi-authentication-label')">{{ t('guest.authentication') }}</label>
         <select
+          :data-testid="qa('guest-wifi-authentication-select')"
           v-model="guestWiFiData.GuestWiFi.SecurityMode"
           :disabled="guestWiFiData.GuestWiFi.Enable === 0"
         >
-          <option v-for="mode in securityModes" :key="mode" :value="mode">
+          <option v-for="mode in securityModes" :key="mode" :value="mode" :data-testid="qa(`guest-wifi-authentication-option-${slug(mode)}`)">
             {{ mode }}
           </option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>{{ t('guest.password') }}</label>
-        <div class="password-input">
+        <label :data-testid="qa('guest-wifi-password-label')">{{ t('guest.password') }}</label>
+        <div class="password-input" :data-testid="qa('guest-wifi-password-container')">
           <input
             :type="showPassword ? 'text' : 'password'"
+            :data-testid="qa('guest-wifi-password-input')"
             v-model="guestWiFiData.GuestWiFi.Password"
             :disabled="guestWiFiData.GuestWiFi.Enable === 0"
             required
@@ -167,6 +174,7 @@ onMounted(fetchGuestWiFi);
           <button 
             type="button" 
             class="toggle-password"
+            :data-testid="qa('guest-wifi-password-toggle')"
             @click="showPassword = !showPassword"
             :disabled="guestWiFiData.GuestWiFi.Enable === 0"
           >
@@ -178,21 +186,22 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchGuestWiFi" :disabled="loading">
+        <button type="button" class="btn btn-secondary" @click="fetchGuestWiFi" :disabled="loading" :data-testid="qa('guest-wifi-cancel-button')">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :disabled="loading" :data-testid="qa('guest-wifi-apply-button')">
           {{ t('common.apply') }}
         </button>
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('guest-wifi-success-message')">
       {{ t('common.apply') }} successful
     </div>
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
+      :data-testid="qa('guest-wifi-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       message="Applying Guest WiFi Settings..."
       :duration="30"

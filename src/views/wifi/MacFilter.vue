@@ -5,6 +5,8 @@ import type { MACFilteringResponse, MACFilteringEntry } from '../../types/macFil
 import { getMACFiltering, updateMACFiltering } from '../../services/api/macFiltering';
 import MacFilterBand from './macfilter/MacFilterBand.vue';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const activeTab = ref('2.4G');
@@ -145,24 +147,25 @@ onMounted(fetchMACFiltering);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('macfilter.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('mac-filter-title')">{{ t('macfilter.title') }}</h1>
 
-    <div class="status-content">
-      <div v-if="loading && !macFilteringData" class="loading-state">
+    <div class="status-content" :data-testid="qa('mac-filter-content')">
+      <div v-if="loading && !macFilteringData" class="loading-state" :data-testid="qa('mac-filter-loading')">
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
 
-      <div v-else-if="error" class="error-state">
+      <div v-else-if="error" class="error-state" :data-testid="qa('mac-filter-error')">
         {{ error }}
       </div>
 
       <template v-else-if="macFilteringData">
-        <div class="panel-section">
-          <div class="tab-navigation">
+        <div class="panel-section" :data-testid="qa('mac-filter-panel')">
+          <div class="tab-navigation" :data-testid="qa('mac-filter-tabs')">
             <button
               class="tab-button"
               :class="{ active: activeTab === '2.4G' }"
+              :data-testid="qa('mac-filter-tab-2g')"
               @click="activeTab = '2.4G'"
             >
               2.4G
@@ -170,6 +173,7 @@ onMounted(fetchMACFiltering);
             <button
               class="tab-button"
               :class="{ active: activeTab === '5G' }"
+              :data-testid="qa('mac-filter-tab-5g')"
               @click="activeTab = '5G'"
             >
               5G
@@ -177,29 +181,33 @@ onMounted(fetchMACFiltering);
             <button
               class="tab-button"
               :class="{ active: activeTab === '6G' }"
+              :data-testid="qa('mac-filter-tab-6g')"
               @click="activeTab = '6G'"
             >
               6G
             </button>
           </div>
 
-          <div class="tab-content">
+          <div class="tab-content" :data-testid="qa('mac-filter-tab-content')">
             <MacFilterBand 
               v-if="activeTab === '2.4G'" 
               :entries="wifi2gEntries" 
               band="2.4G"
+              :data-testid="qa('mac-filter-2g-band')"
               @update:entries="update2GEntries"
             />
             <MacFilterBand 
               v-if="activeTab === '5G'" 
               :entries="wifi5gEntries" 
               band="5G"
+              :data-testid="qa('mac-filter-5g-band')"
               @update:entries="update5GEntries"
             />
             <MacFilterBand 
               v-if="activeTab === '6G'" 
               :entries="wifi6gEntries" 
               band="6G"
+              :data-testid="qa('mac-filter-6g-band')"
               @update:entries="update6GEntries"
             />
           </div>
@@ -208,6 +216,7 @@ onMounted(fetchMACFiltering);
             <button 
               type="button" 
               class="btn btn-secondary" 
+              :data-testid="qa('mac-filter-cancel-button')"
               @click="handleCancel"
               :disabled="loading"
             >
@@ -216,6 +225,7 @@ onMounted(fetchMACFiltering);
             <button 
               type="button"
               class="btn btn-primary"
+              :data-testid="qa('mac-filter-apply-button')"
               @click="handleApply"
               :disabled="loading"
             >
@@ -225,13 +235,14 @@ onMounted(fetchMACFiltering);
         </div>
       </template>
 
-      <div v-if="showSuccess" class="success-message">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('mac-filter-success-message')">
         {{ t('common.apply') }} successful
       </div>
 
       <!-- Confirmation Dialog -->
       <ConfirmationDialog
         :is-open="showConfirmDialog"
+        :data-testid="qa('mac-filter-confirm-dialog')"
         :title="t('macfilter.applyChangesTitle')"
         :message="t('macfilter.applyChangesMessage')"
         @confirm="confirmApply"

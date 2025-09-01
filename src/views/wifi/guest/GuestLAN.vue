@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { GuestLANResponse } from '../../../types/guest';
 import { getGuestLAN, updateGuestLAN } from '../../../services/api/guestAccess';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const guestLANData = ref<GuestLANResponse | null>(null);
@@ -202,27 +204,28 @@ onMounted(fetchGuestLAN);
 </script>
 
 <template>
-  <div class="guest-lan">
-    <div v-if="loading && !guestLANData" class="loading-state">
+  <div class="guest-lan" :data-testid="qa('guest-lan-content')">
+    <div v-if="loading && !guestLANData" class="loading-state" :data-testid="qa('guest-lan-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error" class="error-state">
+    <div v-else-if="error" class="error-state" :data-testid="qa('guest-lan-error')">
       {{ error }}
     </div>
 
-    <form v-else-if="guestLANData" @submit.prevent="handleSubmit">
+    <form v-else-if="guestLANData" @submit.prevent="handleSubmit" :data-testid="qa('guest-lan-form')">
       <!-- LAN IP Setting -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('guest.lanIpSetting') }}</div>
+      <div class="panel-section" :data-testid="qa('guest-lan-ip-section')">
+        <div class="section-title" :data-testid="qa('guest-lan-ip-title')">{{ t('guest.lanIpSetting') }}</div>
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('guest.enable') }}</span>
+              <span :data-testid="qa('guest-lan-ip-enable-label')">{{ t('guest.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('guest-lan-ip-enable-toggle')"
                   v-model="guestLANData.GuestLAN.GUESTIPSetting.Enable"
                   :true-value="1"
                   :false-value="0"
@@ -233,9 +236,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.ipAddress') }}</label>
+            <label :data-testid="qa('guest-lan-ip-address-label')">{{ t('guest.ipAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-ip-address-input')"
               :value="guestLANData.GuestLAN.GUESTIPSetting.IPAddress"
               @input="handleIPInput($event, 'lanIP')"
               :disabled="!guestLANData.GuestLAN.GUESTIPSetting.Enable"
@@ -244,9 +248,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.subnetMask') }}</label>
+            <label :data-testid="qa('guest-lan-subnet-mask-label')">{{ t('guest.subnetMask') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-subnet-mask-input')"
               v-model="guestLANData.GuestLAN.GUESTIPSetting.SubnetMask"
               :disabled="!guestLANData.GuestLAN.GUESTIPSetting.Enable"
               placeholder="255.255.255.0"
@@ -256,15 +261,16 @@ onMounted(fetchGuestLAN);
       </div>
 
       <!-- DHCPv4 Setting -->
-      <div class="panel-section">
-        <div class="section-title">{{ t('guest.dhcpSetting') }}</div>
+      <div class="panel-section" :data-testid="qa('guest-lan-dhcp-section')">
+        <div class="section-title" :data-testid="qa('guest-lan-dhcp-title')">{{ t('guest.dhcpSetting') }}</div>
         <div class="card-content">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('guest.enableDhcpServer') }}</span>
+              <span :data-testid="qa('guest-lan-dhcp-enable-label')">{{ t('guest.enableDhcpServer') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
+                  :data-testid="qa('guest-lan-dhcp-enable-toggle')"
                   v-model="guestLANData.GuestLAN.DHCPv4Setting.Enable"
                   :true-value="1"
                   :false-value="0"
@@ -275,9 +281,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.dnsServer') }}</label>
+            <label :data-testid="qa('guest-lan-dns-server-label')">{{ t('guest.dnsServer') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-dns-server-input')"
               :value="guestLANData.GuestLAN.DHCPv4Setting.DNSServers"
               @input="handleIPInput($event, 'dnsServer')"
               :disabled="!guestLANData.GuestLAN.DHCPv4Setting.Enable"
@@ -286,9 +293,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.beginAddress') }}</label>
+            <label :data-testid="qa('guest-lan-begin-address-label')">{{ t('guest.beginAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-begin-address-input')"
               :value="guestLANData.GuestLAN.DHCPv4Setting.BeginAddress"
               @input="handleIPInput($event, 'beginAddress')"
               :disabled="!guestLANData.GuestLAN.DHCPv4Setting.Enable"
@@ -297,9 +305,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.endAddress') }}</label>
+            <label :data-testid="qa('guest-lan-end-address-label')">{{ t('guest.endAddress') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-end-address-input')"
               :value="guestLANData.GuestLAN.DHCPv4Setting.EndAddress"
               @input="handleIPInput($event, 'endAddress')"
               :disabled="!guestLANData.GuestLAN.DHCPv4Setting.Enable"
@@ -308,9 +317,10 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.subnetMask') }}</label>
+            <label :data-testid="qa('guest-lan-dhcp-subnet-mask-label')">{{ t('guest.subnetMask') }}</label>
             <input
               type="text"
+              :data-testid="qa('guest-lan-dhcp-subnet-mask-input')"
               v-model="guestLANData.GuestLAN.DHCPv4Setting.SubnetMask"
               :disabled="!guestLANData.GuestLAN.DHCPv4Setting.Enable"
               placeholder="255.255.255.0"
@@ -318,16 +328,17 @@ onMounted(fetchGuestLAN);
           </div>
 
           <div class="form-group">
-            <label>{{ t('guest.leaseTime') }}</label>
-            <div class="input-with-unit">
+            <label :data-testid="qa('guest-lan-lease-time-label')">{{ t('guest.leaseTime') }}</label>
+            <div class="input-with-unit" :data-testid="qa('guest-lan-lease-time-container')">
               <input
                 type="number"
+                :data-testid="qa('guest-lan-lease-time-input')"
                 v-model="guestLANData.GuestLAN.DHCPv4Setting.LeaseTime"
                 :disabled="!guestLANData.GuestLAN.DHCPv4Setting.Enable"
                 min="300"
                 max="604800"
               />
-              <span class="unit">{{ t('guest.seconds') }}</span>
+              <span class="unit" :data-testid="qa('guest-lan-lease-time-unit')">{{ t('guest.seconds') }}</span>
             </div>
           </div>
         </div>
@@ -337,6 +348,7 @@ onMounted(fetchGuestLAN);
         <button 
           type="button" 
           class="btn btn-secondary" 
+          :data-testid="qa('guest-lan-cancel-button')"
           @click="fetchGuestLAN"
         >
           {{ t('common.cancel') }}
@@ -344,13 +356,14 @@ onMounted(fetchGuestLAN);
         <button 
           type="submit"
           class="btn btn-primary"
+          :data-testid="qa('guest-lan-apply-button')"
         >
           {{ t('common.apply') }}
         </button>
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('guest-lan-success-message')">
       {{ t('common.apply') }} successful
     </div>
   </div>

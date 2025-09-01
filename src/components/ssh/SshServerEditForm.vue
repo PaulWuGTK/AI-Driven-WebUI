@@ -2,6 +2,8 @@
 import { defineProps, defineEmits, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../types/ssh';
+import { useQA } from '../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 
@@ -94,27 +96,29 @@ const handleCustomKeepAliveChange = (event: Event) => {
 </script>
 
 <template>
-  <div class="ssh-server-edit">
-    <h3>{{ t('ssh.editServer') }}</h3>
-    <form @submit.prevent="$emit('save')">
+  <div class="ssh-server-edit" :data-testid="qa('ssh-server-edit-content')">
+    <h3 :data-testid="qa('ssh-server-edit-title')">{{ t('ssh.editServer') }}</h3>
+    <form @submit.prevent="$emit('save')" :data-testid="qa('ssh-server-edit-form')">
       <!-- Server Settings Section -->
-      <div class="form-section">
+      <div class="form-section" :data-testid="qa('ssh-server-edit-settings-section')">
         <div class="form-group">
-          <label>{{ t('ssh.interface') }}</label>
+          <label :data-testid="qa('ssh-server-edit-interface-label')">{{ t('ssh.interface') }}</label>
           <select 
+            :data-testid="qa('ssh-server-edit-interface-select')"
             :value="server.Interface"
             @change="updateServer('Interface', ($event.target as HTMLSelectElement).value)"
           >
-            <option v-for="iface in interfaces" :key="iface" :value="iface">
+            <option v-for="iface in interfaces" :key="iface" :value="iface" :data-testid="qa(`ssh-server-edit-interface-option-${slug(iface)}`)">
               {{ iface }}
             </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>{{ t('ssh.port') }}</label>
+          <label :data-testid="qa('ssh-server-edit-port-label')">{{ t('ssh.port') }}</label>
           <input 
             type="number" 
+            :data-testid="qa('ssh-server-edit-port-input')"
             :value="server.Port"
             @input="updateServer('Port', parseInt(($event.target as HTMLInputElement).value))"
             min="1"
@@ -125,10 +129,11 @@ const handleCustomKeepAliveChange = (event: Event) => {
 
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.enable') }}</span>
+            <span :data-testid="qa('ssh-server-edit-enable-label')">{{ t('ssh.enable') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-enable-toggle')"
                 :checked="server.Enable === 1"
                 @change="updateServer('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -139,73 +144,79 @@ const handleCustomKeepAliveChange = (event: Event) => {
       </div>
 
       <!-- Connection Settings Section -->
-      <div class="form-section">
+      <div class="form-section" :data-testid="qa('ssh-server-edit-connection-section')">
         <div class="form-group">
-          <label>{{ t('ssh.autoDisableServer') }}</label>
+          <label :data-testid="qa('ssh-server-edit-auto-disable-label')">{{ t('ssh.autoDisableServer') }}</label>
           <select 
+            :data-testid="qa('ssh-server-edit-auto-disable-select')"
             :value="server.AutoDisableDuration"
             @change="updateServer('AutoDisableDuration', parseInt(($event.target as HTMLSelectElement).value))"
           >
-            <option v-for="option in autoDisableOptions" :key="option.value" :value="option.value">
+            <option v-for="option in autoDisableOptions" :key="option.value" :value="option.value" :data-testid="qa(`ssh-server-edit-auto-disable-option-${option.value}`)">
               {{ option.label }}
             </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>{{ t('ssh.connectionTimeout') }}</label>
+          <label :data-testid="qa('ssh-server-edit-connection-timeout-label')">{{ t('ssh.connectionTimeout') }}</label>
           <select 
+            :data-testid="qa('ssh-server-edit-connection-timeout-select')"
             :value="selectedTimeoutOption"
             @change="handleTimeoutChange"
           >
-            <option v-for="option in connectionTimeoutOptions" :key="option.value" :value="option.value">
+            <option v-for="option in connectionTimeoutOptions" :key="option.value" :value="option.value" :data-testid="qa(`ssh-server-edit-connection-timeout-option-${option.value}`)">
               {{ option.label }}
             </option>
           </select>
           
-          <div v-if="selectedTimeoutOption === -1" class="custom-input-wrapper">
+          <div v-if="selectedTimeoutOption === -1" class="custom-input-wrapper" :data-testid="qa('ssh-server-edit-connection-timeout-custom')">
             <input 
               type="number" 
+              :data-testid="qa('ssh-server-edit-connection-timeout-custom-input')"
               :value="customTimeoutValue"
               @input="handleCustomTimeoutChange"
               min="1"
               max="60"
               class="custom-input"
             >
-            <span class="input-unit">mins</span>
+            <span class="input-unit" :data-testid="qa('ssh-server-edit-connection-timeout-custom-unit')">mins</span>
           </div>
         </div>
 
         <div class="form-group">
-          <label>{{ t('ssh.keepAliveMessage') }}</label>
+          <label :data-testid="qa('ssh-server-edit-keep-alive-label')">{{ t('ssh.keepAliveMessage') }}</label>
           <select 
+            :data-testid="qa('ssh-server-edit-keep-alive-select')"
             :value="selectedKeepAliveOption"
             @change="handleKeepAliveChange"
           >
-            <option v-for="option in keepAliveOptions" :key="option.value" :value="option.value">
+            <option v-for="option in keepAliveOptions" :key="option.value" :value="option.value" :data-testid="qa(`ssh-server-edit-keep-alive-option-${option.value}`)">
               {{ option.label }}
             </option>
           </select>
           
-          <div v-if="selectedKeepAliveOption === -1" class="custom-input-wrapper">
+          <div v-if="selectedKeepAliveOption === -1" class="custom-input-wrapper" :data-testid="qa('ssh-server-edit-keep-alive-custom')">
             <input 
               type="number" 
+              :data-testid="qa('ssh-server-edit-keep-alive-custom-input')"
               :value="customKeepAliveValue"
               @input="handleCustomKeepAliveChange"
               min="1"
               max="60"
               class="custom-input"
             >
-            <span class="input-unit">mins</span>
+            <span class="input-unit" :data-testid="qa('ssh-server-edit-keep-alive-custom-unit')">mins</span>
           </div>
         </div>
 
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.allowAllIPv4') }}</span>
+            <span :data-testid="qa('ssh-server-edit-allow-all-ipv4-label')">{{ t('ssh.allowAllIPv4') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle')"
                 :checked="server.AllowAllIPv4 === 1"
                 @change="updateServer('AllowAllIPv4', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -215,9 +226,10 @@ const handleCustomKeepAliveChange = (event: Event) => {
         </div>
 
         <div class="form-group" v-if="!server.AllowAllIPv4">
-          <label>{{ t('ssh.ipv4Prefix') }}</label>
+          <label :data-testid="qa('ssh-server-edit-ipv4-prefix-label')">{{ t('ssh.ipv4Prefix') }}</label>
           <input 
             type="text" 
+            :data-testid="qa('ssh-server-edit-ipv4-prefix-input')"
             :value="server.IPv4AllowedSourcePrefix"
             @input="updateServer('IPv4AllowedSourcePrefix', ($event.target as HTMLInputElement).value)"
             placeholder="e.g., 192.168.1.0/24"
@@ -226,10 +238,11 @@ const handleCustomKeepAliveChange = (event: Event) => {
 
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.allowAllIPv6') }}</span>
+            <span :data-testid="qa('ssh-server-edit-allow-all-ipv6-label')">{{ t('ssh.allowAllIPv6') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle')"
                 :checked="server.AllowAllIPv6 === 1"
                 @change="updateServer('AllowAllIPv6', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -239,9 +252,10 @@ const handleCustomKeepAliveChange = (event: Event) => {
         </div>
 
         <div class="form-group" v-if="!server.AllowAllIPv6">
-          <label>{{ t('ssh.ipv6Prefix') }}</label>
+          <label :data-testid="qa('ssh-server-edit-ipv6-prefix-label')">{{ t('ssh.ipv6Prefix') }}</label>
           <input 
             type="text" 
+            :data-testid="qa('ssh-server-edit-ipv6-prefix-input')"
             :value="server.IPv6AllowedSourcePrefix"
             @input="updateServer('IPv6AllowedSourcePrefix', ($event.target as HTMLInputElement).value)"
             placeholder="e.g., 2001:db8::/32"
@@ -250,13 +264,14 @@ const handleCustomKeepAliveChange = (event: Event) => {
       </div>
 
       <!-- Authentication Settings Section -->
-      <div class="form-section">
+      <div class="form-section" :data-testid="qa('ssh-server-edit-auth-section')">
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.allowPasswordLogin') }}</span>
+            <span :data-testid="qa('ssh-server-edit-allow-password-login-label')">{{ t('ssh.allowPasswordLogin') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-allow-password-login-toggle')"
                 :checked="server.AllowPasswordLogin === 1"
                 @change="updateServer('AllowPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -267,10 +282,11 @@ const handleCustomKeepAliveChange = (event: Event) => {
 
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.allowRootLogin') }}</span>
+            <span :data-testid="qa('ssh-server-edit-allow-root-login-label')">{{ t('ssh.allowRootLogin') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-allow-root-login-toggle')"
                 :checked="server.AllowRootLogin === 1"
                 @change="updateServer('AllowRootLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -281,10 +297,11 @@ const handleCustomKeepAliveChange = (event: Event) => {
 
         <div class="form-group">
           <label class="switch-label">
-            <span>{{ t('ssh.rootLoginWithPassword') }}</span>
+            <span :data-testid="qa('ssh-server-edit-root-password-login-label')">{{ t('ssh.rootLoginWithPassword') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
+                :data-testid="qa('ssh-server-edit-root-password-login-toggle')"
                 :checked="server.AllowRootPasswordLogin === 1"
                 @change="updateServer('AllowRootPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
@@ -294,9 +311,10 @@ const handleCustomKeepAliveChange = (event: Event) => {
         </div>
 
         <div class="form-group">
-          <label>{{ t('ssh.maxAuthTries') }}</label>
+          <label :data-testid="qa('ssh-server-edit-max-auth-tries-label')">{{ t('ssh.maxAuthTries') }}</label>
           <input 
             type="number" 
+            :data-testid="qa('ssh-server-edit-max-auth-tries-input')"
             :value="server.MaxAuthTries"
             @input="updateServer('MaxAuthTries', parseInt(($event.target as HTMLInputElement).value))"
             min="1"
@@ -307,10 +325,10 @@ const handleCustomKeepAliveChange = (event: Event) => {
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
+        <button type="button" class="btn btn-secondary" :data-testid="qa('ssh-server-edit-cancel-button')" @click="$emit('cancel')">
           {{ t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('ssh-server-edit-save-button')">
           {{ t('common.save') }}
         </button>
       </div>

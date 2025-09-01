@@ -5,6 +5,8 @@ import type { SshAuthorizedKey } from '../../../types/ssh';
 import { getSshAuthorizedKeys, updateSshAuthorizedKeys } from '../../../services/api/ssh';
 import { extractKeyComment, isValidSshKey } from '../../../utils/sshUtils';
 import SshPublicKeyViewer from '../../../components/ssh/SshPublicKeyViewer.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const keys = ref<SshAuthorizedKey[]>([]);
@@ -72,69 +74,69 @@ onMounted(fetchKeys);
 </script>
 
 <template>
-  <div class="key-management">
+  <div class="key-management" :data-testid="qa('ssh-key-management-content')">
     <div class="header-row">
-      <div class="section-title-sp">{{ t('ssh.publicKeyManagement') }}</div>
+      <div class="section-title-sp" :data-testid="qa('ssh-key-management-title')">{{ t('ssh.publicKeyManagement') }}</div>
     </div>
 
-    <div v-if="loading" class="loading-state">
+    <div v-if="loading" class="loading-state" :data-testid="qa('ssh-key-management-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else class="key-list">
+    <div v-else class="key-list" :data-testid="qa('ssh-key-management-list')">
       <!-- PC版表格 -->
-      <div class="table-container">
+      <div class="table-container" :data-testid="qa('ssh-key-management-table')">
         <table>
           <thead>
             <tr>
-              <th>{{ t('ssh.comment') }}</th>
-              <th>{{ t('ssh.algorithm') }}</th>
-              <th>{{ t('ssh.publicKey') }}</th>
-              <th>{{ t('ssh.action') }}</th>
+              <th :data-testid="qa('ssh-key-management-header-comment')">{{ t('ssh.comment') }}</th>
+              <th :data-testid="qa('ssh-key-management-header-algorithm')">{{ t('ssh.algorithm') }}</th>
+              <th :data-testid="qa('ssh-key-management-header-public-key')">{{ t('ssh.publicKey') }}</th>
+              <th :data-testid="qa('ssh-key-management-header-action')">{{ t('ssh.action') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="key in keys" :key="key.Key">
-              <td>{{ extractKeyComment(key.Key) }}</td>
-              <td>{{ key.Key.split(' ')[0] }}</td>
+            <tr v-for="(key, index) in keys" :key="key.Key" :data-testid="qa(`ssh-key-management-row-${index}`)">
+              <td :data-testid="qa(`ssh-key-management-comment-${index}`)">{{ extractKeyComment(key.Key) }}</td>
+              <td :data-testid="qa(`ssh-key-management-algorithm-${index}`)">{{ key.Key.split(' ')[0] }}</td>
               <td>
-                <button class="btn btn-view" @click="handleViewKey(key)">
+                <button class="btn btn-view" :data-testid="qa(`ssh-key-management-view-${index}`)" @click="handleViewKey(key)">
                   {{ t('ssh.clickToView') }}
                 </button>
               </td>
               <td>
-                <button class="btn-action" @click="handleDelete(key)" title="Delete">
+                <button class="btn-action" :data-testid="qa(`ssh-key-management-delete-${index}`)" @click="handleDelete(key)" title="Delete">
                   <span class="material-icons">delete</span>
                 </button>
               </td>
             </tr>
-            <tr v-if="keys.length === 0">
-              <td colspan="4" class="no-data">No public keys added</td>
+            <tr v-if="keys.length === 0" :data-testid="qa('ssh-key-management-no-data-row')">
+              <td colspan="4" class="no-data" :data-testid="qa('ssh-key-management-no-data')">No public keys added</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- 手機版卡片 -->
-      <div class="mobile-cards">
-        <div v-if="keys.length === 0" class="no-data-mobile">
+      <div class="mobile-cards" :data-testid="qa('ssh-key-management-mobile')">
+        <div v-if="keys.length === 0" class="no-data-mobile" :data-testid="qa('ssh-key-management-no-data-mobile')">
           No public keys added
         </div>
-        <div class="table-card" v-else v-for="key in keys" :key="key.Key">
+        <div class="table-card" v-else v-for="(key, index) in keys" :key="key.Key" :data-testid="qa(`ssh-key-management-card-${index}`)">
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.comment') }}</span>
-            <span class="card-value">{{ extractKeyComment(key.Key) }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-key-management-card-comment-label-${index}`)">{{ t('ssh.comment') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-key-management-card-comment-value-${index}`)">{{ extractKeyComment(key.Key) }}</span>
           </div>
           <div class="card-row">
-            <span class="card-label">{{ t('ssh.algorithm') }}</span>
-            <span class="card-value">{{ key.Key.split(' ')[0] }}</span>
+            <span class="card-label" :data-testid="qa(`ssh-key-management-card-algorithm-label-${index}`)">{{ t('ssh.algorithm') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-key-management-card-algorithm-value-${index}`)">{{ key.Key.split(' ')[0] }}</span>
           </div>
           <div class="card-actions">
-            <button class="btn btn-view" @click="handleViewKey(key)">
+            <button class="btn btn-view" :data-testid="qa(`ssh-key-management-card-view-${index}`)" @click="handleViewKey(key)">
               {{ t('ssh.clickToView') }}
             </button>
-            <button class="btn-action" @click="handleDelete(key)" title="Delete">
+            <button class="btn-action" :data-testid="qa(`ssh-key-management-card-delete-${index}`)" @click="handleDelete(key)" title="Delete">
               <span class="material-icons">delete</span>
             </button>
           </div>
@@ -142,21 +144,22 @@ onMounted(fetchKeys);
       </div>
 
       <!-- Add New Key Section -->
-      <div class="add-key-section">
-        <div class="section-title">{{ t('ssh.newSshKey') }}</div>
+      <div class="add-key-section" :data-testid="qa('ssh-key-management-add-section')">
+        <div class="section-title" :data-testid="qa('ssh-key-management-add-title')">{{ t('ssh.newSshKey') }}</div>
         <div class="form-group">
           <textarea
+            :data-testid="qa('ssh-key-management-add-textarea')"
             v-model="newKey"
             :placeholder="t('ssh.enterNewSshKey')"
             rows="4"
           ></textarea>
-          <div v-if="error" class="error-message">{{ error }}</div>
+          <div v-if="error" class="error-message" :data-testid="qa('ssh-key-management-add-error')">{{ error }}</div>
         </div>
         <div class="button-group">
-          <button class="btn btn-secondary" @click="newKey = ''">
+          <button class="btn btn-secondary" :data-testid="qa('ssh-key-management-add-cancel')" @click="newKey = ''">
             {{ t('common.cancel') }}
           </button>
-          <button class="btn btn-primary" @click="handleAddKey">
+          <button class="btn btn-primary" :data-testid="qa('ssh-key-management-add-create')" @click="handleAddKey">
             {{ t('common.create') }}
           </button>
         </div>
@@ -165,6 +168,7 @@ onMounted(fetchKeys);
 
     <SshPublicKeyViewer
       v-if="showKeyModal && selectedKey"
+      :data-testid="qa('ssh-key-management-viewer')"
       :public-key="selectedKey"
       :on-close="handleCloseViewer"
     />
