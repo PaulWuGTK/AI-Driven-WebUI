@@ -19,14 +19,27 @@ const localOnoffState = ref(props.device.Onoff);
 
 // Get device icon based on type
 const getDeviceIcon = (type: string): string => {
-  if (type.toLowerCase().includes('switch')) return 'toggle_on';
-  if (type.toLowerCase().includes('light')) return 'lightbulb';
-  if (type.toLowerCase().includes('outlet')) return 'power';
-  if (type.toLowerCase().includes('sensor')) return 'sensors';
-  if (type.toLowerCase().includes('thermostat')) return 'thermostat';
-  if (type.toLowerCase().includes('lock')) return 'lock';
-  if (type.toLowerCase().includes('camera')) return 'videocam';
-  if (type.toLowerCase().includes('speaker')) return 'speaker';
+  const t = type.toLowerCase();
+  const has = (re: RegExp) => re.test(t);
+
+  const isPlug       = has(/\bplug(?:-?in)?\b|\bsocket\b|\boutlet\b/);
+  const isSwitch     = has(/\bswitch\b/);
+  const isLight      = has(/\blights?\b|\bbulbs?\b|\blamps?\b/);
+  const isSensor     = has(/\bsensors?\b/);
+  const isThermostat = has(/\bthermostat\b/);
+  const isLock       = has(/\block\b/);
+  const isCamera     = has(/\b(camera|doorbell)\b/);
+  const isSpeaker    = has(/\bspeakers?\b/);
+
+  // 優先序：Plug > Switch > Light > 其它
+  if (isPlug)       return 'power';      // On/Off Plug-in Unit 會命中這裡
+  if (isSwitch)     return 'toggle_on';  // "Light Switch" 會命中這裡，不會再到 light
+  if (isLight)      return 'lightbulb';
+  if (isSensor)     return 'sensors';
+  if (isThermostat) return 'thermostat';
+  if (isLock)       return 'lock';
+  if (isCamera)     return 'videocam';
+  if (isSpeaker)    return 'speaker';
   return 'device_hub';
 };
 

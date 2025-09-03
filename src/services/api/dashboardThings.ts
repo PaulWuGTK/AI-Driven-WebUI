@@ -31,6 +31,12 @@ const mockDashboardThingsData: DashboardThingsResponse = {
         NodeId: 8,
         Type: "Smart Outlet",
         Onoff: 0
+      },
+      {
+        Name: "Device_plug_1444",
+        NodeId: 9,
+        Type: "Smart Plug",
+        Onoff: 0
       }
     ]
   }
