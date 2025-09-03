@@ -12,6 +12,7 @@ export interface Translations {
     meshInfo: string;
     lcm: string;
     systemStats: string;
+    network: string;
     basicSetting: string;
     wireless: string;
     wanSetting: string;

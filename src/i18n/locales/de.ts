@@ -11,6 +11,7 @@ export default {
     meshInfo: 'Mesh-Informationen',
     lcm: 'LCM',
     systemStats: 'Systemstatistiken',
+    network: 'Netzwerk',
     basicSetting: 'Grundeinstellung',
     wireless: 'Drahtlos',
     wanSetting: 'WAN',

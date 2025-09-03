@@ -11,6 +11,7 @@ export default {
     meshInfo: 'Informations sur le maillage',
     lcm: 'LCM',
     systemStats: 'Statistiques système',
+    network: 'Réseau',
     basicSetting: 'Paramètres de base',
     wireless: 'Sans fil',
     wanSetting: 'WAN',

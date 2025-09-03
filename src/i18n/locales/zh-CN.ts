@@ -11,6 +11,7 @@ export default {
     meshInfo: '网格信息',
     lcm: 'LCM',
     systemStats: '系统统计',
+    network: '网络',
     basicSetting: '基本设置',
     wireless: '无线',
     wanSetting: 'WAN',

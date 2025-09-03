@@ -58,12 +58,12 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'LCM': { gateway: true, extender: true },
     'System Stats': { gateway: true, extender: true }
   },
-  'Basic Setting': {
+  'Network': {
     'WAN': { gateway: true, extender: false },
     'LAN': { gateway: true, extender: true },
-    'Wireless': { gateway: true, extender: false }
   },
   'Wi-Fi': {
+    'Basic Setting': { gateway: true, extender: false },
     'Guest Access': { gateway: true, extender: false },
     'MAC Filter': { gateway: true, extender: false },
     'Wireless Extender': { gateway: true, extender: true }
@@ -115,13 +115,12 @@ const baseMenuItems: MenuItem[] = [
     ]
   },
   {
-    name: 'Basic Setting',
+    name: 'Network',
     icon: basicIcon,
-    translationKey: 'menu.basicSetting',
+    translationKey: 'menu.network',
     subItems: [
       { name: 'WAN', path: '/settings/wan', translationKey: 'menu.wanSetting' },
       { name: 'LAN', path: '/settings/lan', translationKey: 'menu.lanSetting' },
-      { name: 'Wireless', path: '/settings/wireless', translationKey: 'menu.wireless' }
     ]
   },
   {
@@ -129,6 +128,7 @@ const baseMenuItems: MenuItem[] = [
     icon: wifiIcon,
     translationKey: 'menu.wifi',
     subItems: [
+      { name: 'Basic Setting', path: '/settings/wireless', translationKey: 'menu.basicSetting' },
       { name: 'Guest Access', path: '/wifi/guest-access', translationKey: 'menu.guestAccess' },
       { name: 'MAC Filter', path: '/wifi/mac-filter', translationKey: 'menu.macFilter' },
       { name: 'Wireless Extender', path: '/wifi/wireless-extender', translationKey: 'menu.wirelessExtender' }

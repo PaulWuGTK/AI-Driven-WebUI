@@ -11,6 +11,7 @@ export default {
     meshInfo: '메시 정보',
     lcm: 'LCM',
     systemStats: '시스템 통계',
+    network: '네트워크',
     basicSetting: '기본 설정',
     wireless: '무선',
     wanSetting: 'WAN',

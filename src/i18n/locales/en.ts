@@ -13,6 +13,7 @@ const translations: Translations = {
     meshInfo: 'Mesh Information',
     lcm: 'LCM',
     systemStats: 'System Stats',
+    network: 'Network',
     basicSetting: 'Basic Setting',
     wireless: 'Wireless',
     wanSetting: 'WAN',
