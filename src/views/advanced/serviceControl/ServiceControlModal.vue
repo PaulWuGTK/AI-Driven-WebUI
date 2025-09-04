@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
 import type { ServiceControlRule, ServiceControlOptions, ServiceOption } from '../../../types/serviceControl';
 
 const { t } = useI18n();
@@ -22,6 +23,47 @@ const editingRule = ref<ServiceControlRule>({
 });
 const selectedPredefinedService = ref<string>('');
 const showSourceIPRange = ref(false);
+
+// Enhanced protocol options that include combined protocols
+const enhancedProtocolOptions = computed(() => {
+  const baseProtocols = [...props.options.Protocols];
+  
+  // Add combined protocol options
+  const combinedProtocols = [
+    { value: "17,6", label: "UDP/TCP" },
+    { value: "6,17", label: "TCP/UDP" },
+    { value: "1,58", label: "ICMP (v4/v6)" },
+    { value: "2", label: "IGMP" }
+  ];
+  
+  // Only add combined protocols if they don't already exist
+  combinedProtocols.forEach(combined => {
+    if (!baseProtocols.find(p => p.value === combined.value)) {
+      baseProtocols.push(combined);
+    }
+  });
+  
+  return baseProtocols;
+});
+
+// Enhanced IP version options
+const enhancedIPVersionOptions = computed(() => {
+  const baseOptions = [...props.options.IPVersions];
+  
+  // Add special IP version options if they don't exist
+  const specialOptions = [
+    { value: "0", label: "Both IPv4 & IPv6" },
+    { value: "-1", label: "Both IPv4 & IPv6 (Legacy)" }
+  ];
+  
+  specialOptions.forEach(special => {
+    if (!baseOptions.find(o => o.value === special.value)) {
+      baseOptions.push(special);
+    }
+  });
+  
+  return baseOptions;
+});
 
 // Watch for changes in the predefined service selection
 watch(selectedPredefinedService, (newValue) => {
@@ -140,7 +182,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <div class="form-group">
             <label>{{ t('serviceControl.protocol') }}</label>
             <select v-model="editingRule.Protocol" required>
-              <option v-for="protocol in options.Protocols" :key="protocol.value" :value="protocol.value">
+              <option v-for="protocol in enhancedProtocolOptions" :key="protocol.value" :value="protocol.value">
                 {{ protocol.label }}
               </option>
             </select>
@@ -171,8 +213,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <div class="form-group">
             <label>{{ t('serviceControl.ipRange') }}</label>
             <select v-model="editingRule.IPVersion" required>
-              <option :value="-1">Both IPv4 & IPv6</option>
-              <option v-for="ipVersion in options.IPVersions" :key="ipVersion.value" :value="Number(ipVersion.value)">
+              <option v-for="ipVersion in enhancedIPVersionOptions" :key="ipVersion.value" :value="Number(ipVersion.value)">
                 {{ ipVersion.label }}
               </option>
             </select>

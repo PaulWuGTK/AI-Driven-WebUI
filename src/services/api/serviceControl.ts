@@ -89,8 +89,7 @@ export const updateServiceControl = async (data: ServiceControlUpdateRequest): P
     console.log('Update Service Control:', data);
     
     // Update mock data
-    mockServiceControlData.AdvancedServiceControl.Rules =
-      (data.AdvancedServiceControl.Rules || []).map(r => ({
+    mockServiceControlData.AdvancedServiceControl.Rules = data.AdvancedServiceControl.Rules.map(r => ({
         ...r,
         InterfaceOriginal: (r as any).InterfaceOriginal ?? r.Interface,
       }));

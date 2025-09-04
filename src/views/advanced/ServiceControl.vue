@@ -22,25 +22,33 @@ const ruleToDelete = ref<string | null>(null);
 // Computed properties for display
 const protocolMap = computed(() => {
   if (!serviceControlData.value) return {};
-  return Object.fromEntries(
+  const map: Record<string, string> = Object.fromEntries(
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.Protocols.map(p => [p.value, p.label])
   );
+  // Add support for combined protocols
+  map['17,6'] = 'UDP/TCP';
+  map['6,17'] = 'TCP/UDP';
+  map['1,58'] = 'ICMP (v4/v6)';
+  map['2'] = 'IGMP';
+  return map;
 });
 
 const interfaceMap = computed(() => {
   if (!serviceControlData.value) return {};
-  return Object.fromEntries(
+  const map: Record<string, string> = Object.fromEntries(
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.Interfaces.map(i => [i.value, i.label])
   );
+  return map;
 });
 
 const ipVersionMap = computed(() => {
   if (!serviceControlData.value) return {};
-  const map = Object.fromEntries(
+  const map: Record<string, string> = Object.fromEntries(
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.IPVersions.map(i => [i.value, i.label])
   );
-  map['-1'] = 'Both';
-  map['0'] = 'Both';
+  // Handle special cases for "Both" IP versions
+  map['-1'] = 'Both IPv4 & IPv6';
+  map['0'] = 'Both IPv4 & IPv6';
   return map;
 });
 
@@ -173,7 +181,7 @@ const showSuccessMessage = () => {
 
 // Format IP version for display
 const formatIPVersion = (version: number): string => {
-  if (version === -1 || version === 0) return 'Both';
+  if (version === -1 || version === 0) return 'Both IPv4 & IPv6';
   return `IPv${version}`;
 };
 
@@ -224,7 +232,7 @@ onMounted(fetchServiceControl);
                   <td :data-testid="qa(`service-control-access-direction-${ruleIndex}`)">{{ interfaceMap[rule.Interface] || rule.Interface }}</td>
                   <td :data-testid="qa(`service-control-protocol-${ruleIndex}`)">{{ protocolMap[rule.Protocol] || rule.Protocol }}</td>
                   <td>
-                    {{ formatIPVersion(rule.IPVersion) }}
+                    {{ ipVersionMap[rule.IPVersion.toString()] || formatIPVersion(rule.IPVersion) }}
                     <span v-if="rule.SourceIPStart && rule.SourceIPEnd">
                       ({{ rule.SourceIPStart }} - {{ rule.SourceIPEnd }})
                     </span>
