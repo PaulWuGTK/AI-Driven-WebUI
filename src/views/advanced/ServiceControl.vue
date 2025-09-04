@@ -50,6 +50,12 @@ const fetchServiceControl = async () => {
   error.value = null;
   try {
     serviceControlData.value = await getServiceControl();
+    // 保險：補上 InterfaceOriginal（舊資料或舊後端時）
+    const rules = serviceControlData.value.AdvancedServiceControl.Rules || [];
+    serviceControlData.value.AdvancedServiceControl.Rules = rules.map(r => ({
+      ...r,
+      InterfaceOriginal: (r as any).InterfaceOriginal ?? r.Interface,
+    }));
   } catch (err) {
     console.error('Error fetching service control data:', err);
     error.value = 'Failed to fetch service control data';
@@ -73,6 +79,7 @@ const handleAddRule = () => {
     Enable: true,
     Service: "",
     Interface: defaultInterface,
+    InterfaceOriginal: defaultInterface,
     IPVersion: 4
   };
   

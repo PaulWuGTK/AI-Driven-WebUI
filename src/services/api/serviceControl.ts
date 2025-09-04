@@ -67,9 +67,21 @@ const mockServiceControlData: ServiceControlResponse = {
 
 export const getServiceControl = async (): Promise<ServiceControlResponse> => {
   if (isDevelopment) {
+    mockServiceControlData.AdvancedServiceControl.Rules =
+      (mockServiceControlData.AdvancedServiceControl.Rules || []).map(r => ({
+        ...r,
+        InterfaceOriginal: (r as any).InterfaceOriginal ?? r.Interface,
+      }));
     return mockServiceControlData;
   }
-  return callApi<ServiceControlResponse>('/API/info?list=AdvancedServiceControl');
+  const data = await callApi<ServiceControlResponse>('/API/info?list=AdvancedServiceControl');
+  // 保險：確保每筆規則有 InterfaceOriginal（舊資料或舊後端時）
+  data.AdvancedServiceControl.Rules =
+    (data.AdvancedServiceControl.Rules || []).map(r => ({
+      ...r,
+      InterfaceOriginal: (r as any).InterfaceOriginal ?? r.Interface,
+    }));
+  return data;
 };
 
 export const updateServiceControl = async (data: ServiceControlUpdateRequest): Promise<ServiceControlResponse> => {
@@ -77,7 +89,11 @@ export const updateServiceControl = async (data: ServiceControlUpdateRequest): P
     console.log('Update Service Control:', data);
     
     // Update mock data
-    mockServiceControlData.AdvancedServiceControl.Rules = data.AdvancedServiceControl.Rules;
+    mockServiceControlData.AdvancedServiceControl.Rules =
+      (data.AdvancedServiceControl.Rules || []).map(r => ({
+        ...r,
+        InterfaceOriginal: (r as any).InterfaceOriginal ?? r.Interface,
+      }));
     
     return mockServiceControlData;
   }

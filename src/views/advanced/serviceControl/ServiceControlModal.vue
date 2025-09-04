@@ -15,7 +15,11 @@ const emit = defineEmits<{
   (e: 'cancel'): void;
 }>();
 
-const editingRule = ref<ServiceControlRule>({ ...props.rule });
+const editingRule = ref<ServiceControlRule>({
+  ...props.rule,
+  // 兼容舊資料：若沒有 InterfaceOriginal 就用目前的 Interface
+  InterfaceOriginal: (props.rule as any).InterfaceOriginal ?? props.rule.Interface,
+});
 const selectedPredefinedService = ref<string>('');
 const showSourceIPRange = ref(false);
 
@@ -55,7 +59,11 @@ const handleSubmit = () => {
     delete editingRule.value.SourceIPEnd;
   }
 
-  emit('save', editingRule.value);
+  // 送出時也保險補一次，避免在某些流程中被移除
+  emit('save', {
+    ...editingRule.value,
+    InterfaceOriginal: (editingRule.value as any).InterfaceOriginal ?? editingRule.value.Interface,
+  });
 };
 
 // Toggle source IP range visibility

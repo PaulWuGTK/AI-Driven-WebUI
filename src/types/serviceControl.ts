@@ -5,6 +5,7 @@ export interface ServiceControlRule {
   Enable: boolean;
   Service: string;
   Interface: string;
+  InterfaceOriginal?: string;
   IPVersion: number;
   SourceIPStart?: string;
   SourceIPEnd?: string;
