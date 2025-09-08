@@ -52,8 +52,7 @@ const enhancedIPVersionOptions = computed(() => {
   
   // Add special IP version options if they don't exist
   const specialOptions = [
-    { value: "0", label: "Both IPv4 & IPv6" },
-    { value: "-1", label: "Both IPv4 & IPv6 (Legacy)" }
+    { value: "0", label: "Both IPv4 & IPv6" }
   ];
   
   specialOptions.forEach(special => {

@@ -47,7 +47,6 @@ const ipVersionMap = computed(() => {
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.IPVersions.map(i => [i.value, i.label])
   );
   // Handle special cases for "Both" IP versions
-  map['-1'] = 'Both IPv4 & IPv6';
   map['0'] = 'Both IPv4 & IPv6';
   return map;
 });

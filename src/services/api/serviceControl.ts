@@ -15,7 +15,7 @@ const mockServiceControlData: ServiceControlResponse = {
         Enable: true,
         Service: "HTTP",
         Interface: "Device.IP.Interface.3.",
-        IPVersion: 4
+        IPVersion: 6
       },
       {
         DestPort: "443",
@@ -33,7 +33,7 @@ const mockServiceControlData: ServiceControlResponse = {
         Enable: true,
         Service: "DNS",
         Interface: "Device.IP.Interface.3.",
-        IPVersion: 4
+        IPVersion: 0
       }
     ],
     ACLAvailableOptions: {
