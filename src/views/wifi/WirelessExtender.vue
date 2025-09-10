@@ -48,7 +48,11 @@ const fetchExtenderStatus = async () => {
     extenderData.value = await getExtenderStatus();
     // Initialize temp values with current values
     tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
-    tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
+    if(tempExtenderEnabled.value == 1){
+      tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
+    }else{
+      tempExtenderRole.value = "MeshAgent"; // Add for init the Extender Role
+    }
   } catch (err) {
     console.error('Error fetching extender status:', err);
     error.value = 'Failed to fetch extender status';
