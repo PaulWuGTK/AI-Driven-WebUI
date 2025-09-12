@@ -595,7 +595,8 @@ export default {
     activating: 'Firmware wird aktiviert...',
     rebooting: 'Neustart…',
     powerOffWarning: 'Bitte schalten Sie das Gerät nicht aus.',
-    rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.'
+    rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.',
+    upgradeFail: 'Firmware-Aktualisierung fehlgeschlagen'
   },
   reset: {
     title: 'Gerät zurücksetzen',

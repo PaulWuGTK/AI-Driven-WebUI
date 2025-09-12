@@ -9,18 +9,32 @@ export async function getFirmwareStatus(): Promise<FirmwareResponse> {
       UpgradeFw: {
         UpgradeFw: {
           "1": {
+            Min_Allowed_Ver: "3.0.0.0",
+            BootFailureLog: "",
+            Switch_Status: "Available",
+            FW_UG_Status: "Available",
+            PRPL_Ver: "prplOS4.0",
+            BSP_Ver: "ath13.0",
+            Rollback: 0,
             Name: "",
             Available: 1,
-            BootFailureLog: "",
             Version: "1.0.0",
+            GTK_FW_Ver: "3.8.5",
             Alias: "active",
             Status: "Active"
           },
           "2": {
+            Min_Allowed_Ver: "3.0.0.0",
+            BootFailureLog: "",
+            Switch_Status: "Downgrade_not_allowed",
+            FW_UG_Status: "Available",
+            PRPL_Ver: "prplOS4.0",
+            BSP_Ver: "ath13.0",
+            Rollback: 0,
             Name: "",
             Available: 0,
-            BootFailureLog: "",
             Version: "",
+            GTK_FW_Ver: "2.8.5",
             Alias: "inactive",
             Status: "Available"
           }

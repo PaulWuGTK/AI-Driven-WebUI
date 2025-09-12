@@ -598,7 +598,8 @@ const translations: Translations = {
     activating: 'Activating Firmware...',
     rebooting: 'Rebooting…',
     powerOffWarning: 'Please do not power off the device.',
-    rebootWarning: 'Device will reboot after activation.'
+    rebootWarning: 'Device will reboot after activation.',
+    upgradeFail: 'Firmware Upgrade Failed'
   },
   reset: {
     title: 'Device Reset',

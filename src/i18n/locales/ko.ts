@@ -594,7 +594,8 @@ export default {
     activating: '펌웨어 활성화 중...',
     rebooting: '재부팅 중…',
     powerOffWarning: '전원을 끄지 마세요.',
-    rebootWarning: '활성화 후 장치가 재부팅됩니다.'
+    rebootWarning: '활성화 후 장치가 재부팅됩니다.',
+    upgradeFail: '펌웨어 업그레이드에 실패했습니다'
   },
   reset: {
     title: '장치 초기화',

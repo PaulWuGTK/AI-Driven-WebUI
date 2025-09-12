@@ -598,6 +598,7 @@ export interface Translations {
     rebooting: string;
     powerOffWarning: string;
     rebootWarning: string;
+    upgradeFail: string;
   };
   reset: {
     title: string;

@@ -595,7 +595,8 @@ export default {
     activating: '固件激活中...',
     rebooting: '正在重启…',
     powerOffWarning: '请勿关闭电源。',
-    rebootWarning: '激活后设备将重新启动。'
+    rebootWarning: '激活后设备将重新启动。',
+    upgradeFail: '固件升级失败'
   },
   reset: {
     title: '设备重置',

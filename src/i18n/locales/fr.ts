@@ -595,7 +595,8 @@ export default {
     activating: 'Activation du firmware en cours...',
     rebooting: 'Redémarrage en cours…',
     powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.',
-    rebootWarning: 'L\'appareil redémarrera après l\'activation.'
+    rebootWarning: 'L\'appareil redémarrera après l\'activation.',
+    upgradeFail: 'Échec de la mise à jour du firmware'
   },
   reset: {
     title: 'Réinitialisation de l\'appareil',

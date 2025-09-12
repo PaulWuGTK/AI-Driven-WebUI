@@ -595,7 +595,8 @@ export default {
     activating: 'ファームウェアを有効化中...',
     rebooting: '再起動中…',
     powerOffWarning: '電源を切らないでください。',
-    rebootWarning: '有効化後、デバイスが再起動します。'
+    rebootWarning: '有効化後、デバイスが再起動します。',
+    upgradeFail: 'ファームウェアのアップグレードに失敗しました'
   },
   reset: {
     title: 'デバイスリセット',

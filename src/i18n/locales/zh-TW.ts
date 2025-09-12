@@ -595,7 +595,8 @@ export default {
     activating: '韌體啟用中...',
     rebooting: '重新啟動中…',
     powerOffWarning: '請勿關閉電源。',
-    rebootWarning: '啟用後裝置將重新啟動。'
+    rebootWarning: '啟用後裝置將重新啟動。',
+    upgradeFail: '韌體升級失敗'
   },
   reset: {
     title: '裝置重置',

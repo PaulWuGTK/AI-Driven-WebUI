@@ -21,14 +21,66 @@ const countdown = ref(60);
 const countdownTimer = ref<number | null>(null);
 const isActivating = ref(false);
 const isRebootPhase = ref(false);
+const upgradeError = ref<string | null>(null);
+const showUpgradeError = ref(false);
 
 const fetchFirmwareStatus = async () => {
   try {
     const response = await getFirmwareStatus();
     firmwareBanks.value = Object.values(response.UpgradeFw.UpgradeFw);
   } catch (err) {
-    console.error('Error fetching firmware status:', err);
+//    console.error('Error fetching firmware status:', err);
     error.value = 'Failed to fetch firmware status';
+  }
+};
+
+// Check if activate button should be disabled
+const isActivateDisabled = (bank: FirmwareBank): boolean => {
+  return bank.Status === 'Active' || 
+         bank.Status === 'NoImage' || 
+         bank.Switch_Status !== 'Available';
+};
+
+// Get status display text
+const getStatusDisplay = (bank: FirmwareBank): string => {
+  if (bank.Switch_Status && bank.Switch_Status !== 'Available') {
+    return bank.Switch_Status;
+  }
+  return bank.Status;
+};
+
+// Check if there's an upgrade error to display
+const checkUpgradeError = async () => {
+  try {
+    const response = await getFirmwareStatus();
+    const banks = Object.values(response.UpgradeFw.UpgradeFw);
+    
+    // Check if any bank has FW_UG_Status indicating an error (not Available or Upgrading)
+    const errorBank = banks.find(bank => 
+      bank.FW_UG_Status && 
+      bank.FW_UG_Status !== 'Available' && 
+      bank.FW_UG_Status !== 'Upgrading' &&
+      bank.FW_UG_Status !== 'Success'
+    );
+    
+    if (errorBank && errorBank.FW_UG_Status) {
+//      console.log('Upgrade error detected:', errorBank.FW_UG_Status);
+      upgradeError.value = errorBank.FW_UG_Status;
+      showUpgradeError.value = true;
+      // Don't call clearUpgradeState here as it will reset showUpgradeError
+      // Just ensure we're not in upgrading state
+      isUpgrading.value = false;
+      isActivating.value = false;
+      isRebootPhase.value = false;
+      if (countdownTimer.value) {
+        clearInterval(countdownTimer.value);
+        countdownTimer.value = null;
+      }
+    } else {
+//      console.log('No upgrade error found, banks:', banks.map(b => ({ alias: b.Alias, fwStatus: b.FW_UG_Status })));
+    }
+  } catch (err) {
+//    console.error('Error checking upgrade status:', err);
   }
 };
 
@@ -101,6 +153,8 @@ const clearUpgradeState = () => {
   isUpgrading.value = false;
   isActivating.value = false;
   isRebootPhase.value = false;
+  upgradeError.value = null;
+  showUpgradeError.value = false;
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
     countdownTimer.value = null;
@@ -108,7 +162,7 @@ const clearUpgradeState = () => {
 };
 
 const handleActivate = async (bank: FirmwareBank) => {
-  if (bank.Status === 'Active') return;
+  if (isActivateDisabled(bank)) return;
 
   loading.value = true;
   error.value = null;
@@ -128,7 +182,7 @@ const handleActivate = async (bank: FirmwareBank) => {
     startUpgradeCountdown();
     await fetchFirmwareStatus();
   } catch (err) {
-    console.error('Error activating firmware:', err);
+//    console.error('Error activating firmware:', err);
     error.value = err instanceof Error ? err.message : 'Failed to activate firmware';
     clearUpgradeState();
   } finally {
@@ -141,6 +195,8 @@ const handleUpgrade = async () => {
   
   loading.value = true;
   error.value = null;
+  upgradeError.value = null;
+  showUpgradeError.value = false;
   isActivating.value = false;
   
   try {
@@ -152,21 +208,38 @@ const handleUpgrade = async () => {
     // Then perform the upgrade with autoActivate always true
     await upgradeFirmware(uploadedFileName.value, true);
     
-    // Clear file selection after successful upgrade
-    selectedFile.value = null;
-    uploadedFileName.value = null;
+//    console.log('Upgrade command sent, checking for errors...');
     
-    // Start countdown and show upgrade overlay
-    startUpgradeCountdown();
+    // Check for upgrade errors after a short delay
+    // Use a Promise-based approach to ensure proper sequencing
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        await checkUpgradeError();
+        
+        // Only start countdown if no upgrade error
+        if (!showUpgradeError.value) {
+//          console.log('No upgrade error detected, starting countdown');
+          // Clear file selection after successful upgrade
+          selectedFile.value = null;
+          uploadedFileName.value = null;
+          startUpgradeCountdown();
+        } else {
+//          console.log('Upgrade error detected, not starting countdown');
+        }
+        resolve();
+      }, 3000);
+    });
     
-    // Refresh firmware status
-    await fetchFirmwareStatus();
   } catch (err) {
-    console.error('Error processing firmware:', err);
+//    console.error('Error processing firmware:', err);
     error.value = err instanceof Error ? err.message : 'Failed to process firmware';
     clearUpgradeState();
   } finally {
     loading.value = false;
+    // Refresh firmware status after everything
+    if (!isUpgrading.value) {
+    await fetchFirmwareStatus();
+    }
   }
 };
 
@@ -204,16 +277,17 @@ onMounted(fetchFirmwareStatus);
                         :class="{ active: bank.Status === 'Active' }"
                         :data-testid="qa(`firmware-bank-status-indicator-${bankIndex}`)"
                       ></span>
-                      <span :data-testid="qa(`firmware-bank-status-text-${bankIndex}`)">{{ bank.Status }}</span>
+                      <span :data-testid="qa(`firmware-bank-status-text-${bankIndex}`)">{{ getStatusDisplay(bank) }}</span>
                     </div>
                   </td>
                   <td :data-testid="qa(`firmware-bank-version-${bankIndex}`)">{{ bank.Version || 'N/A' }}</td>
                   <td>
                     <button 
-                      v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'"
+                      v-if="!isActivateDisabled(bank)"
                       class="btn btn-primary btn-activate"
                       :data-testid="qa(`firmware-bank-activate-button-${bankIndex}`)"
                       @click="handleActivate(bank)"
+                      :disabled="isActivateDisabled(bank)"
                     >
                       {{ t('firmware.activate') }}
                     </button>
@@ -248,7 +322,7 @@ onMounted(fetchFirmwareStatus);
                 <span class="card-label" :data-testid="qa(`firmware-bank-card-version-label-${bankIndex}`)">{{ t('firmware.firmwareVersion') }}</span>
                 <span class="card-value" :data-testid="qa(`firmware-bank-card-version-value-${bankIndex}`)">{{ bank.Version || 'N/A' }}</span>
               </div>
-              <div class="card-actions" v-if="bank.Status !== 'Active' && bank.Status !== 'NoImage'">
+              <div class="card-actions" v-if="!isActivateDisabled(bank)">
                 <button 
                   class="btn btn-primary btn-activate"
                   :data-testid="qa(`firmware-bank-card-activate-button-${bankIndex}`)"
@@ -337,6 +411,24 @@ onMounted(fetchFirmwareStatus);
         <p :data-testid="qa('firmware-upgrade-warning-text')">{{ t('firmware.powerOffWarning') }}</p>
         <p v-if="isRebootPhase" :data-testid="qa('firmware-upgrade-reboot-warning')">{{ t('firmware.rebootWarning') }}</p>
         <div class="countdown" :data-testid="qa('firmware-upgrade-countdown')">{{ countdown }}s</div>
+      </div>
+    </div>
+
+    <!-- Upgrade Error Overlay -->
+    <div v-if="showUpgradeError" class="error-overlay" :data-testid="qa('firmware-upgrade-error-overlay')">
+      <div class="error-content" :data-testid="qa('firmware-upgrade-error-content')">
+        <div class="error-icon" :data-testid="qa('firmware-upgrade-error-icon')">
+          <span class="material-icons">error</span>
+        </div>
+        <h2 :data-testid="qa('firmware-upgrade-error-title')">{{ t('firmware.upgradeFail') }}</h2>
+        <p :data-testid="qa('firmware-upgrade-error-message')">{{ upgradeError }}</p>
+        <button 
+          class="btn btn-primary" 
+          :data-testid="qa('firmware-upgrade-error-close-button')"
+          @click="showUpgradeError = false; upgradeError = null"
+        >
+          {{ t('common.close') }}
+        </button>
       </div>
     </div>
   </div>
@@ -465,6 +557,12 @@ onMounted(fetchFirmwareStatus);
   opacity: 1;
 }
 
+.btn-activate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #ccc;
+}
+
 /* Upgrade Overlay Styles */
 .upgrade-overlay {
   position: fixed;
@@ -486,6 +584,53 @@ onMounted(fetchFirmwareStatus);
   text-align: center;
   max-width: 400px;
   width: 90%;
+}
+
+/* Error Overlay Styles */
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.error-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-icon {
+  color: #dc3545;
+  font-size: 3rem;
+}
+
+.error-icon .material-icons {
+  font-size: 3rem;
+}
+
+.error-content h2 {
+  color: #dc3545;
+  margin: 0;
+}
+
+.error-content p {
+  color: var(--text-secondary);
+  margin: 0;
+  word-break: break-word;
 }
 
 .spinner {
