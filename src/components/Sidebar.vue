@@ -84,11 +84,12 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
   },
   'Application': {
     'XperienceControl': { gateway: false, extender: false, requiresStreambow: true }
-  },
-  'Internet of Things': {
-    'Thread': { gateway: true, extender: false },
-    'Matter': { gateway: true, extender: false }
   }
+  // ,
+  // 'Internet of Things': {
+  //   'Thread': { gateway: true, extender: false },
+  //   'Matter': { gateway: true, extender: false }
+  // }
 };
 
 // Base menu structure
@@ -165,16 +166,17 @@ const baseMenuItems: MenuItem[] = [
     subItems: [
       { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
     ]
-  },
-  {
-    name: 'Internet of Things',
-    icon: iotIcon, // Reusing WiFi icon for now
-    translationKey: 'menu.iot',
-    subItems: [
-      { name: 'Thread', path: '/iot/thread', translationKey: 'menu.thread' },
-      { name: 'Matter', path: '/iot/matter', translationKey: 'menu.matter' }
-    ]
   }
+  // ,
+  // {
+  //   name: 'Internet of Things',
+  //   icon: iotIcon, // Reusing WiFi icon for now
+  //   translationKey: 'menu.iot',
+  //   subItems: [
+  //     { name: 'Thread', path: '/iot/thread', translationKey: 'menu.thread' },
+  //     { name: 'Matter', path: '/iot/matter', translationKey: 'menu.matter' }
+  //   ]
+  // }
 ];
 
 // Filter menu items based on device mode and app availability
@@ -202,14 +204,14 @@ const filterMenuItems = () => {
         }
         
         // Check for feature flags for IoT items
-        if (item.name === 'Internet of Things') {
-          if (subItem.name === 'Thread' && !features.value.thread) {
-            return false;
-          }
-          if (subItem.name === 'Matter' && !features.value.matter) {
-            return false;
-          }
-        }
+        // if (item.name === 'Internet of Things') {
+        //   if (subItem.name === 'Thread' && !features.value.thread) {
+        //     return false;
+        //   }
+        //   if (subItem.name === 'Matter' && !features.value.matter) {
+        //     return false;
+        //   }
+        // }
         
         return isGateway ? visibility.gateway : visibility.extender;
       });
