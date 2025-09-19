@@ -15,6 +15,11 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const results = ref<DiagnosticsResponse['ManagementDiagnostic']['DNSLookup'] | null>(null);
 
+const ensureTrailingDot = (s?: string) => {
+  if (!s) return '';
+  return s.endsWith('.') ? s : s + '.';
+};
+
 const fetchInterfaces = async () => {
   loading.value = true;
   error.value = null;
@@ -24,9 +29,13 @@ const fetchInterfaces = async () => {
     results.value = data.ManagementDiagnostic.DNSLookup;
     if (interfaces.value.length > 0) {
       if (results.value && results.value.Interface) {
-        selectedInterface.value = results.value.Interface; // 選擇 TraceRoute 目前的 Interface
+        selectedInterface.value = ensureTrailingDot(results.value.Interface); // 選擇 TraceRoute 目前的 Interface
       } else {
-        selectedInterface.value = interfaces.value[0].Interface; // 預設選擇第一個 Interface
+        const eth0Item = interfaces.value.find(it => {
+          const n = (it.Name ?? '').toLowerCase();
+          return n === 'eth0';
+        });
+        selectedInterface.value = eth0Item?.Interface ?? interfaces.value[0].Interface;
       }
     }
   } catch (err) {

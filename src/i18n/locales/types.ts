@@ -35,6 +35,7 @@ export interface Translations {
     backup: string;
     xperienceControl: string;
     application: string;
+    logs: string;
     iot: string;
     thread: string;
     matter: string;
@@ -757,4 +758,36 @@ export interface Translations {
     auto: string;
     manual: string;
   },
+  logs: {
+    title: string;
+    filters: string;
+    logEntries: string;
+    sources: string;
+    severity: string;
+    modules: string;
+    search: string;
+    searchPlaceholder: string;
+    clearFilters: string;
+    applyFilters: string;
+    timestamp: string;
+    source: string;
+    module: string;
+    process: string;
+    message: string;
+    action: string;
+    host: string;
+    logId: string;
+    rawLog: string;
+    logDetails: string;
+    viewDetails: string;
+    noLogsFound: string;
+    hasMoreEntries: string;
+    serverTime: string;
+    justNow: string;
+    minutesAgo: string;
+    hoursAgo: string;
+    daysAgo: string;
+    startAutoRefresh: string;
+    pauseAutoRefresh: string;
+  };
 }
