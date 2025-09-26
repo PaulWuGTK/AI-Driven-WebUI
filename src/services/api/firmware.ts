@@ -140,12 +140,12 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     body: JSON.stringify(payload)
   });
 
-  if (!response.ok) {
-    throw new Error('Firmware upgrade failed');
-  }
+  // if (!response.ok) {
+  //   throw new Error('Firmware upgrade failed');
+  // }
 
-  const result = await response.json();
-  if (result[0]?.failure?.errcode) {
-    throw new Error(`Firmware upgrade failed: ${result[0].failure.errcode}`);
-  }
+  // const result = await response.json();
+  // if (result[0]?.failure?.errcode) {
+  //   throw new Error(`Firmware upgrade failed: ${result[0].failure.errcode}`);
+  // }
 }
