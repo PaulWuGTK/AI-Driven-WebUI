@@ -786,5 +786,29 @@ export default {
     daysAgo: '{days}일 전',
     startAutoRefresh: '자동 새로고침 시작',
     pauseAutoRefresh: '자동 새로고침 일시정지'
+  },
+  logStatus: {
+    title: '시스템 로그',
+    categories: '카테고리',
+    severity: '심각도',
+    limit: '제한',
+    search: '키워드 검색',
+    searchPlaceholder: '검색할 키워드를 입력하세요...',
+    searchBtn: '검색',
+    clearBtn: '지우기',
+    source: '소스',
+    matchCount: '일치 수',
+    showing: '표시 중',
+    moreAvailable: '서버에 더 많은 로그가 있습니다',
+    all: '전체',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: '시스템',
+    kernel: '커널',
+    firewall: '방화벽',
+    lcm: 'LCM'
   }
 };

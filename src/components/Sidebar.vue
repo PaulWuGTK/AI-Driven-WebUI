@@ -56,7 +56,8 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'WiFi Neighbor': { gateway: true, extender: false },
     'Mesh Information': { gateway: true, extender: false },
     'LCM': { gateway: true, extender: true },
-    'System Stats': { gateway: true, extender: true }
+    'System Stats': { gateway: true, extender: true },
+    'Log': { gateway: true, extender: true }
   },
   'Network': {
     'WAN': { gateway: true, extender: false },
@@ -112,7 +113,8 @@ const baseMenuItems: MenuItem[] = [
       { name: 'WiFi Neighbor', path: '/status/wifi-neighbor', translationKey: 'menu.wifiNeighbor' },
       { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' },
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' },
-      { name: 'System Stats', path: '/status/system-stats', translationKey: 'menu.systemStats' }
+      { name: 'System Stats', path: '/status/system-stats', translationKey: 'menu.systemStats' },
+      { name: 'Log', path: '/status/log', translationKey: 'menu.logs' }
     ]
   },
   {

@@ -787,5 +787,29 @@ export default {
     daysAgo: 'vor {days}d',
     startAutoRefresh: 'Auto-Aktualisierung starten',
     pauseAutoRefresh: 'Auto-Aktualisierung pausieren'
+  },
+  logStatus: {
+    title: 'Systemprotokoll',
+    categories: 'Kategorien',
+    severity: 'Schweregrad',
+    limit: 'Limit',
+    search: 'Suchbegriff',
+    searchPlaceholder: 'Suchbegriff eingeben...',
+    searchBtn: 'Suchen',
+    clearBtn: 'Löschen',
+    source: 'Quelle',
+    matchCount: 'Übereinstimmungen',
+    showing: 'Angezeigt',
+    moreAvailable: 'Weitere Protokolle auf dem Server verfügbar',
+    all: 'Alle',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: 'System',
+    kernel: 'Kernel',
+    firewall: 'Firewall',
+    lcm: 'LCM'
   }
 };

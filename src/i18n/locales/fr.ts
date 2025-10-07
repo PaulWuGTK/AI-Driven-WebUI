@@ -788,4 +788,28 @@ export default {
     startAutoRefresh: 'Démarrer l\'actualisation automatique',
     pauseAutoRefresh: 'Suspendre l\'actualisation automatique'
   },
+  logStatus: {
+    title: 'Journal du système',
+    categories: 'Catégories',
+    severity: 'Gravité',
+    limit: 'Limite',
+    search: 'Mot-clé de recherche',
+    searchPlaceholder: 'Entrez un mot-clé à rechercher...',
+    searchBtn: 'Rechercher',
+    clearBtn: 'Effacer',
+    source: 'Source',
+    matchCount: 'Nombre de correspondances',
+    showing: 'Affichage',
+    moreAvailable: 'Plus de journaux disponibles sur le serveur',
+    all: 'Tous',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: 'Système',
+    kernel: 'Noyau',
+    firewall: 'Pare-feu',
+    lcm: 'LCM'
+  }
 };

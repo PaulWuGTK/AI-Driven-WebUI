@@ -74,6 +74,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/status/log',
+      component: () => import('../views/status/LogStatus.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/settings/wireless',
       component: () => import('../views/settings/WirelessSettings.vue'),
       beforeEnter: requireAuth

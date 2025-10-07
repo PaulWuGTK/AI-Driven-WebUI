@@ -790,6 +790,30 @@ const translations: Translations = {
     daysAgo: '{days}d ago',
     startAutoRefresh: 'Start Auto Refresh',
     pauseAutoRefresh: 'Pause Auto Refresh'
+  },
+  logStatus: {
+    title: 'System Log',
+    categories: 'Categories',
+    severity: 'Severity',
+    limit: 'Limit',
+    search: 'Search Keyword',
+    searchPlaceholder: 'Enter keyword to search...',
+    searchBtn: 'Search',
+    clearBtn: 'Clear',
+    source: 'Source',
+    matchCount: 'Match Count',
+    showing: 'Showing',
+    moreAvailable: 'More logs available on server',
+    all: 'All',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: 'System',
+    kernel: 'Kernel',
+    firewall: 'Firewall',
+    lcm: 'LCM'
   }
 };
 

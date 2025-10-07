@@ -790,4 +790,28 @@ export interface Translations {
     startAutoRefresh: string;
     pauseAutoRefresh: string;
   };
+  logStatus: {
+    title: string;
+    categories: string;
+    severity: string;
+    limit: string;
+    search: string;
+    searchPlaceholder: string;
+    searchBtn: string;
+    clearBtn: string;
+    source: string;
+    matchCount: string;
+    showing: string;
+    moreAvailable: string;
+    all: string;
+    dhcp: string;
+    cwmpd: string;
+    wifi: string;
+    wan: string;
+    lan: string;
+    system: string;
+    kernel: string;
+    firewall: string;
+    lcm: string;
+  };
 }

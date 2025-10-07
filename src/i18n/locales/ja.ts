@@ -787,5 +787,29 @@ export default {
     daysAgo: '{days}日前',
     startAutoRefresh: '自動更新開始',
     pauseAutoRefresh: '自動更新一時停止'
+  },
+  logStatus: {
+    title: 'システムログ',
+    categories: 'カテゴリ',
+    severity: '重大度',
+    limit: '制限',
+    search: 'キーワード検索',
+    searchPlaceholder: '検索するキーワードを入力...',
+    searchBtn: '検索',
+    clearBtn: 'クリア',
+    source: 'ソース',
+    matchCount: '一致件数',
+    showing: '表示中',
+    moreAvailable: 'サーバーにさらにログがあります',
+    all: 'すべて',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: 'システム',
+    kernel: 'カーネル',
+    firewall: 'ファイアウォール',
+    lcm: 'LCM'
   }
 };

@@ -787,5 +787,29 @@ export default {
     daysAgo: '{days}天前',
     startAutoRefresh: '开始自动刷新',
     pauseAutoRefresh: '暂停自动刷新'
+  },
+  logStatus: {
+    title: '系统日志',
+    categories: '类别',
+    severity: '严重性',
+    limit: '限制',
+    search: '搜索关键词',
+    searchPlaceholder: '请输入要搜索的关键词...',
+    searchBtn: '搜索',
+    clearBtn: '清除',
+    source: '来源',
+    matchCount: '匹配数',
+    showing: '正在显示',
+    moreAvailable: '服务器上还有更多日志',
+    all: '全部',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: '系统',
+    kernel: '内核',
+    firewall: '防火墙',
+    lcm: 'LCM'
   }
 };

@@ -787,5 +787,29 @@ export default {
     daysAgo: '{days}天前',
     startAutoRefresh: '開始自動刷新',
     pauseAutoRefresh: '暫停自動刷新'
+  },
+  logStatus: {
+    title: '系統日誌',
+    categories: '類別',
+    severity: '嚴重程度',
+    limit: '限制',
+    search: '搜尋關鍵字',
+    searchPlaceholder: '輸入關鍵字搜尋…',
+    searchBtn: '搜尋',
+    clearBtn: '清除',
+    source: '來源',
+    matchCount: '符合數',
+    showing: '顯示中',
+    moreAvailable: '伺服器上有更多日誌可用',
+    all: '全部',
+    dhcp: 'DHCP',
+    cwmpd: 'CWMPD',
+    wifi: 'WiFi',
+    wan: 'WAN',
+    lan: 'LAN',
+    system: '系統',
+    kernel: '核心',
+    firewall: '防火牆',
+    lcm: 'LCM'
   }
 };
