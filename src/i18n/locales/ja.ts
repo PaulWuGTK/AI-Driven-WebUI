@@ -797,6 +797,8 @@ export default {
     searchPlaceholder: '検索するキーワードを入力...',
     searchBtn: '検索',
     clearBtn: 'クリア',
+    exportBtn: 'ログをエクスポート',
+    exporting: 'エクスポート中...',
     source: 'ソース',
     matchCount: '一致件数',
     showing: '表示中',

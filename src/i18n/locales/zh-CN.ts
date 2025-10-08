@@ -797,6 +797,8 @@ export default {
     searchPlaceholder: '请输入要搜索的关键词...',
     searchBtn: '搜索',
     clearBtn: '清除',
+    exportBtn: '导出日志',
+    exporting: '导出中...',
     source: '来源',
     matchCount: '匹配数',
     showing: '正在显示',

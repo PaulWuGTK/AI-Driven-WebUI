@@ -797,6 +797,8 @@ export default {
     searchPlaceholder: 'Entrez un mot-clé à rechercher...',
     searchBtn: 'Rechercher',
     clearBtn: 'Effacer',
+    exportBtn: 'Exporter les journaux',
+    exporting: 'Exportation...',
     source: 'Source',
     matchCount: 'Nombre de correspondances',
     showing: 'Affichage',

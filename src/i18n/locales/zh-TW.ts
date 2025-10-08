@@ -797,6 +797,8 @@ export default {
     searchPlaceholder: '輸入關鍵字搜尋…',
     searchBtn: '搜尋',
     clearBtn: '清除',
+    exportBtn: '匯出日誌',
+    exporting: '匯出中...',
     source: '來源',
     matchCount: '符合數',
     showing: '顯示中',

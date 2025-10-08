@@ -800,6 +800,8 @@ const translations: Translations = {
     searchPlaceholder: 'Enter keyword to search...',
     searchBtn: 'Search',
     clearBtn: 'Clear',
+    exportBtn: 'Export Logs',
+    exporting: 'Exporting...',
     source: 'Source',
     matchCount: 'Match Count',
     showing: 'Showing',

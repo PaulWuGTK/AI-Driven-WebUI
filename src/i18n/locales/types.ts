@@ -799,6 +799,8 @@ export interface Translations {
     searchPlaceholder: string;
     searchBtn: string;
     clearBtn: string;
+    exportBtn: string;
+    exporting: string;
     source: string;
     matchCount: string;
     showing: string;

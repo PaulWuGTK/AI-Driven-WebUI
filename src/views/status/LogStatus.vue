@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LogEntry, LogCategory, LogSeverity } from '../../types/log';
-import { getSystemLog } from '../../services/api/log';
+import { getSystemLog, exportLogs } from '../../services/api/log';
 import LogViewer from '../../components/log/LogViewer.vue';
 import { useQA } from '../../utils/qa';
 
@@ -121,6 +121,42 @@ const handleClear = () => {
   fetchLogs();
 };
 
+const exporting = ref(false);
+const exportError = ref<string | null>(null);
+
+const handleExport = async () => {
+  exporting.value = true;
+  exportError.value = null;
+
+  try {
+    const categories: Record<string, number> = {};
+
+    if (!selectedCategories.value.has('all')) {
+      selectedCategories.value.forEach(cat => {
+        if (cat !== 'all') {
+          categories[cat] = 1;
+        }
+      });
+    }
+
+    const response = await exportLogs(Object.keys(categories).length > 0 ? categories : undefined);
+
+    if (response.StatusLog.url) {
+      const link = document.createElement('a');
+      link.href = response.StatusLog.url;
+      link.download = response.StatusLog.filename || 'logs.tgz';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  } catch (e) {
+    console.error('Failed to export logs:', e);
+    exportError.value = 'Failed to export logs';
+  } finally {
+    exporting.value = false;
+  }
+};
+
 onMounted(() => {
   fetchLogs();
 });
@@ -202,8 +238,20 @@ onMounted(() => {
               >
                 {{ t('logStatus.clearBtn') }}
               </button>
+              <button
+                class="btn btn-export"
+                :data-testid="qa('log-export-btn')"
+                :disabled="exporting"
+                @click="handleExport"
+              >
+                {{ exporting ? t('logStatus.exporting') : t('logStatus.exportBtn') }}
+              </button>
             </div>
           </div>
+        </div>
+
+        <div v-if="exportError" class="error-message" :data-testid="qa('log-export-error')">
+          {{ exportError }}
         </div>
 
         <div v-if="error" class="error-message" :data-testid="qa('log-error')">
@@ -350,6 +398,20 @@ onMounted(() => {
 
 .btn-secondary:hover {
   background: #5a6268;
+}
+
+.btn-export {
+  background: #28a745;
+  color: white;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #218838;
+}
+
+.btn-export:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .error-message {

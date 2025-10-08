@@ -796,6 +796,8 @@ export default {
     searchPlaceholder: '검색할 키워드를 입력하세요...',
     searchBtn: '검색',
     clearBtn: '지우기',
+    exportBtn: '로그 내보내기',
+    exporting: '내보내는 중...',
     source: '소스',
     matchCount: '일치 수',
     showing: '표시 중',

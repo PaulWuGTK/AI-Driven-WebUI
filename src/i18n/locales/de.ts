@@ -797,6 +797,8 @@ export default {
     searchPlaceholder: 'Suchbegriff eingeben...',
     searchBtn: 'Suchen',
     clearBtn: 'Löschen',
+    exportBtn: 'Protokolle exportieren',
+    exporting: 'Exportieren...',
     source: 'Quelle',
     matchCount: 'Übereinstimmungen',
     showing: 'Angezeigt',
