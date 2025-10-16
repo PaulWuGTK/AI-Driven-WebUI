@@ -42,6 +42,14 @@ export const runSpeedTest = async (): Promise<SpeedTestResponse> => {
     body: JSON.stringify({AppXperienceControl:""})
   });
 
+
+  if (response.status === 401 || response.status === 403) {
+      // Authentication error - redirect to login
+      auth.clearSession();
+      window.location.href = '/login';
+      throw new Error(`Authentication error: ${response.status}`);
+  }
+  
   if (!response.ok) {
     throw new Error(`Speed test failed with status: ${response.status}`);
   }
