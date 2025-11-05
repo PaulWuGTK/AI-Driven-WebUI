@@ -29,7 +29,7 @@ const fetchAccountSettings = async () => {
     accountData.value = await getAccountSettings();
   } catch (err) {
     console.error('Error fetching account settings:', err);
-    error.value = 'Failed to fetch account settings';
+    error.value = t('account.errorFetchSettings');
   } finally {
     loading.value = false;
   }
@@ -37,19 +37,19 @@ const fetchAccountSettings = async () => {
 
 const validatePasswords = (): string | null => {
   if (!oldPassword.value || !newPassword.value || !confirmPassword.value) {
-    return 'All fields are required';
+    return t('account.errorAllFieldsRequired');
   }
 
   if (noSpace.value && (oldPassword.value.includes(' ') || newPassword.value.includes(' ') || confirmPassword.value.includes(' '))) {
-    return 'Password cannot contain a space';
+    return t('account.errorPasswordSpace');
   }
 
   if (newPassword.value.length > maxLength.value) {
-    return `Password cannot exceed ${maxLength.value} characters`;
+    return t('account.errorPasswordLength', { maxLength: maxLength.value });
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    return 'New password and confirm password do not match';
+    return t('account.errorPasswordMismatch');
   }
 
   return null;
@@ -94,11 +94,11 @@ const handleApply = async () => {
       showSuccessMessage();
       handleCancel();
     } else {
-      error.value = response.ManagementAccount.reason || 'Failed to update password';
+      error.value = response.ManagementAccount.reason || t('account.errorUpdateFailed');
     }
   } catch (err) {
     console.error('Error updating password:', err);
-    error.value = 'Failed to update password';
+    error.value = t('account.errorUpdateFailed');
   } finally {
     loading.value = false;
   }
@@ -109,7 +109,7 @@ onMounted(fetchAccountSettings);
 
 <template>
   <div class="page-container">
-    <h1 class="page-title" :data-testid="qa('account-title')">Account Management</h1>
+    <h1 class="page-title" :data-testid="qa('account-title')">{{ t('account.title') }}</h1>
 
     <div class="status-content" :data-testid="qa('account-content')">
       <div v-if="loading && !accountData" class="loading-state" :data-testid="qa('account-loading')">
@@ -121,8 +121,8 @@ onMounted(fetchAccountSettings);
         <div class="panel-section" :data-testid="qa('account-panel')">
           <div class="card-content">
             <div class="info-box">
-              <p>Use the fields below to enter up to {{ maxLength }} characters and click "Apply" to change or create the password.</p>
-              <p v-if="noSpace" class="note">Note: Password cannot contain a space.</p>
+              <p>{{ t('account.infoMessage', { maxLength }) }}</p>
+              <p v-if="noSpace" class="note">{{ t('account.noteMessage') }}</p>
             </div>
 
             <div v-if="error" class="error-message" :data-testid="qa('account-error')">
@@ -130,13 +130,13 @@ onMounted(fetchAccountSettings);
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('account-old-password-label')">Old Password</label>
+              <label :data-testid="qa('account-old-password-label')">{{ t('account.oldPassword') }}</label>
               <div class="password-input-wrapper">
                 <input
                   :type="showOldPassword ? 'text' : 'password'"
                   :data-testid="qa('account-old-password-input')"
                   v-model="oldPassword"
-                  placeholder="Please Enter the value"
+                  :placeholder="t('account.passwordPlaceholder')"
                   :maxlength="maxLength"
                   :disabled="loading"
                 >
@@ -152,13 +152,13 @@ onMounted(fetchAccountSettings);
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('account-new-password-label')">New Password</label>
+              <label :data-testid="qa('account-new-password-label')">{{ t('account.newPassword') }}</label>
               <div class="password-input-wrapper">
                 <input
                   :type="showNewPassword ? 'text' : 'password'"
                   :data-testid="qa('account-new-password-input')"
                   v-model="newPassword"
-                  placeholder="Please Enter the value"
+                  :placeholder="t('account.passwordPlaceholder')"
                   :maxlength="maxLength"
                   :disabled="loading"
                 >
@@ -174,13 +174,13 @@ onMounted(fetchAccountSettings);
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('account-confirm-password-label')">Confirm Password</label>
+              <label :data-testid="qa('account-confirm-password-label')">{{ t('account.confirmPassword') }}</label>
               <div class="password-input-wrapper">
                 <input
                   :type="showConfirmPassword ? 'text' : 'password'"
                   :data-testid="qa('account-confirm-password-input')"
                   v-model="confirmPassword"
-                  placeholder="Please Enter the value"
+                  :placeholder="t('account.passwordPlaceholder')"
                   :maxlength="maxLength"
                   :disabled="loading"
                 >
@@ -202,7 +202,7 @@ onMounted(fetchAccountSettings);
                 @click="handleCancel"
                 :disabled="loading"
               >
-                Cancel
+                {{ t('common.cancel') }}
               </button>
               <button
                 class="btn btn-primary"
@@ -210,7 +210,7 @@ onMounted(fetchAccountSettings);
                 @click="handleApply"
                 :disabled="loading"
               >
-                Apply
+                {{ t('common.apply') }}
               </button>
             </div>
           </div>
@@ -218,7 +218,7 @@ onMounted(fetchAccountSettings);
       </template>
 
       <div v-if="showSuccess" class="success-message" :data-testid="qa('account-success-message')">
-        Password updated successfully
+        {{ t('account.successUpdate') }}
       </div>
     </div>
   </div>

@@ -814,5 +814,21 @@ export default {
     kernel: 'Kernel',
     firewall: 'Firewall',
     lcm: 'LCM'
+  },
+  account: {
+    title: 'Kontoverwaltung',
+    oldPassword: 'Altes Passwort',
+    newPassword: 'Neues Passwort',
+    confirmPassword: 'Passwort bestätigen',
+    passwordPlaceholder: 'Bitte geben Sie den Wert ein',
+    infoMessage: 'Verwenden Sie die unteren Felder, um bis zu {maxLength} Zeichen einzugeben und klicken Sie auf "Anwenden", um das Passwort zu ändern oder zu erstellen.',
+    noteMessage: 'Hinweis: Das Passwort darf kein Leerzeichen enthalten.',
+    errorFetchSettings: 'Fehler beim Abrufen der Kontoeinstellungen',
+    errorAllFieldsRequired: 'Alle Felder sind erforderlich',
+    errorPasswordSpace: 'Das Passwort darf kein Leerzeichen enthalten',
+    errorPasswordLength: 'Das Passwort darf nicht länger als {maxLength} Zeichen sein',
+    errorPasswordMismatch: 'Neues Passwort und Bestätigung stimmen nicht überein',
+    errorUpdateFailed: 'Fehler beim Aktualisieren des Passworts',
+    successUpdate: 'Passwort erfolgreich aktualisiert'
   }
 };

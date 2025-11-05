@@ -817,6 +817,22 @@ const translations: Translations = {
     kernel: 'Kernel',
     firewall: 'Firewall',
     lcm: 'LCM'
+  },
+  account: {
+    title: 'Account Management',
+    oldPassword: 'Old Password',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm Password',
+    passwordPlaceholder: 'Please Enter the value',
+    infoMessage: 'Use the fields below to enter up to {maxLength} characters and click "Apply" to change or create the password.',
+    noteMessage: 'Note: Password cannot contain a space.',
+    errorFetchSettings: 'Failed to fetch account settings',
+    errorAllFieldsRequired: 'All fields are required',
+    errorPasswordSpace: 'Password cannot contain a space',
+    errorPasswordLength: 'Password cannot exceed {maxLength} characters',
+    errorPasswordMismatch: 'New password and confirm password do not match',
+    errorUpdateFailed: 'Failed to update password',
+    successUpdate: 'Password updated successfully'
   }
 };
 

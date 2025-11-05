@@ -814,5 +814,21 @@ export default {
     kernel: '核心',
     firewall: '防火牆',
     lcm: 'LCM'
+  },
+  account: {
+    title: '帳戶管理',
+    oldPassword: '舊密碼',
+    newPassword: '新密碼',
+    confirmPassword: '確認密碼',
+    passwordPlaceholder: '請輸入數值',
+    infoMessage: '使用下方欄位輸入最多{maxLength}個字元，然後點擊「套用」來變更或建立密碼。',
+    noteMessage: '注意：密碼不能包含空格。',
+    errorFetchSettings: '取得帳戶設定失敗',
+    errorAllFieldsRequired: '所有欄位均為必填',
+    errorPasswordSpace: '密碼不能包含空格',
+    errorPasswordLength: '密碼不能超過{maxLength}個字元',
+    errorPasswordMismatch: '新密碼與確認密碼不相符',
+    errorUpdateFailed: '更新密碼失敗',
+    successUpdate: '密碼更新成功'
   }
 };

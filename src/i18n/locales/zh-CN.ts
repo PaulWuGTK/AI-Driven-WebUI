@@ -21,6 +21,7 @@ export default {
     macFilter: '无线 MAC 过滤',
     wirelessExtender: '无线扩展器',
     management: '管理',
+    account: '账户管理',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '高级设置',
@@ -813,5 +814,21 @@ export default {
     kernel: '内核',
     firewall: '防火墙',
     lcm: 'LCM'
+  },
+  account: {
+    title: '账户管理',
+    oldPassword: '旧密码',
+    newPassword: '新密码',
+    confirmPassword: '确认密码',
+    passwordPlaceholder: '请输入值',
+    infoMessage: '使用以下字段输入最多{maxLength}个字符，然后点击"应用"来更改或创建密码。',
+    noteMessage: '注意：密码不能包含空格。',
+    errorFetchSettings: '获取账户设置失败',
+    errorAllFieldsRequired: '所有字段都是必填的',
+    errorPasswordSpace: '密码不能包含空格',
+    errorPasswordLength: '密码不能超过{maxLength}个字符',
+    errorPasswordMismatch: '新密码和确认密码不匹配',
+    errorUpdateFailed: '更新密码失败',
+    successUpdate: '密码更新成功'
   }
 };

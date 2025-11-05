@@ -21,6 +21,7 @@ export default {
     macFilter: '無線 MAC フィルター',
     wirelessExtender: '無線中継機',
     management: '管理',
+    account: 'アカウント管理',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '詳細設定',
@@ -813,5 +814,21 @@ export default {
     kernel: 'カーネル',
     firewall: 'ファイアウォール',
     lcm: 'LCM'
+  },
+  account: {
+    title: 'アカウント管理',
+    oldPassword: '旧パスワード',
+    newPassword: '新しいパスワード',
+    confirmPassword: 'パスワードの確認',
+    passwordPlaceholder: '値を入力してください',
+    infoMessage: '以下のフィールドを使用して最大{maxLength}文字を入力し、「適用」をクリックしてパスワードを変更または作成してください。',
+    noteMessage: '注意：パスワードにスペースを含めることはできません。',
+    errorFetchSettings: 'アカウント設定の取得に失敗しました',
+    errorAllFieldsRequired: 'すべてのフィールドは必須です',
+    errorPasswordSpace: 'パスワードにスペースを含めることはできません',
+    errorPasswordLength: 'パスワードは{maxLength}文字を超えることはできません',
+    errorPasswordMismatch: '新しいパスワードと確認パスワードが一致しません',
+    errorUpdateFailed: 'パスワードの更新に失敗しました',
+    successUpdate: 'パスワードが正常に更新されました'
   }
 };

@@ -21,6 +21,7 @@ export default {
     macFilter: '무선 MAC 필터',
     wirelessExtender: '무선 확장기',
     management: '관리',
+    account: '계정 관리',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '고급 설정',
@@ -812,5 +813,21 @@ export default {
     kernel: '커널',
     firewall: '방화벽',
     lcm: 'LCM'
+  },
+  account: {
+    title: '계정 관리',
+    oldPassword: '이전 비밀번호',
+    newPassword: '새 비밀번호',
+    confirmPassword: '비밀번호 확인',
+    passwordPlaceholder: '값을 입력하세요',
+    infoMessage: '아래 필드를 사용하여 최대 {maxLength}자를 입력하고 "적용"을 클릭하여 비밀번호를 변경하거나 생성하세요.',
+    noteMessage: '참고: 비밀번호에 공백을 포함할 수 없습니다.',
+    errorFetchSettings: '계정 설정을 가져오지 못했습니다',
+    errorAllFieldsRequired: '모든 필드는 필수입니다',
+    errorPasswordSpace: '비밀번호에 공백을 포함할 수 없습니다',
+    errorPasswordLength: '비밀번호는 {maxLength}자를 초과할 수 없습니다',
+    errorPasswordMismatch: '새 비밀번호와 확인 비밀번호가 일치하지 않습니다',
+    errorUpdateFailed: '비밀번호 업데이트에 실패했습니다',
+    successUpdate: '비밀번호가 성공적으로 업데이트되었습니다'
   }
 };

@@ -814,5 +814,21 @@ export default {
     kernel: 'Noyau',
     firewall: 'Pare-feu',
     lcm: 'LCM'
+  },
+  account: {
+    title: 'Gestion du compte',
+    oldPassword: 'Ancien mot de passe',
+    newPassword: 'Nouveau mot de passe',
+    confirmPassword: 'Confirmer le mot de passe',
+    passwordPlaceholder: 'Veuillez saisir la valeur',
+    infoMessage: 'Utilisez les champs ci-dessous pour saisir jusqu\'\u00e0 {maxLength} caract\u00e8res et cliquez sur "Appliquer" pour modifier ou cr\u00e9er le mot de passe.',
+    noteMessage: 'Remarque : Le mot de passe ne peut pas contenir d\'espace.',
+    errorFetchSettings: 'Échec de la récupération des param\u00e8tres du compte',
+    errorAllFieldsRequired: 'Tous les champs sont obligatoires',
+    errorPasswordSpace: 'Le mot de passe ne peut pas contenir d\'espace',
+    errorPasswordLength: 'Le mot de passe ne peut pas d\u00e9passer {maxLength} caract\u00e8res',
+    errorPasswordMismatch: 'Le nouveau mot de passe et la confirmation ne correspondent pas',
+    errorUpdateFailed: 'Échec de la mise \u00e0 jour du mot de passe',
+    successUpdate: 'Mot de passe mis \u00e0 jour avec succ\u00e8s'
   }
 };
