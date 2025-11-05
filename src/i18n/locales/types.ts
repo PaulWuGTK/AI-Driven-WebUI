@@ -22,6 +22,7 @@ export interface Translations {
     macFilter: string;
     wirelessExtender: string;
     management: string;
+    account: string;
     ntp: string;
     ssh: string;
     advanced: string;

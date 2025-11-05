@@ -21,6 +21,7 @@ export default {
     macFilter: 'WLAN-MAC-Filter',
     wirelessExtender: 'WLAN-Repeater',
     management: 'Management',
+    account: 'Kontoverwaltung',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Erweitert',

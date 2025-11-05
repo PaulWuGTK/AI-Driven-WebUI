@@ -159,6 +159,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/management/account',
+      component: () => import('../views/management/account/AccountManagement.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/application/xperience-control',
       component: () => import('../views/application/XperienceControl.vue'),
       beforeEnter: requireAuth

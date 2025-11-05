@@ -21,6 +21,7 @@ export default {
     macFilter: '無線 MAC 篩選',
     wirelessExtender: '無線延伸器',
     management: '管理',
+    account: '帳戶管理',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: '進階設定',

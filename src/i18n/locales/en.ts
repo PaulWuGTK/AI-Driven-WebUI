@@ -23,6 +23,7 @@ const translations: Translations = {
     macFilter: 'MAC Filter',
     wirelessExtender: 'Wireless Extender',
     management: 'Management',
+    account: 'Account Management',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Advanced',

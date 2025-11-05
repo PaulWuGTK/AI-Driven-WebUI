@@ -21,6 +21,7 @@ export default {
     macFilter: 'Filtre MAC sans fil',
     wirelessExtender: 'Répéteur sans fil',
     management: 'Gestion',
+    account: 'Gestion du compte',
     ntp: 'NTP',
     ssh: 'SSH',
     advanced: 'Avancé',

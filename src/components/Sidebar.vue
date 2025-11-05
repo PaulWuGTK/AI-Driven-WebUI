@@ -75,6 +75,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'DDNS': { gateway: true, extender: false }
   },
   'Management': {
+    'Account Management': { gateway: true, extender: false },
     'NTP': { gateway: true, extender: false },
     'SSH': { gateway: true, extender: false },
     'Diagnostics': { gateway: true, extender: true },
@@ -152,6 +153,7 @@ const baseMenuItems: MenuItem[] = [
     icon: managementIcon,
     translationKey: 'menu.management',
     subItems: [
+      { name: 'Account Management', path: '/management/account', translationKey: 'menu.account' },
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
       { name: 'SSH', path: '/management/ssh', translationKey: 'menu.ssh' },
       { name: 'Diagnostics', path: '/management/diagnostics', translationKey: 'menu.diagnostics' },
