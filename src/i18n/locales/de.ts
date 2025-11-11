@@ -34,6 +34,7 @@ export default {
     backup: 'Sicherung',
     xperienceControl: 'XperienceControl',
     application: 'Anwendung',
+    upnp: 'UPnP',
     logs: 'Protokolle',
     iot: 'Internet der Dinge',
     thread: 'Thread',
@@ -644,6 +645,14 @@ export default {
     maxEchoTime: 'Maximale Echozeit',
     testFailed: 'Geschwindigkeitstest fehlgeschlagen. Bitte erneut versuchen.',
     testing: 'Test läuft...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'UPnP aktivieren',
+    interfaceSelection: 'Schnittstellenauswahl',
+    apply: 'Anwenden',
+    loadError: 'UPnP-Einstellungen konnten nicht geladen werden',
+    updateError: 'UPnP-Einstellungen konnten nicht aktualisiert werden'
   },
   thread: {
     title: 'Thread',

@@ -34,6 +34,7 @@ export default {
     backup: 'バックアップ',
     xperienceControl: 'XperienceControl',
     application: 'アプリケーション',
+    upnp: 'UPnP',
     logs: 'ログ',
     iot: 'モノのインターネット',
     thread: 'スレッド',
@@ -644,6 +645,14 @@ export default {
     maxEchoTime: '最大エコー時間',
     testFailed: '速度テストに失敗しました。再試行してください。',
     testing: 'テスト中...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'UPnP有効化',
+    interfaceSelection: 'インターフェース選択',
+    apply: '適用',
+    loadError: 'UPnP設定を読み込めませんでした',
+    updateError: 'UPnP設定を更新できませんでした'
   },
   thread: {
     title: 'スレッド',

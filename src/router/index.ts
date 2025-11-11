@@ -169,6 +169,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/application/upnp',
+      component: () => import('../views/application/UpnpSettings.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/iot/thread',
       component: () => import('../views/iot/thread/ThreadLayout.vue'),
       beforeEnter: requireAuth

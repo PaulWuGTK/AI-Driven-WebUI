@@ -34,6 +34,7 @@ export default {
     backup: '백업',
     xperienceControl: 'XperienceControl',
     application: '애플리케이션',
+    upnp: 'UPnP',
     logs: '로그',
     iot: '사물인터넷',
     thread: 'Thread',
@@ -643,6 +644,14 @@ export default {
     maxEchoTime: '최대 에코 시간',
     testFailed: '속도 테스트 실패. 다시 시도하세요.',
     testing: '테스트 중...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'UPnP 활성화',
+    interfaceSelection: '인터페이스 선택',
+    apply: '적용',
+    loadError: 'UPnP 설정을 불러올 수 없습니다',
+    updateError: 'UPnP 설정을 업데이트할 수 없습니다'
   },
   thread: {
     title: 'Thread',

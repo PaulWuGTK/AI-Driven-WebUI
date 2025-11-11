@@ -34,6 +34,7 @@ export default {
     backup: 'Sauvegarde',
     xperienceControl: 'XperienceControl',
     application: 'Application',
+    upnp: 'UPnP',
     logs: 'Journaux',
     iot: 'Internet des Objets',
     thread: 'Thread',
@@ -639,11 +640,19 @@ export default {
     mbps: 'Mbps',
     ms: 'ms',
     packetLoss: 'Perte de paquets',
-    minEchoTime: 'Temps d’écho minimum',
-    meanEchoTime: 'Temps d’écho moyen',
-    maxEchoTime: 'Temps d’écho maximum',
+    minEchoTime: 'Temps d\'écho minimum',
+    meanEchoTime: 'Temps d\'écho moyen',
+    maxEchoTime: 'Temps d\'écho maximum',
     testFailed: 'Échec du test de vitesse. Veuillez réessayer.',
     testing: 'Test en cours...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'Activer UPnP',
+    interfaceSelection: 'Sélection de l\'interface',
+    apply: 'Appliquer',
+    loadError: 'Impossible de charger les paramètres UPnP',
+    updateError: 'Impossible de mettre à jour les paramètres UPnP'
   },
   thread: {
     title: 'Thread',

@@ -34,6 +34,7 @@ export default {
     backup: '备份',
     xperienceControl: 'XperienceControl',
     application: '应用程序',
+    upnp: 'UPnP',
     logs: '日志',
     iot: '物联网',
     thread: 'Thread',
@@ -644,6 +645,14 @@ export default {
     maxEchoTime: '最大回显时间',
     testFailed: '测速失败，请重试。',
     testing: '测试中...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'UPnP 启用',
+    interfaceSelection: '接口选择',
+    apply: '应用',
+    loadError: '无法加载 UPnP 设置',
+    updateError: '无法更新 UPnP 设置'
   },
   thread: {
     title: 'Thread',

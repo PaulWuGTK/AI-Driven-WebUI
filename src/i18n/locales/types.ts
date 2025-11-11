@@ -36,6 +36,7 @@ export interface Translations {
     backup: string;
     xperienceControl: string;
     application: string;
+    upnp: string;
     logs: string;
     iot: string;
     thread: string;
@@ -646,6 +647,14 @@ export interface Translations {
     maxEchoTime: string;
     testFailed: string;
     testing: string;
+  };
+  upnp: {
+    title: string;
+    enable: string;
+    interfaceSelection: string;
+    apply: string;
+    loadError: string;
+    updateError: string;
   };
   thread: {
     title: string;

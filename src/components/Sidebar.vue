@@ -85,7 +85,8 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Upgrade Firmware': { gateway: true, extender: true }
   },
   'Application': {
-    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true }
+    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true },
+    'UPnP': { gateway: true, extender: false }
   }
   // ,
   // 'Internet of Things': {
@@ -168,7 +169,8 @@ const baseMenuItems: MenuItem[] = [
     icon: applicationIcon,
     translationKey: 'menu.application',
     subItems: [
-      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' }
+      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' },
+      { name: 'UPnP', path: '/application/upnp', translationKey: 'menu.upnp' }
     ]
   }
   // ,

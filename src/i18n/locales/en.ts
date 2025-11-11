@@ -37,6 +37,7 @@ const translations: Translations = {
     backup: 'Backup',
     xperienceControl: 'XperienceControl',
     application: 'Application',
+    upnp: 'UPnP',
     logs: 'Logs',
     iot: 'Internet of Things',
     thread: 'Thread',
@@ -647,6 +648,14 @@ const translations: Translations = {
     maxEchoTime: 'Max Echo Time',
     testFailed: 'Speedtest failed. Please try again.',
     testing: 'Testing...'
+  },
+  upnp: {
+    title: 'UPnP',
+    enable: 'UPnP Enable',
+    interfaceSelection: 'Interface Selection',
+    apply: 'Apply',
+    loadError: 'Failed to load UPnP settings',
+    updateError: 'Failed to update UPnP settings'
   },
   thread: {
     title: 'Thread',
