@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: '應用程式',
     upnp: 'UPnP',
+    dualImage: '雙映像檔',
     logs: '紀錄',
     iot: '物聯網',
     thread: 'Thread',
@@ -839,5 +840,12 @@ export default {
     errorPasswordMismatch: '新密碼與確認密碼不相符',
     errorUpdateFailed: '更新密碼失敗',
     successUpdate: '密碼更新成功'
+  },
+  dualImage: {
+    title: '雙鏡像',
+    currentBootPartition: '目前開機分割區',
+    partitionInformation: '分割區資訊',
+    bootPartition: '開機分割區',
+    version: '版本'
   }
 };

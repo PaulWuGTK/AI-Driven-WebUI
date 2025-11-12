@@ -79,6 +79,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/status/dual-image',
+      component: () => import('../views/status/DualImage.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/settings/wireless',
       component: () => import('../views/settings/WirelessSettings.vue'),
       beforeEnter: requireAuth

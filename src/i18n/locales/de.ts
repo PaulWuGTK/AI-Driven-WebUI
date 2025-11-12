@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: 'Anwendung',
     upnp: 'UPnP',
+    dualImage: 'Dual-Image',
     logs: 'Protokolle',
     iot: 'Internet der Dinge',
     thread: 'Thread',
@@ -839,5 +840,12 @@ export default {
     errorPasswordMismatch: 'Neues Passwort und Bestätigung stimmen nicht überein',
     errorUpdateFailed: 'Fehler beim Aktualisieren des Passworts',
     successUpdate: 'Passwort erfolgreich aktualisiert'
+  },
+  dualImage: {
+    title: 'Dual Image',
+    currentBootPartition: 'Aktuelle Boot-Partition',
+    partitionInformation: 'Partitionsinformationen',
+    bootPartition: 'Boot-Partition',
+    version: 'Version'
   }
 };

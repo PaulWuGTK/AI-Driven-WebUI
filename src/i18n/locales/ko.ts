@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: '애플리케이션',
     upnp: 'UPnP',
+    dualImage: '듀얼 이미지',
     logs: '로그',
     iot: '사물인터넷',
     thread: 'Thread',
@@ -838,5 +839,12 @@ export default {
     errorPasswordMismatch: '새 비밀번호와 확인 비밀번호가 일치하지 않습니다',
     errorUpdateFailed: '비밀번호 업데이트에 실패했습니다',
     successUpdate: '비밀번호가 성공적으로 업데이트되었습니다'
+  },
+  dualImage: {
+    title: '듀얼 이미지',
+    currentBootPartition: '현재 부팅 파티션',
+    partitionInformation: '파티션 정보',
+    bootPartition: '부팅 파티션',
+    version: '버전'
   }
 };

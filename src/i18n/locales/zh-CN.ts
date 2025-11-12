@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: '应用程序',
     upnp: 'UPnP',
+    dualImage: '双映像档',
     logs: '日志',
     iot: '物联网',
     thread: 'Thread',
@@ -839,5 +840,12 @@ export default {
     errorPasswordMismatch: '新密码和确认密码不匹配',
     errorUpdateFailed: '更新密码失败',
     successUpdate: '密码更新成功'
+  },
+  dualImage: {
+    title: '双镜像',
+    currentBootPartition: '当前启动分区',
+    partitionInformation: '分区信息',
+    bootPartition: '启动分区',
+    version: '版本'
   }
 };

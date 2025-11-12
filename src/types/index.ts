@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './dashboard';
 export * from './ddns';
+export * from './dualImage';
 export * from './lan';
 export * from './lcm';
 export * from './mesh';

@@ -57,6 +57,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Mesh Information': { gateway: true, extender: false },
     'LCM': { gateway: true, extender: true },
     'System Stats': { gateway: true, extender: true },
+    'Dual Image': { gateway: true, extender: true },
     'Log': { gateway: true, extender: true }
   },
   'Network': {
@@ -116,6 +117,7 @@ const baseMenuItems: MenuItem[] = [
       { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' },
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' },
       { name: 'System Stats', path: '/status/system-stats', translationKey: 'menu.systemStats' },
+      { name: 'Dual Image', path: '/status/dual-image', translationKey: 'menu.dualImage' },
       { name: 'Log', path: '/status/log', translationKey: 'menu.logs' }
     ]
   },
@@ -149,7 +151,7 @@ const baseMenuItems: MenuItem[] = [
       { name: 'DDNS', path: '/advanced/ddns', translationKey: 'menu.ddns' }
     ]
   },
-  { 
+  {
     name: 'Management',
     icon: managementIcon,
     translationKey: 'menu.management',

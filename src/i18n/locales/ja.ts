@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: 'アプリケーション',
     upnp: 'UPnP',
+    dualImage: 'デュアルイメージ',
     logs: 'ログ',
     iot: 'モノのインターネット',
     thread: 'スレッド',
@@ -839,5 +840,12 @@ export default {
     errorPasswordMismatch: '新しいパスワードと確認パスワードが一致しません',
     errorUpdateFailed: 'パスワードの更新に失敗しました',
     successUpdate: 'パスワードが正常に更新されました'
+  },
+  dualImage: {
+    title: 'デュアルイメージ',
+    currentBootPartition: '現在のブートパーティション',
+    partitionInformation: 'パーティション情報',
+    bootPartition: 'ブートパーティション',
+    version: 'バージョン'
   }
 };

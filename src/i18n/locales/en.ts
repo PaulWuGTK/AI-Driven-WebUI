@@ -38,6 +38,7 @@ const translations: Translations = {
     xperienceControl: 'XperienceControl',
     application: 'Application',
     upnp: 'UPnP',
+    dualImage: 'Dual Image',
     logs: 'Logs',
     iot: 'Internet of Things',
     thread: 'Thread',
@@ -842,6 +843,13 @@ const translations: Translations = {
     errorPasswordMismatch: 'New password and confirm password do not match',
     errorUpdateFailed: 'Failed to update password',
     successUpdate: 'Password updated successfully'
+  },
+  dualImage: {
+    title: 'Dual Image',
+    currentBootPartition: 'Current Boot Partition',
+    partitionInformation: 'Partition Information',
+    bootPartition: 'Boot Partition',
+    version: 'Version'
   }
 };
 

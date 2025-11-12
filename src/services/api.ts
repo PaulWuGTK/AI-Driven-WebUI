@@ -1,6 +1,7 @@
 import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, StatisticsResponse, NtpResponse, NtpUpdateRequest } from '../types';
 import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone';
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
+import type { DualImageResponse } from '../types/dualImage';
 import type { SshServer, SshServerResponse, SshAuthorizedKey, SshAuthorizedKeyResponse, SshSession, SshSessionResponse } from '../types/ssh';
 import type { WifiNeighborScanResponse, WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
 import type { StatusLcmResponse } from '../types/lcm';
@@ -11,6 +12,7 @@ import { statisticsMockData } from './mockData/statisticsMockData';
 import { ntpMockData } from './mockData/ntpMockData';
 import { timezoneData } from './mockData/timezoneData';
 import { ddnsData } from './mockData/ddnsData';
+import { dualImageMockData } from './mockData/dualImageMockData';
 import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/sshData';
 import { handleApiResponse } from '../utils/apiUtils';
 import { callApi } from './apiClient';
@@ -203,4 +205,11 @@ export async function updateDdns(data: DdnsUpdateRequest): Promise<DdnsResponse>
     body: JSON.stringify(data),
   });
   return handleApiResponse<DdnsResponse>(response);
+}
+
+export async function getDualImageStatus(): Promise<DualImageResponse> {
+  if (isDevelopment) {
+    return dualImageMockData;
+  }
+  return callApi<DualImageResponse>(`${API_BASE_URL}/info?list=StatusDualImage`);
 }

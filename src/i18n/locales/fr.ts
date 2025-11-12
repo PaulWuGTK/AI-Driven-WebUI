@@ -35,6 +35,7 @@ export default {
     xperienceControl: 'XperienceControl',
     application: 'Application',
     upnp: 'UPnP',
+    dualImage: 'Double Image',
     logs: 'Journaux',
     iot: 'Internet des Objets',
     thread: 'Thread',
@@ -839,5 +840,12 @@ export default {
     errorPasswordMismatch: 'Le nouveau mot de passe et la confirmation ne correspondent pas',
     errorUpdateFailed: 'Échec de la mise \u00e0 jour du mot de passe',
     successUpdate: 'Mot de passe mis \u00e0 jour avec succ\u00e8s'
+  },
+  dualImage: {
+    title: 'Image Duale',
+    currentBootPartition: 'Partition de démarrage actuelle',
+    partitionInformation: 'Informations sur les partitions',
+    bootPartition: 'Partition de démarrage',
+    version: 'Version'
   }
 };
