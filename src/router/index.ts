@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { AuthService } from '../services/auth';
 
-// Auth guard
 const requireAuth = (to: any, from: any, next: any) => {
   const auth = AuthService.getInstance();
   if (!auth.isAuthenticated() && to.path !== '/login') {
@@ -16,6 +15,7 @@ const router = createRouter({
   routes: [
     {
       path: '/login',
+      name: 'Login',
       component: () => import('../views/Login.vue')
     },
     {
@@ -25,12 +25,13 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
+      name: 'Dashboard',
       component: () => import('../views/Dashboard.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/status',
-      redirect: '/status/wan',
+      redirect: '/dashboard',
       beforeEnter: requireAuth
     },
     {
@@ -84,89 +85,339 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
-      path: '/settings/wireless',
-      component: () => import('../views/settings/WirelessSettings.vue'),
+      path: '/status/wan-failover',
+      component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/settings/wan',
-      component: () => import('../views/settings/WanSettings.vue'),
+      path: '/status/cellular',
+      component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/settings/lan',
-      component: () => import('../views/settings/lan/LanSettings.vue'),
+      path: '/network/wan',
+      name: 'NetworkWan',
+      component: () => import('../views/network/wan/WanConfig.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/wifi/guest-access',
-      component: () => import('../views/wifi/GuestAccess.vue'),
+      path: '/basic/wan',
+      redirect: '/network/wan'
+    },
+    {
+      path: '/basic/backup-wan',
+      component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/wifi/mac-filter',
-      component: () => import('../views/wifi/MacFilter.vue'),
+      path: '/network/lan',
+      name: 'NetworkLan',
+      component: () => import('../views/network/lan/LanConfig.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/wifi/wireless-extender',
-      component: () => import('../views/wifi/WirelessExtender.vue'),
+      path: '/basic/lan',
+      redirect: '/network/lan'
+    },
+    {
+      path: '/network/lan/ipv4',
+      name: 'NetworkLanIPv4',
+      component: () => import('../views/network/lan/IPv4Config.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/lan/ipv4',
+      redirect: '/network/lan/ipv4'
+    },
+    {
+      path: '/basic/lan/ipv6',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/network/lan/devices',
+      name: 'NetworkLanDevices',
+      component: () => import('../views/network/lan/DeviceList.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/lan/devices',
+      redirect: '/network/lan/devices'
+    },
+    {
+      path: '/network/wireless',
+      name: 'NetworkWireless',
+      component: () => import('../views/network/wireless/WirelessConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan',
+      redirect: '/network/wireless'
+    },
+    {
+      path: '/network/wireless/basic',
+      name: 'NetworkWirelessBasic',
+      component: () => import('../views/network/wireless/BasicConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/basic',
+      redirect: '/network/wireless/basic'
+    },
+    {
+      path: '/network/wireless/advanced',
+      name: 'NetworkWirelessAdvanced',
+      component: () => import('../views/network/wireless/AdvancedConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/advanced',
+      redirect: '/network/wireless/advanced'
+    },
+    {
+      path: '/network/wireless/wps',
+      name: 'NetworkWirelessWps',
+      component: () => import('../views/network/wireless/WpsConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/wps',
+      redirect: '/network/wireless/wps'
+    },
+    {
+      path: '/network/wireless/mesh',
+      name: 'NetworkWirelessMesh',
+      component: () => import('../views/network/wireless/MeshConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/mesh',
+      redirect: '/network/wireless/mesh'
+    },
+    {
+      path: '/basic/wlan/zones',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/network/wireless/extender',
+      name: 'NetworkWirelessExtender',
+      component: () => import('../views/network/wireless/ExtenderConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/extender',
+      redirect: '/network/wireless/extender'
+    },
+    {
+      path: '/basic/cellular',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/nat/port-forwarding',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/advanced/nat',
+      name: 'AdvancedNat',
+      component: () => import('../views/advanced/nat/NatConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/nat',
+      redirect: '/advanced/nat'
+    },
+    {
+      path: '/advanced/nat/dmz',
+      name: 'AdvancedNatDmz',
+      component: () => import('../views/advanced/nat/DmzConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/nat/dmz',
+      redirect: '/advanced/nat/dmz'
+    },
+    {
+      path: '/basic/nat/alg',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/advanced/security',
+      name: 'AdvancedSecurity',
+      component: () => import('../views/advanced/SecurityConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/security',
+      redirect: '/advanced/security'
+    },
+    {
+      path: '/basic/routing',
+      component: () => import('../views/InProgress.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/advanced/ssh',
+      name: 'AdvancedSsh',
+      component: () => import('../views/advanced/SshConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/advance/ssh',
+      redirect: '/advanced/ssh'
     },
     {
       path: '/advanced/service-control',
+      name: 'AdvancedServiceControl',
       component: () => import('../views/advanced/ServiceControl.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/advanced/dmz',
-      component: () => import('../views/advanced/DmzSettings.vue'),
+      path: '/advance/service-control',
+      redirect: '/advanced/service-control'
+    },
+    {
+      path: '/advance/qos',
+      component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/advanced/ddns',
-      component: () => import('../views/advanced/DdnsSettings.vue'),
+      name: 'AdvancedDdns',
+      component: () => import('../views/advanced/DdnsConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/application/ddns',
+      redirect: '/advanced/ddns'
+    },
+    {
+      path: '/system/ntp',
+      name: 'SystemNtp',
+      component: () => import('../views/system/ntp/NtpConfig.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/management/ntp',
-      component: () => import('../views/management/NtpSettings.vue'),
+      redirect: '/system/ntp'
+    },
+    {
+      path: '/system/reboot',
+      name: 'SystemReboot',
+      component: () => import('../views/system/reboot/DeviceReboot.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/management/ssh',
-      component: () => import('../views/management/ssh/SshManagement.vue'),
+      path: '/management/reboot',
+      redirect: '/system/reboot'
+    },
+    {
+      path: '/management/language',
+      component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth
     },
     {
-      path: '/management/diagnostics',
-      component: () => import('../views/management/diagnostics/DiagnosticsTools.vue'),
+      path: '/system/settings',
+      name: 'SystemSettings',
+      component: () => import('../views/system/settings/SettingsManagement.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/settings',
+      redirect: '/system/settings'
+    },
+    {
+      path: '/system/settings/reset',
+      name: 'SystemSettingsReset',
+      component: () => import('../views/system/reset/DeviceReset.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/settings/reset',
+      redirect: '/system/settings/reset'
+    },
+    {
+      path: '/system/settings/backup',
+      name: 'SystemSettingsBackup',
+      component: () => import('../views/system/backup/BackupManagement.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/settings/backup',
+      redirect: '/system/settings/backup'
+    },
+    {
+      path: '/system/settings/update',
+      name: 'SystemSettingsUpdate',
+      component: () => import('../views/system/firmware/FirmwareUpgrade.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/settings/update',
+      redirect: '/system/settings/update'
+    },
+    {
+      path: '/system/diagnostics',
+      name: 'SystemDiagnostics',
+      component: () => import('../views/system/diagnostics/DiagnosticsTools.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/tools',
+      redirect: '/system/diagnostics'
+    },
+    {
+      path: '/system/diagnostics/ping',
+      name: 'SystemDiagnosticsPing',
+      component: () => import('../views/system/diagnostics/PingTool.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/tools/ping',
+      redirect: '/system/diagnostics/ping'
+    },
+    {
+      path: '/system/diagnostics/traceroute',
+      name: 'SystemDiagnosticsTraceroute',
+      component: () => import('../views/system/diagnostics/TraceRouteTool.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/tools/traceroute',
+      redirect: '/system/diagnostics/traceroute'
+    },
+    {
+      path: '/system/diagnostics/dns',
+      name: 'SystemDiagnosticsDns',
+      component: () => import('../views/system/diagnostics/DNSLookupTool.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/tools/dns',
+      redirect: '/system/diagnostics/dns'
+    },
+    {
+      path: '/system/device',
+      name: 'SystemDevice',
+      component: () => import('../views/system/device/DeviceManagement.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/management/device',
-      component: () => import('../views/management/device/DeviceManagement.vue'),
-      beforeEnter: requireAuth
+      redirect: '/system/device'
     },
     {
-      path: '/management/reset',
-      component: () => import('../views/management/reset/DeviceReset.vue'),
-      beforeEnter: requireAuth
-    },
-    {
-      path: '/upgrade',
-      component: () => import('../views/management/firmware/FirmwareUpgrade.vue'),
-      beforeEnter: requireAuth
-    },
-    {
-      path: '/management/backup',
-      component: () => import('../views/management/backup/BackupManagement.vue'),
+      path: '/system/account',
+      name: 'SystemAccount',
+      component: () => import('../views/system/account/AccountManagement.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/management/account',
-      component: () => import('../views/management/account/AccountManagement.vue'),
-      beforeEnter: requireAuth
+      redirect: '/system/account'
     },
     {
       path: '/application/xperience-control',
@@ -175,16 +426,19 @@ const router = createRouter({
     },
     {
       path: '/application/upnp',
-      component: () => import('../views/application/UpnpSettings.vue'),
+      name: 'ApplicationUpnp',
+      component: () => import('../views/application/UpnpConfig.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/iot/thread',
+      name: 'IotThread',
       component: () => import('../views/iot/thread/ThreadLayout.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/iot/matter',
+      name: 'IotMatter',
       component: () => import('../views/iot/matter/MatterDashboard.vue'),
       beforeEnter: requireAuth
     }

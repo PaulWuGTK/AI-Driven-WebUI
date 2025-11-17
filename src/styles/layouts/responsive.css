@@ -1,0 +1,313 @@
+/* Responsive Design Styles */
+
+/* Desktop: Hide mobile cards by default */
+.mobile-cards {
+  display: none;
+}
+
+/* Tablet and Below (768px) */
+@media (max-width: 768px) {
+  /* Layout Adjustments */
+  .main-content {
+    height: calc(100vh - var(--header-height));
+  }
+
+  .page-container {
+    height: 100%;
+  }
+
+  /* Content Spacing */
+  .page-content,
+  .status-content {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .page-title {
+    padding: var(--space-4);
+    font-size: var(--font-size-xl);
+  }
+
+  /* Card Adjustments */
+  .card-body {
+    padding: var(--space-4);
+  }
+
+  .card-header,
+  .card-footer {
+    padding: var(--space-4);
+  }
+
+  /* Form Adjustments */
+  .form-row-2,
+  .form-row-3,
+  .form-row-4 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Grid Adjustments */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Info Row */
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .info-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .info-value {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Button Groups */
+  .btn-group,
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group .btn,
+  .action-buttons .btn {
+    width: 100%;
+  }
+
+  /* Table Responsive */
+  .table-container {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  /* Header Row */
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Container Padding */
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  /* Modal/Dialog Adjustments */
+  .modal-dialog {
+    margin: var(--space-4);
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Mobile Portrait (576px and below) */
+@media (max-width: 576px) {
+  /* Further reduce spacing */
+  .page-content,
+  .status-content {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .page-title {
+    padding: var(--space-3);
+    font-size: var(--font-size-lg);
+  }
+
+  /* Compact cards */
+  .card-body {
+    padding: var(--space-3);
+  }
+
+  .card-header,
+  .card-footer {
+    padding: var(--space-3);
+  }
+
+  /* Font size adjustments */
+  h1, .h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h2, .h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  h3, .h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Button adjustments */
+  .btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Input adjustments */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Desktop (1024px and above) */
+@media (min-width: 1024px) {
+  /* Larger content area */
+  .page-content,
+  .status-content {
+    padding: var(--space-8);
+    gap: var(--space-8);
+  }
+
+  /* Better use of space for grids */
+  .grid-cols-2-lg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-3-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-cols-4-lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Form row improvements */
+  .form-row-2-lg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-row-3-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row-4-lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large Desktop (1280px and above) */
+@media (min-width: 1280px) {
+  /* Maximum content width constraint */
+  .page-content,
+  .status-content {
+    max-width: var(--content-max-width);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebar,
+  .header,
+  .btn,
+  .action-buttons {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-container {
+    overflow: visible;
+  }
+
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .table {
+    border: 1px solid #000;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #000;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark Mode Support (Prepared for future) */
+@media (prefers-color-scheme: dark) {
+  /* Dark mode variables can be added here in the future */
+  /* This is just a placeholder for now */
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #000;
+    --text-secondary: #000;
+  }
+
+  .btn {
+    border-width: 2px;
+  }
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-height: 600px) {
+  .page-title {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--font-size-lg);
+  }
+
+  .page-content,
+  .status-content {
+    padding: var(--space-4);
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .tab-button {
+    min-height: 44px;
+    padding: var(--space-4) var(--space-6);
+  }
+
+  .form-check-input {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* Remove hover effects on touch devices */
+  .btn:hover,
+  .tab-button:hover,
+  .table-hover tbody tr:hover {
+    background-color: inherit;
+  }
+}

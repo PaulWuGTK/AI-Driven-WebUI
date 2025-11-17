@@ -1,0 +1,304 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { MACFilteringResponse, MACFilteringEntry } from '../../../types/macFiltering';
+import { getMACFiltering, updateMACFiltering } from '../../../services/api/macFiltering';
+import MacFilterBand from '../../network/wireless/macfilter/MacFilterBand.vue';
+import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
+
+const { t } = useI18n();
+const activeTab = ref('2.4G');
+const macFilteringData = ref<MACFilteringResponse | null>(null);
+const loading = ref(false);
+const showSuccess = ref(false);
+const error = ref<string | null>(null);
+const showConfirmDialog = ref(false);
+
+const wifi2gEntries = computed(() =>
+  macFilteringData.value?.MACFiltering.wifi2g || []
+);
+
+const wifi5gEntries = computed(() =>
+  macFilteringData.value?.MACFiltering.wifi5g || []
+);
+
+const wifi6gEntries = computed(() =>
+  macFilteringData.value?.MACFiltering.wifi6g || []
+);
+
+const originalWifi2gEntries = ref<MACFilteringEntry[]>([]);
+const originalWifi5gEntries = ref<MACFilteringEntry[]>([]);
+const originalWifi6gEntries = ref<MACFilteringEntry[]>([]);
+
+const fetchMACFiltering = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const response = await getMACFiltering();
+    macFilteringData.value = response;
+
+    originalWifi2gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi2g));
+    originalWifi5gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi5g));
+    originalWifi6gEntries.value = JSON.parse(JSON.stringify(response.MACFiltering.wifi6g));
+  } catch (err) {
+    console.error('Error fetching MAC filtering data:', err);
+    error.value = 'Failed to fetch MAC filtering data';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const update2GEntries = (entries: MACFilteringEntry[]) => {
+  if (!macFilteringData.value) return;
+  macFilteringData.value.MACFiltering.wifi2g = entries;
+};
+
+const update5GEntries = (entries: MACFilteringEntry[]) => {
+  if (!macFilteringData.value) return;
+  macFilteringData.value.MACFiltering.wifi5g = entries;
+};
+
+const update6GEntries = (entries: MACFilteringEntry[]) => {
+  if (!macFilteringData.value) return;
+  macFilteringData.value.MACFiltering.wifi6g = entries;
+};
+
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
+};
+
+const handleApply = () => {
+  const hasOffToOnTransition = checkOffToOnTransition();
+
+  if (hasOffToOnTransition) {
+    showConfirmDialog.value = true;
+  } else {
+    showConfirmDialog.value = false;
+    confirmApply();
+  }
+};
+
+const checkOffToOnTransition = (): boolean => {
+  if (!macFilteringData.value) return false;
+
+  const checkBandTransitions = (currentEntries: MACFilteringEntry[], originalEntries: MACFilteringEntry[]): boolean => {
+    return currentEntries.some(currentEntry => {
+      const originalEntry = originalEntries.find(orig => orig.Path === currentEntry.Path);
+      if (!originalEntry) return false;
+
+      return originalEntry.ACLMode === 'Off' &&
+             (currentEntry.ACLMode === 'WhiteList' || currentEntry.ACLMode === 'BlackList');
+    });
+  };
+
+  return checkBandTransitions(macFilteringData.value.MACFiltering.wifi2g, originalWifi2gEntries.value) ||
+         checkBandTransitions(macFilteringData.value.MACFiltering.wifi5g, originalWifi5gEntries.value);
+};
+
+const confirmApply = async () => {
+  if (!macFilteringData.value) return;
+
+  loading.value = true;
+  error.value = null;
+  try {
+    await updateMACFiltering({
+      MACFiltering: macFilteringData.value.MACFiltering
+    });
+    showSuccessMessage();
+    await fetchMACFiltering();
+  } catch (err) {
+    console.error('Error updating MAC filtering:', err);
+    error.value = 'Failed to update MAC filtering';
+  } finally {
+    loading.value = false;
+    showConfirmDialog.value = false;
+  }
+};
+
+const handleCancel = async () => {
+  await fetchMACFiltering();
+};
+
+onMounted(fetchMACFiltering);
+</script>
+
+<template>
+  <div class="status-content" :data-testid="qa('mac-filter-tab-content')">
+    <div v-if="loading && !macFilteringData" class="loading-state" :data-testid="qa('mac-filter-loading')">
+      <div class="loading-spinner"></div>
+      <span>{{ t('common.loading') }}</span>
+    </div>
+
+    <div v-else-if="error" class="error-state" :data-testid="qa('mac-filter-error')">
+      {{ error }}
+    </div>
+
+    <template v-else-if="macFilteringData">
+      <div class="panel-section" :data-testid="qa('mac-filter-panel')">
+        <div class="tab-navigation" :data-testid="qa('mac-filter-tabs')">
+          <button
+            class="tab-button"
+            :class="{ active: activeTab === '2.4G' }"
+            :data-testid="qa('mac-filter-tab-2g')"
+            @click="activeTab = '2.4G'"
+          >
+            2.4G
+          </button>
+          <button
+            class="tab-button"
+            :class="{ active: activeTab === '5G' }"
+            :data-testid="qa('mac-filter-tab-5g')"
+            @click="activeTab = '5G'"
+          >
+            5G
+          </button>
+          <button
+            class="tab-button"
+            :class="{ active: activeTab === '6G' }"
+            :data-testid="qa('mac-filter-tab-6g')"
+            @click="activeTab = '6G'"
+          >
+            6G
+          </button>
+        </div>
+
+        <div class="tab-content" :data-testid="qa('mac-filter-tab-content')">
+          <MacFilterBand
+            v-if="activeTab === '2.4G'"
+            :entries="wifi2gEntries"
+            band="2.4G"
+            :data-testid="qa('mac-filter-2g-band')"
+            @update:entries="update2GEntries"
+          />
+          <MacFilterBand
+            v-if="activeTab === '5G'"
+            :entries="wifi5gEntries"
+            band="5G"
+            :data-testid="qa('mac-filter-5g-band')"
+            @update:entries="update5GEntries"
+          />
+          <MacFilterBand
+            v-if="activeTab === '6G'"
+            :entries="wifi6gEntries"
+            band="6G"
+            :data-testid="qa('mac-filter-6g-band')"
+            @update:entries="update6GEntries"
+          />
+        </div>
+
+        <div class="button-group">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            :data-testid="qa('mac-filter-cancel-button')"
+            @click="handleCancel"
+            :disabled="loading"
+          >
+            {{ t('common.cancel') }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            :data-testid="qa('mac-filter-apply-button')"
+            @click="handleApply"
+            :disabled="loading"
+          >
+            {{ t('common.apply') }}
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('mac-filter-success-message')">
+      {{ t('common.apply') }} successful
+    </div>
+
+    <ConfirmationDialog
+      :is-open="showConfirmDialog"
+      :data-testid="qa('mac-filter-confirm-dialog')"
+      :title="t('macfilter.applyChangesTitle')"
+      :message="t('macfilter.applyChangesMessage')"
+      @confirm="confirmApply"
+      @cancel="showConfirmDialog = false"
+    />
+  </div>
+</template>
+
+<style scoped>
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1100;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
+}
+</style>

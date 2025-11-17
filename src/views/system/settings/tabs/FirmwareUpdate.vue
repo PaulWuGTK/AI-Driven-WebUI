@@ -1,0 +1,680 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import type { FirmwareBank } from '../../../../types/firmware';
+import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } from '../../../../services/api/firmware';
+import { useQA } from '../../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
+
+const { t } = useI18n();
+const router = useRouter();
+const selectedFile = ref<File | null>(null);
+const loading = ref(false);
+const error = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+const isDragging = ref(false);
+const firmwareBanks = ref<FirmwareBank[]>([]);
+const uploadedFileName = ref<string | null>(null);
+const isUpgrading = ref(false);
+const countdown = ref(60);
+const countdownTimer = ref<number | null>(null);
+const isActivating = ref(false);
+const isRebootPhase = ref(false);
+const upgradeError = ref<string | null>(null);
+const showUpgradeError = ref(false);
+
+const fetchFirmwareStatus = async () => {
+  try {
+    const response = await getFirmwareStatus();
+    firmwareBanks.value = Object.values(response.UpgradeFw.UpgradeFw);
+  } catch (err) {
+//    console.error('Error fetching firmware status:', err);
+    error.value = 'Failed to fetch firmware status';
+  }
+};
+
+// Check if activate button should be disabled
+const isActivateDisabled = (bank: FirmwareBank): boolean => {
+  return bank.Status === 'Active' || 
+         bank.Status === 'NoImage' || 
+         bank.Switch_Status !== 'Available';
+};
+
+// Get status display text
+const getStatusDisplay = (bank: FirmwareBank): string => {
+  if (bank.Switch_Status && bank.Switch_Status !== 'Available') {
+    return bank.Switch_Status;
+  }
+  return bank.Status;
+};
+
+// Check if there's an upgrade error to display
+const checkUpgradeError = async () => {
+  try {
+    const response = await getFirmwareStatus();
+    const banks = Object.values(response.UpgradeFw.UpgradeFw);
+    
+    // Check if any bank has FW_UG_Status indicating an error (not Available or Upgrading)
+    const errorBank = banks.find(bank => 
+      bank.FW_UG_Status && 
+      bank.FW_UG_Status !== 'Available' && 
+      bank.FW_UG_Status !== 'Upgrading' &&
+      bank.FW_UG_Status !== 'Success'
+    );
+    
+    if (errorBank && errorBank.FW_UG_Status) {
+//      console.log('Upgrade error detected:', errorBank.FW_UG_Status);
+      upgradeError.value = errorBank.FW_UG_Status;
+      showUpgradeError.value = true;
+      // Don't call clearUpgradeState here as it will reset showUpgradeError
+      // Just ensure we're not in upgrading state
+      isUpgrading.value = false;
+      isActivating.value = false;
+      isRebootPhase.value = false;
+      if (countdownTimer.value) {
+        clearInterval(countdownTimer.value);
+        countdownTimer.value = null;
+      }
+    } else {
+//      console.log('No upgrade error found, banks:', banks.map(b => ({ alias: b.Alias, fwStatus: b.FW_UG_Status })));
+    }
+  } catch (err) {
+//    console.error('Error checking upgrade status:', err);
+  }
+};
+
+const handleFileSelect = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    selectedFile.value = input.files[0];
+    uploadedFileName.value = null;
+  }
+};
+
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = false;
+  if (event.dataTransfer?.files.length) {
+    selectedFile.value = event.dataTransfer.files[0];
+    uploadedFileName.value = null;
+  }
+};
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
+
+const handleDragLeave = (event: DragEvent) => {
+  event.preventDefault();
+  isDragging.value = false;
+};
+
+const startUpgradeCountdown = () => {
+  isUpgrading.value = true;
+
+  // 如果是「啟用分割槽」流程，直接進入重開機階段；否則先跑升級階段
+  isRebootPhase.value = isActivating.value;
+
+  // 先清掉舊的計時器（避免多重計時）
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+    countdownTimer.value = null;
+  }
+
+  // 第一階段 60s（升級）→ 第二階段 100s（重開機）
+  countdown.value = isRebootPhase.value ? 100 : 60;
+
+  const tick = () => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      if (countdownTimer.value) {
+        clearInterval(countdownTimer.value);
+        countdownTimer.value = null;
+      }
+
+      if (!isRebootPhase.value) {
+        // 第一段結束 → 進入「重開機」第二段 100 秒
+        isRebootPhase.value = true;
+        countdown.value = 100;
+        countdownTimer.value = window.setInterval(tick, 1000);
+      } else {
+        // 第二段結束 → 導回登入（或你要的頁面）
+        router.push('/login');
+      }
+    }
+  };
+
+  countdownTimer.value = window.setInterval(tick, 1000);
+};
+
+const clearUpgradeState = () => {
+  isUpgrading.value = false;
+  isActivating.value = false;
+  isRebootPhase.value = false;
+  upgradeError.value = null;
+  showUpgradeError.value = false;
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+    countdownTimer.value = null;
+  }
+};
+
+const handleActivate = async (bank: FirmwareBank) => {
+  if (isActivateDisabled(bank)) return;
+
+  loading.value = true;
+  error.value = null;
+  isActivating.value = true;
+  
+  try {
+    const bankNumber = Object.entries(firmwareBanks.value).find(
+      ([_, b]) => b === bank
+    )?.[0];
+
+    if (!bankNumber) {
+      throw new Error('Invalid firmware bank');
+    }
+
+    await activateFirmware(parseInt(bankNumber)+1);
+    
+    startUpgradeCountdown();
+    await fetchFirmwareStatus();
+  } catch (err) {
+//    console.error('Error activating firmware:', err);
+    error.value = err instanceof Error ? err.message : 'Failed to activate firmware';
+    clearUpgradeState();
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleUpgrade = async () => {
+  if (!selectedFile.value) return;
+  
+  loading.value = true;
+  error.value = null;
+  upgradeError.value = null;
+  showUpgradeError.value = false;
+  isActivating.value = false;
+  
+  try {
+    // First upload the firmware file
+    if (!uploadedFileName.value) {
+      uploadedFileName.value = await uploadFirmware(selectedFile.value);
+    }
+
+    // Then perform the upgrade with autoActivate always true
+    await upgradeFirmware(uploadedFileName.value, true);
+    
+//    console.log('Upgrade command sent, checking for errors...');
+    
+    // Check for upgrade errors after a short delay
+    // Use a Promise-based approach to ensure proper sequencing
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        await checkUpgradeError();
+        
+        // Only start countdown if no upgrade error
+        if (!showUpgradeError.value) {
+//          console.log('No upgrade error detected, starting countdown');
+          // Clear file selection after successful upgrade
+          selectedFile.value = null;
+          uploadedFileName.value = null;
+          startUpgradeCountdown();
+        } else {
+//          console.log('Upgrade error detected, not starting countdown');
+        }
+        resolve();
+      }, 3000);
+    });
+    
+  } catch (err) {
+//    console.error('Error processing firmware:', err);
+    error.value = err instanceof Error ? err.message : 'Failed to process firmware';
+    clearUpgradeState();
+  } finally {
+    loading.value = false;
+    // Refresh firmware status after everything
+    if (!isUpgrading.value) {
+    await fetchFirmwareStatus();
+    }
+  }
+};
+
+onMounted(fetchFirmwareStatus);
+</script>
+
+<template>
+  <div class="status-content" :data-testid="qa('firmware-content')">
+      <div class="panel-section" :data-testid="qa('firmware-panel')">
+        <!-- Firmware Banks Section -->
+        <div class="section-title" :data-testid="qa('firmware-bank-title')">{{ t('firmware.firmwareBank') }}</div>
+        
+        <div class="card-content">
+          <!-- PC Version -->
+          <div class="table-container" :data-testid="qa('firmware-bank-table')">
+            <table>
+              <thead>
+                <tr>
+                  <th :data-testid="qa('firmware-bank-header-bank')">{{ t('firmware.firmwareBank') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-status')">{{ t('firmware.status') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-version')">{{ t('firmware.firmwareVersion') }}</th>
+                  <th :data-testid="qa('firmware-bank-header-action')">{{ t('firmware.action') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(bank, bankIndex) in firmwareBanks" :key="bank.Alias" :data-testid="qa(`firmware-bank-row-${bankIndex}`)">
+                  <td :data-testid="qa(`firmware-bank-alias-${bankIndex}`)">{{ bank.Alias }}</td>
+                  <td>
+                    <div class="status-wrapper" :data-testid="qa(`firmware-bank-status-wrapper-${bankIndex}`)">
+                      <span 
+                        class="status-indicator"
+                        :class="{ active: bank.Status === 'Active' }"
+                        :data-testid="qa(`firmware-bank-status-indicator-${bankIndex}`)"
+                      ></span>
+                      <span :data-testid="qa(`firmware-bank-status-text-${bankIndex}`)">{{ getStatusDisplay(bank) }}</span>
+                    </div>
+                  </td>
+                  <td :data-testid="qa(`firmware-bank-version-${bankIndex}`)">{{ bank.Version || 'N/A' }}</td>
+                  <td>
+                    <button 
+                      v-if="!isActivateDisabled(bank)"
+                      class="btn btn-primary btn-activate"
+                      :data-testid="qa(`firmware-bank-activate-button-${bankIndex}`)"
+                      @click="handleActivate(bank)"
+                      :disabled="isActivateDisabled(bank)"
+                    >
+                      {{ t('firmware.activate') }}
+                    </button>
+                    <span v-else :data-testid="qa(`firmware-bank-no-action-${bankIndex}`)">-</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Version -->
+          <div class="mobile-cards" :data-testid="qa('firmware-bank-mobile')">
+            <div class="table-card" v-for="(bank, bankIndex) in firmwareBanks" :key="bank.Alias" :data-testid="qa(`firmware-bank-card-${bankIndex}`)">
+              <div class="card-row">
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-bank-label-${bankIndex}`)">{{ t('firmware.firmwareBank') }}</span>
+                <span class="card-value" :data-testid="qa(`firmware-bank-card-bank-value-${bankIndex}`)">{{ bank.Alias }}</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-status-label-${bankIndex}`)">{{ t('firmware.status') }}</span>
+                <span class="card-value">
+                  <div class="status-wrapper">
+                    <span 
+                      class="status-indicator"
+                      :class="{ active: bank.Status === 'Active' }"
+                      :data-testid="qa(`firmware-bank-card-status-indicator-${bankIndex}`)"
+                    ></span>
+                    <span :data-testid="qa(`firmware-bank-card-status-text-${bankIndex}`)">{{ bank.Status }}</span>
+                  </div>
+                </span>
+              </div>
+              <div class="card-row">
+                <span class="card-label" :data-testid="qa(`firmware-bank-card-version-label-${bankIndex}`)">{{ t('firmware.firmwareVersion') }}</span>
+                <span class="card-value" :data-testid="qa(`firmware-bank-card-version-value-${bankIndex}`)">{{ bank.Version || 'N/A' }}</span>
+              </div>
+              <div class="card-actions" v-if="!isActivateDisabled(bank)">
+                <button 
+                  class="btn btn-primary btn-activate"
+                  :data-testid="qa(`firmware-bank-card-activate-button-${bankIndex}`)"
+                  @click="handleActivate(bank)"
+                >
+                  {{ t('firmware.activate') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section" :data-testid="qa('firmware-upload-section')">
+          <div class="section-title" :data-testid="qa('firmware-upload-title')">{{ t('firmware.uploadFirmware') }}</div>
+          
+          <div class="card-content">
+            <div 
+              class="drop-zone"
+              :class="{ dragging: isDragging }"
+              :data-testid="qa('firmware-upload-drop-zone')"
+              @drop="handleDrop"
+              @dragover="handleDragOver"
+              @dragleave="handleDragLeave"
+            >
+              <div class="drop-zone-content">
+                <span class="material-icons">cloud_upload</span>
+                <p class="drop-text" :data-testid="qa('firmware-upload-drop-text')">{{ t('firmware.dragAndDrop') }}</p>
+                <p class="separator" :data-testid="qa('firmware-upload-separator-text')">{{ t('firmware.selectFromComputer') }}</p>
+                <button 
+                  class="btn btn-secondary"
+                  :data-testid="qa('firmware-upload-choose-file-button')"
+                  @click="() => fileInput?.click()"
+                >
+                  {{ t('firmware.chooseFile') }}
+                </button>
+              </div>
+            </div>
+
+            <div v-if="selectedFile" class="selected-file" :data-testid="qa('firmware-upload-selected-file')">
+              <span class="material-icons">description</span>
+              <span class="file-name" :data-testid="qa('firmware-upload-selected-file-name')">{{ selectedFile.name }}</span>
+              <button 
+                class="btn-clear"
+                :data-testid="qa('firmware-upload-clear-file-button')"
+                @click="selectedFile = null"
+              >
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+
+            <input 
+              type="file" 
+              ref="fileInput"
+              :data-testid="qa('firmware-upload-file-input')"
+              @change="handleFileSelect"
+              style="display: none"
+              accept=".bin,.img,.swu"
+            >
+
+            <div v-if="error" class="error-message" :data-testid="qa('firmware-upload-error-message')">
+              {{ error }}
+            </div>
+
+            <div class="button-group">
+              <button 
+                class="btn btn-primary"
+                :data-testid="qa('firmware-upload-button')"
+                @click="handleUpgrade"
+                :disabled="!selectedFile || loading"
+              >
+                <span class="material-icons" v-if="loading">sync</span>
+                <span>{{ loading ? t('firmware.processing') : t('firmware.updateFirmware') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upgrade/Activation Overlay -->
+    <div v-if="isUpgrading" class="upgrade-overlay" :data-testid="qa('firmware-upgrade-overlay')">
+      <div class="upgrade-content" :data-testid="qa('firmware-upgrade-content')">
+        <div class="spinner"></div>
+        <h2 :data-testid="qa('firmware-upgrade-status-text')">{{ isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading')) }}</h2>
+        <p :data-testid="qa('firmware-upgrade-warning-text')">{{ t('firmware.powerOffWarning') }}</p>
+        <p v-if="isRebootPhase" :data-testid="qa('firmware-upgrade-reboot-warning')">{{ t('firmware.rebootWarning') }}</p>
+        <div class="countdown" :data-testid="qa('firmware-upgrade-countdown')">{{ countdown }}s</div>
+      </div>
+    </div>
+
+    <!-- Upgrade Error Overlay -->
+    <div v-if="showUpgradeError" class="error-overlay" :data-testid="qa('firmware-upgrade-error-overlay')">
+      <div class="error-content" :data-testid="qa('firmware-upgrade-error-content')">
+        <div class="error-icon" :data-testid="qa('firmware-upgrade-error-icon')">
+          <span class="material-icons">error</span>
+        </div>
+        <h2 :data-testid="qa('firmware-upgrade-error-title')">{{ t('firmware.upgradeFail') }}</h2>
+        <p :data-testid="qa('firmware-upgrade-error-message')">{{ upgradeError }}</p>
+        <button 
+          class="btn btn-primary" 
+          :data-testid="qa('firmware-upgrade-error-close-button')"
+          @click="showUpgradeError = false; upgradeError = null"
+        >
+          {{ t('common.close') }}
+        </button>
+      </div>
+    </div>
+</template>
+
+<style scoped>
+.status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.status-indicator.active {
+  background-color: #4caf50;
+}
+
+.upload-section {
+  margin-top: 2rem;
+}
+
+.drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary);
+}
+
+.drop-zone.dragging {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 112, 187, 0.05);
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.drop-zone .material-icons {
+  font-size: 3rem;
+  color: var(--primary-color);
+}
+
+.drop-text {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.separator {
+  color: var(--text-secondary);
+  margin: 0;
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.selected-file .material-icons {
+  color: var(--primary-color);
+}
+
+.file-name {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.btn-clear {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.btn-clear:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.button-group .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message {
+  color: #dc3545;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn-activate {
+  opacity: 1;
+}
+
+.btn-activate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #ccc;
+}
+
+/* Upgrade Overlay Styles */
+.upgrade-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.upgrade-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+/* Error Overlay Styles */
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.error-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-icon {
+  color: #dc3545;
+  font-size: 3rem;
+}
+
+.error-icon .material-icons {
+  font-size: 3rem;
+}
+
+.error-content h2 {
+  color: #dc3545;
+  margin: 0;
+}
+
+.error-content p {
+  color: var(--text-secondary);
+  margin: 0;
+  word-break: break-word;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+.countdown {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 1rem;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .drop-zone {
+    padding: 1.5rem 1rem;
+  }
+
+  .drop-zone .material-icons {
+    font-size: 2.5rem;
+  }
+
+  .drop-text {
+    font-size: 1rem;
+  }
+
+  .button-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .selected-file {
+    flex-wrap: wrap;
+  }
+
+  .file-name {
+    width: 100%;
+    order: 3;
+  }
+}
+</style>

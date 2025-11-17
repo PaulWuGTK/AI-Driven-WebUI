@@ -1,0 +1,914 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
+import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
+import { useQA } from '../../../utils/qa';
+const { isQAMode, qa, slug } = useQA();
+
+const { t } = useI18n();
+const extenderData = ref<ExtenderResponse | null>(null);
+const tempExtenderEnabled = ref<number>(0);
+const tempExtenderRole = ref<"MeshAgent" | "Repeater">("MeshAgent");
+const scanResults = ref<ExtenderNeighbor[]>([]);
+const loading = ref(false);
+const scanning = ref(false);
+const error = ref<string | null>(null);
+const showConnectModal = ref(false);
+const selectedAP = ref<ExtenderNeighbor | null>(null);
+const password = ref('');
+const showSuccess = ref(false);
+const successMessage = ref('');
+const redirectCountdown = ref<number | null>(null);
+const redirectTimer = ref<number | null>(null);
+const redirectUrl = ref<string | null>(null);
+
+// Computed properties
+const isExtenderEnabled = computed(() => 
+  extenderData.value?.Extender.ExtenderEnabled.Enabled === 1
+);
+
+const extenderRole = computed(() => 
+  extenderData.value?.Extender.ExtenderRole.Role || 'MeshAgent'
+);
+
+const wpsPinCode = computed(() => 
+  extenderData.value?.Extender.Wps.WpsPinCode || ''
+);
+
+const connectionStatus = computed(() => 
+  extenderData.value?.Extender.ConnectionStatus || null
+);
+
+// Fetch extender status
+const fetchExtenderStatus = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    extenderData.value = await getExtenderStatus();
+    // Initialize temp values with current values
+    tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
+    if(tempExtenderEnabled.value == 1){
+      tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
+    }else{
+      tempExtenderRole.value = "MeshAgent"; // Add for init the Extender Role
+    }
+  } catch (err) {
+    console.error('Error fetching extender status:', err);
+    error.value = 'Failed to fetch extender status';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Handle toggle extender enabled state (just updates the temp value)
+const handleExtenderEnabledChange = (event: Event) => {
+  tempExtenderEnabled.value = (event.target as HTMLInputElement).checked ? 1 : 0;
+};
+
+// Handle role change (just updates the temp value)
+const handleRoleChange = (event: Event) => {
+  tempExtenderRole.value = (event.target as HTMLSelectElement).value as "MeshAgent" | "Repeater";
+};
+
+// Apply configuration changes
+const applyConfigChanges = async () => {
+  loading.value = true;
+  try {
+    const response = await updateExtenderSettings({
+      Extender: {
+        Action: 'ExtenderEnable',
+        Enabled: tempExtenderEnabled.value,
+        Role: tempExtenderRole.value
+      }
+    });
+    
+    // Check if we need to redirect (mode switch)
+    if (response.Extender && 'ip_address' in response.Extender && response.Extender.ip_address) {
+      redirectUrl.value = `http://${response.Extender.ip_address}`;
+      redirectCountdown.value = 10;
+      
+      // Start countdown for redirect
+      if (redirectTimer.value) {
+        clearInterval(redirectTimer.value);
+      }
+      
+      redirectTimer.value = window.setInterval(() => {
+        if (redirectCountdown.value !== null) {
+          redirectCountdown.value--;
+          if (redirectCountdown.value <= 0) {
+            clearInterval(redirectTimer.value as number);
+            window.location.href = redirectUrl.value as string;
+          }
+        }
+      }, 1000);
+      
+      showSuccessNotification(`${response.Extender.message}. Redirecting in ${redirectCountdown.value} seconds...`);
+    } else {
+      await fetchExtenderStatus();
+      showSuccessNotification('Configuration updated successfully');
+    }
+  } catch (err) {
+    console.error('Error updating extender configuration:', err);
+    error.value = 'Failed to update extender configuration';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Cancel configuration changes
+const cancelConfigChanges = () => {
+  if (extenderData.value) {
+    tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
+    tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
+  }
+};
+
+// Scan for neighbor APs
+const handleScan = async () => {
+  scanning.value = true;
+  error.value = null;
+  try {
+    const response = await scanNeighborAPs();
+    scanResults.value = response.ExtenderScan;
+  } catch (err) {
+    console.error('Error scanning for neighbor APs:', err);
+    error.value = 'Failed to scan for neighbor APs';
+  } finally {
+    scanning.value = false;
+  }
+};
+
+// Trigger WPS pairing
+const handleWPSPairing = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    await triggerWPS();
+    showSuccessNotification('WPS pairing initiated');
+  } catch (err) {
+    console.error('Error triggering WPS pairing:', err);
+    error.value = 'Failed to trigger WPS pairing';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Open connect modal for a specific AP
+const openConnectModal = (ap: ExtenderNeighbor) => {
+  selectedAP.value = ap;
+  password.value = '';
+  showConnectModal.value = true;
+};
+
+// Close connect modal
+const closeConnectModal = () => {
+  showConnectModal.value = false;
+  selectedAP.value = null;
+  password.value = '';
+};
+
+// Connect to selected AP
+const handleConnect = async () => {
+  if (!selectedAP.value) return;
+
+  loading.value = true;
+  error.value = null;
+
+  // 先解構出需要用的欄位
+  const { Band, SSID, Security } = selectedAP.value;
+
+  try {
+    const connectRequest: ExtenderConnectRequest = {
+      Extender: {
+        Action: 'connection_setting',
+        Band,
+        SSID,
+        Security,
+        Password: password.value
+      }
+    };
+
+    await connectToAP(connectRequest);
+    await fetchExtenderStatus();          // 跟裝置拿最新狀態
+    showSuccessNotification(`Connected to ${SSID} successfully`);
+    closeConnectModal();                  // 最後再關閉 modal，清掉 selectedAP
+  } catch (err) {
+    console.error('Error connecting to AP:', err);
+    error.value = 'Failed to connect to AP';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Show success notification
+const showSuccessNotification = (message: string) => {
+  successMessage.value = message;
+  showSuccess.value = true;
+  setTimeout(() => {
+    if (!redirectCountdown.value) { // Don't hide if we're redirecting
+      showSuccess.value = false;
+    }
+  }, 3000);
+};
+
+// Get status class based on connection status
+const getStatusClass = (status: string) => {
+  return status === 'connected' ? 'status-connected' : 'status-disconnected';
+};
+
+// Cancel redirect
+const cancelRedirect = () => {
+  if (redirectTimer.value) {
+    clearInterval(redirectTimer.value);
+    redirectTimer.value = null;
+  }
+  redirectCountdown.value = null;
+  redirectUrl.value = null;
+  showSuccess.value = false;
+};
+
+onMounted(() => {
+  fetchExtenderStatus();
+});
+</script>
+
+<template>
+  <div class="page-container">
+    <h1 class="page-title" :data-testid="qa('wireless-extender-title')">{{ t('wirelessExtender.title') }}</h1>
+
+    <div class="status-content" :data-testid="qa('wireless-extender-content')">
+      <div v-if="loading && !extenderData" class="loading-state" :data-testid="qa('wireless-extender-loading')">
+        <div class="loading-spinner"></div>
+        <span>{{ t('common.loading') }}</span>
+      </div>
+
+      <div v-else-if="error" class="error-state" :data-testid="qa('wireless-extender-error')">
+        {{ error }}
+      </div>
+
+      <template v-else-if="extenderData">
+        <!-- Extender Configuration Section -->
+        <div class="panel-section" :data-testid="qa('wireless-extender-config-section')">
+          <div class="section-title" :data-testid="qa('wireless-extender-config-title')">{{ t('wirelessExtender.configuration') }}</div>
+          
+          <div class="card-content">
+            <div class="form-group">
+              <div class="switch-label">
+                <span :data-testid="qa('wireless-extender-enabled-label')">{{ t('wirelessExtender.enabled') }}</span>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    :data-testid="qa('wireless-extender-enabled-toggle')"
+                    :checked="tempExtenderEnabled === 1"
+                    @change="handleExtenderEnabledChange"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div v-if="tempExtenderEnabled === 1" class="form-group">
+              <label :data-testid="qa('wireless-extender-role-label')">{{ t('wirelessExtender.role') }}</label>
+              <select 
+                :value="tempExtenderRole"
+                :data-testid="qa('wireless-extender-role-select')"
+                @change="handleRoleChange"
+                class="role-select"
+              >
+                <option value="MeshAgent">{{ t('wirelessExtender.meshAgent') }}</option>
+                <option value="Repeater">{{ t('wirelessExtender.repeater') }}</option>
+              </select>
+            </div>
+
+            <div class="button-group">
+              <button 
+                type="button" 
+                class="btn btn-secondary" 
+                :data-testid="qa('wireless-extender-config-cancel-button')"
+                @click="cancelConfigChanges"
+                :disabled="loading"
+              >
+                {{ t('common.cancel') }}
+              </button>
+              <button 
+                type="button"
+                class="btn btn-primary"
+                :data-testid="qa('wireless-extender-config-apply-button')"
+                @click="applyConfigChanges"
+                :disabled="loading"
+              >
+                {{ t('common.apply') }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <template v-if="isExtenderEnabled">
+          <!-- Connection Status Section -->
+          <div class="panel-section" :data-testid="qa('wireless-extender-status-section')">
+            <div class="section-title" :data-testid="qa('wireless-extender-status-title')">{{ t('wirelessExtender.connectionStatus') }}</div>
+            
+            <div class="card-content">
+              <div class="table-container" :data-testid="qa('wireless-extender-status-table')">
+                <table>
+                  <thead>
+                    <tr>
+                      <th :data-testid="qa('wireless-extender-status-header-band')">{{ t('wirelessExtender.band') }}</th>
+                      <th :data-testid="qa('wireless-extender-status-header-status')">{{ t('wirelessExtender.status') }}</th>
+                      <th :data-testid="qa('wireless-extender-status-header-ssid')">{{ t('wirelessExtender.ssid') }}</th>
+                      <th :data-testid="qa('wireless-extender-status-header-security')">{{ t('wirelessExtender.security') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-if="connectionStatus" :data-testid="qa('wireless-extender-status-row-2g')">
+                      <td :data-testid="qa('wireless-extender-status-band-2g')">2.4 GHz</td>
+                      <td>
+                        <span :class="getStatusClass(connectionStatus['2.4GHz'].Status)">
+                          {{ connectionStatus['2.4GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                        </span>
+                      </td>
+                      <td :data-testid="qa('wireless-extender-status-ssid-2g')">{{ connectionStatus['2.4GHz'].SSID }}</td>
+                      <td :data-testid="qa('wireless-extender-status-security-2g')">{{ connectionStatus['2.4GHz'].Security }}</td>
+                    </tr>
+                    <tr v-if="connectionStatus" :data-testid="qa('wireless-extender-status-row-5g')">
+                      <td :data-testid="qa('wireless-extender-status-band-5g')">5 GHz</td>
+                      <td>
+                        <span :class="getStatusClass(connectionStatus['5GHz'].Status)">
+                          {{ connectionStatus['5GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                        </span>
+                      </td>
+                      <td :data-testid="qa('wireless-extender-status-ssid-5g')">{{ connectionStatus['5GHz'].SSID }}</td>
+                      <td :data-testid="qa('wireless-extender-status-security-5g')">{{ connectionStatus['5GHz'].Security }}</td>
+                    </tr>
+                    <tr v-if="connectionStatus" :data-testid="qa('wireless-extender-status-row-6g')">
+                      <td :data-testid="qa('wireless-extender-status-band-6g')">6 GHz</td>
+                      <td>
+                        <span :class="getStatusClass(connectionStatus['6GHz'].Status)">
+                          {{ connectionStatus['6GHz'].Status === 'connected' ? 
+                            t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                        </span>
+                      </td>
+                      <td :data-testid="qa('wireless-extender-status-ssid-6g')">{{ connectionStatus['6GHz'].SSID }}</td>
+                      <td :data-testid="qa('wireless-extender-status-security-6g')">{{ connectionStatus['6GHz'].Security }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="mobile-cards" :data-testid="qa('wireless-extender-status-mobile')">
+                <div class="table-card" v-if="connectionStatus" :data-testid="qa('wireless-extender-status-card-2g')">
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-band-label-2g')">{{ t('wirelessExtender.band') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-band-value-2g')">2.4 GHz</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-status-label-2g')">{{ t('wirelessExtender.status') }}</span>
+                    <span class="card-value" :class="getStatusClass(connectionStatus['2.4GHz'].Status)" :data-testid="qa('wireless-extender-status-card-status-value-2g')">
+                      {{ connectionStatus['2.4GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                    </span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-ssid-label-2g')">{{ t('wirelessExtender.ssid') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-ssid-value-2g')">{{ connectionStatus['2.4GHz'].SSID }}</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-security-label-2g')">{{ t('wirelessExtender.security') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-security-value-2g')">{{ connectionStatus['2.4GHz'].Security }}</span>
+                  </div>
+                </div>
+
+                <div class="table-card" v-if="connectionStatus" :data-testid="qa('wireless-extender-status-card-5g')">
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-band-label-5g')">{{ t('wirelessExtender.band') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-band-value-5g')">5 GHz</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-status-label-5g')">{{ t('wirelessExtender.status') }}</span>
+                    <span class="card-value" :class="getStatusClass(connectionStatus['5GHz'].Status)" :data-testid="qa('wireless-extender-status-card-status-value-5g')">
+                      {{ connectionStatus['5GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                    </span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-ssid-label-5g')">{{ t('wirelessExtender.ssid') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-ssid-value-5g')">{{ connectionStatus['5GHz'].SSID }}</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-security-label-5g')">{{ t('wirelessExtender.security') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-security-value-5g')">{{ connectionStatus['5GHz'].Security }}</span>
+                  </div>
+                </div>
+
+                <div class="table-card" v-if="connectionStatus" :data-testid="qa('wireless-extender-status-card-6g')">
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-band-label-6g')">{{ t('wirelessExtender.band') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-band-value-6g')">6 GHz</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-status-label-6g')">{{ t('wirelessExtender.status') }}</span>
+                    <span class="card-value" :class="getStatusClass(connectionStatus['6GHz'].Status)" :data-testid="qa('wireless-extender-status-card-status-value-6g')">
+                      {{ connectionStatus['6GHz'].Status === 'connected' ? 
+                        t('wirelessExtender.connected') : t('wirelessExtender.disconnected') }}
+                    </span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-ssid-label-6g')">{{ t('wirelessExtender.ssid') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-ssid-value-6g')">{{ connectionStatus['6GHz'].SSID }}</span>
+                  </div>
+                  <div class="card-row">
+                    <span class="card-label" :data-testid="qa('wireless-extender-status-card-security-label-6g')">{{ t('wirelessExtender.security') }}</span>
+                    <span class="card-value" :data-testid="qa('wireless-extender-status-card-security-value-6g')">{{ connectionStatus['6GHz'].Security }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- WPS Section -->
+          <div class="panel-section" :data-testid="qa('wireless-extender-wps-section')">
+            <div class="section-title" :data-testid="qa('wireless-extender-wps-title')">{{ t('wirelessExtender.wps') }}</div>
+            
+            <div class="card-content">
+              <div class="wps-info">
+                <div class="wps-pin">
+                  <span class="pin-label" :data-testid="qa('wireless-extender-wps-pin-label')">{{ t('wirelessExtender.pinCode') }}:</span>
+                  <span class="pin-value" :data-testid="qa('wireless-extender-wps-pin-value')">{{ wpsPinCode }}</span>
+                </div>
+                <button 
+                  class="btn btn-primary wps-button"
+                  :data-testid="qa('wireless-extender-wps-pairing-button')"
+                  @click="handleWPSPairing"
+                  :disabled="loading"
+                >
+                  {{ t('wirelessExtender.pairing') }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Neighbor AP Scan Section -->
+          <div class="panel-section" :data-testid="qa('wireless-extender-scan-section')">
+            <div class="section-title" :data-testid="qa('wireless-extender-scan-title')">{{ t('wirelessExtender.neighborScan') }}</div>
+            
+            <div class="card-content">
+              <div class="scan-button-container">
+                <button 
+                  class="btn btn-primary"
+                  :data-testid="qa('wireless-extender-scan-button')"
+                  @click="handleScan"
+                  :disabled="scanning"
+                >
+                  {{ scanning ? t('wirelessExtender.scanning') : t('wirelessExtender.scan') }}
+                </button>
+              </div>
+
+              <div v-if="scanResults.length > 0" class="scan-results" :data-testid="qa('wireless-extender-scan-results')">
+                <div class="table-container" :data-testid="qa('wireless-extender-scan-table')">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th :data-testid="qa('wireless-extender-scan-header-ssid')">{{ t('wirelessExtender.ssid') }}</th>
+                        <th :data-testid="qa('wireless-extender-scan-header-band')">{{ t('wirelessExtender.band') }}</th>
+                        <th :data-testid="qa('wireless-extender-scan-header-channel')">{{ t('wifiNeighbor.channel') }}</th>
+                        <th :data-testid="qa('wireless-extender-scan-header-signal')">{{ t('wifiNeighbor.signal') }}</th>
+                        <th :data-testid="qa('wireless-extender-scan-header-security')">{{ t('wirelessExtender.security') }}</th>
+                        <th :data-testid="qa('wireless-extender-scan-header-select')">{{ t('wirelessExtender.select') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(ap, index) in scanResults" :key="index" :data-testid="qa(`wireless-extender-scan-row-${index}`)">
+                        <td :data-testid="qa(`wireless-extender-scan-ssid-${index}`)">{{ ap.SSID }}</td>
+                        <td :data-testid="qa(`wireless-extender-scan-band-${index}`)">{{ ap.Band }}</td>
+                        <td :data-testid="qa(`wireless-extender-scan-channel-${index}`)">{{ ap.Channel }}</td>
+                        <td :data-testid="qa(`wireless-extender-scan-signal-${index}`)">{{ ap.Signal }}</td>
+                        <td :data-testid="qa(`wireless-extender-scan-security-${index}`)">{{ ap.Security }}</td>
+                        <td>
+                          <button 
+                            class="btn btn-select"
+                            :data-testid="qa(`wireless-extender-scan-select-button-${index}`)"
+                            @click="openConnectModal(ap)"
+                          >
+                            {{ t('wirelessExtender.select') }}
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mobile-cards" :data-testid="qa('wireless-extender-scan-mobile')">
+                  <div class="table-card" v-for="(ap, index) in scanResults" :key="index" :data-testid="qa(`wireless-extender-scan-card-${index}`)">
+                    <div class="card-row">
+                      <span class="card-label" :data-testid="qa(`wireless-extender-scan-card-ssid-label-${index}`)">{{ t('wirelessExtender.ssid') }}</span>
+                      <span class="card-value" :data-testid="qa(`wireless-extender-scan-card-ssid-value-${index}`)">{{ ap.SSID }}</span>
+                    </div>
+                    <div class="card-row">
+                      <span class="card-label" :data-testid="qa(`wireless-extender-scan-card-band-label-${index}`)">{{ t('wirelessExtender.band') }}</span>
+                      <span class="card-value" :data-testid="qa(`wireless-extender-scan-card-band-value-${index}`)">{{ ap.Band }}</span>
+                    </div>
+                    <div class="card-row">
+                      <span class="card-label" :data-testid="qa(`wireless-extender-scan-card-channel-label-${index}`)">{{ t('wifiNeighbor.channel') }}</span>
+                      <span class="card-value" :data-testid="qa(`wireless-extender-scan-card-channel-value-${index}`)">{{ ap.Channel }}</span>
+                    </div>
+                    <div class="card-row">
+                      <span class="card-label" :data-testid="qa(`wireless-extender-scan-card-signal-label-${index}`)">{{ t('wifiNeighbor.signal') }}</span>
+                      <span class="card-value" :data-testid="qa(`wireless-extender-scan-card-signal-value-${index}`)">{{ ap.Signal }}</span>
+                    </div>
+                    <div class="card-row">
+                      <span class="card-label" :data-testid="qa(`wireless-extender-scan-card-security-label-${index}`)">{{ t('wirelessExtender.security') }}</span>
+                      <span class="card-value" :data-testid="qa(`wireless-extender-scan-card-security-value-${index}`)">{{ ap.Security }}</span>
+                    </div>
+                    <div class="card-actions">
+                      <button 
+                        class="btn btn-primary"
+                        :data-testid="qa(`wireless-extender-scan-card-select-button-${index}`)"
+                        @click="openConnectModal(ap)"
+                      >
+                        {{ t('wirelessExtender.select') }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connect to AP Modal -->
+          <div v-if="showConnectModal && selectedAP" class="modal-overlay" :data-testid="qa('wireless-extender-connect-modal')">
+            <div class="modal-content" :data-testid="qa('wireless-extender-connect-modal-content')">
+              <div class="modal-header">
+                <h3 :data-testid="qa('wireless-extender-connect-modal-title')">{{ t('wirelessExtender.connectToAP') }}</h3>
+                <button class="close-button" :data-testid="qa('wireless-extender-connect-modal-close')" @click="closeConnectModal">&times;</button>
+              </div>
+              
+              <div class="modal-body">
+                <div class="form-group">
+                  <label :data-testid="qa('wireless-extender-connect-band-label')">{{ t('wirelessExtender.radioBand') }}</label>
+                  <div class="info-value" :data-testid="qa('wireless-extender-connect-band-value')">{{ selectedAP.Band }}</div>
+                </div>
+                
+                <div class="form-group">
+                  <label :data-testid="qa('wireless-extender-connect-ssid-label')">{{ t('wirelessExtender.ssid') }}</label>
+                  <div class="info-value" :data-testid="qa('wireless-extender-connect-ssid-value')">{{ selectedAP.SSID }}</div>
+                </div>
+                
+                <div class="form-group">
+                  <label :data-testid="qa('wireless-extender-connect-wifi-mode-label')">{{ t('wirelessExtender.wifiMode') }}</label>
+                  <div class="info-value" :data-testid="qa('wireless-extender-connect-wifi-mode-value')">{{ selectedAP.Band === '2.4GHz' ? '11NG' : selectedAP.Band === '5GHz' ? '11AC' : '11AX' }}</div>
+                </div>
+                
+                <div class="form-group">
+                  <label :data-testid="qa('wireless-extender-connect-security-label')">{{ t('wirelessExtender.security') }}</label>
+                  <div class="info-value" :data-testid="qa('wireless-extender-connect-security-value')">{{ selectedAP.Security }}</div>
+                </div>
+                
+                <div class="form-group">
+                  <label :data-testid="qa('wireless-extender-connect-password-label')">{{ t('wirelessExtender.wpaPreshareKey') }}</label>
+                  <input 
+                    type="password" 
+                    :data-testid="qa('wireless-extender-connect-password-input')"
+                    v-model="password"
+                    :placeholder="t('ntp.placeholder')"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div class="modal-footer">
+                <button class="btn btn-secondary" :data-testid="qa('wireless-extender-connect-cancel-button')" @click="closeConnectModal">
+                  {{ t('common.cancel') }}
+                </button>
+                <button 
+                  class="btn btn-primary" 
+                  :data-testid="qa('wireless-extender-connect-submit-button')"
+                  @click="handleConnect"
+                  :disabled="!password || loading"
+                >
+                  {{ t('wirelessExtender.connect') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </template>
+
+      <!-- Success notification -->
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-extender-success-message')">
+        {{ successMessage }}
+        <div v-if="redirectCountdown !== null" class="redirect-info">
+          <div>Redirecting in {{ redirectCountdown }} seconds...</div>
+          <button @click="cancelRedirect" class="btn-cancel-redirect" :data-testid="qa('wireless-extender-cancel-redirect-button')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.role-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.status-connected {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.status-disconnected {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.wps-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.wps-pin {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pin-label {
+  color: var(--text-secondary);
+}
+
+.pin-value {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.wps-button {
+  padding: 0.5rem 1.5rem;
+}
+
+.scan-button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.scan-results {
+  margin-top: 1.5rem;
+}
+
+.btn-select {
+  padding: 0.25rem 0.75rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-select:hover {
+  opacity: 0.9;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.info-value {
+  padding: 0.5rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 100;
+}
+
+.redirect-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-cancel-redirect {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.btn-cancel-redirect:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.error-state {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+  .wps-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .wps-button {
+    width: 100%;
+  }
+
+  .scan-button-container .btn {
+    width: 100%;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
+}
+</style>

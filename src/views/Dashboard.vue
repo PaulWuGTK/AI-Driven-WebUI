@@ -50,7 +50,7 @@ onUnmounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title" :data-testid="qa('dashboard-title')">{{ t('menu.dashboard') }}</h1>
+    <h1 class="page-title" :data-testid="qa('dashboard-title')">{{ t('menu.home') }}</h1>
     
     <div class="status-content" :data-testid="qa('dashboard-content')">
     <div v-if="loading" class="loading-state" :data-testid="qa('dashboard-loading')">
