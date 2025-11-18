@@ -10,6 +10,7 @@ export interface WlanBasicConfig {
 export interface WlanBasicResponse {
   WlanBasic: {
     MLOEnable: number;
+    CommonSSIDEnable: number;
     MeshEnable?: number;  // Added MeshEnable parameter
     wifimlo: WlanBasicConfig & { Enable: number };  // Added Enable property
     wifi2g: WlanBasicConfig;

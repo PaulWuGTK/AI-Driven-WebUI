@@ -280,11 +280,15 @@ export default {
     extender: 'Répéteur',
     enableWpsConfirm: 'Activer le WPS',
     enableWpsMessage: 'Activer le WPS désactivera le filtre MAC. Voulez-vous continuer ?',
+    commonSsidSettings: 'Paramètres SSID commun',
+    commonSsidEnable: 'Activer SSID commun',
+    commonSsidBandSettings: 'Paramètres de bande SSID commun',
     mloSettings: 'Paramètres MLO',
     mloEnable: 'Activer MLO',
     mloModeDisabled: 'MLO est activé – le mode ne peut pas être modifié.',
     mloMeshDisabled: 'Le MLO est activé sur un ou plusieurs points d’accès (Standard ou Invité) – les paramètres Mesh ne peuvent pas être modifiés.',
     meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.',
+    commonSsidDisabled: 'Le SSID commun est désactivé – les paramètres MLO ne peuvent pas être modifiés.',
     mloMeshWarning: "Le MLO est actuellement activé sur un ou plusieurs points d'accès (principal ou invité). Il sera automatiquement désactivé lors de l'application des paramètres Mesh."
   },
   guest: {

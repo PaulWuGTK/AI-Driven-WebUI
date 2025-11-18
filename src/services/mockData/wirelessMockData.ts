@@ -3,6 +3,7 @@ import type { WlanBasicResponse, WlanAdvancedResponse, WlanWpsResponse, WlanMesh
 export const wlanBasicMockData: WlanBasicResponse = {
   WlanBasic: {
     MLOEnable: 0,
+    CommonSSIDEnable: 0,
     MeshEnable: 0,
     wifi2g: {
       Password: "password",

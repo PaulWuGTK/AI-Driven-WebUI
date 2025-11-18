@@ -280,11 +280,15 @@ export default {
     extender: '扩展器',
     enableWpsConfirm: '启用 WPS',
     enableWpsMessage: '启用 WPS 将禁用 MAC 过滤。是否继续？',
+    commonSsidSettings: '通用 SSID 设置',
+    commonSsidEnable: '启用通用 SSID',
+    commonSsidBandSettings: '通用 SSID 频段设置',
     mloSettings: 'MLO 设置',
     mloEnable: '启用 MLO',
     mloModeDisabled: 'MLO 已启用，无法更改模式。',
     mloMeshDisabled: '一个或多个 AP（基本或访客）已启用 MLO – 无法更改 Mesh 设置。',
     meshMloDisabled: 'Mesh 已启用 – 无法更改 MLO 设置。',
+    commonSsidDisabled: '通用 SSID 已禁用 – 无法更改 MLO 设置。',
     mloMeshWarning: "一个或多个 AP（主用或访客）已启用 MLO。应用 Mesh 设置时将自动禁用 MLO。"
   },
   guest: {

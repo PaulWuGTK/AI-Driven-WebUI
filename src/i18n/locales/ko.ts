@@ -279,11 +279,15 @@ export default {
     extender: '확장기',
     enableWpsConfirm: 'WPS 활성화',
     enableWpsMessage: 'WPS를 활성화하면 MAC 필터가 비활성화됩니다. 계속하시겠습니까?',
+    commonSsidSettings: '공통 SSID 설정',
+    commonSsidEnable: '공통 SSID 활성화',
+    commonSsidBandSettings: '공통 SSID 대역 설정',
     mloSettings: 'MLO 설정',
     mloEnable: 'MLO 활성화',
     mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.',
     mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
     meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
+    commonSsidDisabled: '공통 SSID가 비활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
     mloMeshWarning: "하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다."
   },
   guest: {

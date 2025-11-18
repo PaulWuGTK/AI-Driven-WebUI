@@ -280,11 +280,15 @@ export default {
     extender: '中継機',
     enableWpsConfirm: 'WPS を有効化',
     enableWpsMessage: 'WPS を有効にすると MAC フィルターが無効になります。続行してもよろしいですか？',
+    commonSsidSettings: '共通 SSID 設定',
+    commonSsidEnable: '共通 SSID を有効にする',
+    commonSsidBandSettings: '共通 SSID バンド設定',
     mloSettings: 'MLO 設定',
     mloEnable: 'MLO を有効にする',
     mloModeDisabled: 'MLO が有効です – モードは変更できません。',
     mloMeshDisabled: '1つ以上の AP（基本またはゲスト）で MLO が有効です – メッシュ設定は変更できません。',
     meshMloDisabled: 'メッシュが有効です – MLO 設定は変更できません。',
+    commonSsidDisabled: '共通 SSID が無効です – MLO 設定は変更できません。',
     mloMeshWarning: "MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。"
   },
   guest: {

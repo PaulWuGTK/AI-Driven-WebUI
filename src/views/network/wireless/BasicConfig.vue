@@ -22,6 +22,11 @@ const isMloDisabledByMesh = computed(() => {
   return wlanBasicData.value?.WlanBasic.MeshEnable === 1;
 });
 
+// Computed property to check if MLO is disabled by Common SSID
+const isMloDisabledByCommonSsid = computed(() => {
+  return wlanBasicData.value?.WlanBasic.CommonSSIDEnable === 0;
+});
+
 const fetchBasicConfig = async () => {
   loading.value = true;
   try {
@@ -40,6 +45,15 @@ const showSuccessMessage = () => {
   }, 3000);
 };
 
+const handleCommonSsidToggle = () => {
+  if (!wlanBasicData.value) return;
+
+  // When Common SSID is disabled, also disable MLO
+  if (wlanBasicData.value.WlanBasic.CommonSSIDEnable === 0) {
+    wlanBasicData.value.WlanBasic.MLOEnable = 0;
+  }
+};
+
 const handleBlockingComplete = () => {
   showBlockingOverlay.value = false;
   // Redirect back to the current page to refresh data
@@ -55,6 +69,7 @@ const handleSubmit = async () => {
     const postData = {
       WlanBasic: {
         MLOEnable: wlanBasicData.value.WlanBasic.MLOEnable,
+        CommonSSIDEnable: wlanBasicData.value.WlanBasic.CommonSSIDEnable,
         wifi2g: {
           Enable: wlanBasicData.value.WlanBasic.wifi2g.Enable,
           SSID: wlanBasicData.value.WlanBasic.wifi2g.SSID,
@@ -116,7 +131,31 @@ onMounted(fetchBasicConfig);
             <span>{{ t('wireless.meshMloDisabled') }}</span>
           </div>
         </div>
-        
+
+        <!-- Common SSID Settings Section -->
+        <div class="panel-section" :data-testid="qa('wireless-basic-config-common-ssid-section')">
+          <div class="section-title" :data-testid="qa('wireless-basic-config-common-ssid-title')">{{ t('wireless.commonSsidSettings') }}</div>
+          <div class="card-content" :data-testid="qa('wireless-basic-config-common-ssid-content')">
+            <!-- Common SSID Enable Toggle -->
+            <div class="form-group">
+              <div class="switch-label">
+                <span :data-testid="qa('wireless-basic-config-common-ssid-enable-label')">{{ t('wireless.commonSsidEnable') }}</span>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    :data-testid="qa('wireless-basic-config-common-ssid-enable-toggle')"
+                    v-model="wlanBasicData.WlanBasic.CommonSSIDEnable"
+                    :true-value="1"
+                    :false-value="0"
+                    @change="handleCommonSsidToggle"
+                  >
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- MLO Settings Section -->
         <div class="panel-section" :data-testid="qa('wireless-basic-config-mlo-section')">
           <div class="section-title" :data-testid="qa('wireless-basic-config-mlo-title')">{{ t('wireless.mloSettings') }}</div>
@@ -132,7 +171,7 @@ onMounted(fetchBasicConfig);
                     v-model="wlanBasicData.WlanBasic.MLOEnable"
                     :true-value="1"
                     :false-value="0"
-                    :disabled="isMloDisabledByMesh"
+                    :disabled="isMloDisabledByMesh || wlanBasicData.WlanBasic.CommonSSIDEnable === 0"
                   >
                   <span class="slider"></span>
                 </label>
@@ -141,20 +180,20 @@ onMounted(fetchBasicConfig);
           </div>
         </div>
 
-        <!-- MLO Settings Section -->
-        <div v-if="wlanBasicData.WlanBasic.MLOEnable === 1" class="panel-section" :data-testid="qa('wireless-basic-config-mlo-band-section')">
+        <!-- Common SSID Band Settings Section (shown when Common SSID is enabled) -->
+        <div v-if="wlanBasicData.WlanBasic.CommonSSIDEnable === 1" class="panel-section" :data-testid="qa('wireless-basic-config-common-ssid-band-section')">
           <div class="band-header">
-            <div class="section-title-sp" :data-testid="qa('wireless-basic-config-mlo-band-title')">2.4GHz / 5GHz / 6GHz {{ t('wireless.settings') }}</div>
+            <div class="section-title-sp" :data-testid="qa('wireless-basic-config-common-ssid-band-title')">{{ t('wireless.commonSsidBandSettings') }}</div>
           </div>
           
-          <div class="band-content" :data-testid="qa('wireless-basic-config-mlo-band-content')">
+          <div class="band-content" :data-testid="qa('wireless-basic-config-common-ssid-band-content')">
             <div class="form-group">
               <div class="switch-label">
-                <span :data-testid="qa('wireless-basic-config-mlo-band-enable-label')">{{ t('common.enable') }}</span>
+                <span :data-testid="qa('wireless-basic-config-common-ssid-band-enable-label')">{{ t('common.enable') }}</span>
                 <label class="switch">
                   <input
                     type="checkbox"
-                    :data-testid="qa('wireless-basic-config-mlo-band-enable-toggle')"
+                    :data-testid="qa('wireless-basic-config-common-ssid-band-enable-toggle')"
                     v-model="wlanBasicData.WlanBasic.wifimlo.Enable"
                     :true-value="1"
                     :false-value="0"
@@ -163,28 +202,28 @@ onMounted(fetchBasicConfig);
                 </label>
               </div>
             </div>
-            
+
             <div class="form-group">
-              <label :data-testid="qa('wireless-basic-config-mlo-band-ssid-label')">{{ t('wireless.ssid') }}</label>
+              <label :data-testid="qa('wireless-basic-config-common-ssid-band-ssid-label')">{{ t('wireless.ssid') }}</label>
               <input
                 type="text"
-                :data-testid="qa('wireless-basic-config-mlo-band-ssid-input')"
+                :data-testid="qa('wireless-basic-config-common-ssid-band-ssid-input')"
                 v-model="wlanBasicData.WlanBasic.wifimlo.SSID"
                 :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
               />
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('wireless-basic-config-mlo-band-authentication-label')">{{ t('wireless.authentication') }}</label>
+              <label :data-testid="qa('wireless-basic-config-common-ssid-band-authentication-label')">{{ t('wireless.authentication') }}</label>
               <select
-                :data-testid="qa('wireless-basic-config-mlo-band-authentication-select')"
+                :data-testid="qa('wireless-basic-config-common-ssid-band-authentication-select')"
                 v-model="wlanBasicData.WlanBasic.wifimlo.SecurityMode"
                 :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
               >
-                <option 
+                <option
                   v-for="mode in (wlanBasicData.WlanBasic.wifimlo.SecurityModeAvailable ?? '').split(',')"
                   :key="mode"
-                  :data-testid="qa(`wireless-basic-config-mlo-band-authentication-option-${slug(mode)}`)"
+                  :data-testid="qa(`wireless-basic-config-common-ssid-band-authentication-option-${slug(mode)}`)"
                   :value="mode"
                 >
                   {{ mode }}
@@ -193,18 +232,18 @@ onMounted(fetchBasicConfig);
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('wireless-basic-config-mlo-band-password-label')">{{ t('wireless.password') }}</label>
-              <div class="password-input" :data-testid="qa('wireless-basic-config-mlo-band-password-container')">
+              <label :data-testid="qa('wireless-basic-config-common-ssid-band-password-label')">{{ t('wireless.password') }}</label>
+              <div class="password-input" :data-testid="qa('wireless-basic-config-common-ssid-band-password-container')">
                 <input
                   :type="showPassword ? 'text' : 'password'"
-                  :data-testid="qa('wireless-basic-config-mlo-band-password-input')"
+                  :data-testid="qa('wireless-basic-config-common-ssid-band-password-input')"
                   v-model="wlanBasicData.WlanBasic.wifimlo.Password"
                   :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   class="toggle-password"
-                  :data-testid="qa('wireless-basic-config-mlo-band-password-toggle')"
+                  :data-testid="qa('wireless-basic-config-common-ssid-band-password-toggle')"
                   @click="showPassword = !showPassword"
                   :disabled="!wlanBasicData.WlanBasic.wifimlo.Enable"
                 >
@@ -217,8 +256,8 @@ onMounted(fetchBasicConfig);
           </div>
         </div>
 
-        <!-- Individual Band Configurations (only shown when MLO is disabled) -->
-        <template v-if="wlanBasicData.WlanBasic.MLOEnable === 0">
+        <!-- Individual Band Configurations (only shown when Common SSID is disabled) -->
+        <template v-if="wlanBasicData.WlanBasic.CommonSSIDEnable === 0">
           <WirelessBandConfig
             :data-testid="qa('wireless-basic-config-2g-band')"
             title="2.4GHz"
@@ -379,7 +418,11 @@ onMounted(fetchBasicConfig);
   color: var(--text-primary);
 }
 
-input, select {
+.form-group > input[type="text"],
+.form-group > input[type="password"],
+.form-group > select,
+.password-input > input[type="text"],
+.password-input > input[type="password"] {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--border-color);
@@ -387,7 +430,8 @@ input, select {
   font-size: 0.9rem;
 }
 
-input:disabled, select:disabled {
+.form-group > input:disabled,
+.form-group > select:disabled {
   background-color: var(--bg-secondary);
   cursor: not-allowed;
 }

@@ -274,6 +274,7 @@ const translations = {
     wpsStatus: 'WPS Status',
     easyMesh: 'EasyMesh',
     commonSsidConfig: 'Common SSID Configuration',
+    commonSsidBandSettings: 'Common SSID Band Settings',
     pushButtonTitle: 'Connect a new device by pushbutton',
     pinConnectTitle: 'Connect a new device by PIN',
     devicePinTitle: 'PIN for adding this device to a network',
@@ -284,11 +285,14 @@ const translations = {
     extender: 'Extender',
     enableWpsConfirm: 'Enable WPS',
     enableWpsMessage: 'Enabling WPS will disable the MAC filter. Are you sure you want to continue?',
+    commonSsidSettings: 'Common SSID Settings',
+    commonSsidEnable: 'Common SSID Enable',
     mloSettings: 'MLO Settings',
     mloEnable: 'MLO Enable',
     mloModeDisabled: 'MLO is enabled – Mode cannot be changed.',
     mloMeshDisabled: 'MLO is enabled on one or more APs (Basic or Guest) – Mesh Settings cannot be changed.',
     meshMloDisabled: 'Mesh is enabled – MLO settings cannot be changed.',
+    commonSsidDisabled: 'Common SSID is disabled – MLO settings cannot be changed.',
     mloMeshWarning: 'MLO is currently enabled on one or more APs (Basic or Guest). It will be disabled automatically when applying Mesh settings.'
   },
   guest: {
