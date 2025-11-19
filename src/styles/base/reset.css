@@ -61,11 +61,7 @@ button {
   border: none;
 }
 
-input,
-textarea,
-select {
-  width: 100%;
-}
+/* Removed global width: 100% for form elements to prevent unintended layout issues */
 
 table {
   border-collapse: collapse;
