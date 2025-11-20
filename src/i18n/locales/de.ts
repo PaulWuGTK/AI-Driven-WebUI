@@ -670,12 +670,12 @@ export default {
     testing: 'Test läuft...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'UPnP aktivieren',
+    title: 'UPnP-IGD',
+    enable: 'UPnP-IGD aktivieren',
     interfaceSelection: 'Schnittstellenauswahl',
     apply: 'Anwenden',
-    loadError: 'UPnP-Einstellungen konnten nicht geladen werden',
-    updateError: 'UPnP-Einstellungen konnten nicht aktualisiert werden'
+    loadError: 'UPnP-IGD-Einstellungen konnten nicht geladen werden',
+    updateError: 'UPnP-IGD-Einstellungen konnten nicht aktualisiert werden'
   },
   thread: {
     title: 'Thread',

@@ -101,7 +101,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="upnpEnable" class="form-row" :data-testid="qa('upnp-interface-row')">
+          <div v-if="0" class="form-row" :data-testid="qa('upnp-interface-row')">
             <label class="form-label" :data-testid="qa('upnp-interface-label')">{{ t('upnp.interfaceSelection') }}</label>
             <div class="form-control">
               <select

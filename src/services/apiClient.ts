@@ -1,7 +1,5 @@
 import { AuthService } from './auth';
 
-const auth = AuthService.getInstance();
-
 type Headers = Record<string, string>;
 
 export async function callApi<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -10,6 +8,7 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
     ...(options.headers as Headers)
   };
 
+  const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
   if (sessionId) {
     headers.Authorization = `bearer ${sessionId}`;
@@ -36,9 +35,36 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
   } catch (err) {
     // Check if error message contains 401 or 403
     if (err instanceof Error && (err.message.includes('401') || err.message.includes('403'))) {
+      const auth = AuthService.getInstance();
       auth.clearSession();
       window.location.href = '/login';
     }
     throw err;
   }
 }
+
+const apiClient = {
+  async get<T>(url: string): Promise<T> {
+    return callApi<T>(url, { method: 'GET' });
+  },
+
+  async post<T>(url: string, data?: any): Promise<T> {
+    return callApi<T>(url, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  async put<T>(url: string, data?: any): Promise<T> {
+    return callApi<T>(url, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+
+  async delete<T>(url: string): Promise<T> {
+    return callApi<T>(url, { method: 'DELETE' });
+  }
+};
+
+export default apiClient;

@@ -22,11 +22,12 @@ onMounted(() => {
 });
 
 const isLoginPage = computed(() => route.path === '/login');
+const isWizardPage = computed(() => route.path === '/wizard');
 </script>
 
 <template>
   <div class="app-container">
-    <template v-if="!isLoginPage">
+    <template v-if="!isLoginPage && !isWizardPage">
       <Sidebar />
       <div class="main-content">
         <Header />

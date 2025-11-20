@@ -40,7 +40,7 @@ export default {
     qos: 'QoS',
     application: 'Application',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     management: 'Gestion',
     reboot: 'Redémarrer',
@@ -670,12 +670,12 @@ export default {
     testing: 'Test en cours...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'Activer UPnP',
+    title: 'UPnP IGD',
+    enable: 'Activer UPnP IGD',
     interfaceSelection: 'Sélection de l\'interface',
     apply: 'Appliquer',
-    loadError: 'Impossible de charger les paramètres UPnP',
-    updateError: 'Impossible de mettre à jour les paramètres UPnP'
+    loadError: 'Impossible de charger les paramètres UPnP IGD',
+    updateError: 'Impossible de mettre à jour les paramètres UPnP IGD'
   },
   thread: {
     title: 'Thread',

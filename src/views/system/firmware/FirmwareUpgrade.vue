@@ -43,9 +43,9 @@ const isActivateDisabled = (bank: FirmwareBank): boolean => {
 
 // Get status display text
 const getStatusDisplay = (bank: FirmwareBank): string => {
-  if (bank.Switch_Status && bank.Switch_Status !== 'Available') {
-    return bank.Switch_Status;
-  }
+  // if (bank.Switch_Status && bank.Switch_Status !== 'Available') {
+  //   return bank.Switch_Status;
+  // }
   return bank.Status;
 };
 

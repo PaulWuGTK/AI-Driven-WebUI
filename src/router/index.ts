@@ -5,6 +5,8 @@ const requireAuth = (to: any, from: any, next: any) => {
   const auth = AuthService.getInstance();
   if (!auth.isAuthenticated() && to.path !== '/login') {
     next('/login');
+  } else if (auth.needsWizard() && to.path !== '/wizard') {
+    next('/wizard');
   } else {
     next();
   }
@@ -17,6 +19,11 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/wizard',
+      component: () => import('../views/wizard/SetupWizard.vue'),
+      beforeEnter: requireAuth
     },
     {
       path: '/',

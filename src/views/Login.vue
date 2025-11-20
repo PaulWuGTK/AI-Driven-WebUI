@@ -13,7 +13,7 @@ const loading = ref(false);
 
 const handleLogin = async () => {
   if (loading.value) return;
-  
+
   loading.value = true;
   error.value = '';
 
@@ -21,7 +21,11 @@ const handleLogin = async () => {
     const auth = AuthService.getInstance();
     const success = await auth.login(username.value, password.value);
     if (success) {
-      await router.push('/dashboard');
+      if (auth.needsWizard()) {
+        await router.push('/wizard');
+      } else {
+        await router.push('/dashboard');
+      }
     } else {
       error.value = 'Invalid username or password';
     }

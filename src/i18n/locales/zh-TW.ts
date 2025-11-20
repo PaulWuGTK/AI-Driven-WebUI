@@ -40,7 +40,7 @@ export default {
     qos: 'QoS',
     application: '應用程式',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     management: '管理',
     reboot: '重新啟動',
@@ -671,12 +671,12 @@ export default {
     testing: '測試中...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'UPnP 啟用',
+    title: 'UPnP IGD',
+    enable: 'UPnP IGD 啟用',
     interfaceSelection: '介面選擇',
     apply: '套用',
-    loadError: '無法載入 UPnP 設定',
-    updateError: '無法更新 UPnP 設定'
+    loadError: '無法載入 UPnP IGD 設定',
+    updateError: '無法更新 UPnP IGD 設定'
   },
   thread: {
     title: 'Thread',

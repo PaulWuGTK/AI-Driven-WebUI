@@ -1,5 +1,6 @@
 import type { LoginResponse } from '../types/auth';
 import { loginMockData } from './mockData/authMockData';
+import { wizardApi } from './api/wizard';
 
 export class AuthService {
   private static instance: AuthService;
@@ -43,11 +44,24 @@ export class AuthService {
       if (this.isDevelopment) {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Simulate authentication check
         if (username === 'admin' && password === 'admin') {
           this.setSessionId(loginMockData.sessionID);
           localStorage.setItem('username', username);
+
+          // Check wizard status from wizard API
+          try {
+            const wizardData = await wizardApi.getWizardInfo();
+            if (wizardData.wizardCheck) {
+              localStorage.setItem('wizardRequired', 'true');
+            } else {
+              localStorage.removeItem('wizardRequired');
+            }
+          } catch (err) {
+            console.warn('Failed to check wizard status:', err);
+          }
+
           return true;
         }
         throw new Error('Invalid username or password');
@@ -67,17 +81,38 @@ export class AuthService {
       }
 
       const data = await response.json() as LoginResponse;
-      
+
       if (data.sessionID) {
         this.setSessionId(data.sessionID);
         localStorage.setItem('username', username);
+
+        // Check wizard status from wizard API
+        try {
+          const wizardData = await wizardApi.getWizardInfo();
+          if (wizardData.wizardCheck) {
+            localStorage.setItem('wizardRequired', 'true');
+          } else {
+            localStorage.removeItem('wizardRequired');
+          }
+        } catch (err) {
+          console.warn('Failed to check wizard status:', err);
+        }
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
+  }
+
+  needsWizard(): boolean {
+    return localStorage.getItem('wizardRequired') === 'true';
+  }
+
+  clearWizardFlag() {
+    localStorage.removeItem('wizardRequired');
   }
 }

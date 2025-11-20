@@ -40,7 +40,7 @@ export default {
     qos: 'QoS',
     application: 'アプリケーション',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     management: '管理',
     reboot: '再起動',
@@ -670,12 +670,12 @@ export default {
     testing: 'テスト中...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'UPnP有効化',
+    title: 'UPnP IGD',
+    enable: 'UPnP IGD有効化',
     interfaceSelection: 'インターフェース選択',
     apply: '適用',
-    loadError: 'UPnP設定を読み込めませんでした',
-    updateError: 'UPnP設定を更新できませんでした'
+    loadError: 'UPnP IGD設定を読み込めませんでした',
+    updateError: 'UPnP IGD設定を更新できませんでした'
   },
   thread: {
     title: 'スレッド',

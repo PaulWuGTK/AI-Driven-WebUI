@@ -681,12 +681,12 @@ const translations = {
     testing: 'Testing...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'UPnP Enable',
+    title: 'UPnP IGD',
+    enable: 'UPnP IGD Enable',
     interfaceSelection: 'Interface Selection',
     apply: 'Apply',
-    loadError: 'Failed to load UPnP settings',
-    updateError: 'Failed to update UPnP settings'
+    loadError: 'Failed to load UPnP IGD settings',
+    updateError: 'Failed to update UPnP IGD settings'
   },
   thread: {
     title: 'Thread',

@@ -40,7 +40,7 @@ export default {
     qos: 'QoS',
     application: '응용 프로그램',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     management: '관리',
     reboot: '재부팅',
@@ -669,12 +669,12 @@ export default {
     testing: '테스트 중...'
   },
   upnp: {
-    title: 'UPnP',
-    enable: 'UPnP 활성화',
+    title: 'UPnP IGD',
+    enable: 'UPnP IGD 활성화',
     interfaceSelection: '인터페이스 선택',
     apply: '적용',
-    loadError: 'UPnP 설정을 불러올 수 없습니다',
-    updateError: 'UPnP 설정을 업데이트할 수 없습니다'
+    loadError: 'UPnP IGD 설정을 불러올 수 없습니다',
+    updateError: 'UPnP IGD 설정을 업데이트할 수 없습니다'
   },
   thread: {
     title: 'Thread',
