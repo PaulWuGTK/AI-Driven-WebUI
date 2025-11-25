@@ -34,6 +34,8 @@ export interface WizardConfig {
   wifi: {
     smartConnect: boolean;
     mloEnable: boolean;
+    psc: boolean;
+    pmf: boolean;
     common: {
       ssid: string;
       security: string;

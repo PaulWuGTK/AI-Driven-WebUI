@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 const props = defineProps<Props>();
 defineEmits(['next', 'prev']);
+const { t } = useI18n();
 
 const confirmPassword = ref('');
 const showPassword = ref(false);
@@ -25,8 +27,8 @@ const isValid = computed(() => {
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Admin Username & Password</h1>
-      <p class="step-subtitle">For stronger security, please change the admin username and password to prevent unauthorized access to your WNRFQQ-112BE's configuration page.</p>
+      <h1 class="step-title">{{ t('wizard.adminPasswordTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.adminPasswordSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -40,25 +42,25 @@ const isValid = computed(() => {
 
       <div class="form-container">
         <div class="form-group">
-          <label for="username">Admin Username <span class="required">*</span></label>
+          <label for="username">{{ t('wizard.username') }} <span class="required">*</span></label>
           <input
             id="username"
             type="text"
             v-model="config.admin.username"
-            placeholder="Enter username"
+            :placeholder="t('wizard.usernamePlaceholder')"
             class="form-input"
             required
           />
         </div>
 
         <div class="form-group">
-          <label for="new-password">Password <span class="required">*</span> <span class="help-inline">(10–15 chars, letters & numbers, no repeats)</span></label>
+          <label for="new-password">{{ t('wizard.password') }} <span class="required">*</span> <span class="help-inline">{{ t('wizard.passwordHint') }}</span></label>
           <div class="password-input">
             <input
               id="new-password"
               :type="showPassword ? 'text' : 'password'"
               v-model="config.admin.password"
-              placeholder="Enter password"
+              :placeholder="t('wizard.passwordPlaceholder')"
               class="form-input"
               required
             />
@@ -69,13 +71,13 @@ const isValid = computed(() => {
         </div>
 
         <div class="form-group">
-          <label for="confirm-password">Confirm Password <span class="required">*</span></label>
+          <label for="confirm-password">{{ t('wizard.confirmPassword') }} <span class="required">*</span></label>
           <div class="password-input">
             <input
               id="confirm-password"
               :type="showConfirmPassword ? 'text' : 'password'"
               v-model="confirmPassword"
-              placeholder="Re-enter password"
+              :placeholder="t('wizard.confirmPasswordPlaceholder')"
               class="form-input"
               :class="{ 'input-error': !passwordsMatch }"
               required
@@ -84,23 +86,23 @@ const isValid = computed(() => {
               <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
-          <p v-if="!passwordsMatch" class="error-text">Passwords do not match</p>
+          <p v-if="!passwordsMatch" class="error-text">{{ t('wizard.passwordMismatch') }}</p>
         </div>
       </div>
 
       <div class="info-box">
-        <h4>Password Requirements:</h4>
+        <h4>{{ t('wizard.requirementsTitle') }}</h4>
         <ul>
-          <li>Use a strong, unique password</li>
-          <li>Mix uppercase and lowercase letters</li>
-          <li>Include numbers and special characters</li>
-          <li>Avoid common words or personal information</li>
+          <li>{{ t('wizard.strong') }}</li>
+          <li>{{ t('wizard.mixCase') }}</li>
+          <li>{{ t('wizard.includeSpecial') }}</li>
+          <li>{{ t('wizard.avoidCommon') }}</li>
         </ul>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')" :disabled="!isValid">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')" :disabled="!isValid">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

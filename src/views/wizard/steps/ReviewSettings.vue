@@ -89,6 +89,15 @@ const showBandPasswords = ref({
           </div>
 
           <div v-else class="wifi-details">
+            <div class="review-item">
+              <span class="label">PSC:</span>
+              <span class="value">{{ config.wifi.psc ? 'Enabled' : 'Disabled' }}</span>
+            </div>
+            <div class="review-item">
+              <span class="label">PMF:</span>
+              <span class="value">{{ config.wifi.pmf ? 'Enabled' : 'Disabled' }}</span>
+            </div>
+
             <div v-if="config.wifi.bands['2g'].enabled" class="band-info">
               <h4>2.4GHz Band</h4>
               <div class="review-item">
@@ -292,9 +301,6 @@ const showBandPasswords = ref({
 }
 
 .wifi-details {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
 }
 
 .band-info {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
   ssid?: string;
@@ -8,9 +9,10 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['finish']);
+const { t } = useI18n();
 
 const displaySsid = computed(() => props.ssid || 'WNRFQQ-9d93-WPA3');
-const displayModel = computed(() => props.deviceModel || 'WNRFQQ-112BE');
+const displayModel = computed(() => props.deviceModel || '');
 </script>
 
 <template>
@@ -25,17 +27,16 @@ const displayModel = computed(() => props.deviceModel || 'WNRFQQ-112BE');
         </div>
       </div>
 
-      <h1 class="device-name">{{ displayModel }}</h1>
+      <h1 v-if="displayModel" class="device-name">{{ displayModel }}</h1>
 
-      <h2>Finish!</h2>
+      <h2>{{ t('wizard.completeTitle') }}</h2>
 
       <p class="message">
-        Once setup is complete and the Internet LED on your router is solid blue, you can join your<br>
-        new Wi-Fi network (SSID: <strong>{{ displaySsid }}</strong>) with the saved password.
+        {{ t('wizard.message', { ssid: displaySsid }) }}
       </p>
 
       <button class="btn-finish" @click="$emit('finish')">
-        Go to Dashboard
+        {{ t('wizard.goToDashboard') }}
       </button>
     </div>
   </div>

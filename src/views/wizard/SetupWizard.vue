@@ -60,6 +60,8 @@ const config = ref<WizardConfig>({
   wifi: {
     smartConnect: true,
     mloEnable: true,
+    psc: true,
+    pmf: false,
     common: {
       ssid: '',
       security: 'WPA3-Personal',
@@ -241,7 +243,7 @@ const getStepComponent = () => {
     <div v-else-if="isComplete" class="wizard-content">
       <WizardComplete
         :ssid="config.wifi.smartConnect ? config.wifi.common.ssid : config.wifi.bands['2g'].ssid"
-        device-model="WNRFQQ-112BE"
+        :device-model="wizardData?.ModelName"
         @finish="handleFinish"
       />
     </div>

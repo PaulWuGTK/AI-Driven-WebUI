@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 const props = defineProps<Props>();
 defineEmits(['next', 'prev']);
 
+const { t } = useI18n();
 const showPassword = ref(false);
 
 const commonSecurityOptions = computed(() => {
@@ -79,8 +81,8 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Create Your Wi-Fi Network</h1>
-      <p class="step-subtitle">Name your Wi-Fi and set a password to protect your network.</p>
+      <h1 class="step-title">{{ t('wizard.wifiTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.wifiSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -95,8 +97,8 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
       <div class="settings-section">
         <div class="toggle-row">
           <label class="toggle-label">
-            <span>Smart Connect</span>
-            <span class="info-icon" title="Combine all bands into one network name">ℹ️</span>
+            <span>{{ t('wizard.smartConnect') }}</span>
+            <span class="info-icon" :title="t('wizard.smartConnectTooltip')">ℹ️</span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.smartConnect" />
@@ -106,8 +108,8 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
 
         <div class="toggle-row">
           <label class="toggle-label">
-            <span>MLO Network</span>
-            <span class="info-icon" title="Multi-Link Operation for faster speeds">ℹ️</span>
+            <span>{{ t('wizard.mloNetwork') }}</span>
+            <span class="info-icon" :title="t('wizard.mloTooltip')">ℹ️</span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" />
@@ -268,9 +270,33 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
 
       </div>
 
+      <div v-if="!config.wifi.smartConnect" class="settings-section" style="margin-top: 1.5rem;">
+        <div class="toggle-row">
+          <label class="toggle-label">
+            <span>{{ t('wizard.psc') }}</span>
+            <span class="info-icon" :title="t('wizard.pscTooltip')">ℹ️</span>
+          </label>
+          <label class="toggle-switch">
+            <input type="checkbox" v-model="config.wifi.psc" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle-label">
+            <span>{{ t('wizard.pmf') }}</span>
+            <span class="info-icon" :title="t('wizard.pmfTooltip')">ℹ️</span>
+          </label>
+          <label class="toggle-switch">
+            <input type="checkbox" v-model="config.wifi.pmf" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

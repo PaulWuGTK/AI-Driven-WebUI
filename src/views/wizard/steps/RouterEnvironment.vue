@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 defineEmits(['next', 'prev']);
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Get Your Device Ready</h1>
-      <p class="step-subtitle">Bring your device online with a modem in only a few quick steps.</p>
+      <h1 class="step-title">{{ t('wizard.routerEnvironmentTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.routerEnvironmentSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -21,26 +24,26 @@ defineEmits(['next', 'prev']);
       <div class="environment-diagram">
         <div class="diagram-item">
           <div class="icon icon-globe"></div>
-          <span>INTERNET</span>
+          <span>{{ t('wizard.internet') }}</span>
         </div>
         <div class="diagram-connection">
           <div class="connection-line"></div>
         </div>
         <div class="diagram-item">
           <div class="icon icon-modem"></div>
-          <span>MODEM</span>
+          <span>{{ t('wizard.modem') }}</span>
         </div>
         <div class="diagram-connection">
           <div class="connection-line"></div>
           <div class="connection-labels">
-            <span class="label-top">Ethernet Port</span>
-            <span class="label-text">Ethernet Cable</span>
-            <span class="label-bottom">WAN Port</span>
+            <span class="label-top">{{ t('wizard.ethernetPort') }}</span>
+            <span class="label-text">{{ t('wizard.ethernetCable') }}</span>
+            <span class="label-bottom">{{ t('wizard.wanPort') }}</span>
           </div>
         </div>
         <div class="diagram-item highlight">
           <div class="icon icon-router"></div>
-          <span>WNRFQQ-112BE</span>
+          <span>{{ t('wizard.router') }}</span>
         </div>
         <div class="diagram-connection">
           <div class="wifi-signal-left"></div>
@@ -48,7 +51,7 @@ defineEmits(['next', 'prev']);
         </div>
         <div class="diagram-item">
           <div class="icon icon-device"></div>
-          <span>CLIENT DEVICE</span>
+          <span>{{ t('wizard.clientDevice') }}</span>
         </div>
       </div>
 
@@ -56,22 +59,22 @@ defineEmits(['next', 'prev']);
         <div class="info-step">
           <div class="step-number">1</div>
           <div class="step-content">
-            <h4>Connect to modem</h4>
-            <p>Plug one end of the Ethernet cable into the modem's Ethernet port and the other end into the WAN port of your WNRFQQ-112BE.</p>
+            <h4>{{ t('wizard.step1Title') }}</h4>
+            <p>{{ t('wizard.step1Description') }}</p>
           </div>
         </div>
         <div class="info-step">
           <div class="step-number">2</div>
           <div class="step-content">
-            <h4>Restart your modem</h4>
-            <p>Wait until your modem finishes rebooting, then click Next.</p>
+            <h4>{{ t('wizard.step2Title') }}</h4>
+            <p>{{ t('wizard.step2Description') }}</p>
           </div>
         </div>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

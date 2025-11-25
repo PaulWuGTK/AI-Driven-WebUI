@@ -21,6 +21,8 @@ function parseSecurityOptions(optionsString: string): string[] {
 function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
   const smartConnect = data.WiFi.CommonSSIDEnable === 1;
   const mloEnable = data.WiFi.MLOEnable === 1;
+  const psc = data.WiFi.PSC6g === 1;
+  const pmf = data.WiFi.MFPConfig === 1;
 
   return {
     wan: {
@@ -29,6 +31,8 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
     wifi: {
       smartConnect,
       mloEnable,
+      psc,
+      pmf,
       common: {
         ssid: data.WiFi.wifimlo.SSID,
         security: data.WiFi.wifimlo.SecurityMode,
@@ -75,8 +79,8 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
         CommonSSIDEnable: config.wifi.smartConnect ? 1 : 0,
         MLOEnable: config.wifi.mloEnable ? 1 : 0,
         MeshEnable: config.mesh.enable ? 1 : 0,
-        MFPConfig: 1,
-        PSC6g: 1,
+        MFPConfig: config.wifi.pmf ? 1 : 0,
+        PSC6g: config.wifi.psc ? 1 : 0,
         wifimlo: {
           Enable: config.wifi.mloEnable ? 1 : 0,
           SSID: config.wifi.common.ssid,

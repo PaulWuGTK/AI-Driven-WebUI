@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { wizardApi } from '../../../services/api/wizard';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const { t } = useI18n();
 const isRedirecting = ref(false);
 
 const handleFinish = async () => {
@@ -25,7 +27,7 @@ const handleFinish = async () => {
   }
 };
 
-const deviceModel = props.wizardData?.ModelName || 'WNRFQQ-112BE';
+const deviceModel = props.wizardData?.ModelName || '';
 </script>
 
 <template>
@@ -50,13 +52,13 @@ const deviceModel = props.wizardData?.ModelName || 'WNRFQQ-112BE';
           </svg>
         </div>
 
-        <h1 class="device-model">{{ deviceModel }}</h1>
+        <h1 v-if="deviceModel" class="device-model">{{ deviceModel }}</h1>
 
-        <h2 class="finish-title">Finish!</h2>
+        <h2 class="finish-title">{{ t('wizard.agentCompleteTitle') }}</h2>
 
         <div class="instructions">
-          <p>Wait until the LED stops blinking and turns solid blue.</p>
-          <p>Then you can log in to the web-based configuration page to check the mesh topology.</p>
+          <p>{{ t('wizard.instruction1') }}</p>
+          <p>{{ t('wizard.instruction2') }}</p>
         </div>
 
         <button
@@ -64,7 +66,7 @@ const deviceModel = props.wizardData?.ModelName || 'WNRFQQ-112BE';
           @click="handleFinish"
           :disabled="isRedirecting"
         >
-          {{ isRedirecting ? 'Redirecting...' : 'Finish Setup' }}
+          {{ isRedirecting ? t('wizard.redirecting') : t('wizard.finishButton') }}
         </button>
       </div>
     </div>

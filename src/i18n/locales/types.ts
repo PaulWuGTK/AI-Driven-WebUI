@@ -750,6 +750,54 @@ export interface Translations {
     submit: string;
     error: string;
   };
+  wizard: {
+    completeTitle: string;
+    message: string;
+    goToDashboard: string;
+    agentCompleteTitle: string;
+    instruction1: string;
+    instruction2: string;
+    finishButton: string;
+    redirecting: string;
+    adminPasswordTitle: string;
+    adminPasswordSubtitle: string;
+    username: string;
+    usernamePlaceholder: string;
+    password: string;
+    passwordPlaceholder: string;
+    passwordHint: string;
+    confirmPassword: string;
+    confirmPasswordPlaceholder: string;
+    passwordMismatch: string;
+    requirementsTitle: string;
+    strong: string;
+    mixCase: string;
+    includeSpecial: string;
+    avoidCommon: string;
+    routerEnvironmentTitle: string;
+    routerEnvironmentSubtitle: string;
+    internet: string;
+    modem: string;
+    ethernetPort: string;
+    ethernetCable: string;
+    wanPort: string;
+    router: string;
+    clientDevice: string;
+    step1Title: string;
+    step1Description: string;
+    step2Title: string;
+    step2Description: string;
+    wifiTitle: string;
+    wifiSubtitle: string;
+    smartConnect: string;
+    smartConnectTooltip: string;
+    mloNetwork: string;
+    mloTooltip: string;
+    psc: string;
+    pscTooltip: string;
+    pmf: string;
+    pmfTooltip: string;
+  };
   common: {
     save: string;
     cancel: string;
@@ -767,7 +815,11 @@ export interface Translations {
     generate: string;
     auto: string;
     manual: string;
-  },
+    back: string;
+    next: string;
+    underDevelopment: string;
+    underDevelopmentDesc: string;
+  };
   logs: {
     title: string;
     filters: string;
