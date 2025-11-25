@@ -29,7 +29,7 @@ defineEmits(['next', 'prev']);
       <div class="form-group">
         <label for="wan-mode">Connection Type <span class="required">*</span></label>
         <select id="wan-mode" v-model="config.wan.wanMode" class="form-select">
-          <option v-for="mode in wizardData?.WANModeList" :key="mode" :value="mode">
+          <option v-for="mode in wizardData?.Wan.WANModeList" :key="mode" :value="mode">
             {{ mode.replace(/_/g, ' ') }}
           </option>
         </select>

@@ -29,7 +29,7 @@ export class ChecksumService {
   static async addChecksumToFile(blob: Blob): Promise<Blob> {
     const arrayBuffer = await blob.arrayBuffer();
     const checksum = await this.calculateChecksum(arrayBuffer);
-    return new Blob([new Uint8Array(arrayBuffer), checksum], { type: blob.type });
+    return new Blob([new Uint8Array(arrayBuffer), checksum as BlobPart], { type: blob.type });
   }
 
   static async trimChecksumFromFile(file: File): Promise<Blob> {
@@ -49,7 +49,7 @@ export class ChecksumService {
 
     const fileData = new Uint8Array(arrayBuffer.slice(0, -32));
     const actualChecksum = new Uint8Array(arrayBuffer.slice(-32));
-    const expectedChecksum = await this.calculateChecksum(fileData);
+    const expectedChecksum = await this.calculateChecksum(fileData.buffer as ArrayBuffer);
 
     return actualChecksum.every((byte, index) => byte === expectedChecksum[index]);
   }

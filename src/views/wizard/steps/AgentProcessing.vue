@@ -1,24 +1,100 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { wizardApi } from '../../../services/api/wizard';
+import type { AgentSetupMode } from '../../../types/wizard';
 
-const router = useRouter();
+interface Props {
+  agentSetupMode: AgentSetupMode;
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits(['back-to-agent-setup', 'agent-success']);
+
 const countdown = ref(120);
-let timer: number | null = null;
+const linkStatus = ref<'Connecting' | 'Down' | 'Up'>('Connecting');
+const onboardingStatus = ref<'Success' | 'Inprogress' | 'Timeout'>('Inprogress');
+const statusMessage = ref('Connecting to network...');
+
+let countdownTimer: number | null = null;
+let statusPollTimer: number | null = null;
+
+const startOnboarding = async () => {
+  try {
+    await wizardApi.startAgentOnboarding(props.agentSetupMode);
+    startPolling();
+  } catch (error) {
+    console.error('Failed to start agent onboarding:', error);
+    statusMessage.value = 'Failed to start setup. Please try again.';
+  }
+};
+
+const pollStatus = async () => {
+  try {
+    const response = await wizardApi.getAgentStatus();
+    linkStatus.value = response.WizardAgent.LinkStatus;
+    onboardingStatus.value = response.WizardAgent.OnboardingStatus;
+
+    if (onboardingStatus.value === 'Success') {
+      stopPolling();
+      emit('agent-success');
+    } else if (onboardingStatus.value === 'Timeout') {
+      stopPolling();
+      statusMessage.value = 'Setup timed out. Please try again.';
+      setTimeout(() => {
+        emit('back-to-agent-setup');
+      }, 3000);
+    } else {
+      updateStatusMessage();
+    }
+  } catch (error) {
+    console.error('Failed to poll agent status:', error);
+  }
+};
+
+const updateStatusMessage = () => {
+  if (linkStatus.value === 'Connecting') {
+    statusMessage.value = 'Connecting to network...';
+  } else if (linkStatus.value === 'Up') {
+    statusMessage.value = 'Connection established. Completing setup...';
+  } else if (linkStatus.value === 'Down') {
+    statusMessage.value = 'Connection failed. Retrying...';
+  }
+};
+
+const startPolling = () => {
+  statusPollTimer = window.setInterval(() => {
+    pollStatus();
+  }, 2000);
+};
+
+const stopPolling = () => {
+  if (statusPollTimer) {
+    clearInterval(statusPollTimer);
+    statusPollTimer = null;
+  }
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+};
 
 onMounted(() => {
-  timer = window.setInterval(() => {
+  countdownTimer = window.setInterval(() => {
     countdown.value--;
     if (countdown.value <= 0) {
-      router.push('/login');
+      stopPolling();
+      statusMessage.value = 'Setup timed out.';
+      setTimeout(() => {
+        emit('back-to-agent-setup');
+      }, 2000);
     }
   }, 1000);
+
+  startOnboarding();
 });
 
 onUnmounted(() => {
-  if (timer) {
-    clearInterval(timer);
-  }
+  stopPolling();
 });
 
 const formatTime = (seconds: number) => {
@@ -37,19 +113,23 @@ const formatTime = (seconds: number) => {
       <div class="progress-bar">
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
       </div>
 
       <div class="processing-container">
         <div class="spinner"></div>
-        <h3>Connecting to network...</h3>
-        <p>This may take a few moments.</p>
+        <h3>{{ statusMessage }}</h3>
+        <p class="status-info">
+          Link: <strong>{{ linkStatus }}</strong> |
+          Status: <strong>{{ onboardingStatus }}</strong>
+        </p>
         <div class="countdown">
           <p>Timeout in: <strong>{{ formatTime(countdown) }}</strong></p>
         </div>
       </div>
 
       <div class="info-box">
-        <p>If the setup is not completed within 120 seconds, you will be redirected to the login page.</p>
+        <p>If the setup is not completed within 120 seconds, you will be redirected back to the setup page.</p>
       </div>
     </div>
   </div>
@@ -151,6 +231,18 @@ const formatTime = (seconds: number) => {
 .countdown strong {
   color: #0078d4;
   font-size: 1.25rem;
+}
+
+.status-info {
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.status-info strong {
+  color: #0078d4;
+  font-weight: 600;
 }
 
 .info-box {

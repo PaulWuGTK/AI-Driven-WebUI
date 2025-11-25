@@ -53,7 +53,7 @@ export class AuthService {
           // Check wizard status from wizard API
           try {
             const wizardData = await wizardApi.getWizardInfo();
-            if (wizardData.wizardCheck) {
+            if (wizardData.OpMode === 'Init') {
               localStorage.setItem('wizardRequired', 'true');
             } else {
               localStorage.removeItem('wizardRequired');
@@ -89,7 +89,7 @@ export class AuthService {
         // Check wizard status from wizard API
         try {
           const wizardData = await wizardApi.getWizardInfo();
-          if (wizardData.wizardCheck) {
+          if (wizardData.OpMode === 'Init') {
             localStorage.setItem('wizardRequired', 'true');
           } else {
             localStorage.removeItem('wizardRequired');

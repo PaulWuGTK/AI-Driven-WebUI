@@ -8,6 +8,7 @@ import PrivacyPolicy from './steps/PrivacyPolicy.vue';
 import ModeSelect from './steps/ModeSelect.vue';
 import AgentSetup from './steps/AgentSetup.vue';
 import AgentProcessing from './steps/AgentProcessing.vue';
+import AgentComplete from './steps/AgentComplete.vue';
 import RouterEnvironment from './steps/RouterEnvironment.vue';
 import WanModeSelect from './steps/WanModeSelect.vue';
 import MeshSetup from './steps/MeshSetup.vue';
@@ -17,7 +18,7 @@ import ReviewSettings from './steps/ReviewSettings.vue';
 import ApplyingSettings from './steps/ApplyingSettings.vue';
 import WizardComplete from './steps/WizardComplete.vue';
 
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const availableLanguages = ref([
   { code: 'en', label: 'English' },
@@ -29,9 +30,17 @@ const availableLanguages = ref([
   { code: 'ko', label: '한국어' }
 ]);
 
+const username = ref(localStorage.getItem('username') || 'admin');
+
 const handleLanguageChange = (event: Event) => {
   const newLocale = (event.target as HTMLSelectElement).value;
   locale.value = newLocale;
+};
+
+const handleLogout = async () => {
+  const authService = (await import('../../services/auth')).AuthService.getInstance();
+  authService.clearSession();
+  router.push('/login');
 };
 
 const router = useRouter();
@@ -40,6 +49,7 @@ const wizardData = ref<WizardData | null>(null);
 const loading = ref(true);
 const isApplying = ref(false);
 const isComplete = ref(false);
+const isAgentComplete = ref(false);
 const etaSeconds = ref(120);
 
 const config = ref<WizardConfig>({
@@ -75,7 +85,7 @@ const agentSetupMode = ref<AgentSetupMode>('wps');
 
 const maxSteps = computed(() => {
   if (config.value.mode === 'agent') {
-    return 4;
+    return 5;
   }
   return 8;
 });
@@ -103,23 +113,23 @@ onMounted(async () => {
 });
 
 const nextStep = () => {
-  if (currentStep.value === 2 && config.value.mode === 'agent') {
-    currentStep.value = 3;
-  } else if (currentStep.value === 3 && config.value.mode === 'agent') {
-    currentStep.value = 4;
-  } else if (currentStep.value < maxSteps.value) {
+  if (currentStep.value < maxSteps.value) {
     currentStep.value++;
   }
 };
 
 const prevStep = () => {
-  if (currentStep.value === 3 && config.value.mode === 'agent') {
-    currentStep.value = 2;
-  } else if (currentStep.value === 4 && config.value.mode === 'agent') {
-    currentStep.value = 3;
-  } else if (currentStep.value > 1) {
+  if (currentStep.value > 1) {
     currentStep.value--;
   }
+};
+
+const backToAgentSetup = () => {
+  currentStep.value = 3;
+};
+
+const handleAgentSuccess = () => {
+  isAgentComplete.value = true;
 };
 
 const handleModeChange = (mode: 'router' | 'agent') => {
@@ -136,12 +146,12 @@ const submitWizard = async () => {
     loading.value = true;
     const response = await wizardApi.submitWizardConfig(config.value);
 
-    if (response.Wizard.ok) {
-      etaSeconds.value = response.Wizard.eta_seconds;
+    if (response.WizardRouter.ok) {
+      etaSeconds.value = response.WizardRouter.eta_seconds;
       loading.value = false;
       isApplying.value = true;
     } else {
-      throw new Error(response.Wizard.message);
+      throw new Error(response.WizardRouter.message);
     }
   } catch (error) {
     console.error('Failed to submit wizard configuration:', error);
@@ -202,6 +212,14 @@ const getStepComponent = () => {
             </option>
           </select>
         </div>
+        <button class="header-btn">
+          <span class="material-icons">person</span>
+          {{ username }}
+        </button>
+        <button class="header-btn" @click="handleLogout">
+          <span class="material-icons">logout</span>
+          {{ t('header.logout') }}
+        </button>
       </div>
     </header>
 
@@ -211,6 +229,12 @@ const getStepComponent = () => {
       <ApplyingSettings
         :eta-seconds="etaSeconds"
         @complete="handleApplyComplete"
+      />
+    </div>
+
+    <div v-else-if="isAgentComplete" class="wizard-content">
+      <AgentComplete
+        :wizard-data="wizardData"
       />
     </div>
 
@@ -234,6 +258,8 @@ const getStepComponent = () => {
         @prev="prevStep"
         @mode-change="handleModeChange"
         @agent-mode-change="handleAgentSetupModeChange"
+        @back-to-agent-setup="backToAgentSetup"
+        @agent-success="handleAgentSuccess"
         @submit="submitWizard"
       />
     </div>
@@ -292,6 +318,29 @@ const getStepComponent = () => {
 .language-select:focus {
   outline: none;
   border-color: #0078d4;
+}
+
+.header-btn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.header-btn:hover {
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.material-icons {
+  font-size: 20px;
 }
 
 .wizard-content {

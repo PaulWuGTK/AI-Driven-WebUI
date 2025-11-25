@@ -1,5 +1,14 @@
 import apiClient from '../apiClient';
-import type { WizardData, WizardConfig, WizardSubmitResponse, WizardSubmitData } from '../../types/wizard';
+import type {
+  WizardData,
+  WizardConfig,
+  WizardSubmitResponse,
+  WizardSubmitData,
+  WizardAgentOnboardingRequest,
+  WizardAgentStatusResponse,
+  WizardAgentEndPageRequest,
+  AgentSetupMode
+} from '../../types/wizard';
 import { wizardMockData } from '../mockData/authMockData';
 
 const isDevelopment = import.meta.env.DEV;
@@ -10,95 +19,92 @@ function parseSecurityOptions(optionsString: string): string[] {
 }
 
 function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
-  const smartConnect = data.wifi.CommonSSIDEnable === 1;
-  const mloEnable = data.wifi.MLOEnable === 1;
+  const smartConnect = data.WiFi.CommonSSIDEnable === 1;
+  const mloEnable = data.WiFi.MLOEnable === 1;
 
   return {
     wan: {
-      wanMode: data.WANMode || ''
+      wanMode: data.Wan.WANMode || ''
     },
     wifi: {
       smartConnect,
       mloEnable,
       common: {
-        ssid: data.wifi.wifimlo.SSID,
-        security: data.wifi.wifimlo.SecurityMode,
-        password: data.wifi.wifimlo.Password,
-        securityOptions: parseSecurityOptions(data.wifi.wifimlo.SecurityModeAvailable)
+        ssid: data.WiFi.wifimlo.SSID,
+        security: data.WiFi.wifimlo.SecurityMode,
+        password: data.WiFi.wifimlo.Password,
+        securityOptions: parseSecurityOptions(data.WiFi.wifimlo.SecurityModeAvailable)
       },
       bands: {
         '2g': {
-          enabled: data.wifi.wifi2g.Enable === 1,
-          ssid: data.wifi.wifi2g.SSID,
-          security: data.wifi.wifi2g.SecurityMode,
-          password: data.wifi.wifi2g.Password,
-          securityOptions: parseSecurityOptions(data.wifi.wifi2g.SecurityModeAvailable)
+          enabled: data.WiFi.wifi2g.Enable === 1,
+          ssid: data.WiFi.wifi2g.SSID,
+          security: data.WiFi.wifi2g.SecurityMode,
+          password: data.WiFi.wifi2g.Password,
+          securityOptions: parseSecurityOptions(data.WiFi.wifi2g.SecurityModeAvailable)
         },
         '5g': {
-          enabled: data.wifi.wifi5g.Enable === 1,
-          ssid: data.wifi.wifi5g.SSID,
-          security: data.wifi.wifi5g.SecurityMode,
-          password: data.wifi.wifi5g.Password,
-          securityOptions: parseSecurityOptions(data.wifi.wifi5g.SecurityModeAvailable)
+          enabled: data.WiFi.wifi5g.Enable === 1,
+          ssid: data.WiFi.wifi5g.SSID,
+          security: data.WiFi.wifi5g.SecurityMode,
+          password: data.WiFi.wifi5g.Password,
+          securityOptions: parseSecurityOptions(data.WiFi.wifi5g.SecurityModeAvailable)
         },
         '6g': {
-          enabled: data.wifi.wifi6g.Enable === 1,
-          ssid: data.wifi.wifi6g.SSID,
-          security: data.wifi.wifi6g.SecurityMode,
-          password: data.wifi.wifi6g.Password,
-          securityOptions: parseSecurityOptions(data.wifi.wifi6g.SecurityModeAvailable)
+          enabled: data.WiFi.wifi6g.Enable === 1,
+          ssid: data.WiFi.wifi6g.SSID,
+          security: data.WiFi.wifi6g.SecurityMode,
+          password: data.WiFi.wifi6g.Password,
+          securityOptions: parseSecurityOptions(data.WiFi.wifi6g.SecurityModeAvailable)
         }
       }
     },
     mesh: {
-      enable: data.MeshEnable === 1
+      enable: data.WiFi.MeshEnable === 1
     }
   };
 }
 
 function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
   return {
-    Wizard: {
-      mode: config.mode,
-      wan: {
-        wanMode: config.wan.wanMode
+    WizardRouter: {
+      Wan: {
+        WANMode: config.wan.wanMode
       },
-      wifi: {
-        smartConnect: config.wifi.smartConnect ? 1 : 0,
+      WiFi: {
+        CommonSSIDEnable: config.wifi.smartConnect ? 1 : 0,
         MLOEnable: config.wifi.mloEnable ? 1 : 0,
-        common: {
-          Enable: config.wifi.smartConnect ? 1 : 0,
+        MeshEnable: config.mesh.enable ? 1 : 0,
+        MFPConfig: 1,
+        PSC6g: 1,
+        wifimlo: {
+          Enable: config.wifi.mloEnable ? 1 : 0,
           SSID: config.wifi.common.ssid,
           SecurityMode: config.wifi.common.security,
           Password: config.wifi.common.password
         },
-        bands: {
-          '2g': {
-            Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
-            SSID: config.wifi.bands['2g'].ssid,
-            SecurityMode: config.wifi.bands['2g'].security,
-            Password: config.wifi.bands['2g'].password
-          },
-          '5g': {
-            Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
-            SSID: config.wifi.bands['5g'].ssid,
-            SecurityMode: config.wifi.bands['5g'].security,
-            Password: config.wifi.bands['5g'].password
-          },
-          '6g': {
-            Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
-            SSID: config.wifi.bands['6g'].ssid,
-            SecurityMode: config.wifi.bands['6g'].security,
-            Password: config.wifi.bands['6g'].password
-          }
+        wifi2g: {
+          Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
+          SSID: config.wifi.bands['2g'].ssid,
+          SecurityMode: config.wifi.bands['2g'].security,
+          Password: config.wifi.bands['2g'].password
+        },
+        wifi5g: {
+          Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
+          SSID: config.wifi.bands['5g'].ssid,
+          SecurityMode: config.wifi.bands['5g'].security,
+          Password: config.wifi.bands['5g'].password
+        },
+        wifi6g: {
+          Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
+          SSID: config.wifi.bands['6g'].ssid,
+          SecurityMode: config.wifi.bands['6g'].security,
+          Password: config.wifi.bands['6g'].password
         }
       },
-      mesh: {
-        MeshEnable: config.mesh.enable ? 1 : 0
-      },
-      admin: {
-        username: config.admin.username,
-        password: config.admin.password
+      Admin: {
+        Username: config.admin.username,
+        Password: config.admin.password
       }
     }
   };
@@ -108,10 +114,10 @@ export const wizardApi = {
   async getWizardInfo(): Promise<WizardData> {
     if (isDevelopment) {
       await new Promise(resolve => setTimeout(resolve, 300));
-      return wizardMockData.Wizard;
+      return wizardMockData.WizardRouter;
     }
-    const response = await apiClient.get<{ Wizard: WizardData }>('/API/info?list=Wizard');
-    return response.Wizard;
+    const response = await apiClient.get<{ WizardRouter: WizardData }>('/API/info?list=WizardRouter');
+    return response.WizardRouter;
   },
 
   transformWizardDataToConfig,
@@ -123,7 +129,7 @@ export const wizardApi = {
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Wizard config submitted:', submitData);
       return {
-        Wizard: {
+        WizardRouter: {
           ok: true,
           message: 'WAN mode applied; Wi-Fi/Mesh/Admin pending (dummy).',
           job_id: 'wiz-' + Date.now(),
@@ -131,6 +137,52 @@ export const wizardApi = {
         }
       };
     }
-    return await apiClient.post<WizardSubmitResponse>('/API/info?list=Wizard', submitData);
+    return await apiClient.post<WizardSubmitResponse>('/API/info?list=WizardRouter', submitData);
+  },
+
+  async startAgentOnboarding(method: AgentSetupMode): Promise<void> {
+    const requestData: WizardAgentOnboardingRequest = {
+      WizardAgent: {
+        Action: 'Onboarding',
+        Method: method === 'wps' ? 'WPS' : 'Ethernet'
+      }
+    };
+
+    if (isDevelopment) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Agent onboarding started:', requestData);
+      return;
+    }
+    await apiClient.post('/API/info?list=WizardAgent', requestData);
+  },
+
+  async getAgentStatus(): Promise<WizardAgentStatusResponse> {
+    if (isDevelopment) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const statuses: Array<'Success' | 'Inprogress' | 'Timeout'> = ['Inprogress', 'Inprogress', 'Success'];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      return {
+        WizardAgent: {
+          LinkStatus: randomStatus === 'Success' ? 'Up' : 'Connecting',
+          OnboardingStatus: randomStatus
+        }
+      };
+    }
+    return await apiClient.get<WizardAgentStatusResponse>('/API/info?list=WizardAgent');
+  },
+
+  async completeAgentSetup(): Promise<void> {
+    const requestData: WizardAgentEndPageRequest = {
+      WizardAgent: {
+        Action: 'EndPage'
+      }
+    };
+
+    if (isDevelopment) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Agent setup completed:', requestData);
+      return;
+    }
+    await apiClient.post('/API/info?list=WizardAgent', requestData);
   }
 };

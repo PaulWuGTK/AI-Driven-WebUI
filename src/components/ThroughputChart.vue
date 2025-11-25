@@ -74,7 +74,8 @@ const renderChart = () => {
             intersect: false,
             callbacks: {
               label: function(context) {
-                return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' ' + props.unit;
+                const value = context.parsed.y ?? 0;
+                return context.dataset.label + ': ' + value.toFixed(2) + ' ' + props.unit;
               }
             }
           }

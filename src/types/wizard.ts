@@ -7,20 +7,23 @@ export interface WizardWifiInfo {
 }
 
 export interface WizardData {
-  wizardCheck: boolean;
-  WANMode: string;
-  wifi: {
+  ModelName: string;
+  OpMode: string;
+  Wan: {
+    WANMode: string;
+    WANModeList: string[];
+  };
+  WiFi: {
     CommonSSIDEnable: number;
     MLOEnable: number;
     MeshEnable: number;
+    MFPConfig: number;
+    PSC6g: number;
     wifimlo: WizardWifiInfo;
     wifi2g: WizardWifiInfo;
     wifi5g: WizardWifiInfo;
     wifi6g: WizardWifiInfo;
   };
-  MeshEnable: number;
-  modeList: string[];
-  WANModeList: string[];
 }
 
 export interface WizardConfig {
@@ -53,53 +56,50 @@ export interface WizardConfig {
 }
 
 export interface WizardSubmitData {
-  Wizard: {
-    mode: string;
-    wan: {
-      wanMode: string;
+  WizardRouter: {
+    Wan: {
+      WANMode: string;
     };
-    wifi: {
-      smartConnect: number;
+    WiFi: {
+      CommonSSIDEnable: number;
       MLOEnable: number;
-      common: {
+      MeshEnable: number;
+      MFPConfig: number;
+      PSC6g: number;
+      wifimlo: {
         Enable: number;
         SSID: string;
         SecurityMode: string;
         Password: string;
       };
-      bands: {
-        '2g': {
-          Enable: number;
-          SSID: string;
-          SecurityMode: string;
-          Password: string;
-        };
-        '5g': {
-          Enable: number;
-          SSID: string;
-          SecurityMode: string;
-          Password: string;
-        };
-        '6g': {
-          Enable: number;
-          SSID: string;
-          SecurityMode: string;
-          Password: string;
-        };
+      wifi2g: {
+        Enable: number;
+        SSID: string;
+        SecurityMode: string;
+        Password: string;
+      };
+      wifi5g: {
+        Enable: number;
+        SSID: string;
+        SecurityMode: string;
+        Password: string;
+      };
+      wifi6g: {
+        Enable: number;
+        SSID: string;
+        SecurityMode: string;
+        Password: string;
       };
     };
-    mesh: {
-      MeshEnable: number;
-    };
-    admin: {
-      username: string;
-      password: string;
+    Admin: {
+      Username: string;
+      Password: string;
     };
   };
 }
 
 export interface WizardSubmitResponse {
-  Wizard: {
+  WizardRouter: {
     ok: boolean;
     message: string;
     job_id: string;
@@ -108,3 +108,23 @@ export interface WizardSubmitResponse {
 }
 
 export type AgentSetupMode = 'wps' | 'ethernet';
+
+export interface WizardAgentOnboardingRequest {
+  WizardAgent: {
+    Action: 'Onboarding';
+    Method: 'Ethernet' | 'WPS';
+  };
+}
+
+export interface WizardAgentStatusResponse {
+  WizardAgent: {
+    LinkStatus: 'Connecting' | 'Down' | 'Up';
+    OnboardingStatus: 'Success' | 'Inprogress' | 'Timeout';
+  };
+}
+
+export interface WizardAgentEndPageRequest {
+  WizardAgent: {
+    Action: 'EndPage';
+  };
+}
