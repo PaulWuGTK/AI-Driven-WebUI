@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -7,13 +8,14 @@ interface Props {
 
 defineProps<Props>();
 defineEmits(['next', 'prev']);
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Smart Mesh</h1>
-      <p class="step-subtitle">Create a Smart Mesh network for seamless Wi-Fi coverage across your home with simple central management.</p>
+      <h1 class="step-title">{{ t('wizard.meshTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.meshSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -27,8 +29,8 @@ defineEmits(['next', 'prev']);
 
       <div class="mesh-info">
         <div class="mesh-icon">🔗</div>
-        <h3>What is Smart Mesh?</h3>
-        <p>Smart Mesh allows multiple routers to work together as a single network, providing seamless coverage throughout your home or office. Devices automatically connect to the strongest signal.</p>
+        <h3>{{ t('wizard.meshInfoTitle') }}</h3>
+        <p>{{ t('wizard.meshInfoDescription') }}</p>
       </div>
 
       <div class="toggle-group">
@@ -43,18 +45,18 @@ defineEmits(['next', 'prev']);
       </div>
 
       <div v-if="config.mesh.enable" class="mesh-benefits">
-        <h4>Benefits:</h4>
+        <h4>{{ t('wizard.meshBenefitsTitle') }}</h4>
         <ul>
-          <li>Seamless roaming between access points</li>
-          <li>Extended wireless coverage</li>
-          <li>Automatic device steering to optimal access point</li>
-          <li>Centralized management</li>
+          <li>{{ t('wizard.meshBenefit1') }}</li>
+          <li>{{ t('wizard.meshBenefit2') }}</li>
+          <li>{{ t('wizard.meshBenefit3') }}</li>
+          <li>{{ t('wizard.meshBenefit4') }}</li>
         </ul>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

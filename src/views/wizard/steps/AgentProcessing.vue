@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { wizardApi } from '../../../services/api/wizard';
 import type { AgentSetupMode } from '../../../types/wizard';
 
@@ -9,11 +10,12 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['back-to-agent-setup', 'agent-success']);
+const { t } = useI18n();
 
 const countdown = ref(120);
 const linkStatus = ref<'Connecting' | 'Down' | 'Up'>('Connecting');
 const onboardingStatus = ref<'Success' | 'Inprogress' | 'Timeout'>('Inprogress');
-const statusMessage = ref('Connecting to network...');
+const statusMessage = ref('');
 
 let countdownTimer: number | null = null;
 let statusPollTimer: number | null = null;
@@ -53,11 +55,11 @@ const pollStatus = async () => {
 
 const updateStatusMessage = () => {
   if (linkStatus.value === 'Connecting') {
-    statusMessage.value = 'Connecting to network...';
+    statusMessage.value = t('wizard.connectingMessage');
   } else if (linkStatus.value === 'Up') {
-    statusMessage.value = 'Connection established. Completing setup...';
+    statusMessage.value = t('wizard.connectionEstablished');
   } else if (linkStatus.value === 'Down') {
-    statusMessage.value = 'Connection failed. Retrying...';
+    statusMessage.value = t('wizard.connectionFailed');
   }
 };
 
@@ -79,6 +81,7 @@ const stopPolling = () => {
 };
 
 onMounted(() => {
+  statusMessage.value = t('wizard.connectingMessage');
   countdownTimer = window.setInterval(() => {
     countdown.value--;
     if (countdown.value <= 0) {
@@ -107,8 +110,8 @@ const formatTime = (seconds: number) => {
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Setting Up Your Device</h1>
-      <p class="step-subtitle">Please wait while we configure your agent device...</p>
+      <h1 class="step-title">{{ t('wizard.processingTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.processingSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -124,12 +127,12 @@ const formatTime = (seconds: number) => {
           Status: <strong>{{ onboardingStatus }}</strong>
         </p>
         <div class="countdown">
-          <p>Timeout in: <strong>{{ formatTime(countdown) }}</strong></p>
+          <p>{{ t('wizard.timeoutIn') }} <strong>{{ formatTime(countdown) }}</strong></p>
         </div>
       </div>
 
       <div class="info-box">
-        <p>If the setup is not completed within 120 seconds, you will be redirected back to the setup page.</p>
+        <p>{{ t('wizard.timeoutMessage') }}</p>
       </div>
     </div>
   </div>

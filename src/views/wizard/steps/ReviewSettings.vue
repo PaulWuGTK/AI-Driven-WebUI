@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 defineProps<Props>();
 defineEmits(['prev', 'submit']);
+const { t } = useI18n();
 
 const showCommonPassword = ref(false);
 const showAdminPassword = ref(false);
@@ -21,8 +23,8 @@ const showBandPasswords = ref({
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Review Your Settings</h1>
-      <p class="step-subtitle">Please review your configuration before applying.</p>
+      <h1 class="step-title">{{ t('wizard.reviewTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.reviewSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -36,38 +38,38 @@ const showBandPasswords = ref({
 
       <div class="review-container">
         <div class="review-section">
-          <h3>Device Mode</h3>
+          <h3>{{ t('wizard.reviewDeviceMode') }}</h3>
           <div class="review-item">
-            <span class="label">Mode:</span>
-            <span class="value">{{ config.mode === 'router' ? 'Router Mode' : 'Agent Mode' }}</span>
+            <span class="label">{{ t('wizard.reviewMode') }}</span>
+            <span class="value">{{ config.mode === 'router' ? t('wizard.routerModeTitle') : t('wizard.agentModeTitle') }}</span>
           </div>
         </div>
 
         <div v-if="config.mode === 'router'" class="review-section">
-          <h3>WAN Connection</h3>
+          <h3>{{ t('wizard.reviewWanConnection') }}</h3>
           <div class="review-item">
-            <span class="label">Connection Type:</span>
+            <span class="label">{{ t('wizard.reviewConnectionType') }}</span>
             <span class="value">{{ config.wan.wanMode.replace(/_/g, ' ') }}</span>
           </div>
         </div>
 
         <div v-if="config.mode === 'router'" class="review-section">
-          <h3>Smart Mesh</h3>
+          <h3>{{ t('wizard.reviewSmartMesh') }}</h3>
           <div class="review-item">
-            <span class="label">Status:</span>
-            <span class="value">{{ config.mesh.enable ? 'Enabled' : 'Disabled' }}</span>
+            <span class="label">{{ t('wizard.reviewStatus') }}</span>
+            <span class="value">{{ config.mesh.enable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
           </div>
         </div>
 
         <div v-if="config.mode === 'router'" class="review-section">
-          <h3>Wi-Fi Configuration</h3>
+          <h3>{{ t('wizard.reviewWifiConfiguration') }}</h3>
           <div class="review-item">
-            <span class="label">Smart Connect:</span>
-            <span class="value">{{ config.wifi.smartConnect ? 'Enabled' : 'Disabled' }}</span>
+            <span class="label">{{ t('wizard.smartConnect') }}:</span>
+            <span class="value">{{ config.wifi.smartConnect ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
           </div>
           <div class="review-item">
-            <span class="label">MLO Network:</span>
-            <span class="value">{{ config.wifi.mloEnable ? 'Enabled' : 'Disabled' }}</span>
+            <span class="label">{{ t('wizard.reviewMloNetwork') }}</span>
+            <span class="value">{{ config.wifi.mloEnable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
           </div>
 
           <div v-if="config.wifi.smartConnect" class="wifi-details">
@@ -76,11 +78,11 @@ const showBandPasswords = ref({
               <span class="value">{{ config.wifi.common.ssid }}</span>
             </div>
             <div class="review-item">
-              <span class="label">Security:</span>
+              <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
               <span class="value">{{ config.wifi.common.security }}</span>
             </div>
             <div class="review-item password-row">
-              <span class="label">Password:</span>
+              <span class="label">{{ t('wizard.reviewPassword') }}</span>
               <span class="value">{{ showCommonPassword ? config.wifi.common.password : '•'.repeat(config.wifi.common.password.length) }}</span>
               <button type="button" class="password-toggle-btn" @click="showCommonPassword = !showCommonPassword">
                 <span class="material-icons">{{ showCommonPassword ? 'visibility_off' : 'visibility' }}</span>
@@ -90,12 +92,12 @@ const showBandPasswords = ref({
 
           <div v-else class="wifi-details">
             <div class="review-item">
-              <span class="label">PSC:</span>
-              <span class="value">{{ config.wifi.psc ? 'Enabled' : 'Disabled' }}</span>
+              <span class="label">{{ t('wizard.reviewPsc') }}</span>
+              <span class="value">{{ config.wifi.psc ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
             </div>
             <div class="review-item">
-              <span class="label">PMF:</span>
-              <span class="value">{{ config.wifi.pmf ? 'Enabled' : 'Disabled' }}</span>
+              <span class="label">{{ t('wizard.reviewPmf') }}</span>
+              <span class="value">{{ config.wifi.pmf ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
             </div>
 
             <div v-if="config.wifi.bands['2g'].enabled" class="band-info">
@@ -105,11 +107,11 @@ const showBandPasswords = ref({
                 <span class="value">{{ config.wifi.bands['2g'].ssid }}</span>
               </div>
               <div class="review-item">
-                <span class="label">Security:</span>
+                <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['2g'].security }}</span>
               </div>
               <div class="review-item password-row">
-                <span class="label">Password:</span>
+                <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <span class="value">{{ showBandPasswords['2g'] ? config.wifi.bands['2g'].password : '•'.repeat(config.wifi.bands['2g'].password.length) }}</span>
                 <button type="button" class="password-toggle-btn" @click="showBandPasswords['2g'] = !showBandPasswords['2g']">
                   <span class="material-icons">{{ showBandPasswords['2g'] ? 'visibility_off' : 'visibility' }}</span>
@@ -124,11 +126,11 @@ const showBandPasswords = ref({
                 <span class="value">{{ config.wifi.bands['5g'].ssid }}</span>
               </div>
               <div class="review-item">
-                <span class="label">Security:</span>
+                <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['5g'].security }}</span>
               </div>
               <div class="review-item password-row">
-                <span class="label">Password:</span>
+                <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <span class="value">{{ showBandPasswords['5g'] ? config.wifi.bands['5g'].password : '•'.repeat(config.wifi.bands['5g'].password.length) }}</span>
                 <button type="button" class="password-toggle-btn" @click="showBandPasswords['5g'] = !showBandPasswords['5g']">
                   <span class="material-icons">{{ showBandPasswords['5g'] ? 'visibility_off' : 'visibility' }}</span>
@@ -143,11 +145,11 @@ const showBandPasswords = ref({
                 <span class="value">{{ config.wifi.bands['6g'].ssid }}</span>
               </div>
               <div class="review-item">
-                <span class="label">Security:</span>
+                <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['6g'].security }}</span>
               </div>
               <div class="review-item password-row">
-                <span class="label">Password:</span>
+                <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <span class="value">{{ showBandPasswords['6g'] ? config.wifi.bands['6g'].password : '•'.repeat(config.wifi.bands['6g'].password.length) }}</span>
                 <button type="button" class="password-toggle-btn" @click="showBandPasswords['6g'] = !showBandPasswords['6g']">
                   <span class="material-icons">{{ showBandPasswords['6g'] ? 'visibility_off' : 'visibility' }}</span>
@@ -158,13 +160,13 @@ const showBandPasswords = ref({
         </div>
 
         <div v-if="config.mode === 'router'" class="review-section">
-          <h3>Administrator Account</h3>
+          <h3>{{ t('wizard.reviewAdministrator') }}</h3>
           <div class="review-item">
-            <span class="label">Username:</span>
+            <span class="label">{{ t('wizard.username') }}:</span>
             <span class="value">{{ config.admin.username }}</span>
           </div>
           <div class="review-item password-row">
-            <span class="label">Password:</span>
+            <span class="label">{{ t('wizard.reviewPassword') }}</span>
             <span class="value">{{ showAdminPassword ? config.admin.password : '•'.repeat(config.admin.password.length) }}</span>
             <button type="button" class="password-toggle-btn" @click="showAdminPassword = !showAdminPassword">
               <span class="material-icons">{{ showAdminPassword ? 'visibility_off' : 'visibility' }}</span>
@@ -174,12 +176,12 @@ const showBandPasswords = ref({
       </div>
 
       <div class="info-box">
-        <p>After applying these settings, your device will configure itself and may reboot. This process may take a few minutes.</p>
+        <p>{{ t('wizard.reviewApplyMessage') }}</p>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('submit')">Apply</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('submit')">{{ t('common.apply') }}</button>
       </div>
     </div>
   </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { AgentSetupMode } from '../../../types/wizard';
 
 import agentModeWpsImage from '../../../assets/icons/wizard/pict_agent_mode_wps_client_wireless.svg';
@@ -11,6 +12,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['next', 'prev', 'agent-mode-change']);
+const { t } = useI18n();
 
 const selectedMode = ref<AgentSetupMode>(props.agentSetupMode);
 
@@ -23,8 +25,8 @@ const selectMode = (mode: AgentSetupMode) => {
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Get Your Device Ready</h1>
-      <p class="step-subtitle">Easily add your agent device and get online in just a few steps.</p>
+      <h1 class="step-title">{{ t('wizard.agentSetupTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.agentSetupSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -42,14 +44,14 @@ const selectMode = (mode: AgentSetupMode) => {
           :class="{ active: selectedMode === 'wps' }"
           @click="selectMode('wps')"
         >
-          Setup via WPS
+          {{ t('wizard.agentSetupViaWps') }}
         </button>
         <button
           class="mode-btn"
           :class="{ active: selectedMode === 'ethernet' }"
           @click="selectMode('ethernet')"
         >
-          Setup via Ethernet
+          {{ t('wizard.agentSetupViaEthernet') }}
         </button>
       </div>
 
@@ -57,29 +59,29 @@ const selectMode = (mode: AgentSetupMode) => {
         <div class="instruction-item">
           <div class="instruction-number">1</div>
           <div class="instruction-content">
-            <h4>Check your main router</h4>
-            <p>Make sure your main router has Smart Mesh enabled and is connected to the Internet.</p>
+            <h4>{{ t('wizard.agentStep1Title') }}</h4>
+            <p>{{ t('wizard.agentStep1Description') }}</p>
           </div>
         </div>
         <div class="instruction-item">
           <div class="instruction-number">2</div>
           <div class="instruction-content">
-            <h4>Press WPS buttons</h4>
-            <p>Press and hold the WPS buttons on both your main router and agent device for 2–3 seconds.. The LED should start blinking.</p>
+            <h4>{{ t('wizard.agentStep2Title') }}</h4>
+            <p>{{ t('wizard.agentStep2Description') }}</p>
           </div>
         </div>
         <div class="instruction-item">
           <div class="instruction-number">3</div>
           <div class="instruction-content">
-            <h4>Waiting for setup to complete</h4>
-            <p>And then click next.</p>
+            <h4>{{ t('wizard.agentStep3Title') }}</h4>
+            <p>{{ t('wizard.agentStep3Description') }}</p>
           </div>
         </div>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

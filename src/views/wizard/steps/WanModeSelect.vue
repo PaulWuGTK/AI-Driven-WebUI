@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig, WizardData } from '../../../types/wizard';
 
 interface Props {
@@ -8,13 +9,14 @@ interface Props {
 
 defineProps<Props>();
 defineEmits(['next', 'prev']);
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Select Connection Type</h1>
-      <p class="step-subtitle">Choose how your router connects to the internet.</p>
+      <h1 class="step-title">{{ t('wizard.wanModeTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.wanModeSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step active"></div>
@@ -27,28 +29,28 @@ defineEmits(['next', 'prev']);
       </div>
 
       <div class="form-group">
-        <label for="wan-mode">Connection Type <span class="required">*</span></label>
+        <label for="wan-mode">{{ t('wizard.wanModeLabel') }} <span class="required">*</span></label>
         <select id="wan-mode" v-model="config.wan.wanMode" class="form-select">
           <option v-for="mode in wizardData?.Wan.WANModeList" :key="mode" :value="mode">
             {{ mode.replace(/_/g, ' ') }}
           </option>
         </select>
-        <p class="help-text">Select the internet connection type provided by your ISP (Internet Service Provider).</p>
+        <p class="help-text">{{ t('wizard.wanModeHelp') }}</p>
       </div>
 
       <div class="info-box">
-        <h4>Need help choosing?</h4>
+        <h4>{{ t('wizard.wanModeInfoTitle') }}</h4>
         <ul>
-          <li><strong>DHCP:</strong> Automatic IP configuration (most common)</li>
-          <li><strong>PPP:</strong> Requires username and password from ISP</li>
-          <li><strong>Bridged:</strong> Pass-through mode</li>
-          <li><strong>Cellular:</strong> Mobile network connection</li>
+          <li><strong>DHCP:</strong> {{ t('wizard.wanModeDhcp') }}</li>
+          <li><strong>PPP:</strong> {{ t('wizard.wanModePpp') }}</li>
+          <li><strong>Bridged:</strong> {{ t('wizard.wanModeBridged') }}</li>
+          <li><strong>Cellular:</strong> {{ t('wizard.wanModeCellular') }}</li>
         </ul>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="$emit('next')">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 defineEmits(['next']);
 </script>
 
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Terms of Service and Privacy Policy</h1>
+      <h1 class="step-title">{{ t('wizard.privacyPolicyTitle') }}</h1>
 
       <div class="privacy-content">
         <p>Gemtek Privacy Policy (the "Policy") governs and applies to personal information collected by Gemtek Technology Co., Ltd. ("Gemtek") from you through Gemtek websites (the "Websites"), products supplied by Gemtek (the "Products"), or services provided by Gemtek (the "Services"). The Policy also describes Gemtek's practices regarding how such information is collected and used. By visiting the Websites or using the Products or Services, you accept the terms and conditions set forth in this Policy.</p>
@@ -29,7 +32,7 @@ defineEmits(['next']);
       </div>
 
       <div class="button-container">
-        <button class="btn-primary" @click="$emit('next')">Agree</button>
+        <button class="btn-primary" @click="$emit('next')">{{ t('wizard.agreeButton') }}</button>
       </div>
     </div>
   </div>

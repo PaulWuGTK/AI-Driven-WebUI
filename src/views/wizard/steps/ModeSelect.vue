@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { WizardConfig } from '../../../types/wizard';
 import routerModeImage from '../../../assets/icons/wizard/pict_router_mode.svg';
 import agentModeImage from '../../../assets/icons/wizard/pict_agent_mode.svg';
@@ -12,6 +13,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['next', 'prev', 'mode-change']);
+const { t } = useI18n();
 
 const selectedMode = ref<'router' | 'agent'>(props.config.mode);
 
@@ -28,8 +30,8 @@ const handleNext = () => {
 <template>
   <div class="step-container">
     <div class="step-card">
-      <h1 class="step-title">Let's Get Started</h1>
-      <p class="step-subtitle">How would you like to set up your device?</p>
+      <h1 class="step-title">{{ t('wizard.modeSelectTitle') }}</h1>
+      <p class="step-subtitle">{{ t('wizard.modeSelectSubtitle') }}</p>
 
       <div class="progress-bar">
         <div class="progress-step" :class="{ active: currentStep >= 1 }"></div>
@@ -50,8 +52,8 @@ const handleNext = () => {
           <div class="mode-diagram">
             <img :src="routerModeImage" alt="Router Mode Diagram" class="mode-image" />
           </div>
-          <h3>Router Mode</h3>
-          <p>I don't have a main router, and I'm going to set up a new wireless network with a modem.</p>
+          <h3>{{ t('wizard.routerModeTitle') }}</h3>
+          <p>{{ t('wizard.routerModeDescription') }}</p>
         </div>
 
         <div
@@ -62,14 +64,14 @@ const handleNext = () => {
           <div class="mode-diagram">
             <img :src="agentModeImage" alt="Agent Mode Diagram" class="mode-image" />
           </div>
-          <h3>Agent Mode</h3>
-          <p>I'm adding an Agent device to the existing Smart Mesh Network.</p>
+          <h3>{{ t('wizard.agentModeTitle') }}</h3>
+          <p>{{ t('wizard.agentModeDescription') }}</p>
         </div>
       </div>
 
       <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">Back</button>
-        <button class="btn-primary" @click="handleNext">Next</button>
+        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+        <button class="btn-primary" @click="handleNext">{{ t('common.next') }}</button>
       </div>
     </div>
   </div>

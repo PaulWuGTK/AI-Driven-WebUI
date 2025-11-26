@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import iconUpdatingImage from '../../../assets/icons/wizard/ico_updating.svg';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits(['complete']);
+const { t } = useI18n();
 
 const remainingTime = ref(props.etaSeconds);
 
@@ -53,10 +55,10 @@ onUnmounted(() => {
 
       <div class="countdown">{{ formatTime(remainingTime) }}</div>
 
-      <h2>Applying Settings...</h2>
+      <h2>{{ t('wizard.applyingTitle') }}</h2>
 
-      <p class="message">We're rebooting your router and applying your settings.</p>
-      <p class="warning">Please don't turn off or unplug it.</p>
+      <p class="message">{{ t('wizard.applyingMessage') }}</p>
+      <p class="warning">{{ t('wizard.applyingWarning') }}</p>
     </div>
   </div>
 </template>
