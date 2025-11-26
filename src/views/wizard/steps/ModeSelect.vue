@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { WizardConfig } from '../../../types/wizard';
+import routerModeImage from '../../../assets/icons/wizard/pict_router_mode.svg';
+import agentModeImage from '../../../assets/icons/wizard/pict_agent_mode.svg';
 
 interface Props {
   config: WizardConfig;
@@ -46,21 +48,7 @@ const handleNext = () => {
           @click="selectMode('router')"
         >
           <div class="mode-diagram">
-            <div class="diagram-item">
-              <div class="icon icon-globe"></div>
-              <span>INTERNET</span>
-            </div>
-            <div class="diagram-line"></div>
-            <div class="diagram-item">
-              <div class="icon icon-modem"></div>
-              <span>MODEM</span>
-            </div>
-            <div class="diagram-line"></div>
-            <div class="diagram-item">
-              <div class="icon icon-router"></div>
-              <span>MAIN ROUTER</span>
-            </div>
-            <div class="icon icon-wifi"></div>
+            <img :src="routerModeImage" alt="Router Mode Diagram" class="mode-image" />
           </div>
           <h3>Router Mode</h3>
           <p>I don't have a main router, and I'm going to set up a new wireless network with a modem.</p>
@@ -72,27 +60,7 @@ const handleNext = () => {
           @click="selectMode('agent')"
         >
           <div class="mode-diagram">
-            <div class="diagram-item">
-              <div class="icon icon-globe"></div>
-              <span>INTERNET</span>
-            </div>
-            <div class="diagram-line"></div>
-            <div class="diagram-item">
-              <div class="icon icon-router"></div>
-              <span>MAIN ROUTER<br>(MESH CONTROLLER)</span>
-            </div>
-            <div class="diagram-mesh">
-              <div class="diagram-line-mesh"></div>
-              <div class="diagram-agent">
-                <div class="icon icon-agent"></div>
-                <span>AGENT</span>
-              </div>
-              <div class="diagram-line-mesh"></div>
-              <div class="diagram-agent">
-                <div class="icon icon-agent"></div>
-                <span>AGENT</span>
-              </div>
-            </div>
+            <img :src="agentModeImage" alt="Agent Mode Diagram" class="mode-image" />
           </div>
           <h3>Agent Mode</h3>
           <p>I'm adding an Agent device to the existing Smart Mesh Network.</p>
@@ -189,104 +157,10 @@ const handleNext = () => {
   position: relative;
 }
 
-.diagram-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.7rem;
-  color: #666;
-}
-
-.diagram-line {
-  width: 40px;
-  height: 2px;
-  background: #999;
-  margin: 0 0.5rem;
-}
-
-.diagram-mesh {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-left: 1rem;
-}
-
-.diagram-line-mesh {
-  width: 30px;
-  height: 1px;
-  background: #999;
-  margin-left: -15px;
-}
-
-.diagram-agent {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.7rem;
-  color: #666;
-}
-
-.icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.icon-globe::before {
-  content: '🌐';
-  font-size: 1.5rem;
-}
-
-.icon-modem {
-  border-radius: 4px;
-  background: #f0f0f0;
-}
-
-.icon-modem::before {
-  content: '📡';
-  font-size: 1.2rem;
-}
-
-.icon-router {
-  border-radius: 4px;
-  background: #d0d0d0;
-}
-
-.icon-router::before {
-  content: '📶';
-  font-size: 1.2rem;
-}
-
-.icon-agent {
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  background: #e0e0e0;
-}
-
-.icon-agent::before {
-  content: '📡';
-  font-size: 1rem;
-}
-
-.icon-wifi {
-  position: absolute;
-  right: -20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-}
-
-.icon-wifi::before {
-  content: '📶';
-  font-size: 1.2rem;
+.mode-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .mode-card h3 {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import routerModeWireImage from '../../../assets/icons/wizard/pict_router_mode_client_wired.svg';
 
 defineEmits(['next', 'prev']);
 const { t } = useI18n();
@@ -22,37 +23,7 @@ const { t } = useI18n();
       </div>
 
       <div class="environment-diagram">
-        <div class="diagram-item">
-          <div class="icon icon-globe"></div>
-          <span>{{ t('wizard.internet') }}</span>
-        </div>
-        <div class="diagram-connection">
-          <div class="connection-line"></div>
-        </div>
-        <div class="diagram-item">
-          <div class="icon icon-modem"></div>
-          <span>{{ t('wizard.modem') }}</span>
-        </div>
-        <div class="diagram-connection">
-          <div class="connection-line"></div>
-          <div class="connection-labels">
-            <span class="label-top">{{ t('wizard.ethernetPort') }}</span>
-            <span class="label-text">{{ t('wizard.ethernetCable') }}</span>
-            <span class="label-bottom">{{ t('wizard.wanPort') }}</span>
-          </div>
-        </div>
-        <div class="diagram-item highlight">
-          <div class="icon icon-router"></div>
-          <span>{{ t('wizard.router') }}</span>
-        </div>
-        <div class="diagram-connection">
-          <div class="wifi-signal-left"></div>
-          <div class="wifi-signal-right"></div>
-        </div>
-        <div class="diagram-item">
-          <div class="icon icon-device"></div>
-          <span>{{ t('wizard.clientDevice') }}</span>
-        </div>
+        <img :src="routerModeWireImage" alt="Router Mode Wire Diagram" class="mode-image" />
       </div>
 
       <div class="info-container">
@@ -132,6 +103,12 @@ const { t } = useI18n();
   background: white;
   border-radius: 8px;
   position: relative;
+}
+
+.mode-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .diagram-item {

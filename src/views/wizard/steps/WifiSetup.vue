@@ -277,7 +277,7 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
             <span class="info-icon" :title="t('wizard.pscTooltip')">ℹ️</span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.psc" />
+            <input type="checkbox" v-model="config.wifi.psc" disabled/>
             <span class="slider"></span>
           </label>
         </div>

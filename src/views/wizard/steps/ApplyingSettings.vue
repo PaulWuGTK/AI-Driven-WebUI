@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import iconUpdatingImage from '../../../assets/icons/wizard/ico_updating.svg';
 
 interface Props {
   etaSeconds: number;
@@ -43,8 +44,11 @@ onUnmounted(() => {
   <div class="applying-container">
     <div class="applying-card">
       <div class="loading-icon">
-        <div class="gear gear-1"></div>
-        <div class="gear gear-2"></div>
+        <object
+          :data="iconUpdatingImage"
+          type="image/svg+xml"
+          class="mode-image"
+        ></object>
       </div>
 
       <div class="countdown">{{ formatTime(remainingTime) }}</div>
@@ -77,12 +81,16 @@ onUnmounted(() => {
 }
 
 .loading-icon {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
+.mode-image {
+  width: 160px;
+  height: 160px;
+  display: block;
+}
 .gear {
   position: absolute;
   border: 4px solid #0078d4;

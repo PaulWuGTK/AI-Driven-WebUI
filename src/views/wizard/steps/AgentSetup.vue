@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import type { AgentSetupMode } from '../../../types/wizard';
 
+import agentModeWpsImage from '../../../assets/icons/wizard/pict_agent_mode_wps_client_wireless.svg';
+import agentModeEthernetImage from '../../../assets/icons/wizard/pict_agent_mode_ethernet_client_wireless.svg';
+
 interface Props {
   agentSetupMode: AgentSetupMode;
 }
@@ -29,32 +32,8 @@ const selectMode = (mode: AgentSetupMode) => {
       </div>
 
       <div class="setup-diagram">
-        <div class="diagram-item">
-          <div class="icon icon-globe"></div>
-          <span>INTERNET</span>
-        </div>
-        <div class="diagram-line"></div>
-        <div class="diagram-item">
-          <div class="icon icon-router"></div>
-          <span>MAIN ROUTER</span>
-        </div>
-        <div class="diagram-wifi">
-          <div class="wifi-icon"></div>
-          <div class="wps-label">WPS Button</div>
-        </div>
-        <div class="diagram-item">
-          <div class="icon icon-agent"></div>
-          <span>AGENT<br>(WNRF0Q-112BE)</span>
-        </div>
-        <div class="diagram-wifi">
-          <div class="wifi-icon"></div>
-          <div class="wps-label">WPS Button</div>
-        </div>
-        <div class="diagram-line"></div>
-        <div class="diagram-item">
-          <div class="icon icon-client"></div>
-          <span>CLIENT DEVICE</span>
-        </div>
+        <img v-if="selectedMode == 'wps'" :src="agentModeWpsImage" alt="Agent Mode WPS Diagram" class="mode-image" />
+        <img v-if="selectedMode == 'ethernet'" :src="agentModeEthernetImage" alt="Agent Mode WPS Diagram" class="mode-image" />
       </div>
 
       <div class="mode-selection">
@@ -158,6 +137,12 @@ const selectMode = (mode: AgentSetupMode) => {
   padding: 2rem;
   background: #f8f9fa;
   border-radius: 8px;
+}
+
+.mode-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .diagram-item {
