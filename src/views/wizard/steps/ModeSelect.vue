@@ -69,10 +69,11 @@ const handleNext = () => {
         </div>
       </div>
 
-      <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-        <button class="btn-primary" @click="handleNext">{{ t('common.next') }}</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" @click="handleNext">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -81,6 +82,10 @@ const handleNext = () => {
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -88,6 +93,7 @@ const handleNext = () => {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
+  min-height: 600px;
 }
 
 .step-title {

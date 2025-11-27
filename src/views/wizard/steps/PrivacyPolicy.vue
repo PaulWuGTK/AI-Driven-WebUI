@@ -31,9 +31,10 @@ defineEmits(['next']);
         </ul>
       </div>
 
-      <div class="button-container">
-        <button class="btn-primary" @click="$emit('next')">{{ t('wizard.agreeButton') }}</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="btn-primary" @click="$emit('next')">{{ t('wizard.agreeButton') }}</button>
     </div>
   </div>
 </template>
@@ -42,8 +43,10 @@ defineEmits(['next']);
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -51,7 +54,7 @@ defineEmits(['next']);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
-  width: 100%;
+  min-height: 600px;
 }
 
 .step-title {

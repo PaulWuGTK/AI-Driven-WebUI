@@ -38,7 +38,7 @@ const { t } = useI18n();
         <p class="help-text">{{ t('wizard.wanModeHelp') }}</p>
       </div>
 
-      <div class="info-box">
+      <div class="info-box" v-if="0">
         <h4>{{ t('wizard.wanModeInfoTitle') }}</h4>
         <ul>
           <li><strong>DHCP:</strong> {{ t('wizard.wanModeDhcp') }}</li>
@@ -48,10 +48,11 @@ const { t } = useI18n();
         </ul>
       </div>
 
-      <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -60,6 +61,10 @@ const { t } = useI18n();
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -67,6 +72,7 @@ const { t } = useI18n();
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
+  min-height: 600px;
 }
 
 .step-title {

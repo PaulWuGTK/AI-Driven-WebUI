@@ -142,7 +142,11 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         <div class="toggle-row">
           <label class="toggle-label">
             <span>{{ t('wizard.smartConnect') }}</span>
-            <span class="info-icon" :title="t('wizard.smartConnectTooltip')">ℹ️</span>
+            <span class="tooltip-wrapper">
+              <span class="info-icon">
+              </span>
+              <span class="tooltip-box">{{ t('wizard.smartConnectTooltip') }}</span>
+            </span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.smartConnect" />
@@ -153,7 +157,11 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         <div class="toggle-row">
           <label class="toggle-label">
             <span>{{ t('wizard.mloNetwork') }}</span>
-            <span class="info-icon" :title="t('wizard.mloTooltip')">ℹ️</span>
+            <span class="tooltip-wrapper">
+              <span class="info-icon">
+              </span>
+              <span class="tooltip-box">{{ t('wizard.mloTooltip') }}</span>
+            </span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" />
@@ -318,7 +326,11 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         <div class="toggle-row">
           <label class="toggle-label">
             <span>{{ t('wizard.psc') }}</span>
-            <span class="info-icon" :title="t('wizard.pscTooltip')">ℹ️</span>
+            <span class="tooltip-wrapper">
+              <span class="info-icon">
+              </span>
+              <span class="tooltip-box">{{ t('wizard.pscTooltip') }}</span>
+            </span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.psc" disabled/>
@@ -329,7 +341,11 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         <div class="toggle-row">
           <label class="toggle-label">
             <span>{{ t('wizard.pmf') }}</span>
-            <span class="info-icon" :title="t('wizard.pmfTooltip')">ℹ️</span>
+            <span class="tooltip-wrapper">
+              <span class="info-icon">
+              </span>
+              <span class="tooltip-box">{{ t('wizard.pmfTooltip') }}</span>
+            </span>
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.pmf" />
@@ -338,10 +354,11 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         </div>
       </div>
 
-      <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -350,6 +367,10 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -357,6 +378,7 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
+  min-height: 600px;
 }
 
 .step-title {
@@ -413,9 +435,100 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
   color: #333;
 }
 
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
 .info-icon {
-  cursor: help;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #636969;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #636969;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  color: #636969;   /* 文字顏色（會被 ::before 繼承） */
+}
+
+.info-icon:hover {
+  background-color: #004F83;
+  border-color: #999;
+  color: #fff;      /* hover 時變白 */
+}
+
+.info-icon::before {
+  content: '!';
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.tooltip-box {
+  position: absolute;
+  left: calc(100% + 10px);  /* 在 icon 右邊 10px */
+  top: 50%;                 /* 垂直置中 */
+  transform: translateY(-50%);
+  width: 260px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #004F83;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 13px;
+  color: #333;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+/* 外層：藍色邊的左向三角形 */
+.tooltip-box::before {
+  content: "";
+  position: absolute;
+  top: 50%;                        /* 垂直置中 */
+  left: 0;                         /* 貼左邊 */
+  transform: translate(-100%, -50%);
+  border-width: 8px 8px 8px 0;     /* 左向三角形 */
+  border-style: solid;
+  border-color: transparent #004F83 transparent transparent;
+}
+
+/* 內層：白底三角形，做出只有邊框效果 */
+.tooltip-box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(calc(-100% + 1px), -50%);
+  border-width: 7px 7px 7px 0;
+  border-style: solid;
+  border-color: transparent #fff transparent transparent;
+}
+
+.tooltip-wrapper:hover .tooltip-box {
+  opacity: 1;
+  visibility: visible;
 }
 
 .toggle-switch {

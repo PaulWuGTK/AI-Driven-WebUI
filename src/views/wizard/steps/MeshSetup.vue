@@ -27,37 +27,27 @@ const { t } = useI18n();
         <div class="progress-step"></div>
       </div>
 
-      <div class="mesh-info">
-        <div class="mesh-icon">🔗</div>
-        <h3>{{ t('wizard.meshInfoTitle') }}</h3>
-        <p>{{ t('wizard.meshInfoDescription') }}</p>
-      </div>
-
       <div class="toggle-group">
         <div class="toggle-label">
           <span>Smart Mesh</span>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.mesh.enable" />
-            <span class="slider"></span>
-          </label>
-          <span class="info-icon" title="Enable mesh networking">ℹ️</span>
+          <span class="tooltip-wrapper">
+            <span class="info-icon">
+            </span>
+            <span class="tooltip-box">
+              When Smart Mesh is enabled, your router will be the Mesh Controller. After setup, you can add compatible Mesh Agents anytime for whole-home coverage.
+            </span>
+          </span>
         </div>
+        <label class="toggle-switch">
+          <input type="checkbox" v-model="config.mesh.enable" />
+          <span class="slider"></span>
+        </label>
       </div>
+    </div>
 
-      <div v-if="config.mesh.enable" class="mesh-benefits">
-        <h4>{{ t('wizard.meshBenefitsTitle') }}</h4>
-        <ul>
-          <li>{{ t('wizard.meshBenefit1') }}</li>
-          <li>{{ t('wizard.meshBenefit2') }}</li>
-          <li>{{ t('wizard.meshBenefit3') }}</li>
-          <li>{{ t('wizard.meshBenefit4') }}</li>
-        </ul>
-      </div>
-
-      <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
-      </div>
+    <div class="button-container">
+      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -66,6 +56,10 @@ const { t } = useI18n();
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -73,6 +67,7 @@ const { t } = useI18n();
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
+  min-height: 600px;
 }
 
 .step-title {
@@ -105,51 +100,109 @@ const { t } = useI18n();
   background: #0078d4;
 }
 
-.mesh-info {
-  text-align: center;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.mesh-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.mesh-info h3 {
-  color: #333;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.mesh-info p {
-  color: #666;
-  line-height: 1.6;
-}
-
 .toggle-group {
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .toggle-label {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  user-select: none;
+  gap: 0.75rem;
 }
 
-.toggle-label span {
+.toggle-label > span:first-child {
   font-size: 1.1rem;
   font-weight: 600;
   color: #333;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #636969;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  color: #636969;   /* 文字顏色（會被 ::before 繼承） */
+}
+
+.info-icon:hover {
+  background-color: #004F83;
+  border-color: #999;
+  color: #fff;      /* hover 時變白 */
+}
+
+.info-icon::before {
+  content: '!';
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.tooltip-box {
+  position: absolute;
+  left: calc(100% + 10px);  /* 在 icon 右邊 10px */
+  top: 50%;                 /* 垂直置中 */
+  transform: translateY(-50%);
+  width: 260px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #004F83;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 13px;
+  color: #333;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+/* 外層：藍色邊的左向三角形 */
+.tooltip-box::before {
+  content: "";
+  position: absolute;
+  top: 50%;                        /* 垂直置中 */
+  left: 0;                         /* 貼左邊 */
+  transform: translate(-100%, -50%);
+  border-width: 8px 8px 8px 0;     /* 左向三角形 */
+  border-style: solid;
+  border-color: transparent #004F83 transparent transparent;
+}
+
+/* 內層：白底三角形，做出只有邊框效果 */
+.tooltip-box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(calc(-100% + 1px), -50%);
+  border-width: 7px 7px 7px 0;
+  border-style: solid;
+  border-color: transparent #fff transparent transparent;
+}
+
+.tooltip-wrapper:hover .tooltip-box {
+  opacity: 1;
+  visibility: visible;
 }
 
 .toggle-switch {
@@ -194,42 +247,6 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(28px);
-}
-
-.mesh-benefits {
-  background: #f0f8ff;
-  border-left: 4px solid #0078d4;
-  padding: 1.5rem;
-  border-radius: 4px;
-  margin-bottom: 2rem;
-}
-
-.mesh-benefits h4 {
-  color: #0078d4;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.mesh-benefits ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.mesh-benefits li {
-  color: #333;
-  padding: 0.5rem 0;
-  padding-left: 1.5rem;
-  position: relative;
-}
-
-.mesh-benefits li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #0078d4;
-  font-weight: bold;
 }
 
 .button-container {

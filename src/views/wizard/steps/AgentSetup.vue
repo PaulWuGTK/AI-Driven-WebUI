@@ -66,8 +66,10 @@ const selectMode = (mode: AgentSetupMode) => {
         <div class="instruction-item">
           <div class="instruction-number">2</div>
           <div class="instruction-content">
-            <h4>{{ t('wizard.agentStep2Title') }}</h4>
-            <p>{{ t('wizard.agentStep2Description') }}</p>
+            <h4 v-if="selectedMode === 'wps'">{{ t('wizard.agentStep2Title') }}</h4>
+            <p v-if="selectedMode === 'wps'">{{ t('wizard.agentStep2Description') }}</p>
+            <h4 v-if="selectedMode === 'ethernet'">{{ t('wizard.agentStep2EthernetTitle') }}</h4>
+            <p v-if="selectedMode === 'ethernet'">{{ t('wizard.agentStep2EthernetDescription') }}</p>
           </div>
         </div>
         <div class="instruction-item">
@@ -79,10 +81,11 @@ const selectMode = (mode: AgentSetupMode) => {
         </div>
       </div>
 
-      <div class="button-container">
-        <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-        <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
-      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -91,6 +94,10 @@ const selectMode = (mode: AgentSetupMode) => {
 .step-container {
   width: 100%;
   max-width: 900px;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .step-card {
@@ -98,6 +105,7 @@ const selectMode = (mode: AgentSetupMode) => {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
+  min-height: 600px;
 }
 
 .step-title {
@@ -181,7 +189,7 @@ const selectMode = (mode: AgentSetupMode) => {
 }
 
 .wifi-icon::before {
-  content: '📶';
+  content: '��';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -205,7 +213,7 @@ const selectMode = (mode: AgentSetupMode) => {
 }
 
 .icon-globe::before {
-  content: '🌐';
+  content: '��';
   font-size: 1.8rem;
 }
 
@@ -215,7 +223,7 @@ const selectMode = (mode: AgentSetupMode) => {
 }
 
 .icon-router::before {
-  content: '📶';
+  content: '��';
   font-size: 1.5rem;
 }
 
@@ -225,12 +233,12 @@ const selectMode = (mode: AgentSetupMode) => {
 }
 
 .icon-agent::before {
-  content: '📡';
+  content: '��';
   font-size: 1.5rem;
 }
 
 .icon-client::before {
-  content: '📱';
+  content: '��';
   font-size: 1.5rem;
 }
 

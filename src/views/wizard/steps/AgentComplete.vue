@@ -86,9 +86,9 @@ const deviceModel = props.wizardData?.ModelName || '';
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 3rem 2.5rem;
-  width: 100%;
-  max-width: 600px;
+  padding: 2.5rem;
+  min-width: 860px;
+  min-height: 600px;
 }
 
 .success-content {
