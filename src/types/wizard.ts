@@ -120,8 +120,8 @@ export interface WizardAgentOnboardingRequest {
 
 export interface WizardAgentStatusResponse {
   WizardAgent: {
-    LinkStatus: 'Connecting' | 'Down' | 'Up';
-    OnboardingStatus: 'Success' | 'Inprogress' | 'Timeout';
+    LinkStatus?: 'Down' | 'Up';
+    OnboardingStatus: 'Success' | 'Inprogress';
   };
 }
 

@@ -13,6 +13,12 @@ defineEmits(['next', 'prev']);
 const { t } = useI18n();
 const showPassword = ref(false);
 
+const savedBandPasswords = ref({
+  '2g': '',
+  '5g': '',
+  '6g': ''
+});
+
 const commonSecurityOptions = computed(() => {
   if (props.config.wifi.common.securityOptions.length > 0) {
     return props.config.wifi.common.securityOptions.map(opt => ({ value: opt, label: opt }));
@@ -47,17 +53,31 @@ const band6gSecurityOptions = computed(() => {
 
 watch(() => props.config.wifi.smartConnect, (isEnabled) => {
   if (isEnabled) {
+    savedBandPasswords.value['2g'] = props.config.wifi.bands['2g'].password;
+    savedBandPasswords.value['5g'] = props.config.wifi.bands['5g'].password;
+    savedBandPasswords.value['6g'] = props.config.wifi.bands['6g'].password;
+
     props.config.wifi.bands['2g'].ssid = props.config.wifi.common.ssid;
     props.config.wifi.bands['5g'].ssid = props.config.wifi.common.ssid;
     props.config.wifi.bands['6g'].ssid = props.config.wifi.common.ssid;
     props.config.wifi.bands['2g'].security = props.config.wifi.common.security;
     props.config.wifi.bands['5g'].security = props.config.wifi.common.security;
     props.config.wifi.bands['6g'].security = props.config.wifi.common.security;
-    props.config.wifi.bands['2g'].password = '';
-    props.config.wifi.bands['5g'].password = '';
-    props.config.wifi.bands['6g'].password = '';
+    props.config.wifi.bands['2g'].password = savedBandPasswords.value['2g'];
+    props.config.wifi.bands['5g'].password = savedBandPasswords.value['5g'];
+    props.config.wifi.bands['6g'].password = savedBandPasswords.value['6g'];
   } else {
     props.config.wifi.mloEnable = false;
+
+    if (savedBandPasswords.value['2g']) {
+      props.config.wifi.bands['2g'].password = savedBandPasswords.value['2g'];
+    }
+    if (savedBandPasswords.value['5g']) {
+      props.config.wifi.bands['5g'].password = savedBandPasswords.value['5g'];
+    }
+    if (savedBandPasswords.value['6g']) {
+      props.config.wifi.bands['6g'].password = savedBandPasswords.value['6g'];
+    }
   }
 });
 
@@ -74,6 +94,30 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
     props.config.wifi.bands['2g'].security = newSecurity;
     props.config.wifi.bands['5g'].security = newSecurity;
     props.config.wifi.bands['6g'].security = newSecurity;
+  }
+});
+
+watch(() => props.config.wifi.bands['2g'].enabled, (enabled) => {
+  if (!enabled && props.config.wifi.bands['2g'].password) {
+    savedBandPasswords.value['2g'] = props.config.wifi.bands['2g'].password;
+  } else if (enabled && savedBandPasswords.value['2g']) {
+    props.config.wifi.bands['2g'].password = savedBandPasswords.value['2g'];
+  }
+});
+
+watch(() => props.config.wifi.bands['5g'].enabled, (enabled) => {
+  if (!enabled && props.config.wifi.bands['5g'].password) {
+    savedBandPasswords.value['5g'] = props.config.wifi.bands['5g'].password;
+  } else if (enabled && savedBandPasswords.value['5g']) {
+    props.config.wifi.bands['5g'].password = savedBandPasswords.value['5g'];
+  }
+});
+
+watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
+  if (!enabled && props.config.wifi.bands['6g'].password) {
+    savedBandPasswords.value['6g'] = props.config.wifi.bands['6g'].password;
+  } else if (enabled && savedBandPasswords.value['6g']) {
+    props.config.wifi.bands['6g'].password = savedBandPasswords.value['6g'];
   }
 });
 </script>

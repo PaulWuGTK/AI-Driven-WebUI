@@ -13,8 +13,8 @@ const emit = defineEmits(['back-to-agent-setup', 'agent-success']);
 const { t } = useI18n();
 
 const countdown = ref(120);
-const linkStatus = ref<'Connecting' | 'Down' | 'Up'>('Connecting');
-const onboardingStatus = ref<'Success' | 'Inprogress' | 'Timeout'>('Inprogress');
+const linkStatus = ref<'Down' | 'Up' | undefined>(undefined);
+const onboardingStatus = ref<'Success' | 'Inprogress'>('Inprogress');
 const statusMessage = ref('');
 
 let countdownTimer: number | null = null;
@@ -39,12 +39,12 @@ const pollStatus = async () => {
     if (onboardingStatus.value === 'Success') {
       stopPolling();
       emit('agent-success');
-    } else if (onboardingStatus.value === 'Timeout') {
+    } else if (props.agentSetupMode === 'ethernet' && linkStatus.value === 'Down') {
       stopPolling();
-      statusMessage.value = 'Setup timed out. Please try again.';
+      statusMessage.value = 'Connection failed. Returning to setup.';
       setTimeout(() => {
         emit('back-to-agent-setup');
-      }, 3000);
+      }, 2000);
     } else {
       updateStatusMessage();
     }
@@ -54,7 +54,7 @@ const pollStatus = async () => {
 };
 
 const updateStatusMessage = () => {
-  if (linkStatus.value === 'Connecting') {
+  if (linkStatus.value === undefined) {
     statusMessage.value = t('wizard.connectingMessage');
   } else if (linkStatus.value === 'Up') {
     statusMessage.value = t('wizard.connectionEstablished');
@@ -86,7 +86,7 @@ onMounted(() => {
     countdown.value--;
     if (countdown.value <= 0) {
       stopPolling();
-      statusMessage.value = 'Setup timed out.';
+      statusMessage.value = 'Setup timed out. Returning to setup.';
       setTimeout(() => {
         emit('back-to-agent-setup');
       }, 2000);

@@ -163,11 +163,13 @@ export const wizardApi = {
   async getAgentStatus(): Promise<WizardAgentStatusResponse> {
     if (isDevelopment) {
       await new Promise(resolve => setTimeout(resolve, 300));
-      const statuses: Array<'Success' | 'Inprogress' | 'Timeout'> = ['Inprogress', 'Inprogress', 'Success'];
+      const statuses: Array<'Success' | 'Inprogress'> = ['Inprogress', 'Inprogress', 'Success'];
       const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      const linkStatuses: Array<'Up' | 'Down'> = ['Up', 'Down'];
+      const randomLink = linkStatuses[Math.floor(Math.random() * linkStatuses.length)];
       return {
         WizardAgent: {
-          LinkStatus: randomStatus === 'Success' ? 'Up' : 'Connecting',
+          LinkStatus: randomLink,
           OnboardingStatus: randomStatus
         }
       };

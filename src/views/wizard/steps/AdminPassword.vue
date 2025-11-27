@@ -19,8 +19,18 @@ const passwordsMatch = computed(() => {
   return confirmPassword.value === '' || confirmPassword.value === props.config.admin.password;
 });
 
+const passwordPattern = /^[0-9a-zA-Z]+$/;
+
+const isPasswordValid = computed(() => {
+  if (!props.config.admin.password) return false;
+  return passwordPattern.test(props.config.admin.password);
+});
+
 const isValid = computed(() => {
-  return props.config.admin.username && props.config.admin.password && props.config.admin.password === confirmPassword.value;
+  return props.config.admin.username &&
+         props.config.admin.password &&
+         isPasswordValid.value &&
+         props.config.admin.password === confirmPassword.value;
 });
 </script>
 
@@ -54,7 +64,7 @@ const isValid = computed(() => {
         </div>
 
         <div class="form-group">
-          <label for="new-password">{{ t('wizard.password') }} <span class="required">*</span> <span class="help-inline">{{ t('wizard.passwordHint') }}</span></label>
+          <label for="new-password">{{ t('wizard.password') }} <span class="required">*</span></label>
           <div class="password-input">
             <input
               id="new-password"
@@ -62,12 +72,14 @@ const isValid = computed(() => {
               v-model="config.admin.password"
               :placeholder="t('wizard.passwordPlaceholder')"
               class="form-input"
+              :class="{ 'input-error': config.admin.password && !isPasswordValid }"
               required
             />
             <button type="button" class="password-toggle" @click="showPassword = !showPassword">
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
+          <p v-if="config.admin.password && !isPasswordValid" class="error-text">Password can only contain letters (a-z, A-Z) and numbers (0-9)</p>
         </div>
 
         <div class="form-group">
@@ -90,13 +102,13 @@ const isValid = computed(() => {
         </div>
       </div>
 
-      <div class="info-box">
+      <div v-if="0" class="info-box">
         <h4>{{ t('wizard.requirementsTitle') }}</h4>
         <ul>
-          <li>{{ t('wizard.strong') }}</li>
-          <li>{{ t('wizard.mixCase') }}</li>
-          <li>{{ t('wizard.includeSpecial') }}</li>
-          <li>{{ t('wizard.avoidCommon') }}</li>
+          <li>Password must not be empty</li>
+          <li>Only letters (a-z, A-Z) and numbers (0-9) allowed</li>
+          <li>Use a mix of uppercase and lowercase letters</li>
+          <li>Make it strong and memorable</li>
         </ul>
       </div>
 
@@ -171,12 +183,6 @@ const isValid = computed(() => {
 
 .required {
   color: #dc3545;
-}
-
-.help-inline {
-  font-weight: normal;
-  color: #666;
-  font-size: 0.85rem;
 }
 
 .form-input {
