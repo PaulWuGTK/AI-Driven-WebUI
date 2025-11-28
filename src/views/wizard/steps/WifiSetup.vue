@@ -333,7 +333,7 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
             </span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.psc" disabled/>
+            <input type="checkbox" v-model="config.wifi.psc" />
             <span class="slider"></span>
           </label>
         </div>
