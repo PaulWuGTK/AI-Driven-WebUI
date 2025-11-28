@@ -145,20 +145,20 @@ const handleAgentSetupModeChange = (mode: AgentSetupMode) => {
 
 const submitWizard = async () => {
   try {
-    loading.value = true;
+    isApplying.value = true;
+
     const response = await wizardApi.submitWizardConfig(config.value);
 
     if (response.WizardRouter.ok) {
       etaSeconds.value = response.WizardRouter.eta_seconds;
-      loading.value = false;
-      isApplying.value = true;
     } else {
+      isApplying.value = false;
       throw new Error(response.WizardRouter.message);
     }
   } catch (error) {
     console.error('Failed to submit wizard configuration:', error);
     alert('Failed to save configuration. Please try again.');
-    loading.value = false;
+    isApplying.value = false;
   }
 };
 

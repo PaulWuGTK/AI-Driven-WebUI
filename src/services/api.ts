@@ -5,6 +5,7 @@ import type { DualImageResponse } from '../types/dualImage';
 import type { SshServer, SshServerResponse, SshAuthorizedKey, SshAuthorizedKeyResponse, SshSession, SshSessionResponse } from '../types/ssh';
 import type { WifiNeighborScanResponse, WifiNeighborStatusResponse, WifiNeighborScanRequest } from '../types/wifiNeighbor';
 import type { StatusLcmResponse } from '../types/lcm';
+import type { QosBandwidthResponse, QosBandwidthConfig, QosRuleResponse, QosRuleRequest } from '../types/qos';
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
 import { wlanMockData } from './mockData/wlanMockData';
@@ -14,6 +15,7 @@ import { timezoneData } from './mockData/timezoneData';
 import { ddnsData } from './mockData/ddnsData';
 import { dualImageMockData } from './mockData/dualImageMockData';
 import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/sshData';
+import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { handleApiResponse } from '../utils/apiUtils';
 import { callApi } from './apiClient';
 
@@ -212,4 +214,46 @@ export async function getDualImageStatus(): Promise<DualImageResponse> {
     return dualImageMockData;
   }
   return callApi<DualImageResponse>(`${API_BASE_URL}/info?list=StatusDualImage`);
+}
+
+export async function getQosBandwidth(): Promise<QosBandwidthResponse> {
+  if (isDevelopment) {
+    return qosBandwidthMockData;
+  }
+  return callApi<QosBandwidthResponse>(`${API_BASE_URL}/info?list=QosBandwidth`);
+}
+
+export async function updateQosBandwidth(data: { QosBandwidth: QosBandwidthConfig }): Promise<QosBandwidthResponse> {
+  if (isDevelopment) {
+    return { ...qosBandwidthMockData, QosBandwidth: data.QosBandwidth };
+  }
+  const response = await fetch(`${API_BASE_URL}/info?list=QosBandwidth`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return handleApiResponse<QosBandwidthResponse>(response);
+}
+
+export async function getQosRule(): Promise<QosRuleResponse> {
+  if (isDevelopment) {
+    return qosRuleMockData;
+  }
+  return callApi<QosRuleResponse>(`${API_BASE_URL}/info?list=QosRule`);
+}
+
+export async function updateQosRule(data: QosRuleRequest): Promise<QosRuleResponse> {
+  if (isDevelopment) {
+    return { ...qosRuleMockData, QosRule: { ...qosRuleMockData.QosRule, RuleList: data.QosRule.RuleList } };
+  }
+  const response = await fetch(`${API_BASE_URL}/info?list=QosRule`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return handleApiResponse<QosRuleResponse>(response);
 }

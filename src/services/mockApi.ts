@@ -4,6 +4,7 @@ import type { WlanStatusResponse } from '../types/wlan';
 import type { StatisticsResponse } from '../types/statistics';
 import type { NtpResponse, NtpUpdateRequest } from '../types/ntp';
 import type { LogResponse } from '../types/log';
+import type { QosBandwidthResponse, QosRuleResponse } from '../types/qos';
 
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
@@ -12,6 +13,7 @@ import { statisticsMockData } from './mockData/statisticsMockData';
 import { ntpMockData } from './mockData/ntpMockData';
 import { getMeshMockData } from './mockData/dashboard/meshMock';
 import { generateMockLogs } from './mockData/logMockData';
+import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 
 export const getMockWanStatus = (): WanStatusResponse => wanMockData;
 export const getMockLanStatus = (): LanStatusResponse => lanMockData;
@@ -20,6 +22,8 @@ export const getMockStatistics = (): StatisticsResponse => statisticsMockData;
 export const getMockNtp = (): NtpResponse => ntpMockData;
 export const getMockMeshMap = () => ({ MeshMap: getMeshMockData() });
 export const getMockLogs = (request?: any): LogResponse => generateMockLogs(request?.StatusLog);
+export const getMockQosBandwidth = (): QosBandwidthResponse => qosBandwidthMockData;
+export const getMockQosRule = (): QosRuleResponse => qosRuleMockData;
 
 export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
   const servers = data.Ntp.NtpServers.split(',').map(s => s.trim());

@@ -287,9 +287,14 @@ const router = createRouter({
       redirect: '/advanced/service-control'
     },
     {
-      path: '/advance/qos',
-      component: () => import('../views/InProgress.vue'),
+      path: '/advanced/qos',
+      name: 'AdvancedQos',
+      component: () => import('../views/network/qos/QosConfig.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/advance/qos',
+      redirect: '/advanced/qos'
     },
     {
       path: '/advanced/ddns',

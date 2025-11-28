@@ -72,7 +72,7 @@ const showBandPasswords = ref({
             <span class="value">{{ config.wifi.mloEnable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
           </div>
 
-          <div v-if="config.wifi.smartConnect" class="wifi-details">
+          <div v-if="config.wifi.smartConnect">
             <div class="review-item">
               <span class="label">SSID:</span>
               <span class="value">{{ config.wifi.common.ssid }}</span>
@@ -90,7 +90,7 @@ const showBandPasswords = ref({
             </div>
           </div>
 
-          <div v-else class="wifi-details">
+          <div v-else >
             <div class="review-item">
               <span class="label">{{ t('wizard.reviewPsc') }}</span>
               <span class="value">{{ config.wifi.psc ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
@@ -305,9 +305,6 @@ const showBandPasswords = ref({
 
 .password-toggle-btn .material-icons {
   font-size: 1.25rem;
-}
-
-.wifi-details {
 }
 
 .band-info {

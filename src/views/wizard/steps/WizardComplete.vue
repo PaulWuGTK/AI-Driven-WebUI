@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import iconResultSucceedImage from '../../../assets/icons/wizard/ico-result-succeed.svg';
 
 interface Props {
   ssid?: string;
@@ -19,12 +20,7 @@ const displayModel = computed(() => props.deviceModel || '');
   <div class="complete-container">
     <div class="complete-card">
       <div class="success-icon">
-        <div class="router-icon"></div>
-        <div class="wifi-rings">
-          <div class="ring ring-1"></div>
-          <div class="ring ring-2"></div>
-          <div class="ring ring-3"></div>
-        </div>
+        <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" />
       </div>
 
       <h1 v-if="displayModel" class="device-name">{{ displayModel }}</h1>
@@ -68,78 +64,10 @@ const displayModel = computed(() => props.deviceModel || '');
   margin: 0 auto 2rem;
 }
 
-.router-icon {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  top: 30px;
-  left: 30px;
-  background: linear-gradient(135deg, #0098DA 0%, #0078d4 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
-  z-index: 2;
-}
-
-.router-icon::before {
-  content: '📶';
-  font-size: 3rem;
-}
-
-.wifi-rings {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.ring {
-  position: absolute;
-  border: 3px solid #0098DA;
-  border-radius: 50%;
-  opacity: 0;
-  animation: pulse-ring 2s ease-out infinite;
-}
-
-.ring-1 {
-  width: 110px;
-  height: 110px;
-  top: 25px;
-  left: 25px;
-  animation-delay: 0s;
-}
-
-.ring-2 {
-  width: 135px;
-  height: 135px;
-  top: 12px;
-  left: 12px;
-  animation-delay: 0.6s;
-}
-
-.ring-3 {
-  width: 160px;
-  height: 160px;
-  top: 0;
-  left: 0;
-  animation-delay: 1.2s;
-}
-
-@keyframes pulse-ring {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  30% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
+.mode-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .device-name {
