@@ -218,7 +218,9 @@ export default {
     destination: '接続先',
     selectDestination: '接続先を選択',
     band: 'バンド',
-    selectBand: 'バンドを選択'
+    selectBand: 'バンドを選択',
+    nodeDetails: 'ノード詳細',
+    deviceName: 'デバイス名'
   },
   lcm: {
     title: "ステータス - LCM",

@@ -218,7 +218,9 @@ export default {
     destination: 'Ziel',
     selectDestination: 'Ziel auswählen',
     band: 'Band',
-    selectBand: 'Band auswählen'
+    selectBand: 'Band auswählen',
+    nodeDetails: 'Knotendetails',
+    deviceName: 'Gerätename'
   },
   lcm: {
     title: "Status - LCM",

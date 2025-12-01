@@ -218,7 +218,9 @@ export default {
     destination: 'Destination',
     selectDestination: 'Sélectionner la Destination',
     band: 'Bande',
-    selectBand: 'Sélectionner la Bande'
+    selectBand: 'Sélectionner la Bande',
+    nodeDetails: 'Détails du nœud',
+    deviceName: 'Nom de l’appareil'
   },
   lcm: {
     title: "Statut - LCM",

@@ -217,7 +217,9 @@ export default {
     destination: '대상',
     selectDestination: '대상 선택',
     band: '대역',
-    selectBand: '대역 선택'
+    selectBand: '대역 선택',
+    nodeDetails: '노드 상세 정보',
+    deviceName: '장치 이름'
   },
   lcm: {
     title: "상태 - LCM",

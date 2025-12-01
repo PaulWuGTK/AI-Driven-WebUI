@@ -219,7 +219,9 @@ export default {
     destination: '目標',
     selectDestination: '選擇目標',
     band: '頻段',
-    selectBand: '選擇頻段'
+    selectBand: '選擇頻段',
+    nodeDetails: '節點詳細資訊',
+    deviceName: '裝置名稱'
   },
   lcm: {
     title: "狀態 - LCM",

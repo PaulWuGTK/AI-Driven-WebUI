@@ -218,7 +218,9 @@ export default {
     destination: '目标',
     selectDestination: '选择目标',
     band: '频段',
-    selectBand: '选择频段'
+    selectBand: '选择频段',
+    nodeDetails: '节点详细信息',
+    deviceName: '设备名称'
   },
   lcm: {
     title: '状态 - LCM',

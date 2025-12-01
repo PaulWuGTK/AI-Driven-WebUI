@@ -6,6 +6,9 @@ export interface MeshNode {
   MediaType: string;
   Upstream: string;
   SupportedBand?: string;
+  TxRate?: string;
+  RxRate?: string;
+  RSSI?: number;
 }
 
 export interface MeshMapResponse {

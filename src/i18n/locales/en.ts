@@ -220,7 +220,9 @@ const translations = {
     destination: 'Destination',
     selectDestination: 'Select Destination',
     band: 'Band',
-    selectBand: 'Select Band'
+    selectBand: 'Select Band',
+    nodeDetails: 'Node Details',
+    deviceName: 'Device Name'
   },
   lcm: {
     title: 'Status - LCM',

@@ -28,6 +28,7 @@ const props = defineProps<{
 const svgContainer = ref<HTMLDivElement | null>(null);
 const hoveredNode = ref<MeshNode | null>(null);
 const hoverPosition = ref({ x: 0, y: 0 });
+const selectedNode = ref<MeshNode | null>(null);
 const simulation = ref<d3.Simulation<D3Node, D3Link> | null>(null);
 
 // Constants for node sizes and layout
@@ -55,12 +56,73 @@ const getNodeSize = (nodeType: string) => {
   return NODE_SIZES[nodeType as keyof typeof NODE_SIZES] || NODE_SIZES.Client;
 };
 
-// Prepare nodes and links for D3
+// Calculate hierarchical levels for each node
+const calculateHierarchy = (nodes: MeshNode[]) => {
+  const nodeMap = new Map<string, { node: MeshNode; level: number }>();
+  const macToNode = new Map<string, MeshNode>();
+
+  // Build MAC to node mapping
+  nodes.forEach(node => {
+    macToNode.set(node.MACAddress, node);
+  });
+
+  // Find controller (root node) - node with Upstream === '-'
+  const controller = nodes.find(n => n.Upstream === '-');
+  if (!controller) {
+    // If no controller found, treat first node as root
+    nodes.forEach((node, idx) => {
+      nodeMap.set(node.MACAddress, { node, level: idx === 0 ? 0 : 1 });
+    });
+    return nodeMap;
+  }
+
+  // BFS to assign levels
+  const queue: Array<{ mac: string; level: number }> = [{ mac: controller.MACAddress, level: 0 }];
+  const visited = new Set<string>();
+
+  while (queue.length > 0) {
+    const { mac, level } = queue.shift()!;
+
+    if (visited.has(mac)) continue;
+    visited.add(mac);
+
+    const node = macToNode.get(mac);
+    if (node) {
+      nodeMap.set(mac, { node, level });
+
+      // Find all children (nodes whose Upstream is this node's MAC)
+      const children = nodes.filter(n => n.Upstream === mac);
+      children.forEach(child => {
+        queue.push({ mac: child.MACAddress, level: level + 1 });
+      });
+    }
+  }
+
+  // Add any remaining nodes that weren't reached
+  nodes.forEach(node => {
+    if (!nodeMap.has(node.MACAddress)) {
+      nodeMap.set(node.MACAddress, { node, level: 0 });
+    }
+  });
+
+  return nodeMap;
+};
+
+// Prepare nodes and links for D3 with hierarchical positioning
 const prepareNodesAndLinks = () => {
-  // Create a map of nodes for quick lookup
+  const hierarchy = calculateHierarchy(props.nodes);
+
+  // Group nodes by level
+  const levelGroups = new Map<number, MeshNode[]>();
+  hierarchy.forEach(({ node, level }) => {
+    if (!levelGroups.has(level)) {
+      levelGroups.set(level, []);
+    }
+    levelGroups.get(level)!.push(node);
+  });
+
+  // Create D3 nodes with initial positions
   const nodeMap = new Map<string, D3Node>();
-  
-  // First create all nodes with D3Node interface
   props.nodes.forEach(node => {
     nodeMap.set(node.MACAddress, { ...node });
   });
@@ -74,22 +136,61 @@ const prepareNodesAndLinks = () => {
       mediaType: node.MediaType
     }));
 
-  return { nodes: Array.from(nodeMap.values()), links };
+  return { nodes: Array.from(nodeMap.values()), links, hierarchy };
 };
 
 const createSimulation = (width: number, height: number) => {
-  const { nodes, links } = prepareNodesAndLinks();
+  const { nodes, links, hierarchy } = prepareNodesAndLinks();
 
-  // Create simulation with proper typing
+  // Calculate the number of levels
+  const maxLevel = Math.max(...Array.from(hierarchy.values()).map(h => h.level));
+  const verticalPadding = 80;
+  const levelHeight = (height - verticalPadding * 2) / Math.max(maxLevel, 1);
+
+  // Group nodes by level for positioning
+  const levelGroups = new Map<number, D3Node[]>();
+  hierarchy.forEach(({ level }, mac) => {
+    const node = nodes.find(n => n.MACAddress === mac);
+    if (node) {
+      if (!levelGroups.has(level)) {
+        levelGroups.set(level, []);
+      }
+      levelGroups.get(level)!.push(node);
+    }
+  });
+
+  // Calculate positions for each level
+  levelGroups.forEach((nodesInLevel, level) => {
+    const y = verticalPadding + level * levelHeight;
+
+    // Calculate horizontal spacing
+    const horizontalPadding = 80;
+    const availableWidth = width - horizontalPadding * 2;
+    const nodeCount = nodesInLevel.length;
+
+    if (nodeCount === 1) {
+      // Center single node
+      nodesInLevel[0].fx = width / 2;
+      nodesInLevel[0].fy = y;
+    } else {
+      // Distribute multiple nodes evenly
+      const spacing = availableWidth / (nodeCount - 1);
+      nodesInLevel.forEach((node, index) => {
+        node.fx = horizontalPadding + spacing * index;
+        node.fy = y;
+      });
+    }
+  });
+
+  // Use minimal force simulation just to handle rendering
   const sim = d3.forceSimulation<D3Node>()
     .nodes(nodes)
     .force('link', d3.forceLink<D3Node, D3Link>(links)
       .id(d => d.MACAddress)
-      .distance(90))
-    .force('charge', d3.forceManyBody().strength(-700))
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('y', d3.forceY().strength(0.1))
-    .force('x', d3.forceX().strength(0.1));
+      .distance(levelHeight * 0.8)
+      .strength(0))
+    .alphaDecay(1) // Stop immediately
+    .stop(); // Don't run simulation, use fixed positions
 
   return { simulation: sim, nodes, links };
 };
@@ -127,6 +228,15 @@ const renderChart = () => {
 
   svg.call(zoomBehavior as any);
 
+  // Click on background to deselect
+  svg.on('click', () => {
+    selectedNode.value = null;
+    // Reset all node styles
+    g.selectAll<SVGGElement, D3Node>('.node image')
+      .style('opacity', 1)
+      .style('filter', 'none');
+  });
+
   // Create simulation and get prepared nodes and links
   const { simulation: sim, nodes, links } = createSimulation(containerWidth, containerHeight);
   simulation.value = sim;
@@ -140,29 +250,59 @@ const renderChart = () => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', d => d.mediaType === 'Wi-Fi' ? '5,5' : '');
 
-  // Create node groups
+  // Store original positions for each node
+  const originalPositions = new Map<string, { x: number; y: number }>();
+  nodes.forEach(node => {
+    if (node.fx !== undefined && node.fx !== null && node.fy !== undefined && node.fy !== null) {
+      originalPositions.set(node.MACAddress, { x: node.fx, y: node.fy });
+    }
+  });
+
+  // Define update function for positions
+  const updatePositions = () => {
+    link
+      .attr('x1', d => (d.source as D3Node).x!)
+      .attr('y1', d => (d.source as D3Node).y!)
+      .attr('x2', d => (d.target as D3Node).x!)
+      .attr('y2', d => (d.target as D3Node).y!);
+
+    node
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+  };
+
+  // Create node groups with optional drag behavior
   const node = g.selectAll<SVGGElement, D3Node>('.node')
     .data(nodes)
     .join('g')
     .attr('class', 'node')
     .call(d3.drag<SVGGElement, D3Node>()
       .on('start', (event: any, d: D3Node) => {
-        if (!event.active && simulation.value) {
-          simulation.value.alphaTarget(0.3).restart();
+        const originalPos = originalPositions.get(d.MACAddress);
+        if (originalPos) {
+          d.fx = d.x;
+          d.fy = originalPos.y; // Keep Y fixed
         }
-        d.fx = d.x;
-        d.fy = d.y;
       })
       .on('drag', (event: any, d: D3Node) => {
-        d.fx = event.x;
-        d.fy = event.y;
+        const originalPos = originalPositions.get(d.MACAddress);
+        if (originalPos) {
+          // Only allow horizontal dragging
+          d.fx = event.x;
+          d.fy = originalPos.y; // Keep Y fixed at original level
+          d.x = event.x;
+          d.y = originalPos.y;
+
+          // Update positions immediately
+          updatePositions();
+        }
       })
       .on('end', (event: any, d: D3Node) => {
-        if (!event.active && simulation.value) {
-          simulation.value.alphaTarget(0);
+        const originalPos = originalPositions.get(d.MACAddress);
+        if (originalPos) {
+          // Keep the new horizontal position
+          d.fx = event.x;
+          d.fy = originalPos.y;
         }
-        d.fx = null;
-        d.fy = null;
       }));
 
   // Add images to nodes
@@ -181,7 +321,7 @@ const renderChart = () => {
     .style('font-size', '12px')
     .style('fill', '#333');
 
-  // Add hover events
+  // Add hover and click events
   node.on('mouseover', (event, d) => {
     hoveredNode.value = d;
     const rect = (event.target as HTMLElement).getBoundingClientRect();
@@ -192,19 +332,20 @@ const renderChart = () => {
   })
   .on('mouseout', () => {
     hoveredNode.value = null;
+  })
+  .on('click', (event, d) => {
+    event.stopPropagation();
+    selectedNode.value = d;
+
+    // Highlight selected node
+    node.selectAll('image')
+      .style('opacity', n => n === d ? 1 : 0.6)
+      .style('filter', n => n === d ? 'drop-shadow(0 0 8px rgba(33, 150, 243, 0.8))' : 'none');
   });
 
-  // Update positions on tick
-  sim.on('tick', () => {
-    link
-      .attr('x1', d => (d.source as D3Node).x!)
-      .attr('y1', d => (d.source as D3Node).y!)
-      .attr('x2', d => (d.target as D3Node).x!)
-      .attr('y2', d => (d.target as D3Node).y!);
-
-    node
-      .attr('transform', d => `translate(${d.x},${d.y})`);
-  });
+  // Trigger initial position calculation and render
+  sim.tick();
+  updatePositions();
 };
 
 // Watch for changes in nodes
@@ -232,10 +373,16 @@ onUnmounted(() => {
 
 <template>
   <div class="topology-map" :data-testid="qa('mesh-topology-map-container')">
-    <div ref="svgContainer" class="svg-container" :data-testid="qa('mesh-topology-map-svg')"></div>
+    <div
+      ref="svgContainer"
+      class="svg-container"
+      :class="{ 'with-sidebar': selectedNode }"
+      :data-testid="qa('mesh-topology-map-svg')"
+    ></div>
 
-    <div 
-      v-if="hoveredNode"
+    <!-- Hover tooltip -->
+    <div
+      v-if="hoveredNode && !selectedNode"
       class="node-tooltip"
       :data-testid="qa('mesh-topology-map-tooltip')"
       :style="{
@@ -248,10 +395,74 @@ onUnmounted(() => {
         <div :data-testid="qa('mesh-topology-map-tooltip-mode')">Mode: {{ hoveredNode.Mode }}</div>
         <div :data-testid="qa('mesh-topology-map-tooltip-ip')">IP: {{ hoveredNode.ipv4 }}</div>
         <div :data-testid="qa('mesh-topology-map-tooltip-mac')">MAC: {{ hoveredNode.MACAddress }}</div>
-        <div :data-testid="qa('mesh-topology-map-tooltip-media-type')">Media Type: {{ hoveredNode.MediaType }}</div>
-        <div v-if="hoveredNode.SupportedBand" :data-testid="qa('mesh-topology-map-tooltip-band')">Band: {{ hoveredNode.SupportedBand }}</div>
       </div>
     </div>
+
+    <!-- Selected node detail panel -->
+    <transition name="slide">
+      <div
+        v-if="selectedNode"
+        class="node-detail-panel"
+        :data-testid="qa('mesh-topology-map-detail-panel')"
+      >
+        <div class="panel-header">
+          <h3>{{ t('mesh.nodeDetails') || 'Node Details' }}</h3>
+          <button
+            class="close-btn"
+            @click="selectedNode = null"
+            :data-testid="qa('mesh-topology-map-detail-close')"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="panel-content">
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-label">{{ t('mesh.deviceName') || 'Device Name' }}:</span>
+              <span class="detail-value">{{ selectedNode.Name }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">{{ t('mesh.mode') || 'Mode' }}:</span>
+              <span class="detail-value" :class="`mode-${selectedNode.Mode.toLowerCase()}`">
+                {{ selectedNode.Mode }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">{{ t('mesh.ipAddress') || 'IP Address' }}:</span>
+              <span class="detail-value">{{ selectedNode.ipv4 || '-' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">{{ t('mesh.macAddress') || 'MAC Address' }}:</span>
+              <span class="detail-value mono">{{ selectedNode.MACAddress }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">{{ t('mesh.mediaType') || 'Media Type' }}:</span>
+              <span class="detail-value">{{ selectedNode.MediaType }}</span>
+            </div>
+            <div class="detail-row" v-if="selectedNode.Upstream !== '-'">
+              <span class="detail-label">{{ t('mesh.upstream') || 'Upstream' }}:</span>
+              <span class="detail-value mono">{{ selectedNode.Upstream }}</span>
+            </div>
+            <div class="detail-row" v-if="selectedNode.SupportedBand">
+              <span class="detail-label">{{ t('mesh.band') || 'Band' }}:</span>
+              <span class="detail-value">{{ selectedNode.SupportedBand }}</span>
+            </div>
+            <div class="detail-row" v-if="selectedNode.TxRate">
+              <span class="detail-label">{{ t('mesh.txRate') || 'TX Rate' }}:</span>
+              <span class="detail-value">{{ selectedNode.TxRate }}</span>
+            </div>
+            <div class="detail-row" v-if="selectedNode.RxRate">
+              <span class="detail-label">{{ t('mesh.rxRate') || 'RX Rate' }}:</span>
+              <span class="detail-value">{{ selectedNode.RxRate }}</span>
+            </div>
+            <div class="detail-row" v-if="selectedNode.RSSI">
+              <span class="detail-label">{{ t('mesh.rssi') || 'RSSI' }}:</span>
+              <span class="detail-value">{{ selectedNode.RSSI }} dBm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -264,11 +475,18 @@ onUnmounted(() => {
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  display: flex;
 }
 
 .svg-container {
+  flex: 1;
   width: 100%;
   height: 100%;
+  transition: width 0.3s ease;
+}
+
+.svg-container.with-sidebar {
+  width: calc(100% - 320px);
 }
 
 .node-tooltip {
@@ -288,6 +506,122 @@ onUnmounted(() => {
   line-height: 1.4;
 }
 
+.node-detail-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100%;
+  background-color: white;
+  border-left: 1px solid #e0e0e0;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.panel-content {
+  padding: 1.25rem;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: #333;
+  word-break: break-all;
+}
+
+.detail-value.mono {
+  font-family: 'Courier New', monospace;
+  background-color: #f5f5f5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+.mode-controller {
+  color: #2196F3;
+  font-weight: 600;
+}
+
+.mode-agent {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.mode-client {
+  color: #FF9800;
+  font-weight: 600;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from {
+  transform: translateX(100%);
+}
+
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
 :deep(.link) {
   pointer-events: none;
 }
@@ -298,5 +632,9 @@ onUnmounted(() => {
 
 :deep(.node text) {
   pointer-events: none;
+}
+
+:deep(.node image) {
+  transition: opacity 0.2s, filter 0.2s;
 }
 </style>
