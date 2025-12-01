@@ -9,38 +9,52 @@
       </div>
 
       <div class="rule-table-container">
-        <BaseTable
-          :columns="columns"
-          :data="formData.RuleList"
-          :bordered="true"
-          :hover="true"
-        >
-          <template #cell-no="{ index }">
-            {{ index + 1 }}
-          </template>
-          <template #cell-type="{ row }">
-            {{ row.Type }}
-          </template>
-          <template #cell-name="{ row }">
-            {{ row.Type === 'Application' ? row.ApplicationName : row.DeviceName }}
-          </template>
-          <template #cell-description="{ row }">
-            {{ formatDescription(row) }}
-          </template>
-          <template #cell-priority="{ row }">
-            {{ row.Priority }}
-          </template>
-          <template #cell-action="{ row, index }">
-            <div class="action-buttons">
-              <button @click="handleEdit(row, index)" class="icon-btn" :title="t('common.edit')">
-                <span class="material-icons">edit</span>
-              </button>
-              <button @click="handleDelete(index)" class="icon-btn" :title="t('common.delete')">
-                <span class="material-icons">delete</span>
-              </button>
-            </div>
-          </template>
-        </BaseTable>
+        <table class="draggable-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{ t('qos.no') }}</th>
+              <th>{{ t('qos.type') }}</th>
+              <th>{{ t('qos.name') }}</th>
+              <th>{{ t('qos.description') }}</th>
+              <th>{{ t('qos.priority') }}</th>
+              <th>{{ t('qos.action') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(row, index) in formData.RuleList"
+              :key="`rule-${index}`"
+              draggable="true"
+              @dragstart="handleDragStart($event, index)"
+              @dragover="handleDragOver($event, index)"
+              @dragenter="handleDragEnter($event, index)"
+              @dragleave="handleDragLeave($event)"
+              @drop="handleDrop($event, index)"
+              @dragend="handleDragEnd"
+              :class="{ 'drag-over': dragOverIndex === index }"
+            >
+              <td class="drag-handle">
+                <span class="material-icons">drag_indicator</span>
+              </td>
+              <td>{{ index + 1 }}</td>
+              <td>{{ row.Type }}</td>
+              <td>{{ row.Type === 'Application' ? row.ApplicationName : row.DeviceName }}</td>
+              <td>{{ formatDescription(row) }}</td>
+              <td>{{ row.Priority }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button @click="handleEdit(row, index)" class="icon-btn" :title="t('common.edit')">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button @click="handleDelete(index)" class="icon-btn" :title="t('common.delete')">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="button-group">
@@ -176,6 +190,9 @@ const editingIndex = ref<number | null>(null);
 const selectedApplicationType = ref('');
 const selectedDevice = ref('');
 const loading = ref(false);
+
+const draggedIndex = ref<number | null>(null);
+const dragOverIndex = ref<number | null>(null);
 
 const currentRule = ref<QosRule>({
   Order: 0,
@@ -440,6 +457,67 @@ const loadData = async () => {
   }
 };
 
+const handleDragStart = (event: DragEvent, index: number) => {
+  draggedIndex.value = index;
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', String(index));
+  }
+  const target = event.target as HTMLElement;
+  target.style.opacity = '0.4';
+};
+
+const handleDragOver = (event: DragEvent, index: number) => {
+  event.preventDefault();
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move';
+  }
+};
+
+const handleDragEnter = (event: DragEvent, index: number) => {
+  event.preventDefault();
+  if (draggedIndex.value !== null && draggedIndex.value !== index) {
+    dragOverIndex.value = index;
+  }
+};
+
+const handleDragLeave = (event: DragEvent) => {
+  const relatedTarget = event.relatedTarget as HTMLElement;
+  const currentTarget = event.currentTarget as HTMLElement;
+
+  if (!currentTarget.contains(relatedTarget)) {
+    dragOverIndex.value = null;
+  }
+};
+
+const handleDrop = (event: DragEvent, dropIndex: number) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (draggedIndex.value !== null && draggedIndex.value !== dropIndex) {
+    const items = [...formData.value.RuleList];
+    const draggedItem = items[draggedIndex.value];
+
+    items.splice(draggedIndex.value, 1);
+    items.splice(dropIndex, 0, draggedItem);
+
+    items.forEach((item, idx) => {
+      item.Order = idx + 1;
+    });
+
+    formData.value.RuleList = items;
+  }
+
+  dragOverIndex.value = null;
+};
+
+const handleDragEnd = (event: DragEvent) => {
+  const target = event.target as HTMLElement;
+  target.style.opacity = '1';
+  draggedIndex.value = null;
+  dragOverIndex.value = null;
+};
+
 onMounted(() => {
   loadData();
 });
@@ -529,11 +607,69 @@ onMounted(() => {
   margin-top: 8px;
 }
 
+.draggable-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.draggable-table th,
+.draggable-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.draggable-table th {
+  background: var(--bg-secondary, #f9fafb);
+  font-weight: 600;
+  color: var(--text-primary, #1f2937);
+  font-size: 14px;
+}
+
+.draggable-table tbody tr {
+  cursor: move;
+  transition: background-color 0.2s;
+}
+
+.draggable-table tbody tr:hover {
+  background-color: var(--bg-hover, #f3f4f6);
+}
+
+.draggable-table tbody tr.drag-over {
+  background-color: var(--primary-light, #dbeafe);
+  border-top: 2px solid var(--primary-color, #2563eb);
+}
+
+.drag-handle {
+  width: 40px;
+  cursor: grab;
+  color: var(--text-secondary, #6b7280);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle .material-icons {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
 @media (max-width: 768px) {
   .rule-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .draggable-table {
+    font-size: 14px;
+  }
+
+  .draggable-table th,
+  .draggable-table td {
+    padding: 8px;
   }
 }
 </style>
