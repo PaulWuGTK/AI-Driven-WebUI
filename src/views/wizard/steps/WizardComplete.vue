@@ -59,9 +59,9 @@ const displayModel = computed(() => props.deviceModel || '');
 
 .success-icon {
   position: relative;
-  width: 160px;
-  height: 160px;
-  margin: 0 auto 2rem;
+  width: 142px;
+  height: 142px;
+  margin: 4rem auto 2rem;
 }
 
 .mode-image {
@@ -71,17 +71,17 @@ const displayModel = computed(() => props.deviceModel || '');
 }
 
 .device-name {
-  color: #333;
+  color: #666;
   font-size: 1.75rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 h2 {
-  color: #333;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #666;
+  margin: 1rem 0 1rem 0;
 }
 
 .message {

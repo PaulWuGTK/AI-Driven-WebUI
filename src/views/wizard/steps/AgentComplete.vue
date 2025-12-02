@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { wizardApi } from '../../../services/api/wizard';
+import iconResultSucceedImage from '../../../assets/icons/wizard/ico-result-succeed.svg';
 
 interface Props {
   wizardData: any;
@@ -35,21 +36,7 @@ const deviceModel = props.wizardData?.ModelName || '';
     <div class="step-card">
       <div class="success-content">
         <div class="device-icon">
-          <svg viewBox="0 0 200 200" class="device-svg">
-            <circle cx="100" cy="100" r="90" fill="#0078d4" opacity="0.1"/>
-            <circle cx="100" cy="100" r="70" fill="#0078d4" opacity="0.2"/>
-            <circle cx="100" cy="100" r="50" fill="#0078d4"/>
-
-            <!-- Router/Device shape -->
-            <rect x="70" y="80" width="60" height="40" rx="8" fill="white"/>
-
-            <!-- WiFi waves -->
-            <path d="M 50 100 Q 70 80, 90 100" stroke="white" stroke-width="3" fill="none" opacity="0.6"/>
-            <path d="M 110 100 Q 130 80, 150 100" stroke="white" stroke-width="3" fill="none" opacity="0.6"/>
-
-            <path d="M 40 100 Q 70 60, 100 100" stroke="white" stroke-width="3" fill="none" opacity="0.3"/>
-            <path d="M 100 100 Q 130 60, 160 100" stroke="white" stroke-width="3" fill="none" opacity="0.3"/>
-          </svg>
+          <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" />
         </div>
 
         <h1 v-if="deviceModel" class="device-model">{{ deviceModel }}</h1>
@@ -87,7 +74,7 @@ const deviceModel = props.wizardData?.ModelName || '';
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
-  min-width: 860px;
+  min-width: 900px;
   min-height: 600px;
 }
 
@@ -99,29 +86,30 @@ const deviceModel = props.wizardData?.ModelName || '';
 }
 
 .device-icon {
-  width: 200px;
-  height: 200px;
-  margin-bottom: 2rem;
+  position: relative;
+  width: 142px;
+  height: 142px;
+  margin: 4rem auto 2rem;
 }
 
-.device-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 4px 8px rgba(0, 120, 212, 0.2));
+.mode-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .device-model {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: #666;
   margin: 0 0 1rem 0;
 }
 
 .finish-title {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #0078d4;
-  margin: 0 0 2rem 0;
+  color: #666;
+  margin: 1rem 0 1rem 0;
 }
 
 .instructions {
@@ -133,7 +121,7 @@ const deviceModel = props.wizardData?.ModelName || '';
   color: #666;
   font-size: 1rem;
   line-height: 1.6;
-  margin: 0.75rem 0;
+  margin: 0.5rem 0 0.5rem 0;
 }
 
 .finish-button {
