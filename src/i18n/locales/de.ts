@@ -40,7 +40,7 @@ export default {
     qos: 'QoS',
     application: 'Anwendung',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     management: 'Verwaltung',
     reboot: 'Neustart',
@@ -677,7 +677,17 @@ export default {
     interfaceSelection: 'Schnittstellenauswahl',
     apply: 'Anwenden',
     loadError: 'UPnP-IGD-Einstellungen konnten nicht geladen werden',
-    updateError: 'UPnP-IGD-Einstellungen konnten nicht aktualisiert werden'
+    updateError: 'UPnP-IGD-Einstellungen konnten nicht aktualisiert werden',
+    serviceList: 'UPnP-Diensteliste',
+    totalClients: 'Gesamtanzahl der Clients',
+    refresh: 'Aktualisieren',
+    id: 'ID',
+    serviceDescription: 'Dienstbeschreibung',
+    externalPort: 'Externer Port',
+    protocol: 'Protokoll',
+    internalIpAddress: 'Interne IP-Adresse',
+    internalPort: 'Interner Port',
+    noServices: 'Keine aktiven Dienste'
   },
   thread: {
     title: 'Thread',

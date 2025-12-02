@@ -677,7 +677,17 @@ export default {
     interfaceSelection: 'Sélection de l\'interface',
     apply: 'Appliquer',
     loadError: 'Impossible de charger les paramètres UPnP IGD',
-    updateError: 'Impossible de mettre à jour les paramètres UPnP IGD'
+    updateError: 'Impossible de mettre à jour les paramètres UPnP IGD',
+    serviceList: 'Liste des services UPnP',
+    totalClients: 'Nombre total de clients',
+    refresh: 'Actualiser',
+    id: 'ID',
+    serviceDescription: 'Description du service',
+    externalPort: 'Port externe',
+    protocol: 'Protocole',
+    internalIpAddress: 'Adresse IP interne',
+    internalPort: 'Port interne',
+    noServices: 'Aucun service actif'
   },
   thread: {
     title: 'Thread',

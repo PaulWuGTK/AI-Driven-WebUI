@@ -677,7 +677,17 @@ export default {
     interfaceSelection: '接口选择',
     apply: '应用',
     loadError: '无法加载 UPnP IGD 设置',
-    updateError: '无法更新 UPnP IGD 设置'
+    updateError: '无法更新 UPnP IGD 设置',
+    serviceList: 'UPnP 服务列表',
+    totalClients: '客户端总数',
+    refresh: '刷新',
+    id: 'ID',
+    serviceDescription: '服务描述',
+    externalPort: '外部端口',
+    protocol: '协议',
+    internalIpAddress: '内部 IP 地址',
+    internalPort: '内部端口',
+    noServices: '当前没有启用的服务'
   },
   thread: {
     title: 'Thread',

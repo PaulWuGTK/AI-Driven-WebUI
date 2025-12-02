@@ -677,7 +677,17 @@ export default {
     interfaceSelection: 'インターフェース選択',
     apply: '適用',
     loadError: 'UPnP IGD設定を読み込めませんでした',
-    updateError: 'UPnP IGD設定を更新できませんでした'
+    updateError: 'UPnP IGD設定を更新できませんでした',
+    serviceList: 'UPnP サービス一覧',
+    totalClients: 'クライアント合計',
+    refresh: '更新',
+    id: 'ID',
+    serviceDescription: 'サービス説明',
+    externalPort: '外部ポート',
+    protocol: 'プロトコル',
+    internalIpAddress: '内部 IP アドレス',
+    internalPort: '内部ポート',
+    noServices: '有効なサービスはありません'
   },
   thread: {
     title: 'スレッド',

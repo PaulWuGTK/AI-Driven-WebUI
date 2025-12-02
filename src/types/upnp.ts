@@ -3,10 +3,34 @@ export interface InterfaceOption {
   label: string;
 }
 
+export interface PortMapping {
+  Path: string;
+  Description: string;
+  ExternalPort: number;
+  Id: number;
+  Origin: string;
+  InternalPort: number;
+  RemainingLeaseTime: number;
+  LeaseDuration: number;
+  RemoteHost: string;
+  Enable: boolean;
+  Interface: string;
+  Status: string;
+  InternalClient: string;
+  Protocol: string;
+  ExternalPortEnd: number;
+}
+
+export interface PortMappingStats {
+  total: number;
+}
+
 export interface ApplicationUpnp {
   Enable: boolean;
   InterfaceOptions?: InterfaceOption[];
   Interface: string;
+  PortMappings?: PortMapping[];
+  PortMappingStats?: PortMappingStats;
 }
 
 export interface UpnpResponse {

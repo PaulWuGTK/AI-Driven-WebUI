@@ -655,6 +655,16 @@ export interface Translations {
     apply: string;
     loadError: string;
     updateError: string;
+    serviceList: string;
+    totalClients: string;
+    refresh: string;
+    id: string;
+    serviceDescription: string;
+    externalPort: string;
+    protocol: string;
+    internalIpAddress: string;
+    internalPort: string;
+    noServices: string;
   };
   thread: {
     title: string;

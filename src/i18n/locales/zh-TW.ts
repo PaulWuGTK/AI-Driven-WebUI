@@ -678,7 +678,17 @@ export default {
     interfaceSelection: '介面選擇',
     apply: '套用',
     loadError: '無法載入 UPnP IGD 設定',
-    updateError: '無法更新 UPnP IGD 設定'
+    updateError: '無法更新 UPnP IGD 設定',
+    serviceList: 'UPnP 服務清單',
+    totalClients: '用戶端總數',
+    refresh: '重新整理',
+    id: 'ID',
+    serviceDescription: '服務描述',
+    externalPort: '外部連接埠',
+    protocol: '通訊協定',
+    internalIpAddress: '內部 IP 位址',
+    internalPort: '內部連接埠',
+    noServices: '目前沒有啟用的服務'
   },
   thread: {
     title: 'Thread',

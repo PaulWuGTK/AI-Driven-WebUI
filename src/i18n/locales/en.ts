@@ -40,7 +40,7 @@ const translations = {
     qos: 'QoS',
     application: 'Application',
     xperienceControl: 'XperienceControl',
-    upnp: 'UPnP',
+    upnp: 'UPnP IGD',
     ddns: 'DDNS',
     storageService: 'Storage Service',
     management: 'Management',
@@ -688,7 +688,17 @@ const translations = {
     interfaceSelection: 'Interface Selection',
     apply: 'Apply',
     loadError: 'Failed to load UPnP IGD settings',
-    updateError: 'Failed to update UPnP IGD settings'
+    updateError: 'Failed to update UPnP IGD settings',
+    serviceList: 'UPnP Service List',
+    totalClients: 'Total Clients',
+    refresh: 'Refresh',
+    id: 'ID',
+    serviceDescription: 'Service Description',
+    externalPort: 'External Port',
+    protocol: 'Protocol',
+    internalIpAddress: 'Internal IP Address',
+    internalPort: 'Internal Port',
+    noServices: 'No active services'
   },
   thread: {
     title: 'Thread',

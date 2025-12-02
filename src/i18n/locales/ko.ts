@@ -676,7 +676,17 @@ export default {
     interfaceSelection: '인터페이스 선택',
     apply: '적용',
     loadError: 'UPnP IGD 설정을 불러올 수 없습니다',
-    updateError: 'UPnP IGD 설정을 업데이트할 수 없습니다'
+    updateError: 'UPnP IGD 설정을 업데이트할 수 없습니다',
+    serviceList: 'UPnP 서비스 목록',
+    totalClients: '총 클라이언트 수',
+    refresh: '새로 고침',
+    id: 'ID',
+    serviceDescription: '서비스 설명',
+    externalPort: '외부 포트',
+    protocol: '프로토콜',
+    internalIpAddress: '내부 IP 주소',
+    internalPort: '내부 포트',
+    noServices: '활성화된 서비스가 없습니다'
   },
   thread: {
     title: 'Thread',
