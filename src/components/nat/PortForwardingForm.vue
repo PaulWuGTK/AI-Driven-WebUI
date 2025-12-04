@@ -161,10 +161,6 @@ watch(() => props.rule, (newRule) => {
   internalPortEnd.value = internalPorts.end;
 }, { immediate: true });
 
-watch(formData, (newData) => {
-  emit('update:rule', newData);
-}, { deep: true });
-
 function handleCancel() {
   emit('cancel');
 }

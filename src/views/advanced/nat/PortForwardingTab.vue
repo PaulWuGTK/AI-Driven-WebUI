@@ -114,7 +114,7 @@
       :rule="editingRule"
       :wan-list="wanList"
       :proto-list="protoList"
-      @update:rule="(rule) => editingRule = rule"
+      @update:rule="handleRuleUpdate"
       @save="handleSave"
       @cancel="isEditing = false"
     />
@@ -188,6 +188,10 @@ const handleEdit = (rule: PortForwardRule) => {
 const handleDelete = (rule: PortForwardRule) => {
   ruleToDelete.value = rule;
   showDeleteDialog.value = true;
+};
+
+const handleRuleUpdate = (rule: PortForwardRule) => {
+  editingRule.value = rule;
 };
 
 const handleSave = async () => {
