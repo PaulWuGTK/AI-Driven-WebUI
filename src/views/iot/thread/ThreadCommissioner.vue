@@ -633,8 +633,6 @@ input:checked + .slider:before {
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
   }
 
   .modal-footer {

@@ -404,8 +404,6 @@ onMounted(fetchConfig);
     justify-content: flex-end;
     gap: 0.5rem;
     margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
   }
 
   .button-group {

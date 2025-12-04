@@ -458,6 +458,30 @@ const translations = {
     dmzHost: 'DMZ Host',
     alg: 'ALG'
   },
+  portForwarding: {
+    title: 'Port Forwarding',
+    addRule: 'Add Rule',
+    editRule: 'Edit Rule',
+    deleteRule: 'Delete Rule',
+    deleteConfirmMessage: 'Are you sure you want to delete this port forwarding rule?',
+    noRules: 'No port forwarding rules configured',
+    number: 'Number',
+    enable: 'Enable',
+    description: 'Description',
+    protocol: 'Protocol',
+    externalPortRange: 'External Port Range',
+    internalPortRange: 'Internal Port Range',
+    internalIPAddress: 'Internal IP Address',
+    active: 'Active',
+    enablePortForwarding: 'Enable Port Forwarding',
+    interfaceSelection: 'Interface Selection',
+    externalPortStart: 'External Port Range(Start)',
+    externalPortEnd: 'External Port Range(End)',
+    localIPAddress: 'Local IP Address',
+    localPortStart: 'Local Port Range(Start)',
+    localPortEnd: 'Local Port Range(End)',
+    comment: 'Comment'
+  },
   dmz: {
     title: 'DMZ Settings',
     enable: 'Enable DMZ',
@@ -932,7 +956,8 @@ const translations = {
     saveSuccess: 'Settings saved successfully',
     saveFailed: 'Failed to save settings',
     underDevelopment: 'Under Development',
-    underDevelopmentDesc: 'This page is currently under development and will be available soon.'
+    underDevelopmentDesc: 'This page is currently under development and will be available soon.',
+    placeholder: 'Please Enter the value'
   },
   logs: {
     title: 'System Logs',

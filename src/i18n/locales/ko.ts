@@ -920,7 +920,8 @@ export default {
     saveSuccess: '설정이 성공적으로 저장되었습니다',
     saveFailed: '설정을 저장하지 못했습니다',
     underDevelopment: '개발 중',
-    underDevelopmentDesc: '이 페이지는 현재 개발 중이며 곧 제공될 예정입니다.'
+    underDevelopmentDesc: '이 페이지는 현재 개발 중이며 곧 제공될 예정입니다.',
+    placeholder: '값을 입력해주세요'
   },
   logs: {
     title: '시스템 로그',
@@ -1068,5 +1069,29 @@ export default {
     portForwarding: '포트 포워딩',
     dmzHost: 'DMZ 호스트',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: '포트 포워딩',
+    addRule: '규칙 추가',
+    editRule: '규칙 편집',
+    deleteRule: '규칙 삭제',
+    deleteConfirmMessage: '이 포트 포워딩 규칙을 삭제하시겠습니까?',
+    noRules: '설정된 포트 포워딩 규칙이 없습니다',
+    number: '번호',
+    enable: '사용',
+    description: '설명',
+    protocol: '프로토콜',
+    externalPortRange: '외부 포트 범위',
+    internalPortRange: '내부 포트 범위',
+    internalIPAddress: '내부 IP 주소',
+    active: '동작 중',
+    enablePortForwarding: '포트 포워딩 사용',
+    interfaceSelection: '인터페이스 선택',
+    externalPortStart: '외부 포트 범위(시작)',
+    externalPortEnd: '외부 포트 범위(끝)',
+    localIPAddress: '로컬 IP 주소',
+    localPortStart: '로컬 포트 범위(시작)',
+    localPortEnd: '로컬 포트 범위(끝)',
+    comment: '메모',
   }
 };

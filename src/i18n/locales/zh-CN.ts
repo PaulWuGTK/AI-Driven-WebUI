@@ -921,7 +921,8 @@ export default {
     saveSuccess: '设置已成功保存',
     saveFailed: '设置保存失败',
     underDevelopment: '开发中',
-    underDevelopmentDesc: '此页面正在开发中，即将推出。'
+    underDevelopmentDesc: '此页面正在开发中，即将推出。',
+    placeholder: '请输入值'
   },
   logs: {
     title: '系统日志',
@@ -1069,5 +1070,29 @@ export default {
     portForwarding: '端口转发',
     dmzHost: 'DMZ 主机',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: '端口转发',
+    addRule: '新增规则',
+    editRule: '编辑规则',
+    deleteRule: '删除规则',
+    deleteConfirmMessage: '确定要删除此端口转发规则吗？',
+    noRules: '当前尚未配置端口转发规则',
+    number: '序号',
+    enable: '启用',
+    description: '描述',
+    protocol: '协议',
+    externalPortRange: '外部端口范围',
+    internalPortRange: '内部端口范围',
+    internalIPAddress: '内部 IP 地址',
+    active: '已启用',
+    enablePortForwarding: '启用端口转发',
+    interfaceSelection: '接口选择',
+    externalPortStart: '外部端口范围（起始）',
+    externalPortEnd: '外部端口范围（结束）',
+    localIPAddress: '本地 IP 地址',
+    localPortStart: '本地端口范围（起始）',
+    localPortEnd: '本地端口范围（结束）',
+    comment: '备注',
   }
 };

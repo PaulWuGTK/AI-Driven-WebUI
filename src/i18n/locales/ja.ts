@@ -921,7 +921,8 @@ export default {
     saveSuccess: '設定は正常に保存されました',
     saveFailed: '設定の保存に失敗しました',
     underDevelopment: '開発中',
-    underDevelopmentDesc: 'このページは現在開発中です。まもなく公開されます。'
+    underDevelopmentDesc: 'このページは現在開発中です。まもなく公開されます。',
+    placeholder: '値を入力してください'
   },
   logs: {
     title: 'システムログ',
@@ -1069,5 +1070,29 @@ export default {
     portForwarding: 'ポート転送',
     dmzHost: 'DMZホスト',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: 'ポート転送',
+    addRule: 'ルールを追加',
+    editRule: 'ルールを編集',
+    deleteRule: 'ルールを削除',
+    deleteConfirmMessage: 'このポート転送ルールを削除してもよろしいですか？',
+    noRules: '設定されているポート転送ルールはありません',
+    number: '番号',
+    enable: '有効',
+    description: '説明',
+    protocol: 'プロトコル',
+    externalPortRange: '外部ポート範囲',
+    internalPortRange: '内部ポート範囲',
+    internalIPAddress: '内部 IP アドレス',
+    active: 'アクティブ',
+    enablePortForwarding: 'ポート転送を有効にする',
+    interfaceSelection: 'インターフェース選択',
+    externalPortStart: '外部ポート範囲（開始）',
+    externalPortEnd: '外部ポート範囲（終了）',
+    localIPAddress: 'ローカル IP アドレス',
+    localPortStart: 'ローカルポート範囲（開始）',
+    localPortEnd: 'ローカルポート範囲（終了）',
+    comment: 'コメント',
   }
 };

@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import PortForwardingTab from './PortForwardingTab.vue';
 import DmzHostTab from './DmzHostTab.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
 import { useQA } from '../../../utils/qa';
@@ -60,7 +61,7 @@ onMounted(() => {
         </div>
 
         <div class="tab-content" :data-testid="qa('nat-tab-content')">
-          <TabInProgress v-if="activeTab === 'portforwarding'" :data-testid="qa('nat-portforwarding')" />
+          <PortForwardingTab v-if="activeTab === 'portforwarding'" :data-testid="qa('nat-portforwarding')" />
           <DmzHostTab v-if="activeTab === 'dmz'" :data-testid="qa('nat-dmz')" />
           <TabInProgress v-if="activeTab === 'alg'" :data-testid="qa('nat-alg')" />
         </div>

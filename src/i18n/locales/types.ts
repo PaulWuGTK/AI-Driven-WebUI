@@ -893,6 +893,7 @@ export interface Translations {
     next: string;
     underDevelopment: string;
     underDevelopmentDesc: string;
+    placeholder: string;
   };
   logs: {
     title: string;

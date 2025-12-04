@@ -921,7 +921,8 @@ export default {
     saveSuccess: 'Paramètres enregistrés avec succès',
     saveFailed: 'Échec de l’enregistrement des paramètres',
     underDevelopment: 'En développement',
-    underDevelopmentDesc: 'Cette page est actuellement en développement et sera bientôt disponible.'
+    underDevelopmentDesc: 'Cette page est actuellement en développement et sera bientôt disponible.',
+    placeholder: 'Veuillez saisir une valeur'
   },
   logs: {
     title: 'Journaux système',
@@ -1069,5 +1070,29 @@ export default {
     portForwarding: 'Redirection de port',
     dmzHost: 'Hôte DMZ',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: 'Redirection de port',
+    addRule: 'Ajouter une règle',
+    editRule: 'Modifier la règle',
+    deleteRule: 'Supprimer la règle',
+    deleteConfirmMessage: 'Voulez-vous vraiment supprimer cette règle de redirection de port ?',
+    noRules: 'Aucune règle de redirection de port configurée',
+    number: 'Numéro',
+    enable: 'Activer',
+    description: 'Description',
+    protocol: 'Protocole',
+    externalPortRange: 'Plage de ports externes',
+    internalPortRange: 'Plage de ports internes',
+    internalIPAddress: 'Adresse IP interne',
+    active: 'Actif',
+    enablePortForwarding: 'Activer la redirection de port',
+    interfaceSelection: 'Sélection de l’interface',
+    externalPortStart: 'Plage de ports externes (début)',
+    externalPortEnd: 'Plage de ports externes (fin)',
+    localIPAddress: 'Adresse IP locale',
+    localPortStart: 'Plage de ports locaux (début)',
+    localPortEnd: 'Plage de ports locaux (fin)',
+    comment: 'Commentaire',
   }
 };

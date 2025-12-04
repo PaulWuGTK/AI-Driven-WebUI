@@ -921,7 +921,8 @@ export default {
     saveSuccess: 'Einstellungen wurden erfolgreich gespeichert',
     saveFailed: 'Einstellungen konnten nicht gespeichert werden',
     underDevelopment: 'In Entwicklung',
-    underDevelopmentDesc: 'Diese Seite befindet sich derzeit in der Entwicklung und wird in Kürze verfügbar sein.'
+    underDevelopmentDesc: 'Diese Seite befindet sich derzeit in der Entwicklung und wird in Kürze verfügbar sein.',
+    placeholder: 'Bitte geben Sie den Wert ein'
   },
   logs: {
     title: 'Systemprotokolle',
@@ -1069,5 +1070,29 @@ export default {
     portForwarding: 'Portweiterleitung',
     dmzHost: 'DMZ-Host',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: 'Portweiterleitung',
+    addRule: 'Regel hinzufügen',
+    editRule: 'Regel bearbeiten',
+    deleteRule: 'Regel löschen',
+    deleteConfirmMessage: 'Möchten Sie diese Portweiterleitungsregel wirklich löschen?',
+    noRules: 'Keine Portweiterleitungsregeln konfiguriert',
+    number: 'Nummer',
+    enable: 'Aktivieren',
+    description: 'Beschreibung',
+    protocol: 'Protokoll',
+    externalPortRange: 'Externer Portbereich',
+    internalPortRange: 'Interner Portbereich',
+    internalIPAddress: 'Interne IP-Adresse',
+    active: 'Aktiv',
+    enablePortForwarding: 'Portweiterleitung aktivieren',
+    interfaceSelection: 'Schnittstellenauswahl',
+    externalPortStart: 'Externer Portbereich (Start)',
+    externalPortEnd: 'Externer Portbereich (Ende)',
+    localIPAddress: 'Lokale IP-Adresse',
+    localPortStart: 'Lokaler Portbereich (Start)',
+    localPortEnd: 'Lokaler Portbereich (Ende)',
+    comment: 'Kommentar',
   }
 };

@@ -922,7 +922,8 @@ export default {
     saveSuccess: '設定已成功儲存',
     saveFailed: '設定儲存失敗',
     underDevelopment: '開發中',
-    underDevelopmentDesc: '此頁面正在開發中，即將推出。'
+    underDevelopmentDesc: '此頁面正在開發中，即將推出。',
+    placeholder: '請輸入數值'
   },
   logs: {
     title: '系統日誌',
@@ -1070,5 +1071,29 @@ export default {
     portForwarding: '連接埠轉發',
     dmzHost: 'DMZ 主機',
     alg: 'ALG'
+  },
+  portForwarding: {
+    title: '連接埠轉送',
+    addRule: '新增規則',
+    editRule: '編輯規則',
+    deleteRule: '刪除規則',
+    deleteConfirmMessage: '確定要刪除此連接埠轉送規則嗎？',
+    noRules: '目前尚未設定連接埠轉送規則',
+    number: '編號',
+    enable: '啟用',
+    description: '描述',
+    protocol: '通訊協定',
+    externalPortRange: '外部連接埠範圍',
+    internalPortRange: '內部連接埠範圍',
+    internalIPAddress: '內部 IP 位址',
+    active: '啟用中',
+    enablePortForwarding: '啟用連接埠轉送',
+    interfaceSelection: '介面選擇',
+    externalPortStart: '外部連接埠範圍（起始）',
+    externalPortEnd: '外部連接埠範圍（結束）',
+    localIPAddress: '本機 IP 位址',
+    localPortStart: '本機連接埠範圍（起始）',
+    localPortEnd: '本機連接埠範圍（結束）',
+    comment: '備註',
   }
 };
