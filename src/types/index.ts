@@ -1,4 +1,5 @@
 export * from './auth';
+export * from './cellular';
 export * from './dashboard';
 export * from './ddns';
 export * from './dualImage';

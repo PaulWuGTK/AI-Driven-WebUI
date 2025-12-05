@@ -98,7 +98,7 @@ const router = createRouter({
     },
     {
       path: '/status/cellular',
-      component: () => import('../views/InProgress.vue'),
+      component: () => import('../views/status/CellularStatus.vue'),
       beforeEnter: requireAuth
     },
     {
