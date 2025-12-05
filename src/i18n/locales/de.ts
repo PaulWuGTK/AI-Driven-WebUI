@@ -1091,6 +1091,7 @@ export default {
     externalPortStart: 'Externer Portbereich (Start)',
     externalPortEnd: 'Externer Portbereich (Ende)',
     localIPAddress: 'Lokale IP-Adresse',
+    localPort: 'Lokaler Port',
     localPortStart: 'Lokaler Portbereich (Start)',
     localPortEnd: 'Lokaler Portbereich (Ende)',
     comment: 'Kommentar',

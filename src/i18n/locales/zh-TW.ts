@@ -1092,6 +1092,7 @@ export default {
     externalPortStart: '外部連接埠範圍（起始）',
     externalPortEnd: '外部連接埠範圍（結束）',
     localIPAddress: '本機 IP 位址',
+    localPort: '本機連接埠',
     localPortStart: '本機連接埠範圍（起始）',
     localPortEnd: '本機連接埠範圍（結束）',
     comment: '備註',

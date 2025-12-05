@@ -1090,6 +1090,7 @@ export default {
     externalPortStart: '외부 포트 범위(시작)',
     externalPortEnd: '외부 포트 범위(끝)',
     localIPAddress: '로컬 IP 주소',
+    localPort: '로컬 포트',
     localPortStart: '로컬 포트 범위(시작)',
     localPortEnd: '로컬 포트 범위(끝)',
     comment: '메모',

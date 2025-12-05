@@ -1091,6 +1091,7 @@ export default {
     externalPortStart: '外部ポート範囲（開始）',
     externalPortEnd: '外部ポート範囲（終了）',
     localIPAddress: 'ローカル IP アドレス',
+    localPort: 'ローカルポート',
     localPortStart: 'ローカルポート範囲（開始）',
     localPortEnd: 'ローカルポート範囲（終了）',
     comment: 'コメント',

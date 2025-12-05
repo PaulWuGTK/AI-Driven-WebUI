@@ -478,6 +478,7 @@ const translations = {
     externalPortStart: 'External Port Range(Start)',
     externalPortEnd: 'External Port Range(End)',
     localIPAddress: 'Local IP Address',
+    localPort: 'Local Port',
     localPortStart: 'Local Port Range(Start)',
     localPortEnd: 'Local Port Range(End)',
     comment: 'Comment'

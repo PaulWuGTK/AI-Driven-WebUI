@@ -60,25 +60,14 @@
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.localPortStart') }}</label>
+          <label>{{ $t('portForwarding.localPort') }}</label>
           <input
             type="number"
-            v-model="internalPortStart"
+            v-model="internalPort"
             placeholder="1-65535"
             min="1"
             max="65535"
             required
-          />
-        </div>
-
-        <div class="form-group">
-          <label>{{ $t('portForwarding.localPortEnd') }}</label>
-          <input
-            type="number"
-            v-model="internalPortEnd"
-            placeholder="1-65535"
-            min="1"
-            max="65535"
           />
         </div>
 
@@ -138,8 +127,7 @@ const formData = ref<PortForwardRule>({ ...props.rule });
 
 const externalPortStart = ref('');
 const externalPortEnd = ref('');
-const internalPortStart = ref('');
-const internalPortEnd = ref('');
+const internalPort = ref('');
 
 function parsePortRange(range: string) {
   if (range && range.includes('-')) {
@@ -156,9 +144,7 @@ watch(() => props.rule, (newRule) => {
   externalPortStart.value = externalPorts.start;
   externalPortEnd.value = externalPorts.end;
 
-  const internalPorts = parsePortRange(newRule.InternalPort);
-  internalPortStart.value = internalPorts.start;
-  internalPortEnd.value = internalPorts.end;
+  internalPort.value = newRule.InternalPort || '';
 }, { immediate: true });
 
 function handleCancel() {
@@ -170,12 +156,8 @@ function handleSubmit() {
     ? `${externalPortStart.value}-${externalPortEnd.value}`
     : externalPortStart.value;
 
-  const internalRange = internalPortEnd.value
-    ? `${internalPortStart.value}-${internalPortEnd.value}`
-    : internalPortStart.value;
-
   formData.value.ExternalPortRange = externalRange;
-  formData.value.InternalPort = internalRange;
+  formData.value.InternalPort = internalPort.value;
 
   emit('update:rule', formData.value);
   emit('save');

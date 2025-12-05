@@ -1091,6 +1091,7 @@ export default {
     externalPortStart: 'Plage de ports externes (début)',
     externalPortEnd: 'Plage de ports externes (fin)',
     localIPAddress: 'Adresse IP locale',
+    localPort: 'Port local',
     localPortStart: 'Plage de ports locaux (début)',
     localPortEnd: 'Plage de ports locaux (fin)',
     comment: 'Commentaire',

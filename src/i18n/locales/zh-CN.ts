@@ -1091,6 +1091,7 @@ export default {
     externalPortStart: '外部端口范围（起始）',
     externalPortEnd: '外部端口范围（结束）',
     localIPAddress: '本地 IP 地址',
+    localPort: '本地端口',
     localPortStart: '本地端口范围（起始）',
     localPortEnd: '本地端口范围（结束）',
     comment: '备注',
