@@ -157,7 +157,7 @@ function handleSubmit() {
     : externalPortStart.value;
 
   formData.value.ExternalPortRange = externalRange;
-  formData.value.InternalPort = internalPort.value;
+  formData.value.InternalPort = internalPort.value === '' ? '' : String(internalPort.value);
 
   emit('update:rule', formData.value);
   emit('save');
