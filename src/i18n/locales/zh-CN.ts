@@ -954,6 +954,7 @@ export default {
     edit: '编辑',
     delete: '删除',
     enable: '启用',
+    enabled: '已启用',
     loading: '加载中...',
     yes: '是',
     no: '否',

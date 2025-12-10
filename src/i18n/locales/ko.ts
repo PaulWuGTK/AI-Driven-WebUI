@@ -953,6 +953,7 @@ export default {
     edit: '편집',
     delete: '삭제',
     enable: '활성화',
+    enabled: '활성화됨',
     loading: '로딩 중...',
     yes: '예', 
     no: '아니요',

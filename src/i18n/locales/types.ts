@@ -882,6 +882,7 @@ export interface Translations {
     edit: string;
     delete: string;
     enable: string;
+    enabled: string;
     loading: string;
     yes: string;
     no: string;
@@ -891,6 +892,10 @@ export interface Translations {
     manual: string;
     back: string;
     next: string;
+    add: string;
+    update: string;
+    saveSuccess: string;
+    saveFailed: string;
     underDevelopment: string;
     underDevelopmentDesc: string;
     placeholder: string;

@@ -954,6 +954,7 @@ export default {
     edit: 'Bearbeiten',
     delete: 'Löschen',
     enable: 'Aktivieren',
+    enabled: 'Aktiviert',
     loading: 'Lädt...',
     yes: 'Ja',
     no: 'Nein',

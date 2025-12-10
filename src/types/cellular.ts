@@ -41,3 +41,15 @@ export interface CellularInfo {
 export interface CellularResponse {
   Cellular: CellularInfo;
 }
+
+export interface CellularConfig {
+  RoamingEnabled: boolean;
+  InterfaceEnable: boolean;
+  X_PRPLWARE_COM_IPType: string;
+  APN: string;
+  PreferredAccessTechnology: string;
+}
+
+export interface CellularConfigRequest {
+  Cellular: CellularConfig;
+}

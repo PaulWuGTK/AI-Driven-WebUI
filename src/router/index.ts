@@ -218,7 +218,8 @@ const router = createRouter({
     },
     {
       path: '/basic/cellular',
-      component: () => import('../views/InProgress.vue'),
+      name: 'BasicCellular',
+      component: () => import('../views/network/cellular/CellularConfig.vue'),
       beforeEnter: requireAuth
     },
     {

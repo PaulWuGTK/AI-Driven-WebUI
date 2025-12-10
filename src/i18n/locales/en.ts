@@ -990,6 +990,7 @@ const translations = {
     edit: 'Edit',
     delete: 'Delete',
     enable: 'Enable',
+    enabled: 'Enabled',
     loading: 'Loading...',
     yes: 'Yes',
     no: 'No',
