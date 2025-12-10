@@ -958,4 +958,28 @@ export interface Translations {
     firewall: string;
     lcm: string;
   };
+  ipFiltering: {
+    enableIpFiltering: string;
+    ipFilteringMode: string;
+    blacklist: string;
+    whitelist: string;
+    filterMode: string;
+    enableIpv4: string;
+    enableIpv6: string;
+    localIpAddressStart: string;
+    localIpAddressEnd: string;
+    localIpv4AddressStart: string;
+    localIpv4AddressEnd: string;
+    localIpv6AddressStart: string;
+    localIpv6AddressEnd: string;
+    protocol: string;
+    comment: string;
+    placeholder: string;
+    add: string;
+    currentBlacklistFilterTable: string;
+    currentWhitelistFilterTable: string;
+    number: string;
+    active: string;
+    noEntries: string;
+  };
 }

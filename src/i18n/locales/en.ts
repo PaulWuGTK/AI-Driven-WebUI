@@ -1148,6 +1148,30 @@ const translations = {
     protocolRequired: 'Protocol is required',
     deviceRequired: 'Device is required',
     confirmDelete: 'Are you sure you want to delete this rule?'
+  },
+  ipFiltering: {
+    enableIpFiltering: 'Enable IP Filtering',
+    ipFilteringMode: 'IP Filtering Mode',
+    blacklist: 'Blacklist',
+    whitelist: 'Whitelist',
+    filterMode: 'Filter Mode',
+    enableIpv4: 'Enable IPv4',
+    enableIpv6: 'Enable IPv6',
+    localIpAddressStart: 'Local IP Address(Start)',
+    localIpAddressEnd: 'Local IP Address(End)',
+    localIpv4AddressStart: 'Local IPv4 Address(Start)',
+    localIpv4AddressEnd: 'Local IPv4 Address(End)',
+    localIpv6AddressStart: 'Local IPv6 Address(Start)',
+    localIpv6AddressEnd: 'Local IPv6 Address(End)',
+    protocol: 'Protocol',
+    comment: 'Comment',
+    placeholder: 'Please Enter the value',
+    add: 'Add',
+    currentBlacklistFilterTable: 'Current Blacklist Filter Table',
+    currentWhitelistFilterTable: 'Current Whitelist Filter Table',
+    number: 'Number',
+    active: 'Active',
+    noEntries: 'No entries'
   }
 };
 

@@ -2,8 +2,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import IpFilteringTab from './security/IpFilteringTab.vue';
 import MacFilteringTab from './security/MacFilteringTab.vue';
-import TabInProgress from '../../components/TabInProgress.vue';
 import { useQA } from '../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -59,7 +59,7 @@ onMounted(() => {
         </div>
 
         <div class="tab-content" :data-testid="qa('security-tab-content')">
-          <TabInProgress v-if="activeTab === 'ipfiltering'" :data-testid="qa('security-ipfiltering-content')" />
+          <IpFilteringTab v-if="activeTab === 'ipfiltering'" :data-testid="qa('security-ipfiltering-content')" />
           <MacFilteringTab v-if="activeTab === 'macfiltering'" :data-testid="qa('security-macfiltering-content')" />
         </div>
       </div>
