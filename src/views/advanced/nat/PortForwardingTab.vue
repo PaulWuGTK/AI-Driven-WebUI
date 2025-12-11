@@ -8,6 +8,14 @@
       </button>
     </div>
 
+    <div v-if="errorMessage" class="error-banner">
+      <span class="material-icons">error</span>
+      <span>{{ errorMessage }}</span>
+      <button class="close-btn" @click="errorMessage = ''">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
       <span>{{ $t('common.loading') }}</span>
@@ -147,6 +155,7 @@ const editingRule = ref<PortForwardRule | null>(null);
 const showDeleteDialog = ref(false);
 const ruleToDelete = ref<PortForwardRule | null>(null);
 const loading = ref(true);
+const errorMessage = ref('');
 
 const fetchRules = async () => {
   loading.value = true;
@@ -199,6 +208,7 @@ const handleSave = async () => {
 
   try {
     loading.value = true;
+    errorMessage.value = '';
 
     const existingRule = rules.value.find(r => r.No === editingRule.value!.No);
     let updatedRules: PortForwardRule[];
@@ -209,17 +219,23 @@ const handleSave = async () => {
       updatedRules = [...rules.value, editingRule.value];
     }
 
-    await portForwardingApi.updateConfig({
+    const response = await portForwardingApi.updateConfig({
       PortForwarding: {
         PortForwardList: updatedRules
       }
     });
+
+    if (response.NOK) {
+      errorMessage.value = response.NOK;
+      return;
+    }
 
     await fetchRules();
     isEditing.value = false;
     editingRule.value = null;
   } catch (error) {
     console.error('Failed to save port forwarding rule:', error);
+    errorMessage.value = error instanceof Error ? error.message : 'Failed to save port forwarding rule';
   } finally {
     loading.value = false;
   }
@@ -230,19 +246,27 @@ const confirmDelete = async () => {
 
   try {
     loading.value = true;
+    errorMessage.value = '';
     const updatedRules = rules.value.filter(r => r.No !== ruleToDelete.value!.No);
 
-    await portForwardingApi.updateConfig({
+    const response = await portForwardingApi.updateConfig({
       PortForwarding: {
         PortForwardList: updatedRules
       }
     });
+
+    if (response.NOK) {
+      errorMessage.value = response.NOK;
+      showDeleteDialog.value = false;
+      return;
+    }
 
     await fetchRules();
     showDeleteDialog.value = false;
     ruleToDelete.value = null;
   } catch (error) {
     console.error('Failed to delete port forwarding rule:', error);
+    errorMessage.value = error instanceof Error ? error.message : 'Failed to delete port forwarding rule';
   } finally {
     loading.value = false;
   }
@@ -349,6 +373,48 @@ onMounted(fetchRules);
   border-radius: 4px;
 }
 
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin: 0 1.5rem 1rem;
+  background-color: #ffebee;
+  border-left: 4px solid #c62828;
+  border-radius: 4px;
+  color: #c62828;
+}
+
+.error-banner .material-icons:first-child {
+  font-size: 1.5rem;
+}
+
+.error-banner span:not(.material-icons) {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.error-banner .close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  color: #c62828;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.error-banner .close-btn:hover {
+  background-color: rgba(198, 40, 40, 0.1);
+}
+
+.error-banner .close-btn .material-icons {
+  font-size: 1.25rem;
+}
+
 .mobile-cards {
   display: none;
 }
@@ -374,6 +440,11 @@ onMounted(fetchRules);
 
   .loading-state {
     padding: 1rem;
+  }
+
+  .error-banner {
+    margin: 0 1rem 1rem;
+    padding: 0.875rem 1rem;
   }
 
   .table-container {

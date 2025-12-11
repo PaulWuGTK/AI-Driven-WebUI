@@ -24,3 +24,8 @@ export interface PortForwardingUpdateRequest {
     PortForwardList: PortForwardRule[];
   };
 }
+
+export interface PortForwardingApiResponse {
+  OK?: string;
+  NOK?: string;
+}

@@ -1,5 +1,5 @@
 import apiClient from '../apiClient';
-import type { PortForwardingResponse, PortForwardingUpdateRequest } from '../../types/portForwarding';
+import type { PortForwardingResponse, PortForwardingUpdateRequest, PortForwardingApiResponse } from '../../types/portForwarding';
 import { portForwardingMockData } from '../mockData/portForwardingMockData';
 
 const isDevelopment = import.meta.env.DEV;
@@ -12,11 +12,11 @@ export const portForwardingApi = {
     return apiClient.get<PortForwardingResponse>('/API/info?list=PortForwarding');
   },
 
-  async updateConfig(data: PortForwardingUpdateRequest): Promise<void> {
+  async updateConfig(data: PortForwardingUpdateRequest): Promise<PortForwardingApiResponse> {
     if (isDevelopment) {
       portForwardingMockData.PortForwarding.PortForwardList = data.PortForwarding.PortForwardList;
-      return Promise.resolve();
+      return Promise.resolve({ OK: 'Success' });
     }
-    await apiClient.post('/API/info?list=PortForwarding', data);
+    return apiClient.post<PortForwardingApiResponse>('/API/info?list=PortForwarding', data);
   }
 };
