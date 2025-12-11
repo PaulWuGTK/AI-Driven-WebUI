@@ -11,7 +11,7 @@ export const loginMockData: LoginResponse & { wizardCheck?: boolean } = {
 export const wizardMockData = {
   WizardRouter: {
     ModelName: "WREQ-130BE-PRPL",
-    OpMode: "Init",
+    OpMode: "Gateway",
     Wan: {
       WANMode: "demo_wanmode",
       WANModeList: [

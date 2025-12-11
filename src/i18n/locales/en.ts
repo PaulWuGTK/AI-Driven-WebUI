@@ -32,7 +32,8 @@ const translations = {
     alg: 'ALG',
     security: 'Security',
     ipFiltering: 'IP Filtering',
-    macFiltering: 'MAC Filtering',
+    generalMacFiltering: 'MAC Filtering',
+    wifiMacFiltering: 'WiFi MAC Filtering',
     routing: 'Routing',
     advanceSetup: 'Advance Setup',
     sshService: 'SSH Service',
@@ -1172,6 +1173,25 @@ const translations = {
     number: 'Number',
     active: 'Active',
     noEntries: 'No entries'
+  },
+  generalMacFiltering: {
+    enableMacFiltering: 'Enable MAC Filtering',
+    filterMode: 'Filter Mode',
+    blacklist: 'Blacklist',
+    whitelist: 'Whitelist',
+    sourceMacAddress: 'Source MAC Address',
+    comment: 'Comment',
+    macPlaceholder: '11:22:33:44:55:66',
+    commentPlaceholder: 'test1',
+    add: 'Add',
+    currentBlacklistFilterTable: 'Current Blacklist Filter Table',
+    currentWhitelistFilterTable: 'Current Whitelist Filter Table',
+    number: 'Number',
+    active: 'Active',
+    noEntries: 'No entries',
+    emptyMacError: 'MAC address cannot be empty',
+    invalidMacFormat: 'Invalid MAC address format',
+    duplicateMacError: 'This MAC address already exists'
   }
 };
 

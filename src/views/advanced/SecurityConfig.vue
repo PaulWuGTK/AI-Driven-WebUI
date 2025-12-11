@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import IpFilteringTab from './security/IpFilteringTab.vue';
 import MacFilteringTab from './security/MacFilteringTab.vue';
+import GeneralMacFilteringTab from './security/GeneralMacFilteringTab.vue';
 import { useQA } from '../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -12,10 +13,20 @@ const route = useRoute();
 const router = useRouter();
 const activeTab = ref('ipfiltering');
 
-const tabs = computed(() => [
-  { id: 'ipfiltering', label: t('menu.ipFiltering') },
-  { id: 'macfiltering', label: t('menu.macFiltering') }
-]);
+const isDevMode = computed(() => route.query.dev === 'true');
+
+const tabs = computed(() => {
+  const baseTabs = [
+    { id: 'ipfiltering', label: t('menu.ipFiltering') },
+    { id: 'general-macfiltering', label: t('menu.generalMacFiltering') }
+  ];
+
+  if (isDevMode.value) {
+    baseTabs.push({ id: 'wifi-macfiltering', label: t('menu.wifiMacFiltering') });
+  }
+
+  return baseTabs;
+});
 
 watch(() => route.query.tab, (newTab) => {
   if (newTab && typeof newTab === 'string' && tabs.value.some(tab => tab.id === newTab)) {
@@ -60,7 +71,8 @@ onMounted(() => {
 
         <div class="tab-content" :data-testid="qa('security-tab-content')">
           <IpFilteringTab v-if="activeTab === 'ipfiltering'" :data-testid="qa('security-ipfiltering-content')" />
-          <MacFilteringTab v-if="activeTab === 'macfiltering'" :data-testid="qa('security-macfiltering-content')" />
+          <GeneralMacFilteringTab v-if="activeTab === 'general-macfiltering'" :data-testid="qa('security-general-macfiltering-content')" />
+          <MacFilteringTab v-if="activeTab === 'wifi-macfiltering' && isDevMode" :data-testid="qa('security-wifi-macfiltering-content')" />
         </div>
       </div>
     </div>
