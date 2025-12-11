@@ -259,10 +259,10 @@ const apply = async () => {
       }
     });
     originalConfig.value = JSON.parse(JSON.stringify(config.value));
-    alert('IP filtering configuration updated successfully');
+//    alert('IP filtering configuration updated successfully');
   } catch (error) {
     console.error('Failed to update IP filtering config:', error);
-    alert('Failed to update IP filtering configuration');
+//    alert('Failed to update IP filtering configuration');
   }
 };
 
