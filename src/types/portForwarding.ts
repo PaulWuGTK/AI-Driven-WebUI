@@ -26,6 +26,8 @@ export interface PortForwardingUpdateRequest {
 }
 
 export interface PortForwardingApiResponse {
-  OK?: string;
-  NOK?: string;
+  PortForwarding: {
+    OK?: string;
+    NOK?: string;
+  };
 }

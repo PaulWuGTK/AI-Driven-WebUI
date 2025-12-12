@@ -15,7 +15,7 @@ export const portForwardingApi = {
   async updateConfig(data: PortForwardingUpdateRequest): Promise<PortForwardingApiResponse> {
     if (isDevelopment) {
       portForwardingMockData.PortForwarding.PortForwardList = data.PortForwarding.PortForwardList;
-      return Promise.resolve({ OK: 'Success' });
+      return Promise.resolve({ PortForwarding: { OK: 'Success' } });
     }
     return apiClient.post<PortForwardingApiResponse>('/API/info?list=PortForwarding', data);
   }

@@ -225,8 +225,8 @@ const handleSave = async () => {
       }
     });
 
-    if (response.NOK) {
-      errorMessage.value = response.NOK;
+    if (response.PortForwarding.NOK) {
+      errorMessage.value = response.PortForwarding.NOK;
       return;
     }
 
@@ -255,8 +255,8 @@ const confirmDelete = async () => {
       }
     });
 
-    if (response.NOK) {
-      errorMessage.value = response.NOK;
+    if (response.PortForwarding.NOK) {
+      errorMessage.value = response.PortForwarding.NOK;
       showDeleteDialog.value = false;
       return;
     }
