@@ -31,6 +31,8 @@ const selectMode = (mode: AgentSetupMode) => {
       <div class="progress-bar">
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
       </div>
 
       <div class="setup-diagram">

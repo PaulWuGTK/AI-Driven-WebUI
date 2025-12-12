@@ -87,7 +87,7 @@ const agentSetupMode = ref<AgentSetupMode>('wps');
 
 const maxSteps = computed(() => {
   if (config.value.mode === 'agent') {
-    return 5;
+    return 4;
   }
   return 8;
 });

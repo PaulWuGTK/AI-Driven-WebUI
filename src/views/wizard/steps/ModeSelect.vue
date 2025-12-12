@@ -34,13 +34,12 @@ const handleNext = () => {
       <p class="step-subtitle">{{ t('wizard.modeSelectSubtitle') }}</p>
 
       <div class="progress-bar">
-        <div class="progress-step" :class="{ active: currentStep >= 1 }"></div>
-        <div class="progress-step" :class="{ active: currentStep >= 2 }"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
-        <div class="progress-step"></div>
+        <div
+          v-for="step in maxSteps"
+          :key="step"
+          class="progress-step"
+          :class="{ active: step <= currentStep }"
+        ></div>
       </div>
 
       <div class="mode-selection">

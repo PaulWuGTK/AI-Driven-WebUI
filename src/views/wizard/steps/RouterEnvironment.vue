@@ -20,6 +20,7 @@ const { t } = useI18n();
         <div class="progress-step"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
+        <div class="progress-step"></div>
       </div>
 
       <div class="environment-diagram">

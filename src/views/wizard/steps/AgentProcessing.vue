@@ -117,6 +117,7 @@ const formatTime = (seconds: number) => {
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
       </div>
 
       <div class="processing-container">

@@ -34,6 +34,7 @@ const showBandPasswords = ref({
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
       </div>
 
       <div class="review-container">

@@ -133,7 +133,8 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
-        <div class="progress-step"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
       </div>
