@@ -1177,7 +1177,7 @@ export default {
     sourceMacAddress: '送信元 MAC アドレス',
     comment: 'コメント',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: '値を入力してください',
     add: '追加',
     currentBlacklistFilterTable: '現在のブラックリストフィルターテーブル',
     currentWhitelistFilterTable: '現在のホワイトリストフィルターテーブル',

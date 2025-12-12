@@ -1177,7 +1177,7 @@ export default {
     sourceMacAddress: 'Quell-MAC-Adresse',
     comment: 'Kommentar',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: 'Bitte Wert eingeben',
     add: 'Hinzufügen',
     currentBlacklistFilterTable: 'Aktuelle Blacklist-Filtertabelle',
     currentWhitelistFilterTable: 'Aktuelle Whitelist-Filtertabelle',

@@ -1176,7 +1176,7 @@ export default {
     sourceMacAddress: '소스 MAC 주소',
     comment: '메모',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: '값을 입력하십시오',
     add: '추가',
     currentBlacklistFilterTable: '현재 블랙리스트 필터 테이블',
     currentWhitelistFilterTable: '현재 화이트리스트 필터 테이블',

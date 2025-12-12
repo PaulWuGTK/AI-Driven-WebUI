@@ -1182,7 +1182,7 @@ const translations = {
     sourceMacAddress: 'Source MAC Address',
     comment: 'Comment',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: 'Please Enter the value',
     add: 'Add',
     currentBlacklistFilterTable: 'Current Blacklist Filter Table',
     currentWhitelistFilterTable: 'Current Whitelist Filter Table',

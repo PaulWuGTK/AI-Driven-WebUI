@@ -1177,7 +1177,7 @@ export default {
     sourceMacAddress: '源 MAC 地址',
     comment: '备注',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: '请输入值',
     add: '新增',
     currentBlacklistFilterTable: '当前黑名单过滤表',
     currentWhitelistFilterTable: '当前白名单过滤表',

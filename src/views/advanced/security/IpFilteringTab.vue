@@ -1,5 +1,9 @@
 <template>
   <div class="ip-filtering-tab">
+    <div v-if="showSuccess" class="success-message">
+      {{ $t('common.apply') }} successful
+    </div>
+
     <div class="form-group toggle-group">
       <label>{{ $t('ipFiltering.enableIpFiltering') }}</label>
       <label class="switch">
@@ -162,10 +166,18 @@ const newEntry = ref<Omit<IpFilterEntry, 'No'>>({
 
 const errorMessage = ref<string>('');
 const originalConfig = ref<IpFilteringConfig | null>(null);
+const showSuccess = ref(false);
 
 const currentList = computed(() => {
   return filterMode.value === 'Blacklist' ? config.value.BlackList : config.value.WhiteList;
 });
+
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
+};
 
 const loadConfig = async () => {
   try {
@@ -259,10 +271,9 @@ const apply = async () => {
       }
     });
     originalConfig.value = JSON.parse(JSON.stringify(config.value));
-//    alert('IP filtering configuration updated successfully');
+    showSuccessMessage();
   } catch (error) {
     console.error('Failed to update IP filtering config:', error);
-//    alert('Failed to update IP filtering configuration');
   }
 };
 
@@ -533,5 +544,24 @@ onMounted(() => {
 
 .input-error:focus {
   border-color: var(--color-error) !important;
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1100;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
 }
 </style>

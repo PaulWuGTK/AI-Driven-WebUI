@@ -1178,7 +1178,7 @@ export default {
     sourceMacAddress: '來源 MAC 位址',
     comment: '備註',
     macPlaceholder: '11:22:33:44:55:66',
-    commentPlaceholder: 'test1',
+    commentPlaceholder: '請輸入數值',
     add: '新增',
     currentBlacklistFilterTable: '目前黑名單過濾表',
     currentWhitelistFilterTable: '目前白名單過濾表',
