@@ -67,4 +67,5 @@ const apiClient = {
   }
 };
 
+export { apiClient };
 export default apiClient;

@@ -113,8 +113,13 @@ const router = createRouter({
     },
     {
       path: '/basic/backup-wan',
-      component: () => import('../views/InProgress.vue'),
+      name: 'BackupWan',
+      component: () => import('../views/network/wan/BackupWanConfig.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/network/backup-wan',
+      redirect: '/basic/backup-wan'
     },
     {
       path: '/network/lan',

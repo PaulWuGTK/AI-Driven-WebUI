@@ -461,6 +461,24 @@ const translations = {
     ipv4DnsMode: 'IPv4 DNS Mode',
     ipv6DnsMode: 'IPv6 DNS Mode'
   },
+  backupWan: {
+    title: 'Backup WAN Management',
+    backupWan: 'Backup WAN',
+    physicalType: 'PhysicalType',
+    interface: 'Interface',
+    wanHealthCheck: 'WAN Health Check',
+    primaryWan: 'Primary WAN',
+    backupWanLabel: 'Backup WAN',
+    checkCount: 'Check Count',
+    checkCountHint: 'times (Range: 3-9999, Default: 3)',
+    checkPeriod: 'Check Period',
+    checkPeriodHint: 'seconds (Range: 3-9999999, Default: 3)',
+    pingDetection: 'Ping Detection',
+    dnsDetection: 'DNS Detection',
+    ipAddress: 'IP Address',
+    dnsServer: 'DNS Server',
+    enableHint: 'Enable will show WAN Health Check configuration, Disable will hide it'
+  },
   lanBasic: {
     title: 'LAN Settings',
     ipv4Configuration: 'IPv4 Configuration',
