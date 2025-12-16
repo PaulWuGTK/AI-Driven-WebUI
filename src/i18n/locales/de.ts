@@ -961,7 +961,21 @@ export default {
     wanModeBridged: 'Durchleitungsmodus',
     wanModeCellular: 'Mobilfunknetzverbindung',
     privacyPolicyTitle: 'Nutzungsbedingungen und Datenschutzrichtlinie',
-    agreeButton: 'Zustimmen'
+    agreeButton: 'Zustimmen',
+    ssid: 'SSID',
+    ssidPlaceholder: 'Netzwerknamen eingeben',
+    securityType: 'Sicherheitsart',
+    wpa3Warning: '6GHz-Clients können nur die WPA3-Personal-Authentifizierung verwenden.',
+    passwordLabel: 'Passwort',
+    passwordPlaceholderWifi: '8–63 Zeichen, Buchstaben und Zahlen, ohne einfache Wiederholungen',
+    passwordHelpText: 'Verwenden Sie 8–63 Zeichen mit einer Kombination aus Buchstaben und Zahlen und vermeiden Sie leicht zu erratende Wiederholungsmuster.',
+    passwordPlaceholderShort: '8–63 Zeichen',
+    band24ghz: '2,4GHz-Funknetz',
+    enable24ghz: '2,4GHz-Wi-Fi aktivieren',
+    band5ghz: '5GHz-Funknetz',
+    enable5ghz: '5GHz-Wi-Fi aktivieren',
+    band6ghz: '6GHz-Funknetz',
+    enable6ghz: '6GHz-Wi-Fi aktivieren'
   },
   common: {
     save: 'Speichern',

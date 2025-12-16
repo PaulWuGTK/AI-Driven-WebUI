@@ -120,6 +120,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
     props.config.wifi.bands['6g'].password = savedBandPasswords.value['6g'];
   }
 });
+
+const showWpa3Warning = computed(() => {
+  return props.config.wifi.smartConnect &&
+         props.config.wifi.common.security &&
+         (props.config.wifi.common.security.indexOf('WPA2') !== -1);
+});
 </script>
 
 <template>
@@ -173,32 +179,33 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
 
       <div v-if="config.wifi.smartConnect" class="form-container">
         <div class="form-group">
-          <label>SSID <span class="required">*</span></label>
+          <label>{{ t('wizard.ssid') }} <span class="required">*</span></label>
           <input
             type="text"
             v-model="config.wifi.common.ssid"
-            placeholder="Enter network name"
+            :placeholder="t('wizard.ssidPlaceholder')"
             class="form-input"
             required
           />
         </div>
 
         <div class="form-group">
-          <label>Security Type <span class="required">*</span></label>
+          <label>{{ t('wizard.securityType') }} <span class="required">*</span></label>
           <select v-model="config.wifi.common.security" class="form-select">
             <option v-for="option in commonSecurityOptions" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
           </select>
+          <p v-if="showWpa3Warning" class="warning-text">{{ t('wizard.wpa3Warning') }}</p>
         </div>
 
         <div class="form-group">
-          <label>Password <span class="required">*</span></label>
+          <label>{{ t('wizard.passwordLabel') }} <span class="required">*</span></label>
           <div class="password-input">
             <input
               :type="showPassword ? 'text' : 'password'"
               v-model="config.wifi.common.password"
-              placeholder="8–63 chars, letters & numbers, no repeats"
+              :placeholder="t('wizard.passwordPlaceholderWifi')"
               class="form-input"
               minlength="8"
               maxlength="63"
@@ -208,15 +215,15 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
-          <p class="help-text">8–63 characters, letters & numbers, no repeats</p>
+          <p class="help-text">{{ t('wizard.passwordHelpText') }}</p>
         </div>
       </div>
 
       <div v-else class="bands-container">
         <div class="band-section">
-          <h3>2.4GHz Wireless Network</h3>
+          <h3>{{ t('wizard.band24ghz') }}</h3>
           <div class="band-toggle">
-            <label>Enable 2.4GHz Wi-Fi</label>
+            <label>{{ t('wizard.enable24ghz') }}</label>
             <label class="toggle-switch">
               <input type="checkbox" v-model="config.wifi.bands['2g'].enabled" />
               <span class="slider"></span>
@@ -224,12 +231,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
           </div>
           <div v-if="config.wifi.bands['2g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>SSID</label>
+              <label>{{ t('wizard.ssid') }}</label>
               <input type="text" v-model="config.wifi.bands['2g'].ssid" class="form-input" />
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Security Type</label>
+                <label>{{ t('wizard.securityType') }}</label>
                 <select v-model="config.wifi.bands['2g'].security" class="form-select">
                   <option v-for="option in band2gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
@@ -237,12 +244,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
                 </select>
               </div>
               <div class="form-group">
-                <label>Password</label>
+                <label>{{ t('wizard.passwordLabel') }}</label>
                 <input
                   type="password"
                   v-model="config.wifi.bands['2g'].password"
                   class="form-input"
-                  placeholder="8–63 chars"
+                  :placeholder="t('wizard.passwordPlaceholderShort')"
                 />
               </div>
             </div>
@@ -250,9 +257,9 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         </div>
 
         <div class="band-section">
-          <h3>5GHz Wireless Network</h3>
+          <h3>{{ t('wizard.band5ghz') }}</h3>
           <div class="band-toggle">
-            <label>Enable 5GHz Wi-Fi</label>
+            <label>{{ t('wizard.enable5ghz') }}</label>
             <label class="toggle-switch">
               <input type="checkbox" v-model="config.wifi.bands['5g'].enabled" />
               <span class="slider"></span>
@@ -260,12 +267,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
           </div>
           <div v-if="config.wifi.bands['5g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>SSID</label>
+              <label>{{ t('wizard.ssid') }}</label>
               <input type="text" v-model="config.wifi.bands['5g'].ssid" class="form-input" />
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Security Type</label>
+                <label>{{ t('wizard.securityType') }}</label>
                 <select v-model="config.wifi.bands['5g'].security" class="form-select">
                   <option v-for="option in band5gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
@@ -273,12 +280,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
                 </select>
               </div>
               <div class="form-group">
-                <label>Password</label>
+                <label>{{ t('wizard.passwordLabel') }}</label>
                 <input
                   type="password"
                   v-model="config.wifi.bands['5g'].password"
                   class="form-input"
-                  placeholder="8–63 chars"
+                  :placeholder="t('wizard.passwordPlaceholderShort')"
                 />
               </div>
             </div>
@@ -286,9 +293,9 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
         </div>
 
         <div class="band-section">
-          <h3>6GHz Wireless Network</h3>
+          <h3>{{ t('wizard.band6ghz') }}</h3>
           <div class="band-toggle">
-            <label>Enable 6GHz Wi-Fi</label>
+            <label>{{ t('wizard.enable6ghz') }}</label>
             <label class="toggle-switch">
               <input type="checkbox" v-model="config.wifi.bands['6g'].enabled" />
               <span class="slider"></span>
@@ -296,12 +303,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
           </div>
           <div v-if="config.wifi.bands['6g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>SSID</label>
+              <label>{{ t('wizard.ssid') }}</label>
               <input type="text" v-model="config.wifi.bands['6g'].ssid" class="form-input" />
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Security Type</label>
+                <label>{{ t('wizard.securityType') }}</label>
                 <select v-model="config.wifi.bands['6g'].security" class="form-select">
                   <option v-for="option in band6gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
@@ -309,12 +316,12 @@ watch(() => props.config.wifi.bands['6g'].enabled, (enabled) => {
                 </select>
               </div>
               <div class="form-group">
-                <label>Password</label>
+                <label>{{ t('wizard.passwordLabel') }}</label>
                 <input
                   type="password"
                   v-model="config.wifi.bands['6g'].password"
                   class="form-input"
-                  placeholder="8–63 chars"
+                  :placeholder="t('wizard.passwordPlaceholderShort')"
                 />
               </div>
             </div>
@@ -651,6 +658,13 @@ input:disabled + .slider {
   font-size: 0.85rem;
   color: #666;
   margin: 0;
+}
+
+.warning-text {
+  font-size: 0.85rem;
+  color: red;
+  margin: 0.5rem 0 0 0;
+  font-weight: 500;
 }
 
 .bands-container {

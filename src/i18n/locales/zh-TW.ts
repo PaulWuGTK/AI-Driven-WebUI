@@ -962,7 +962,21 @@ export default {
     wanModeBridged: '橋接（透通）模式',
     wanModeCellular: '行動網路連線',
     privacyPolicyTitle: '服務條款和隱私政策',
-    agreeButton: '同意'
+    agreeButton: '同意',
+    ssid: 'SSID',
+    ssidPlaceholder: '請輸入網路名稱',
+    securityType: '安全性類型',
+    wpa3Warning: '6GHz 用戶端僅能使用 WPA3-Personal 驗證',
+    passwordLabel: '密碼',
+    passwordPlaceholderWifi: '8–63 個字元，英數混合且不可全部重複',
+    passwordHelpText: '8–63 個字元，請使用英文字母與數字，避免重複字元組合',
+    passwordPlaceholderShort: '8–63 個字元',
+    band24ghz: '2.4GHz 無線網路',
+    enable24ghz: '啟用 2.4GHz Wi-Fi',
+    band5ghz: '5GHz 無線網路',
+    enable5ghz: '啟用 5GHz Wi-Fi',
+    band6ghz: '6GHz 無線網路',
+    enable6ghz: '啟用 6GHz Wi-Fi'
   },
   common: {
     save: '儲存',

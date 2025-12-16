@@ -961,7 +961,21 @@ export default {
     wanModeBridged: '桥接（透传）模式',
     wanModeCellular: '移动网络连接',
     privacyPolicyTitle: '服务条款和隐私政策',
-    agreeButton: '同意'
+    agreeButton: '同意',
+    ssid: 'SSID',
+    ssidPlaceholder: '请输入网络名称',
+    securityType: '安全类型',
+    wpa3Warning: '6GHz 客户端仅支持使用 WPA3-Personal 认证',
+    passwordLabel: '密码',
+    passwordPlaceholderWifi: '8–63 个字符，字母和数字组合，避免重复',
+    passwordHelpText: '8–63 个字符，请使用字母与数字组合，避免重复字符组合',
+    passwordPlaceholderShort: '8–63 个字符',
+    band24ghz: '2.4GHz 无线网络',
+    enable24ghz: '启用 2.4GHz Wi-Fi',
+    band5ghz: '5GHz 无线网络',
+    enable5ghz: '启用 5GHz Wi-Fi',
+    band6ghz: '6GHz 无线网络',
+    enable6ghz: '启用 6GHz Wi-Fi'
   },
   common: {
     save: '保存',

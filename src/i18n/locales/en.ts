@@ -997,7 +997,21 @@ const translations = {
     wanModeBridged: 'Pass-through mode',
     wanModeCellular: 'Mobile network connection',
     privacyPolicyTitle: 'Terms of Service and Privacy Policy',
-    agreeButton: 'Agree'
+    agreeButton: 'Agree',
+    ssid: 'SSID',
+    ssidPlaceholder: 'Enter network name',
+    securityType: 'Security Type',
+    wpa3Warning: '6G client only use WPA3-Personal authentication',
+    passwordLabel: 'Password',
+    passwordPlaceholderWifi: '8–63 chars, letters & numbers, no repeats',
+    passwordHelpText: '8–63 characters, letters & numbers, no repeats',
+    passwordPlaceholderShort: '8–63 chars',
+    band24ghz: '2.4GHz Wireless Network',
+    enable24ghz: 'Enable 2.4GHz Wi-Fi',
+    band5ghz: '5GHz Wireless Network',
+    enable5ghz: 'Enable 5GHz Wi-Fi',
+    band6ghz: '6GHz Wireless Network',
+    enable6ghz: 'Enable 6GHz Wi-Fi'
   },
   common: {
     save: 'Save',

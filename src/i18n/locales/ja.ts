@@ -961,7 +961,21 @@ export default {
     wanModeBridged: 'パススルーモード',
     wanModeCellular: 'モバイルネットワーク接続',
     privacyPolicyTitle: '利用規約とプライバシーポリシー',
-    agreeButton: '同意する'
+    agreeButton: '同意する',
+    ssid: 'SSID',
+    ssidPlaceholder: 'ネットワーク名を入力',
+    securityType: 'セキュリティ方式',
+    wpa3Warning: '6GHz クライアントは WPA3-Personal 認証のみ利用できます',
+    passwordLabel: 'パスワード',
+    passwordPlaceholderWifi: '8～63文字、英字と数字、同じ文字の繰り返しは不可',
+    passwordHelpText: '8～63文字の英数字を使用し、推測されやすい繰り返しパターンは避けてください',
+    passwordPlaceholderShort: '8～63文字',
+    band24ghz: '2.4GHz 無線ネットワーク',
+    enable24ghz: '2.4GHz Wi-Fi を有効にする',
+    band5ghz: '5GHz 無線ネットワーク',
+    enable5ghz: '5GHz Wi-Fi を有効にする',
+    band6ghz: '6GHz 無線ネットワーク',
+    enable6ghz: '6GHz Wi-Fi を有効にする'
   },
   common: {
     save: '保存',

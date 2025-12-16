@@ -960,7 +960,21 @@ export default {
     wanModeBridged: '패스스루 모드',
     wanModeCellular: '모바일 네트워크 연결',
     privacyPolicyTitle: '서비스 약관 및 개인정보 보호정책',
-    agreeButton: '동의'
+    agreeButton: '동의',
+    ssid: 'SSID',
+    ssidPlaceholder: '네트워크 이름을 입력하세요',
+    securityType: '보안 유형',
+    wpa3Warning: '6GHz 클라이언트는 WPA3-Personal 인증만 사용할 수 있습니다',
+    passwordLabel: '비밀번호',
+    passwordPlaceholderWifi: '8–63자, 영문자와 숫자 조합, 반복 패턴 지양',
+    passwordHelpText: '8–63자의 영문자와 숫자를 조합하여 사용하고, 추측하기 쉬운 반복 패턴은 피하십시오',
+    passwordPlaceholderShort: '8–63자',
+    band24ghz: '2.4GHz 무선 네트워크',
+    enable24ghz: '2.4GHz Wi-Fi 사용',
+    band5ghz: '5GHz 무선 네트워크',
+    enable5ghz: '5GHz Wi-Fi 사용',
+    band6ghz: '6GHz 무선 네트워크',
+    enable6ghz: '6GHz Wi-Fi 사용'
   },
   common: {
     save: '저장',
