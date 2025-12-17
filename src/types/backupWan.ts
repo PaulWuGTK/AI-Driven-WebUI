@@ -1,8 +1,8 @@
 export interface WANHealthCheck {
   CheckMethod: 'Ping' | 'DNS';
-  Alias?: string;
+  Alias: string;
   CheckPeriod: number;
-  Name: string;
+  Name?: string;
   DNSAddress: string;
   Status?: string;
   PingAddress: string;
@@ -10,6 +10,7 @@ export interface WANHealthCheck {
 }
 
 export interface BackupWANConfig {
+  NOK?:string;
   PhysicalInterface: string;
   SupportedPhysicalInterface: string[];
   Enable: number | boolean;
@@ -20,21 +21,22 @@ export interface BackupWANConfig {
 
 export interface BackupWANResponse {
   BackupWAN: BackupWANConfig;
+  NOK?:string;
 }
 
 export interface BackupWANRequest {
   BackupWAN: {
     Enable: boolean;
     PhysicalType: string;
-    PhysicalReference: string;
+    PhysicalInterface: string;
     WHCEnable: boolean;
     WANHealthCheck: Array<{
+      Alias: string;
       CheckMethod: string;
       CheckCount: number;
       CheckPeriod: number;
       PingAddress: string;
       DNSAddress: string;
-      Name: string;
     }>;
   };
 }

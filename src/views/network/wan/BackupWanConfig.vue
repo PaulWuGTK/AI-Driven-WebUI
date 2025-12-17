@@ -178,6 +178,7 @@ const formData = ref<BackupWANConfig>({
   PhysicalType: 'Ethernet',
   WANHealthCheck: [
     {
+      Alias: 'primary_wan',
       CheckMethod: 'Ping',
       CheckPeriod: 3,
       Name: 'eth0',
@@ -186,6 +187,7 @@ const formData = ref<BackupWANConfig>({
       CheckCount: 3
     },
     {
+      Alias: 'backup_wan',
       CheckMethod: 'Ping',
       CheckPeriod: 3,
       Name: 'lan1',
@@ -234,14 +236,6 @@ const loadConfig = async () => {
   }
 };
 
-const getPhysicalReference = (physicalInterface: string): string => {
-  const referenceMap: Record<string, string> = {
-    'lan1': 'Device.Ethernet.Interface.2.',
-    'wwan0': 'Device.Cellular.Interface.1.'
-  };
-  return referenceMap[physicalInterface] || 'Device.Ethernet.Interface.2.';
-};
-
 const handleSubmit = async () => {
   loading.value = true;
   try {
@@ -249,22 +243,29 @@ const handleSubmit = async () => {
       BackupWAN: {
         Enable: Boolean(formData.value.Enable),
         PhysicalType: formData.value.PhysicalType,
-        PhysicalReference: getPhysicalReference(formData.value.PhysicalInterface),
+        PhysicalInterface: formData.value.PhysicalInterface,
         WHCEnable: Boolean(formData.value.WHCEnable),
         WANHealthCheck: formData.value.WANHealthCheck.map(hc => ({
+          Alias: hc.Alias,
           CheckMethod: hc.CheckMethod,
           CheckCount: hc.CheckCount,
           CheckPeriod: hc.CheckPeriod,
           PingAddress: hc.PingAddress,
-          DNSAddress: hc.DNSAddress,
-          Name: hc.Name
+          DNSAddress: hc.DNSAddress
         }))
       }
     };
 
-    await backupWanApi.updateConfig(requestData);
-    showSuccessMessage();
-    await loadConfig();
+    const res = await backupWanApi.updateConfig(requestData);
+
+    const err = res?.BackupWAN?.NOK ?? res?.NOK;
+    if (err) {
+      console.warn('Failed to update Backup WAN config:', err);
+      alert(err);
+    } else {
+      showSuccessMessage();
+      await loadConfig();
+    }
   } catch (error) {
     console.error('Failed to update Backup WAN config:', error);
    // alert('Failed to update Backup WAN configuration');
