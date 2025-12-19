@@ -99,7 +99,8 @@ onMounted(() => {
     <div v-else class="status-content">
       <div class="panel-section" :data-testid="qa('upnp-panel')">
         <div class="card-content">
-          <div class="form-row" :data-testid="qa('upnp-enable-row')">
+        <div class="form-group">
+          <label class="switch-label">
             <label class="form-label" :data-testid="qa('upnp-enable-label')">{{ t('upnp.enable') }}</label>
             <div class="form-control">
               <label class="switch" :data-testid="qa('upnp-enable-switch')">
@@ -111,8 +112,25 @@ onMounted(() => {
                 <span class="slider"></span>
               </label>
             </div>
-          </div>
+          </label>
+        </div>      
+<!--
+        <div class="form-group">
+          <label class="switch-label">
+            <span :data-testid="qa('ssh-server-edit-enable-label')">{{ t('ssh.enable') }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                :data-testid="qa('ssh-server-edit-enable-toggle')"
+                :checked="server.Enable === 1"
+                @change="updateServer('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+              >
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>        
 
+-->
           <div v-if="0" class="form-row" :data-testid="qa('upnp-interface-row')">
             <label class="form-label" :data-testid="qa('upnp-interface-label')">{{ t('upnp.interfaceSelection') }}</label>
             <div class="form-control">
@@ -289,51 +307,6 @@ onMounted(() => {
 .form-select:focus {
   outline: none;
   border-color: var(--primary-color);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--color-primary);
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
 }
 
 .form-actions {

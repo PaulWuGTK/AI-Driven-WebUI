@@ -12,7 +12,8 @@ export interface WANHealthCheck {
 export interface BackupWANConfig {
   NOK?:string;
   PhysicalInterface: string;
-  SupportedPhysicalInterface: string[];
+  SupportedEthernetInterface: string[];
+  SupportedCellularInterface: string[];
   Enable: number | boolean;
   WHCEnable: number | boolean;
   PhysicalType: 'Ethernet' | 'Cellular';

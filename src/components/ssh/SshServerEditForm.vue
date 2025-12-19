@@ -353,12 +353,6 @@ const handleCustomKeepAliveChange = (event: Event) => {
   position: relative;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
 input, select {
   width: 100%;
   padding: 0.5rem;

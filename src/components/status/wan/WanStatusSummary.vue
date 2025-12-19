@@ -40,10 +40,6 @@ defineProps<{
 </template>
 
 <style scoped>
-.info-grid {
-  display: grid;
-  gap: 1rem;
-}
 
 .info-row {
   display: grid;

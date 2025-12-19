@@ -163,54 +163,17 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
   margin-bottom: 0.5rem;
 }
 
-.switch-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text-primary);
-}
-
+/* Custom switch size (60px × 34px) with left margin for layout */
 .switch {
-  position: relative;
-  display: inline-block;
   width: 60px;
   height: 34px;
   flex-shrink: 0;
   margin-left:10px;
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-
 .slider:before {
-  position: absolute;
-  content: "";
   height: 26px;
   width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {

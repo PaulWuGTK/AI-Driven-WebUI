@@ -82,7 +82,7 @@
 /* Info Grid (for status displays) */
 .info-grid {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-1);
 }
 
 .info-row {

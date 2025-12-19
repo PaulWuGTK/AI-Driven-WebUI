@@ -3,7 +3,8 @@ import type { BackupWANResponse } from '../../types/backupWan';
 export const mockBackupWANData: BackupWANResponse = {
   BackupWAN: {
     PhysicalInterface: 'lan1',
-    SupportedPhysicalInterface: ['lan1', 'wwan0'],
+    SupportedEthernetInterface: ['lan1','eth0'],
+    SupportedCellularInterface: ['eth1'],
     Enable: 1,
     WHCEnable: 0,
     PhysicalType: 'Ethernet',

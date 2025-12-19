@@ -4,12 +4,50 @@
   margin-bottom: var(--space-6);
 }
 
+.form-group > label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
 .form-label {
   display: block;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--text-primary);
   margin-bottom: var(--space-2);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.detail-item .label,
+.result-item .label,
+.result-row .label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.switch-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.switch-label > span:first-child {
+  flex: 1;
+  min-width: 0;
 }
 
 .form-label-required::after {
@@ -211,20 +249,24 @@
 }
 
 /* Switch Toggle */
-.form-switch {
+.form-switch,
+.switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 60px;
+  height: 34px;
+  flex-shrink: 0;
 }
 
-.form-switch input {
+.form-switch input,
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.form-switch-slider {
+.form-switch-slider,
+.slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -236,27 +278,31 @@
   transition: var(--transition-fast);
 }
 
-.form-switch-slider::before {
+.form-switch-slider::before,
+.slider::before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  top: 4px;
   background-color: white;
   border-radius: 50%;
   transition: var(--transition-fast);
 }
 
-.form-switch input:checked + .form-switch-slider {
+.form-switch input:checked + .form-switch-slider,
+.switch input:checked + .slider {
   background-color: var(--color-primary);
 }
 
-.form-switch input:checked + .form-switch-slider::before {
-  transform: translateX(20px);
+.form-switch input:checked + .form-switch-slider::before,
+.switch input:checked + .slider::before {
+  transform: translateX(26px);
 }
 
-.form-switch input:disabled + .form-switch-slider {
+.form-switch input:disabled + .form-switch-slider,
+.switch input:disabled + .slider {
   opacity: 0.5;
   cursor: not-allowed;
 }

@@ -275,11 +275,6 @@ const showBandPasswords = ref({
   gap: 0.5rem;
 }
 
-.label {
-  font-weight: 600;
-  color: #666;
-}
-
 .value {
   color: #333;
   font-weight: 500;

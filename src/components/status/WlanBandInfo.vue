@@ -38,11 +38,6 @@ defineProps<{
   margin-bottom: 2rem;
 }
 
-.info-grid {
-  display: grid;
-  gap: 1rem;
-}
-
 .info-row {
   display: grid;
   grid-template-columns: 200px 1fr;

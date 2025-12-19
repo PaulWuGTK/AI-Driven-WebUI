@@ -159,11 +159,6 @@ defineProps<{
 </template>
 
 <style scoped>
-.info-grid {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
 
 .info-row {
   display: grid;

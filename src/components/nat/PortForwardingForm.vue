@@ -4,7 +4,7 @@
     <form @submit.prevent="handleSubmit">
       <div class="form-section">
         <div class="form-group">
-          <label class="switch-label">
+          <div class="switch-label">
             <span>{{ $t('portForwarding.enablePortForwarding') }}</span>
             <label class="switch">
               <input
@@ -14,7 +14,7 @@
               />
               <span class="slider"></span>
             </label>
-          </label>
+          </div>
         </div>
 
         <div class="form-group">
@@ -215,64 +215,6 @@ function handleSubmit() {
 
 .form-group input::placeholder {
   color: var(--text-tertiary);
-}
-
-.switch-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-}
-
-.switch-label > span {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.3s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.switch input:checked + .slider {
-  background-color: var(--primary-color);
-}
-
-.switch input:checked + .slider:before {
-  transform: translateX(24px);
 }
 
 .form-actions {

@@ -26,37 +26,37 @@ const props = defineProps<{
     <h2 class="card-title" :data-testid="qa('dashboard-wan-status-title')">{{ t('dashboard.wan') }} {{ t('dashboard.status') }}</h2>
 
     <div class="info-grid" :data-testid="qa('dashboard-wan-status-grid')">
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-protocol')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-protocol')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-protocol-label')">{{ t('dashboard.protocol') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-protocol-value')" :title="wanInfo.Protocol">{{ wanInfo.Protocol }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-ipv4-address')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-ipv4-address')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-ipv4-address-label')">{{ t('dashboard.ipv4Address') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-ipv4-address-value')" :title="wanInfo.InternetAddress">{{ wanInfo.InternetAddress }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-subnet-mask')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-subnet-mask')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-subnet-mask-label')">{{ t('dashboard.subnetMask') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-subnet-mask-value')" :title="wanInfo.SubnetMask">{{ wanInfo.SubnetMask }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-default-gateway')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-default-gateway')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-default-gateway-label')">{{ t('dashboard.defaultGateway') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-default-gateway-value')" :title="wanInfo.DefaultGateway">{{ wanInfo.DefaultGateway }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-primary-dns')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-primary-dns')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-primary-dns-label')">{{ t('dashboard.primaryDNS') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-primary-dns-value')" :title="wanInfo.PrimaryDNS">{{ wanInfo.PrimaryDNS }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-secondary-dns')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-secondary-dns')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-secondary-dns-label')">{{ t('dashboard.secondaryDNS') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-secondary-dns-value')" :title="wanInfo.SecondaryDNS">{{ wanInfo.SecondaryDNS }}</span>
       </div>
 
-      <div class="info-row" :data-testid="qa('dashboard-wan-status-mac-address')">
+      <div class="info-item" :data-testid="qa('dashboard-wan-status-mac-address')">
         <span class="info-label" :data-testid="qa('dashboard-wan-status-mac-address-label')">{{ t('dashboard.macAddress') }}</span>
         <span class="value" :data-testid="qa('dashboard-wan-status-mac-address-value')" :title="wanInfo.MacAddress">{{ wanInfo.MacAddress }}</span>
       </div>
@@ -71,12 +71,10 @@ const props = defineProps<{
   max-width: 100%;
 }
 
-.info-row {
+.info-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  overflow: hidden;
 }
 
 .info-label {
@@ -92,7 +90,8 @@ const props = defineProps<{
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: right;
-  color: var(--text-primary);
+  color: #333;
+  font-weight: 500;
 }
 
 .card-title {

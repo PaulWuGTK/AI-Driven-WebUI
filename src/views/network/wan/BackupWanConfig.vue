@@ -45,7 +45,7 @@
               />
             </div>
 
-            <div v-if="formData.Enable" class="form-group">
+            <div v-if="0" class="form-group">
               <div class="switch-label">
                 <span>{{ $t('backupWan.wanHealthCheck') }}</span>
                 <label class="switch">
@@ -58,7 +58,7 @@
               </div>
             </div>
 
-            <div v-if="formData.WHCEnable" class="health-check-configs">
+            <div v-if="formData.Enable" class="health-check-configs">
               <div
                 v-for="(healthCheck, index) in formData.WANHealthCheck"
                 :key="index"
@@ -152,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { backupWanApi } from '../../../services/api/backupWan';
 import type { BackupWANConfig, BackupWANRequest } from '../../../types/backupWan';
@@ -172,7 +172,8 @@ const showSuccessMessage = () => {
 
 const formData = ref<BackupWANConfig>({
   PhysicalInterface: 'lan1',
-  SupportedPhysicalInterface: ['lan1', 'wwan0'],
+  SupportedEthernetInterface: ['lan1','eth0'],
+  SupportedCellularInterface: ['eth1'],
   Enable: false,
   WHCEnable: false,
   PhysicalType: 'Ethernet',
@@ -198,23 +199,48 @@ const formData = ref<BackupWANConfig>({
   ]
 });
 
-const physicalTypeOptions = computed(() => [
-  { label: 'Ethernet / Cellular', value: 'Ethernet' },
-  { label: 'Cellular', value: 'Cellular' }
-]);
+const isCellularSupported = computed(() => {
+  const cellularInterfaces = formData.value.SupportedCellularInterface;
+  return cellularInterfaces.length > 0 && cellularInterfaces[0] !== '';
+});
 
-const interfaceOptions = computed(() =>
-  formData.value.SupportedPhysicalInterface.map(iface => ({
-    label: iface,
-    value: iface
-  }))
-);
+const physicalTypeOptions = computed(() => {
+  const options = [{ label: 'Ethernet', value: 'Ethernet' }];
+  if (isCellularSupported.value) {
+    options.push({ label: 'Cellular', value: 'Cellular' });
+  }
+  return options;
+});
+
+const interfaceOptions = computed(() => {
+  const interfaces = formData.value.PhysicalType === 'Ethernet'
+    ? formData.value.SupportedEthernetInterface
+    : formData.value.SupportedCellularInterface;
+
+  return interfaces
+    .filter(iface => iface !== '')
+    .map(iface => ({
+      label: iface,
+      value: iface
+    }));
+});
 
 const handleBackupWanToggle = () => {
   if (!formData.value.Enable) {
     formData.value.WHCEnable = false;
   }
 };
+
+watch(() => formData.value.PhysicalType, (newType) => {
+  const interfaces = newType === 'Ethernet'
+    ? formData.value.SupportedEthernetInterface
+    : formData.value.SupportedCellularInterface;
+
+  const availableInterfaces = interfaces.filter(iface => iface !== '');
+  if (availableInterfaces.length > 0) {
+    formData.value.PhysicalInterface = availableInterfaces[0];
+  }
+});
 
 const loadConfig = async () => {
   loading.value = true;
@@ -244,7 +270,7 @@ const handleSubmit = async () => {
         Enable: Boolean(formData.value.Enable),
         PhysicalType: formData.value.PhysicalType,
         PhysicalInterface: formData.value.PhysicalInterface,
-        WHCEnable: Boolean(formData.value.WHCEnable),
+        WHCEnable: Boolean(formData.value.Enable),
         WANHealthCheck: formData.value.WANHealthCheck.map(hc => ({
           Alias: hc.Alias,
           CheckMethod: hc.CheckMethod,
@@ -293,10 +319,6 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-.page-content {
-  padding: 1.5rem;
-}
-
 .backup-wan-form {
   display: flex;
   flex-direction: column;
@@ -335,58 +357,7 @@ onMounted(() => {
   color: var(--text-primary);
 }
 
-.switch-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text-primary);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color);
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
+/* Custom switch size (60px × 34px) for larger prominence */
 
 .help-text {
   font-size: 0.875rem;
@@ -429,6 +400,7 @@ input:checked + .slider:before {
   width: 18px;
   height: 18px;
   cursor: pointer;
+  margin-right: 0.75rem;
 }
 
 .nested-field {
