@@ -35,7 +35,7 @@ const accessTechnologyOptions = [
   { value: '5g', label: '5G' },
   { value: '4g', label: '4G' },
   { value: '3g', label: '3G' },
-  { value: 'auto', label: 'Auto' }
+  { value: 'Auto', label: 'Auto' }
 ];
 
 const fetchCellularStatus = async () => {

@@ -68,7 +68,7 @@ export interface WizardSubmitData {
       MeshEnable: number;
       MFPConfig: number;
       PSC6g: number;
-      wifimlo: {
+      wificommon: {
         Enable: number;
         SSID: string;
         SecurityMode: string;

@@ -81,8 +81,8 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
         MeshEnable: config.mesh.enable ? 1 : 0,
         MFPConfig: config.wifi.pmf ? 1 : 0,
         PSC6g: config.wifi.psc ? 1 : 0,
-        wifimlo: {
-          Enable: config.wifi.mloEnable ? 1 : 0,
+        wificommon: {
+          Enable: config.wifi.smartConnect ? 1 : 0,
           SSID: config.wifi.common.ssid,
           SecurityMode: config.wifi.common.security,
           Password: config.wifi.common.password
