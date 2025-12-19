@@ -34,10 +34,10 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
       psc,
       pmf,
       common: {
-        ssid: data.WiFi.wifimlo.SSID,
-        security: data.WiFi.wifimlo.SecurityMode,
-        password: data.WiFi.wifimlo.Password,
-        securityOptions: parseSecurityOptions(data.WiFi.wifimlo.SecurityModeAvailable)
+        ssid: data.WiFi.wificommon.SSID,
+        security: data.WiFi.wificommon.SecurityMode,
+        password: data.WiFi.wificommon.Password,
+        securityOptions: parseSecurityOptions(data.WiFi.wificommon.SecurityModeAvailable)
       },
       bands: {
         '2g': {

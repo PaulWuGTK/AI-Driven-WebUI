@@ -33,7 +33,7 @@ export const wizardMockData = {
       MeshEnable: 1,
       MFPConfig: 1,
       PSC6g: 1,
-      wifimlo: {
+      wificommon: {
         Enable: 1,
         SSID: "prplOS_prplmesh",
         SecurityMode: "WPA3-Personal",

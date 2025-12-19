@@ -7,7 +7,7 @@ export const cellularMockData: CellularResponse = {
     ConnectionStatus: 'Up',
     ConnectionTime: 30,
     InterfaceEnable: 1,
-    PreferredAccessTechnology: 'NR',
+    PreferredAccessTechnology: 'Auto',
     SupportedAccessTechnologies: 'LTE,NR',
     IMEI: '864624060070580',
     IMSI: '466011202835208',

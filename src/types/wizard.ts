@@ -19,7 +19,7 @@ export interface WizardData {
     MeshEnable: number;
     MFPConfig: number;
     PSC6g: number;
-    wifimlo: WizardWifiInfo;
+    wificommon: WizardWifiInfo;
     wifi2g: WizardWifiInfo;
     wifi5g: WizardWifiInfo;
     wifi6g: WizardWifiInfo;
