@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getTimezones } from '../../services/api';
 import type { TimezoneEntry } from '../../types/timezone';
@@ -20,6 +20,13 @@ const emit = defineEmits<{
 const timezones = ref<TimezoneEntry[]>([]);
 const loading = ref(true);
 
+const emitSelectedTimezone = () => {
+  const idx = parseInt(props.modelValue, 10);
+  if (!Number.isFinite(idx) || idx <= 0) return;
+  const tz = timezones.value[idx - 1];
+  if (tz) emit('timezone-change', tz);
+};
+
 const fetchTimezones = async () => {
   try {
     const response = await getTimezones();
@@ -28,19 +35,28 @@ const fetchTimezones = async () => {
     console.error('Error fetching timezones:', error);
   } finally {
     loading.value = false;
+    emitSelectedTimezone();
   }
 };
 
 const handleChange = (event: Event) => {
   const index = parseInt((event.target as HTMLSelectElement).value);
-  const timezone = timezones.value[index-1];
+  const timezone = timezones.value[index - 1];
   emit('update:modelValue', index.toString());
-  emit('timezone-change', timezone);
+  if (timezone) emit('timezone-change', timezone);
 };
 
 onMounted(() => {
   fetchTimezones();
 });
+
+// If parent updates modelValue (e.g. after calling NTP API), sync it too
+watch(
+  () => props.modelValue,
+  () => {
+    if (!loading.value) emitSelectedTimezone();
+  }
+);
 </script>
 
 <template>
