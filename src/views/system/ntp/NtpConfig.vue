@@ -51,21 +51,19 @@ const showSuccessMessage = () => {
 
 const handleSubmit = async () => {
   if (!selectedTimezone.value) return;
-
   loading.value = true;
   try {
+    const tz: any = selectedTimezone.value;
+
+    const dstSupport = tz.DstSupport ?? tz.dst_support;
+    const tzNDST = tz.tzNDST ?? tz.tz_ndst;
+    const tzDST  = tz.tzDST  ?? tz.tz_dst;
+
     const tzValue = (() => {
-      const dstSupport = selectedTimezone.value.DstSupport;
-      if (dstSupport === 0) {
-        return selectedTimezone.value.tzNDST;
-      } else if (dstSupport === 1) {
-        return daylightSaving.value
-          ? selectedTimezone.value.tzDST
-          : selectedTimezone.value.tzNDST;
-      } else if (dstSupport === 2) {
-        return selectedTimezone.value.tzDST || selectedTimezone.value.tzNDST;
-      }
-      return selectedTimezone.value.tzNDST;
+      if (dstSupport === 0) return tzNDST;
+      if (dstSupport === 1) return daylightSaving.value ? tzDST : tzNDST;
+      if (dstSupport === 2) return tzDST || tzNDST;
+      return tzNDST;
     })();
 
     const updateData: NtpUpdateRequest = {
@@ -76,7 +74,10 @@ const handleSubmit = async () => {
         REGION: parseInt(timeZone.value, 10)
       }
     };
-
+    if (!tzValue) {
+      error.value = 'SetTZ is empty (timezone data not ready).';
+      return;
+    }
     const response = await updateNtpSettings(updateData);
     ntpData.value = response;
     showSuccessMessage();
