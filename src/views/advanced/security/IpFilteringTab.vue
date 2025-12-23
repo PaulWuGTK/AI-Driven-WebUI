@@ -1,7 +1,7 @@
 <template>
   <div class="ip-filtering-tab">
     <div v-if="showSuccess" class="success-message">
-      {{ $t('common.apply') }} successful
+      {{ $t('common.saveSuccess') }}
     </div>
 
     <div class="form-group toggle-group">
