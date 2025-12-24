@@ -418,6 +418,12 @@ const router = createRouter({
       redirect: '/system/diagnostics/dns'
     },
     {
+      path: '/system/diagnostics/tr471',
+      name: 'SystemDiagnosticsTR471',
+      component: () => import('../views/system/diagnostics/TR471Test.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/system/device',
       name: 'SystemDevice',
       component: () => import('../views/system/device/DeviceManagement.vue'),

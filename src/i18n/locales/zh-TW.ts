@@ -39,6 +39,8 @@ export default {
     sshService: 'SSH 服務',
     serviceControl: '服務控制',
     qos: 'QoS',
+    speedTest: '速度測試',
+    tr471: 'TR-471',
     application: '應用程式',
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',

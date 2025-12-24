@@ -76,7 +76,6 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'QoS': { gateway: true, extender: false }
   },
   'Application': {
-    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true },
     'UPnP': { gateway: true, extender: false },
     'DDNS': { gateway: true, extender: false }
   },
@@ -87,6 +86,10 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Device Management': { gateway: true, extender: false },
     'Settings': { gateway: true, extender: true },
     'Tools': { gateway: true, extender: true }
+  },
+  'Speed Test': {
+    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true },
+    'TR-471': { gateway: true, extender: false }
   }
 };
 
@@ -184,7 +187,6 @@ const baseMenuItems: MenuItem[] = [
     icon: applicationIcon,
     translationKey: 'menu.application',
     subItems: [
-      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' },
       { name: 'UPnP', path: '/application/upnp', translationKey: 'menu.upnp' },
       { name: 'DDNS', path: '/application/ddns', translationKey: 'menu.ddns' }
     ]
@@ -218,6 +220,15 @@ const baseMenuItems: MenuItem[] = [
           { name: 'DNS Diagnosis', path: '/management/tools/dns', translationKey: 'menu.dnsDiagnosis' }
         ]
       }
+    ]
+  },
+  {
+    name: 'Speed Test',
+    icon: applicationIcon,
+    translationKey: 'menu.speedTest',
+    subItems: [
+      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' },
+      { name: 'TR-471', path: '/system/diagnostics/tr471', translationKey: 'menu.tr471' }
     ]
   }
 ];

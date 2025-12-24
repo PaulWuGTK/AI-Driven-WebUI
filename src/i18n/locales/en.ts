@@ -39,6 +39,8 @@ const translations = {
     sshService: 'SSH Service',
     serviceControl: 'Service Control',
     qos: 'QoS',
+    speedTest: 'Speed Test',
+    tr471: 'TR-471',
     application: 'Application',
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',

@@ -12,6 +12,7 @@ export * from './ntp';
 export * from './ssh';
 export * from './statistics';
 export * from './timezone';
+export * from './tr471';
 export * from './upnp';
 export * from './wan';
 export * from './wifiNeighbor';

@@ -39,6 +39,8 @@ export default {
     sshService: 'SSH 서비스',
     serviceControl: '서비스 제어',
     qos: 'QoS',
+    speedTest: '속도 테스트',
+    tr471: 'TR-471',
     application: '응용 프로그램',
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',

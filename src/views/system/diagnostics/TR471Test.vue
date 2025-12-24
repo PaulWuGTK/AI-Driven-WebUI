@@ -1,0 +1,661 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+import { getTR471Config, runTR471Test } from '../../../services/api/tr471';
+import type { TR471Config, TR471TestResult } from '../../../types/tr471';
+import BaseButton from '../../../components/common/BaseButton.vue';
+import BaseInput from '../../../components/common/BaseInput.vue';
+import BaseSelect from '../../../components/common/BaseSelect.vue';
+import BaseCheckbox from '../../../components/common/BaseCheckbox.vue';
+import BaseSpinner from '../../../components/common/BaseSpinner.vue';
+import LineChart from '../../../components/LineChart.vue';
+
+const loading = ref(false);
+const showAdvanced = ref(false);
+const config = ref<TR471Config | null>(null);
+const testTypes = ref({
+  upload: false,
+  download: false
+});
+
+const uploadResult = ref<TR471TestResult | null>(null);
+const downloadResult = ref<TR471TestResult | null>(null);
+const isRunning = ref(false);
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const response = await getTR471Config();
+    config.value = response.TR471;
+  } catch (error) {
+    console.error('Failed to load TR471 config:', error);
+  } finally {
+    loading.value = false;
+  }
+});
+
+const canRunTest = computed(() => {
+  return testTypes.value.upload || testTypes.value.download;
+});
+
+const toggleAdvanced = () => {
+  showAdvanced.value = !showAdvanced.value;
+};
+
+const runTest = async () => {
+  if (!canRunTest.value || !config.value) return;
+
+  isRunning.value = true;
+  uploadResult.value = null;
+  downloadResult.value = null;
+
+  try {
+    if (testTypes.value.upload) {
+      const uploadConfig = {
+        ...config.value,
+        Role: 'Sender'
+      };
+      delete uploadConfig.DiagnosticsState;
+      delete uploadConfig.MaxIPLayerCapacity;
+      delete uploadConfig.LossRatioSummary;
+      delete uploadConfig.RTTRangeSummary;
+      delete uploadConfig.PDVRangeSummary;
+      delete uploadConfig.ListUDPPayloadContent;
+      delete uploadConfig.ListTestType;
+      delete uploadConfig.ListProtocolVersion;
+      delete uploadConfig.ListInterface;
+      delete uploadConfig.ListRateAdjAlgorithm;
+      delete uploadConfig.IncrementalResult;
+
+      const response = await runTR471Test(uploadConfig);
+      uploadResult.value = {
+        MaxIPLayerCapacity: response.TR471.MaxIPLayerCapacity || '0',
+        LossRatioSummary: response.TR471.LossRatioSummary || '0',
+        RTTRangeSummary: response.TR471.RTTRangeSummary || '0',
+        PDVRangeSummary: response.TR471.PDVRangeSummary || '0',
+        IncrementalResult: response.TR471.IncrementalResult || []
+      };
+    }
+
+    if (testTypes.value.download) {
+      const downloadConfig = {
+        ...config.value,
+        Role: 'Receiver'
+      };
+      delete downloadConfig.DiagnosticsState;
+      delete downloadConfig.MaxIPLayerCapacity;
+      delete downloadConfig.LossRatioSummary;
+      delete downloadConfig.RTTRangeSummary;
+      delete downloadConfig.PDVRangeSummary;
+      delete downloadConfig.ListUDPPayloadContent;
+      delete downloadConfig.ListTestType;
+      delete downloadConfig.ListProtocolVersion;
+      delete downloadConfig.ListInterface;
+      delete downloadConfig.ListRateAdjAlgorithm;
+      delete downloadConfig.IncrementalResult;
+
+      const response = await runTR471Test(downloadConfig);
+      downloadResult.value = {
+        MaxIPLayerCapacity: response.TR471.MaxIPLayerCapacity || '0',
+        LossRatioSummary: response.TR471.LossRatioSummary || '0',
+        RTTRangeSummary: response.TR471.RTTRangeSummary || '0',
+        PDVRangeSummary: response.TR471.PDVRangeSummary || '0',
+        IncrementalResult: response.TR471.IncrementalResult || []
+      };
+    }
+  } catch (error) {
+    console.error('TR471 test failed:', error);
+  } finally {
+    isRunning.value = false;
+  }
+};
+
+const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange' | 'LossRatio') => {
+  const datasets: any[] = [];
+
+  if (uploadResult.value && uploadResult.value.IncrementalResult) {
+    const uploadData = uploadResult.value.IncrementalResult.map(r => parseFloat(r[field]));
+    datasets.push({
+      label: `Upload ${field}`,
+      data: uploadData,
+      borderColor: 'rgb(54, 162, 235)',
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      tension: 0.4
+    });
+  }
+
+  if (downloadResult.value && downloadResult.value.IncrementalResult) {
+    const downloadData = downloadResult.value.IncrementalResult.map(r => parseFloat(r[field]));
+    datasets.push({
+      label: `Download ${field}`,
+      data: downloadData,
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      tension: 0.4
+    });
+  }
+
+  const maxLength = Math.max(
+    uploadResult.value?.IncrementalResult?.length || 0,
+    downloadResult.value?.IncrementalResult?.length || 0
+  );
+
+  return {
+    labels: Array.from({ length: maxLength }, (_, i) => (i + 1).toString()),
+    datasets
+  };
+};
+</script>
+
+<template>
+  <div class="page-container">
+    <h1 class="page-title">TR-471 Speed Test</h1>
+
+    <div v-if="loading" class="loading-container">
+      <BaseSpinner />
+    </div>
+
+    <div v-else-if="config" class="status-content">
+      <div class="panel-section">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Server</label>
+            <BaseInput v-model="config.Server" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Port</label>
+            <BaseInput v-model="config.Port" type="number" />
+          </div>
+        </div>
+
+        <div class="advanced-toggle">
+          <BaseButton
+            @click="toggleAdvanced"
+            variant="secondary"
+            :fullWidth="true"
+          >
+            {{ showAdvanced ? 'Hide Advanced Config' : 'Show Advanced Config' }}
+          </BaseButton>
+        </div>
+
+        <div v-if="showAdvanced" class="advanced-config">
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">MTU</label>
+              <BaseInput v-model="config.MTU" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">DSCP</label>
+              <BaseInput v-model="config.DSCP" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Protocol Version</label>
+              <BaseSelect
+                v-model="config.ProtocolVersion"
+                :options="config.ListProtocolVersion || []"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Network Interface</label>
+              <BaseSelect
+                v-model="config.Interface"
+                :options="config.ListInterface || []"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Algorithm</label>
+              <BaseSelect
+                v-model="config.RateAdjAlgorithm"
+                :options="config.ListRateAdjAlgorithm || []"
+              />
+            </div>
+
+            <div class="form-field checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  :checked="config.JumboFramesPermitted === 1"
+                  @change="config.JumboFramesPermitted = ($event.target as HTMLInputElement).checked ? 1 : 0"
+                />
+                <span>Jumbo Frames Permitted</span>
+              </label>
+            </div>
+
+            <div class="form-field checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  :checked="config.LocalInterfaceRateIncluded === 1"
+                  @change="config.LocalInterfaceRateIncluded = ($event.target as HTMLInputElement).checked ? 1 : 0"
+                />
+                <span>Local Interface Rate Included</span>
+              </label>
+            </div>
+
+            <div class="form-field checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  :checked="config.IPDVEnable === 1"
+                  @change="config.IPDVEnable = ($event.target as HTMLInputElement).checked ? 1 : 0"
+                />
+                <span>IPDV Enable</span>
+              </label>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Flow Count</label>
+              <BaseInput v-model="config.FlowCount" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Maximum Flows</label>
+              <BaseInput v-model="config.MaximumFlows" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Ethernet Priority</label>
+              <BaseInput v-model="config.EthernetPriority" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">UDP Payload Content</label>
+              <BaseSelect
+                v-model="config.UDPPayloadContent"
+                :options="config.ListUDPPayloadContent || []"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Maximum Test Bandwidth</label>
+              <BaseInput v-model="config.MaximumTestBandwidth" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Start Sending Rate</label>
+              <BaseInput v-model="config.StartSendingRate" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Start Sending Rate Index</label>
+              <BaseInput v-model="config.StartSendingRateIndex" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Number TestSub Intervals</label>
+              <BaseInput v-model="config.NumberTestSubIntervals" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Number First Mode Test Sub Intervals</label>
+              <BaseInput v-model="config.NumberFirstModeTestSubIntervals" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Test Sub Interval</label>
+              <BaseInput v-model="config.TestSubInterval" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Status Feedback Interval</label>
+              <BaseInput v-model="config.StatusFeedbackInterval" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Retry Thresh</label>
+              <BaseInput v-model="config.RetryThresh" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Test Type</label>
+              <BaseSelect
+                v-model="config.TestType"
+                :options="config.ListTestType || []"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Seq Err Thresh</label>
+              <BaseInput v-model="config.SeqErrThresh" type="number" />
+            </div>
+
+            <div class="form-field checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  :checked="config.ReordDupIgnoreEnable === 1"
+                  @change="config.ReordDupIgnoreEnable = ($event.target as HTMLInputElement).checked ? 1 : 0"
+                />
+                <span>Record Dup Ignore Enable</span>
+              </label>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Lower Thresh</label>
+              <BaseInput v-model="config.LowerThresh" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Upper Thresh</label>
+              <BaseInput v-model="config.UpperThresh" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Slow Adj Thresh</label>
+              <BaseInput v-model="config.SlowAdjThresh" type="number" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">High Speed Delta</label>
+              <BaseInput v-model="config.HighSpeedDelta" type="number" />
+            </div>
+
+            <div class="form-field checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  :checked="config.AuthenticationEnabled === 1"
+                  @change="config.AuthenticationEnabled = ($event.target as HTMLInputElement).checked ? 1 : 0"
+                />
+                <span>Authentication Enabled</span>
+              </label>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Authentication Code</label>
+              <BaseInput
+                v-model="config.AuthenticationCode"
+                type="password"
+                placeholder="Enter authentication code"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="test-controls">
+          <div class="test-type-section">
+            <h3 class="section-title">Speed Test Type</h3>
+            <div class="checkbox-row">
+              <BaseCheckbox
+                v-model="testTypes.upload"
+                label="Upload"
+              />
+              <BaseCheckbox
+                v-model="testTypes.download"
+                label="Download"
+              />
+            </div>
+          </div>
+
+          <div class="run-test-button">
+            <BaseButton
+              @click="runTest"
+              :disabled="!canRunTest || isRunning"
+              variant="primary"
+            >
+              {{ isRunning ? 'Running Test...' : 'Run Speed Test' }}
+            </BaseButton>
+          </div>
+        </div>
+
+        <div v-if="uploadResult || downloadResult" class="results-section">
+          <h2 class="section-title">Results Summary</h2>
+
+          <div v-if="uploadResult" class="result-block">
+            <h3 class="result-title">Upload Result</h3>
+            <div class="result-grid">
+              <div class="result-item">
+                <span class="result-label">IP Layer Capacity:</span>
+                <span class="result-value">{{ parseFloat(uploadResult.MaxIPLayerCapacity).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Loss Ratio:</span>
+                <span class="result-value">{{ parseFloat(uploadResult.LossRatioSummary).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">RTT Range:</span>
+                <span class="result-value">{{ parseFloat(uploadResult.RTTRangeSummary).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">PDV Range:</span>
+                <span class="result-value">{{ parseFloat(uploadResult.PDVRangeSummary).toFixed(6) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="downloadResult" class="result-block">
+            <h3 class="result-title">Download Result</h3>
+            <div class="result-grid">
+              <div class="result-item">
+                <span class="result-label">IP Layer Capacity:</span>
+                <span class="result-value">{{ parseFloat(downloadResult.MaxIPLayerCapacity).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Loss Ratio:</span>
+                <span class="result-value">{{ parseFloat(downloadResult.LossRatioSummary).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">RTT Range:</span>
+                <span class="result-value">{{ parseFloat(downloadResult.RTTRangeSummary).toFixed(6) }}</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">PDV Range:</span>
+                <span class="result-value">{{ parseFloat(downloadResult.PDVRangeSummary).toFixed(6) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-item">
+              <h4 class="chart-title">IP Layer Capacity</h4>
+              <LineChart :chartData="getCombinedChartData('IPLayerCapacity')" />
+            </div>
+            <div class="chart-item">
+              <h4 class="chart-title">Round-trip Time</h4>
+              <LineChart :chartData="getCombinedChartData('RTTRange')" />
+            </div>
+            <div class="chart-item">
+              <h4 class="chart-title">Jitter</h4>
+              <LineChart :chartData="getCombinedChartData('PDVRange')" />
+            </div>
+            <div class="chart-item">
+              <h4 class="chart-title">Loss</h4>
+              <LineChart :chartData="getCombinedChartData('LossRatio')" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.panel-section {
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    padding: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.checkbox-group {
+  justify-content: center;
+  padding-top: 1.5rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.checkbox-label span {
+  user-select: none;
+}
+
+.advanced-toggle {
+  margin: 1.5rem 0;
+}
+
+.advanced-config {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.test-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.test-type-section {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 2rem;
+}
+
+.run-test-button {
+  flex-shrink: 0;
+}
+
+.results-section {
+  margin-top: 2rem;
+}
+
+.result-block {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.result-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.result-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.chart-item {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.chart-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .test-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .checkbox-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
