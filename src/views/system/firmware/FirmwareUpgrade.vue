@@ -111,6 +111,11 @@ const handleDragLeave = (event: DragEvent) => {
   isDragging.value = false;
 };
 
+const hardNavigateToLogin = () => {
+  const ui = Date.now().toString();
+  window.location.replace(`/login?ui=${encodeURIComponent(ui)}&t=${Date.now()}`);
+};
+
 const startUpgradeCountdown = () => {
   isUpgrading.value = true;
 
@@ -140,8 +145,7 @@ const startUpgradeCountdown = () => {
         countdown.value = 100;
         countdownTimer.value = window.setInterval(tick, 1000);
       } else {
-        // 第二段結束 → 導回登入（或你要的頁面）
-        router.push('/login');
+        hardNavigateToLogin();
       }
     }
   };

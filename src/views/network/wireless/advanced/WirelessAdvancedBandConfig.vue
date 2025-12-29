@@ -81,7 +81,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
       <div class="form-group">
         <div class="channel-header" :data-testid="qa(`wireless-advanced-band-config-channel-header-${slug(title)}`)">
           <label :data-testid="qa(`wireless-advanced-band-config-channel-label-${slug(title)}`)">{{ t('wireless.channel') }}</label>
-          <div class="switch-label">
+          <div class="auto-channel">
             <span :data-testid="qa(`wireless-advanced-band-config-auto-channel-label-${slug(title)}`)">{{ t('wireless.autoChannel') }}</span>
             <label class="switch">
               <input
@@ -111,6 +111,31 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 </template>
 
 <style scoped>
+.channel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom: 0.5rem;
+  gap: 12px;
+}
+
+.channel-header > label{
+  margin: 0;
+}
+
+.auto-channel{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 8px;
+  white-space: nowrap;
+  
+}
+
+.auto-channel .switch{
+  margin-left: 0;
+}
+
 .band-config {
   background-color: white;
   border-radius: 4px;
@@ -152,7 +177,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
 }
 
@@ -216,5 +241,11 @@ select:disabled {
     width: 100%;
     justify-content: space-between;
   }
+
+  .auto-channel{
+    width: 100%;
+    justify-content: space-between;
+  }
+  
 }
 </style>
