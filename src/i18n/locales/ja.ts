@@ -341,7 +341,18 @@ export default {
     mloMeshDisabled: '1つ以上の AP（基本またはゲスト）で MLO が有効です – メッシュ設定は変更できません。',
     meshMloDisabled: 'メッシュが有効です – MLO 設定は変更できません。',
     commonSsidDisabled: '共通 SSID が無効です – MLO 設定は変更できません。',
-    mloMeshWarning: "MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。"
+    mloMeshWarning: "MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。",
+    ssidGroupName: 'SSID グループ名',
+    noSsidGroups: '利用可能な SSID グループはありません',
+    groupDefaultName: 'Home',
+    perBandInterfaces: 'バンド別インターフェース',
+    mfpConfig: 'MFP 設定',
+    applyingBasicSettings: 'Wi-Fi 基本設定を適用しています…',
+    bandsEnabled: '有効なバンド',
+    commonSsidShort: '共通 SSID',
+    mloShort: 'MLO',
+    show: '表示',
+    hide: '非表示'
   },
   guest: {
     title: 'ゲストアクセス',

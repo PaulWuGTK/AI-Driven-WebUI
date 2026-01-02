@@ -341,7 +341,18 @@ export default {
     mloMeshDisabled: '一个或多个 AP（基本或访客）已启用 MLO – 无法更改 Mesh 设置。',
     meshMloDisabled: 'Mesh 已启用 – 无法更改 MLO 设置。',
     commonSsidDisabled: '通用 SSID 已禁用 – 无法更改 MLO 设置。',
-    mloMeshWarning: '一个或多个 AP（主用或访客）已启用 MLO。应用 Mesh 设置时将自动禁用 MLO。'
+    mloMeshWarning: '一个或多个 AP（主用或访客）已启用 MLO。应用 Mesh 设置时将自动禁用 MLO。',
+    ssidGroupName: 'SSID 组名称',
+    noSsidGroups: '当前没有可用的 SSID 组',
+    groupDefaultName: 'Home',
+    perBandInterfaces: '各频段接口',
+    mfpConfig: 'MFP 配置',
+    applyingBasicSettings: '正在应用 Wi-Fi 基本设置…',
+    bandsEnabled: '个频段已启用',
+    commonSsidShort: '共享 SSID',
+    mloShort: 'MLO',
+    show: '显示',
+    hide: '隐藏'
   },
   guest: {
     title: '访客访问',

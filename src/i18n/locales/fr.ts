@@ -341,7 +341,18 @@ export default {
     mloMeshDisabled: 'Le MLO est activé sur un ou plusieurs points d’accès (Standard ou Invité) – les paramètres Mesh ne peuvent pas être modifiés.',
     meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.',
     commonSsidDisabled: 'Le SSID commun est désactivé – les paramètres MLO ne peuvent pas être modifiés.',
-    mloMeshWarning: "Le MLO est actuellement activé sur un ou plusieurs points d'accès (principal ou invité). Il sera automatiquement désactivé lors de l'application des paramètres Mesh."
+    mloMeshWarning: "Le MLO est actuellement activé sur un ou plusieurs points d'accès (principal ou invité). Il sera automatiquement désactivé lors de l'application des paramètres Mesh.",
+    ssidGroupName: 'Nom du groupe SSID',
+    noSsidGroups: 'Aucun groupe SSID disponible',
+    groupDefaultName: 'Home',
+    perBandInterfaces: 'Interfaces par bande',
+    mfpConfig: 'Configuration MFP',
+    applyingBasicSettings: 'Application des paramètres Wi-Fi de base...',
+    bandsEnabled: 'bandes activées',
+    commonSsidShort: 'SSID commun',
+    mloShort: 'MLO',
+    show: 'Afficher',
+    hide: 'Masquer'
   },
   guest: {
     title: 'Accès invité',

@@ -342,7 +342,18 @@ export default {
     mloMeshDisabled: '一或多個 AP（基本或訪客）已啟用 MLO – 無法變更 Mesh 設定。',
     meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。',
     commonSsidDisabled: '通用 SSID 已停用 – 無法變更 MLO 設定。',
-    mloMeshWarning: "一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。"
+    mloMeshWarning: "一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。",
+    ssidGroupName: 'SSID 群組名稱',
+    noSsidGroups: '目前沒有可用的 SSID 群組',
+    groupDefaultName: 'Home',
+    perBandInterfaces: '各頻段介面',
+    mfpConfig: 'MFP 設定',
+    applyingBasicSettings: '正在套用 Wi-Fi 基本設定…',
+    bandsEnabled: '個頻段已啟用',
+    commonSsidShort: '共用 SSID',
+    mloShort: 'MLO',
+    show: '顯示',
+    hide: '隱藏'
   },
   guest: {
     title: '訪客存取',

@@ -341,7 +341,18 @@ export default {
     mloMeshDisabled: 'MLO ist auf einem oder mehreren APs (Basis oder Gast) aktiviert – Mesh-Einstellungen können nicht geändert werden.',
     meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.',
     commonSsidDisabled: 'Gemeinsame SSID ist deaktiviert – MLO-Einstellungen können nicht geändert werden.',
-    mloMeshWarning: "MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert."
+    mloMeshWarning: "MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert.",
+    ssidGroupName: 'SSID-Gruppenname',
+    noSsidGroups: 'Keine SSID-Gruppen verfügbar',
+    groupDefaultName: 'Home',
+    perBandInterfaces: 'Bandbezogene Schnittstellen',
+    mfpConfig: 'MFP-Konfiguration',
+    applyingBasicSettings: 'WLAN-Basiseinstellungen werden übernommen...',
+    bandsEnabled: 'Bänder aktiviert',
+    commonSsidShort: 'Gemeinsame SSID',
+    mloShort: 'MLO',
+    show: 'Anzeigen',
+    hide: 'Ausblenden'
   },
   guest: {
     title: 'Gastzugang',

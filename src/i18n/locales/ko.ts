@@ -340,7 +340,18 @@ export default {
     mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
     meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
     commonSsidDisabled: '공통 SSID가 비활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
-    mloMeshWarning: "하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다."
+    mloMeshWarning: "하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다.",
+    ssidGroupName: 'SSID 그룹 이름',
+    noSsidGroups: '사용 가능한 SSID 그룹이 없습니다',
+    groupDefaultName: 'Home',
+    perBandInterfaces: '밴드별 인터페이스',
+    mfpConfig: 'MFP 설정',
+    applyingBasicSettings: 'Wi-Fi 기본 설정을 적용하는 중입니다...',
+    bandsEnabled: '활성화된 밴드',
+    commonSsidShort: '공용 SSID',
+    mloShort: 'MLO',
+    show: '표시',
+    hide: '숨기기'
   },
   guest: {
     title: '게스트 액세스',

@@ -879,6 +879,7 @@ onMounted(fetchConfig);
   width: 20px;
   left: 3px;
   bottom: 3px;
+  top: 3px;
   background-color: white;
   transition: 0.2s;
   border-radius: 50%;
