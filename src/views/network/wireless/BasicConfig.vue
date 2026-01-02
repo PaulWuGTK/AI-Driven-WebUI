@@ -269,30 +269,6 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
     let groupKeyPassPhrase = (g as any).KeyPassPhrase;
     let groupSecurityMode = (g as any).SecurityMode;
 
-    if (Number(norm.CommonSSIDEnable) === 1) {
-      // Common SSID mode: use commonSsidConfig for group-level and sync all interfaces
-      if (editIndex.value === idx && commonSsidConfig.value) {
-        // Currently editing this group with Common SSID mode
-        groupSSID = commonSsidConfig.value.SSID;
-        groupKeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
-        groupSecurityMode = commonSsidConfig.value.SecurityMode;
-
-        // Synchronize all interfaces with Common SSID config
-        for (const itf of norm.Interface) {
-          itf.SSID = commonSsidConfig.value.SSID;
-          itf.SecurityMode = commonSsidConfig.value.SecurityMode;
-          itf.KeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
-          itf.Enable = commonSsidConfig.value.Enable as 0 | 1;
-        }
-      } else {
-        // Not editing: sync all interfaces with group-level data
-        for (const itf of norm.Interface) {
-          itf.SSID = groupSSID;
-          itf.SecurityMode = groupSecurityMode;
-          itf.KeyPassPhrase = groupKeyPassPhrase;
-        }
-      }
-    }
     // Per-band mode: group-level fields stay as-is, interfaces keep their own values
 
     return {
