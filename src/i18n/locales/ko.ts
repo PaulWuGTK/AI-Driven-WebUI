@@ -1048,6 +1048,7 @@ export default {
     delete: '삭제',
     enable: '활성화',
     enabled: '활성화됨',
+    disabled: '비활성화',
     loading: '로딩 중...',
     yes: '예', 
     no: '아니요',

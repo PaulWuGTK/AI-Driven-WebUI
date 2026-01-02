@@ -9,6 +9,7 @@ import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   wlanBasicMockData,
+  wlanBasicMultiMockData,
   wlanAdvancedMockData,
   getWlanWpsMock,
   updateWlanWpsMock,
@@ -48,10 +49,26 @@ export async function updateWlanBasic(data: Partial<WlanBasicResponse>): Promise
  */
 export async function getWlanBasicMulti(): Promise<WlanBasicMultiGetResponse> {
   if (isDevelopment) {
-    // Reuse legacy mock if multi mock isn't present; UI will normalize.
-    return (wlanBasicMockData as unknown) as WlanBasicMultiGetResponse;
+    return wlanBasicMultiMockData;
   }
-  return callApi<WlanBasicMultiGetResponse>(`${API_URL}?list=WlanGroup`);
+
+  const rawResponse = await callApi<any>(`${API_URL}?list=WlanGroup`);
+
+  if (rawResponse.WlanGroup) {
+    const transformedGroups = rawResponse.WlanGroup.map((group: any) => ({
+      ...group,
+      SSIDGroupName: group.Alias || group.SSIDGroupName || 'Unknown',
+      CommonSSIDBandSetting: group.CommonSSIDBandSetting || []
+    }));
+
+    return {
+      WlanBasic: {
+        WlanGroup: transformedGroups
+      }
+    };
+  }
+
+  return rawResponse;
 }
 
 /**

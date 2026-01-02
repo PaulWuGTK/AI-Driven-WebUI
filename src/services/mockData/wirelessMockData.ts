@@ -1,4 +1,5 @@
 import type { WlanBasicResponse, WlanAdvancedResponse, WlanWpsResponse, WlanMeshResponse } from '../../types/wireless';
+import type { WlanBasicMultiGetResponse } from '../../types/wlanBasicMulti';
 
 export const wlanBasicMockData: WlanBasicResponse = {
   WlanBasic: {
@@ -158,5 +159,114 @@ export const wlanMeshMockData: WlanMeshResponse = {
     MeshEnable: 0,
     MLOEnable: 1,
     CommonSSID: "prplOS"
+  }
+};
+
+export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
+  WlanBasic: {
+    WlanGroup: [
+      {
+        SSIDGroupName: "Home",
+        Enable: 1,
+        Alias: "PRIV",
+        SSID: "prplOS-Home",
+        SecurityMode: "WPA2-Personal",
+        KeyPassPhrase: "password123",
+        SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+        CommonSSIDEnable: 1,
+        MLOEnable: 0,
+        BridgeInterface: "br-lan",
+        MFPConfig: 0,
+        Interface: [
+          {
+            Band: "2.4GHz",
+            Enable: 1,
+            SSID: "prplOS-Home",
+            SecurityMode: "WPA2-Personal",
+            KeyPassPhrase: "password123",
+            SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP2G0PRIV",
+            AccessPointReference: "Device.WiFi.AccessPoint.1",
+            SSIDReference: "Device.WiFi.SSID.1"
+          },
+          {
+            Band: "5GHz",
+            Enable: 1,
+            SSID: "prplOS-Home",
+            SecurityMode: "WPA2-Personal",
+            KeyPassPhrase: "password123",
+            SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP5G0PRIV",
+            AccessPointReference: "Device.WiFi.AccessPoint.2",
+            SSIDReference: "Device.WiFi.SSID.2"
+          },
+          {
+            Band: "6GHz",
+            Enable: 0,
+            SSID: "prplOS-Home",
+            SecurityMode: "WPA3-Personal",
+            KeyPassPhrase: "password123",
+            SecurityModeAvailable: "None,WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP6G0PRIV",
+            AccessPointReference: "Device.WiFi.AccessPoint.3",
+            SSIDReference: "Device.WiFi.SSID.3"
+          }
+        ]
+      },
+      {
+        SSIDGroupName: "Guest",
+        Enable: 1,
+        Alias: "GUEST",
+        SSID: "prplOS-Guest",
+        SecurityMode: "WPA2-Personal",
+        KeyPassPhrase: "guestpass456",
+        SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+        CommonSSIDEnable: 0,
+        MLOEnable: 0,
+        BridgeInterface: "br-guest",
+        MFPConfig: 0,
+        Interface: [
+          {
+            Band: "2.4GHz",
+            Enable: 1,
+            SSID: "prplOS-Guest-2G",
+            SecurityMode: "WPA2-Personal",
+            KeyPassPhrase: "guest2g456",
+            SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP2G0GUEST",
+            AccessPointReference: "Device.WiFi.AccessPoint.4",
+            SSIDReference: "Device.WiFi.SSID.4"
+          },
+          {
+            Band: "5GHz",
+            Enable: 1,
+            SSID: "prplOS-Guest-5G",
+            SecurityMode: "WPA2-Personal",
+            KeyPassPhrase: "guest5g789",
+            SecurityModeAvailable: "None,WPA-Personal,WPA2-Personal,WPA-WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP5G0GUEST",
+            AccessPointReference: "Device.WiFi.AccessPoint.5",
+            SSIDReference: "Device.WiFi.SSID.5"
+          },
+          {
+            Band: "6GHz",
+            Enable: 0,
+            SSID: "prplOS-Guest-6G",
+            SecurityMode: "WPA3-Personal",
+            KeyPassPhrase: "guest6gxyz",
+            SecurityModeAvailable: "None,WPA3-Personal",
+            MFPConfig: 0,
+            Alias: "VAP6G0GUEST",
+            AccessPointReference: "Device.WiFi.AccessPoint.6",
+            SSIDReference: "Device.WiFi.SSID.6"
+          }
+        ]
+      }
+    ]
   }
 };

@@ -1049,6 +1049,7 @@ export default {
     delete: '削除',
     enable: '有効',
     enabled: '有効',
+    disabled: '無効',
     loading: '読み込み中...',
     yes: 'はい',
     no: 'いいえ',

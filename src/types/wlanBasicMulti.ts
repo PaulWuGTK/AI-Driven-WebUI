@@ -44,15 +44,45 @@ export interface WlanGroupInterface {
   WpaPreShareKey?: string;
 
   /** Management Frame Protection configuration */
-  MFPConfig?: string;
+  MFPConfig?: string | number;
+
+  /** Reference to AccessPoint object in TR-181 data model */
+  AccessPointReference?: string;
+
+  /** Reference to SSID object in TR-181 data model */
+  SSIDReference?: string;
 }
 
 export interface WlanGroup {
   /** UI label like "Home", "Guest", etc. */
   SSIDGroupName: string;
 
+  /** Group-level enable flag */
+  Enable?: BooleanInt;
+
+  /** Backend alias identifier (e.g., "PRIV", "GUEST") */
+  Alias?: string;
+
+  /** Group-level SSID (may be used when CommonSSIDEnable is true) */
+  SSID?: string;
+
+  /** Group-level security mode */
+  SecurityMode?: string;
+
+  /** Group-level passphrase */
+  KeyPassPhrase?: string;
+
   CommonSSIDEnable: BooleanInt;
   MLOEnable: BooleanInt;
+
+  /** Bridge interface name (e.g., "br-lan") */
+  BridgeInterface?: string;
+
+  /** Management Frame Protection at group level */
+  MFPConfig?: string | number;
+
+  /** Available security modes at group level */
+  SecurityModeAvailable?: string;
 
   /** Band toggles for the group when Common SSID is enabled */
   CommonSSIDBandSetting?: WlanGroupBandSetting[];
@@ -72,20 +102,26 @@ export interface WlanBasicMultiGetResponse {
 }
 
 export interface WlanBasicMultiPostRequest {
-  WlanBasic: {
-    WlanGroup: Array<{
-      SSIDGroupName: string;
-      CommonSSIDEnable: BooleanInt;
-      MLOEnable: BooleanInt;
-      CommonSSIDBandSetting?: WlanGroupBandSetting[];
-      Interface: Array<{
-        Band: string;
-        Enable: BooleanInt;
-        SSID: string;
-        SecurityMode: string;
-        KeyPassPhrase?: string;
-        MFPConfig?: string;
-      }>;
+  WlanGroup: Array<{
+    Enable?: BooleanInt;
+    Alias: string;
+    SSID?: string;
+    KeyPassPhrase?: string;
+    SecurityMode?: string;
+    CommonSSIDEnable: BooleanInt;
+    MLOEnable: BooleanInt;
+    BridgeInterface?: string;
+    MFPConfig?: string | number;
+    Interface: Array<{
+      Enable: BooleanInt;
+      Band: string;
+      Alias?: string;
+      SSID: string;
+      KeyPassPhrase?: string;
+      SecurityMode: string;
+      MFPConfig?: string | number;
+      AccessPointReference?: string;
+      SSIDReference?: string;
     }>;
-  };
+  }>;
 }

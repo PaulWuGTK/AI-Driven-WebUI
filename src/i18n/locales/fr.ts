@@ -1049,6 +1049,7 @@ export default {
     delete: 'Supprimer',
     enable: 'Activer',
     enabled: 'Activé',
+    disabled: 'Désactivé',
     loading: 'Chargement...',
     yes: 'Oui',
     no: 'Non',

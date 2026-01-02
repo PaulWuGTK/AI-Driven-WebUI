@@ -1096,6 +1096,7 @@ const translations = {
     delete: 'Delete',
     enable: 'Enable',
     enabled: 'Enabled',
+    disabled: 'Disabled',
     loading: 'Loading...',
     yes: 'Yes',
     no: 'No',

@@ -1049,6 +1049,7 @@ export default {
     delete: '删除',
     enable: '启用',
     enabled: '已启用',
+    disabled: '禁用',
     loading: '加载中...',
     yes: '是',
     no: '否',

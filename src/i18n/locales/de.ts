@@ -1049,6 +1049,7 @@ export default {
     delete: 'Löschen',
     enable: 'Aktivieren',
     enabled: 'Aktiviert',
+    disabled: 'Deaktiviert',
     loading: 'Lädt...',
     yes: 'Ja',
     no: 'Nein',

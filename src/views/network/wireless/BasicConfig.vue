@@ -14,7 +14,6 @@ import type {
   WlanBasicMultiGetResponse,
   WlanBasicMultiPostRequest,
   WlanGroup,
-  WlanGroupBandSetting,
   WlanGroupInterface
 } from '../../../types/wlanBasicMulti';
 
@@ -38,38 +37,48 @@ const editIndex = ref<number | null>(null);
 const draft = ref<WlanGroup | null>(null);
 const showPassphrase = reactive<Record<string, boolean>>({});
 
+// Separate storage for Common SSID configuration
+// This prevents Common SSID settings from overwriting per-band settings
+const commonSsidConfig = ref<{
+  Enable: number;
+  SSID: string;
+  SecurityMode: string;
+  KeyPassPhrase: string;
+  SecurityModeAvailable: string;
+} | null>(null);
+
 const bands = ['2.4GHz', '5GHz', '6GHz'] as const;
 
 const normalizeGroup = (group: WlanGroup): WlanGroup => {
   const copy: WlanGroup = JSON.parse(JSON.stringify(group));
 
-  // Ensure CommonSSIDBandSetting exists with 2.4/5/6 entries
-  if (!copy.CommonSSIDBandSetting || copy.CommonSSIDBandSetting.length === 0) {
-    copy.CommonSSIDBandSetting = bands.map((b) => ({ Band: b, Enable: 1 }));
-  } else {
-    // ensure all bands exist
-    for (const b of bands) {
-      if (!copy.CommonSSIDBandSetting.some((x) => x.Band === b)) {
-        copy.CommonSSIDBandSetting.push({ Band: b, Enable: 1 });
-      }
-    }
-  }
-
   // Ensure Interface array has per-band entries
   if (!copy.Interface) copy.Interface = [];
   for (const b of bands) {
     if (!copy.Interface.some((i) => i.Band === b)) {
+      const groupSSID = (copy as any).SSID || copy.SSIDGroupName || '';
+      const groupSecurityMode = (copy as any).SecurityMode || '';
+      const groupKeyPassphrase = (copy as any).KeyPassPhrase || '';
+      const groupSecurityModeAvailable = (copy as any).SecurityModeAvailable || '';
+
       copy.Interface.push({
         Band: b,
         Enable: 1,
-        SSID: copy.SSIDGroupName || '',
-        SecurityMode: '',
-        SecurityModeAvailable: '',
-        KeyPassPhrase: '',
+        SSID: groupSSID,
+        SecurityMode: groupSecurityMode,
+        SecurityModeAvailable: groupSecurityModeAvailable,
+        KeyPassPhrase: groupKeyPassphrase,
         MFPConfig: ''
       });
     }
   }
+
+  // Sort Interface array to match bands order (2.4GHz, 5GHz, 6GHz)
+  copy.Interface.sort((a, b) => {
+    const indexA = bands.indexOf(a.Band as typeof bands[number]);
+    const indexB = bands.indexOf(b.Band as typeof bands[number]);
+    return indexA - indexB;
+  });
 
   return copy;
 };
@@ -94,7 +103,6 @@ const fetchConfig = async () => {
               SSIDGroupName: t('wireless.groupDefaultName'),
               CommonSSIDEnable: legacy?.WlanBasic?.CommonSSIDEnable ?? 0,
               MLOEnable: legacy?.WlanBasic?.MLOEnable ?? 0,
-              CommonSSIDBandSetting: bands.map((b) => ({ Band: b, Enable: 1 })),
               Interface: [
                 {
                   Band: '2.4GHz',
@@ -141,19 +149,27 @@ const fetchConfig = async () => {
 
 const groups = computed(() => data.value?.WlanBasic?.WlanGroup ?? []);
 
-const summarizeGroup = (g: WlanGroup) => {
-  const enabledBandCount = (g.CommonSSIDBandSetting ?? []).filter((b) => b.Enable === 1).length;
-  const bandInfo = `${enabledBandCount}/${bands.length} ${t('wireless.bandsEnabled')}`;
-  const common = g.CommonSSIDEnable === 1 ? t('common.enabled') : t('common.no');
-  const mlo = g.MLOEnable === 1 ? t('common.enabled') : t('common.no');
-  return `${t('wireless.commonSsidShort')}: ${common} • ${t('wireless.mloShort')}: ${mlo} • ${bandInfo}`;
-};
-
 // PUBLIC_INTERFACE
 const enterEdit = (index: number) => {
   /** Enter edit mode for a given SSID group index. */
   editIndex.value = index;
   draft.value = normalizeGroup(JSON.parse(JSON.stringify(groups.value[index])));
+
+  // Initialize commonSsidConfig from group-level data (not from Interface array)
+  const group = draft.value;
+  if (group) {
+    // Common SSID uses WlanGroup-level fields, not Interface-level fields
+    // Use first interface's SecurityModeAvailable as fallback if not present at group level
+    const firstInterface = group.Interface?.[0];
+    commonSsidConfig.value = {
+      Enable: (group as any).Enable ?? 1,
+      SSID: (group as any).SSID ?? '',
+      SecurityMode: (group as any).SecurityMode ?? '',
+      KeyPassPhrase: (group as any).KeyPassPhrase ?? '',
+      SecurityModeAvailable: (group as any).SecurityModeAvailable ?? firstInterface?.SecurityModeAvailable ?? ''
+    };
+  }
+
   // Reset passphrase visibility state in edit mode
   for (const b of bands) {
     showPassphrase[`${b}`] = false;
@@ -166,6 +182,7 @@ const cancelEdit = () => {
   /** Exit edit mode and discard draft changes. */
   editIndex.value = null;
   draft.value = null;
+  commonSsidConfig.value = null;
 };
 
 // PUBLIC_INTERFACE
@@ -180,18 +197,15 @@ const updateLocal = () => {
   // Normalize to ensure band/interface entries exist
   const normalized = normalizeGroup(JSON.parse(JSON.stringify(draft.value)));
 
-  // Keep backend shape consistent: when Common SSID is enabled, ensure all interfaces match the single edited block
-  if (normalized.CommonSSIDEnable === 1 && normalized.Interface.length > 0) {
-    const base = normalized.Interface[0];
-    for (const itf of normalized.Interface) {
-      itf.SSID = base.SSID;
-      itf.SecurityMode = base.SecurityMode;
-      itf.KeyPassPhrase = base.KeyPassPhrase;
-      // Enable in Common mode is controlled by Interface[0].Enable in this UI; mirror it across to be safe
-      itf.Enable = base.Enable;
-    }
+  // If Common SSID is enabled, synchronize commonSsidConfig data to group-level fields and all interfaces
+  if (commonSsidConfig.value) {
+    // Update group-level fields
+    (normalized as any).SSID = commonSsidConfig.value.SSID;
+    (normalized as any).SecurityMode = commonSsidConfig.value.SecurityMode;
+    (normalized as any).KeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
+    (normalized as any).Enable = commonSsidConfig.value.Enable;
   }
-
+  
   data.value.WlanBasic.WlanGroup[idx] = normalized;
   cancelEdit();
 };
@@ -215,32 +229,28 @@ const securityModeOptionsForInterface = (itf: WlanGroupInterface): string[] => {
     .filter(Boolean);
 };
 
+const securityModeOptionsForCommonSsid = computed((): string[] => {
+  if (!commonSsidConfig.value) return [];
+  const csv = (commonSsidConfig.value.SecurityModeAvailable ?? '').trim();
+  if (!csv) return [];
+  return csv
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+});
+
 const getInterfaceByBand = (band: string): WlanGroupInterface | undefined => {
   return draft.value?.Interface?.find((x) => x.Band === band);
 };
 
-const getBandSettingByBand = (band: string): WlanGroupBandSetting | undefined => {
-  return draft.value?.CommonSSIDBandSetting?.find((x) => x.Band === band);
-};
-
 const onCommonSsidToggle = () => {
   if (!draft.value) return;
-  if (draft.value.CommonSSIDEnable === 0) {
+  if (Number(draft.value.CommonSSIDEnable) === 0) {
     // When disabling Common SSID, also disable MLO
     draft.value.MLOEnable = 0;
-  } else {
-    // When enabling Common SSID, keep the UI consistent by propagating
-    // the first band's SSID/security/PSK to all bands (user edits are done in a single block).
-    const first = draft.value.Interface?.[0];
-    if (!first) return;
-
-    for (const itf of draft.value.Interface) {
-      itf.SSID = first.SSID;
-      itf.SecurityMode = first.SecurityMode;
-      itf.KeyPassPhrase = first.KeyPassPhrase;
-      itf.Enable = first.Enable;
-    }
   }
+  // Note: We don't modify Interface data here to preserve per-band settings.
+  // Data synchronization happens only when submitting (buildPostPayload).
 };
 
 /**
@@ -251,42 +261,65 @@ const onCommonSsidToggle = () => {
 const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
   if (!data.value) return null;
 
-  const postGroups: WlanBasicMultiPostRequest['WlanBasic']['WlanGroup'] = groups.value.map((g) => {
+  const postGroups: WlanBasicMultiPostRequest['WlanGroup'] = groups.value.map((g, idx) => {
     const norm = normalizeGroup(g);
 
-    // When Common SSID is enabled, the UI edits only a single block; ensure all interfaces share those values.
-    if (norm.CommonSSIDEnable === 1 && norm.Interface.length > 0) {
-      const base = norm.Interface[0];
-      for (const itf of norm.Interface) {
-        itf.SSID = base.SSID;
-        itf.SecurityMode = base.SecurityMode;
-        itf.KeyPassPhrase = base.KeyPassPhrase;
-        itf.Enable = base.Enable;
+    // Determine group-level data based on mode
+    let groupSSID = (g as any).SSID;
+    let groupKeyPassPhrase = (g as any).KeyPassPhrase;
+    let groupSecurityMode = (g as any).SecurityMode;
+
+    if (Number(norm.CommonSSIDEnable) === 1) {
+      // Common SSID mode: use commonSsidConfig for group-level and sync all interfaces
+      if (editIndex.value === idx && commonSsidConfig.value) {
+        // Currently editing this group with Common SSID mode
+        groupSSID = commonSsidConfig.value.SSID;
+        groupKeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
+        groupSecurityMode = commonSsidConfig.value.SecurityMode;
+
+        // Synchronize all interfaces with Common SSID config
+        for (const itf of norm.Interface) {
+          itf.SSID = commonSsidConfig.value.SSID;
+          itf.SecurityMode = commonSsidConfig.value.SecurityMode;
+          itf.KeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
+          itf.Enable = commonSsidConfig.value.Enable as 0 | 1;
+        }
+      } else {
+        // Not editing: sync all interfaces with group-level data
+        for (const itf of norm.Interface) {
+          itf.SSID = groupSSID;
+          itf.SecurityMode = groupSecurityMode;
+          itf.KeyPassPhrase = groupKeyPassPhrase;
+        }
       }
     }
+    // Per-band mode: group-level fields stay as-is, interfaces keep their own values
 
     return {
-      SSIDGroupName: norm.SSIDGroupName,
+      Enable: (g as any).Enable,
+      Alias: (g as any).Alias || norm.SSIDGroupName,
+      SSID: groupSSID,
+      KeyPassPhrase: groupKeyPassPhrase,
+      SecurityMode: groupSecurityMode,
       CommonSSIDEnable: norm.CommonSSIDEnable,
       MLOEnable: norm.MLOEnable,
-      CommonSSIDBandSetting: norm.CommonSSIDBandSetting?.map((b) => ({
-        Band: b.Band,
-        Enable: b.Enable
-      })),
+      BridgeInterface: (g as any).BridgeInterface,
+      MFPConfig: (g as any).MFPConfig,
       Interface: norm.Interface.map((i) => ({
-        Band: i.Band,
         Enable: i.Enable,
+        Band: i.Band,
+        Alias: i.Alias,
         SSID: i.SSID,
-        SecurityMode: i.SecurityMode,
-        // Prefer KeyPassPhrase, but allow fallback from WpaPreShareKey
         KeyPassPhrase: (i.KeyPassPhrase ?? i.WpaPreShareKey ?? '').toString(),
-        // MFPConfig is removed from the UI but preserved in payload for compatibility.
-        MFPConfig: i.MFPConfig
+        SecurityMode: i.SecurityMode,
+        MFPConfig: i.MFPConfig,
+        AccessPointReference: (i as any).AccessPointReference,
+        SSIDReference: (i as any).SSIDReference
       }))
     };
   });
 
-  return { WlanBasic: { WlanGroup: postGroups } };
+  return { WlanGroup: postGroups };
 };
 
 const showSuccessMessage = () => {
@@ -360,18 +393,17 @@ onMounted(fetchConfig);
         <div v-for="(g, idx) in groups" :key="`${g.SSIDGroupName}-${idx}`" class="group-table-row">
           <div class="col col-name">
             <div class="name-line">{{ g.SSIDGroupName }}</div>
-            <div class="sub-line">{{ summarizeGroup(g) }}</div>
           </div>
 
           <div class="col col-common">
-            <span class="pill" :class="g.CommonSSIDEnable === 1 ? 'on' : 'off'">
-              {{ g.CommonSSIDEnable === 1 ? t('common.enabled') : t('common.no') }}
+            <span class="pill" :class="Number(g.CommonSSIDEnable) === 1 ? 'on' : 'off'">
+              {{ Number(g.CommonSSIDEnable) === 1 ? t('common.enabled') : t('common.disabled') }}
             </span>
           </div>
 
           <div class="col col-mlo">
-            <span class="pill" :class="g.MLOEnable === 1 ? 'on' : 'off'">
-              {{ g.MLOEnable === 1 ? t('common.enabled') : t('common.no') }}
+            <span class="pill" :class="Number(g.MLOEnable) === 1 ? 'on' : 'off'">
+              {{ Number(g.MLOEnable) === 1 ? t('common.enabled') : t('common.disabled') }}
             </span>
           </div>
 
@@ -393,7 +425,9 @@ onMounted(fetchConfig);
       </div>
 
       <!-- Non-edit footer actions: Cancel restores last GET, Apply posts -->
-      <div class="footer-actions">
+
+    </BaseCard>
+      <div class="footer-actions" v-if="editIndex === null">
         <BaseButton variant="secondary" :data-testid="qa('wlan-basic-multi-view-cancel')" @click="restoreFromGet">
           {{ t('common.cancel') }}
         </BaseButton>
@@ -401,8 +435,6 @@ onMounted(fetchConfig);
           {{ t('common.apply') }}
         </BaseButton>
       </div>
-    </BaseCard>
-
     <!-- Edit mode (Basic Config list is hidden while this is shown) -->
     <BaseCard v-if="draft && editIndex !== null" class="compact-card edit-card" :data-testid="qa('wlan-basic-multi-edit-card')">
       <template #header>
@@ -426,7 +458,7 @@ onMounted(fetchConfig);
                   <input
                     type="checkbox"
                     :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle')"
-                    :checked="draft.CommonSSIDEnable === 1"
+                    :checked="Number(draft.CommonSSIDEnable) === 1"
                     @change="(e) => { draft!.CommonSSIDEnable = (e.target as HTMLInputElement).checked ? 1 : 0; onCommonSsidToggle(); }"
                   >
                   <span class="slider"></span>
@@ -437,19 +469,19 @@ onMounted(fetchConfig);
             <div class="field">
               <div class="switch-label" :data-testid="qa('wlan-basic-multi-mlo-enable')">
                 <span>{{ t('wireless.mloEnable') }}</span>
-                <label class="switch" :class="{ 'is-disabled': draft.CommonSSIDEnable === 0 }">
+                <label class="switch" :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 }">
                   <input
                     type="checkbox"
                     :data-testid="qa('wlan-basic-multi-mlo-enable-toggle')"
-                    :checked="draft.MLOEnable === 1"
-                    :disabled="draft.CommonSSIDEnable === 0"
+                    :checked="Number(draft.MLOEnable) === 1"
+                    :disabled="Number(draft.CommonSSIDEnable) === 0"
                     @change="(e) => { draft!.MLOEnable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                   >
                   <span class="slider"></span>
                 </label>
               </div>
 
-              <div v-if="draft.CommonSSIDEnable === 0" class="hint">
+              <div v-if="Number(draft.CommonSSIDEnable) === 0" class="hint">
                 {{ t('wireless.commonSsidDisabled') }}
               </div>
             </div>
@@ -458,7 +490,7 @@ onMounted(fetchConfig);
 
         <!-- Common SSID band settings (ONLY when Common SSID is ON) -->
         <div
-          v-if="draft.CommonSSIDEnable === 1"
+          v-if="Number(draft.CommonSSIDEnable) === 1 && commonSsidConfig"
           class="edit-section"
           :data-testid="qa('wlan-basic-multi-common-band-section')"
         >
@@ -473,8 +505,8 @@ onMounted(fetchConfig);
                   <input
                     type="checkbox"
                     :data-testid="qa('wlan-basic-multi-common-band-enable-toggle')"
-                    :checked="draft.Interface[0].Enable === 1"
-                    @change="(e) => { draft!.Interface[0].Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
+                    :checked="Number(commonSsidConfig.Enable) === 1"
+                    @change="(e) => { commonSsidConfig!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                   >
                   <span class="slider"></span>
                 </label>
@@ -487,19 +519,19 @@ onMounted(fetchConfig);
             <div class="row row-3">
               <div class="cell cell-ssid">
                 <BaseInput
-                  v-model="draft.Interface[0].SSID"
+                  v-model="commonSsidConfig.SSID"
                   :label="t('wireless.ssid')"
-                  :disabled="draft.Interface[0].Enable === 0"
+                  :disabled="Number(commonSsidConfig.Enable) === 0"
                   :data-testid="qa('wlan-basic-multi-common-ssid-ssid')"
                 />
               </div>
 
               <div class="cell cell-auth">
                 <BaseSelect
-                  v-model="draft.Interface[0].SecurityMode"
+                  v-model="commonSsidConfig.SecurityMode"
                   :label="t('wireless.authentication')"
-                  :options="securityModeOptionsForInterface(draft.Interface[0]).map((m) => ({ label: m, value: m }))"
-                  :disabled="draft.Interface[0].Enable === 0"
+                  :options="securityModeOptionsForCommonSsid.map((m) => ({ label: m, value: m }))"
+                  :disabled="Number(commonSsidConfig.Enable) === 0"
                   :data-testid="qa('wlan-basic-multi-common-ssid-security')"
                 />
               </div>
@@ -507,17 +539,16 @@ onMounted(fetchConfig);
               <div class="cell cell-psk">
                 <div class="pass-row">
                   <BaseInput
-                    :modelValue="draft.Interface[0].KeyPassPhrase ?? ''"
+                    v-model="commonSsidConfig.KeyPassPhrase"
                     :label="t('wireless.password')"
                     :type="showPassphrase['CommonSSID'] ? 'text' : 'password'"
-                    :disabled="draft.Interface[0].Enable === 0"
+                    :disabled="Number(commonSsidConfig.Enable) === 0"
                     :data-testid="qa('wlan-basic-multi-common-ssid-psk')"
-                    @update:modelValue="(v) => { draft!.Interface[0].KeyPassPhrase = String(v ?? ''); }"
                   />
                   <button
                     type="button"
                     class="icon-btn"
-                    :disabled="draft.Interface[0].Enable === 0"
+                    :disabled="Number(commonSsidConfig.Enable) === 0"
                     :data-testid="qa('wlan-basic-multi-common-ssid-psk-toggle')"
                     @click="showPassphrase['CommonSSID'] = !showPassphrase['CommonSSID']"
                     :title="showPassphrase['CommonSSID'] ? t('wireless.hide') : t('wireless.show')"
@@ -528,17 +559,11 @@ onMounted(fetchConfig);
               </div>
             </div>
           </div>
-
-          <!-- Kept: CommonSSIDBandSetting data is still preserved in payload via normalizeGroup/buildPostPayload.
-               UI intentionally does not expose per-band toggles here to preserve compact design rules. -->
-          <div v-if="false">
-            {{ getBandSettingByBand('2.4GHz')?.Enable }}
-          </div>
         </div>
 
         <!-- Per-band interface rows (only when Common SSID is OFF) -->
         <div
-          v-if="draft.CommonSSIDEnable === 0"
+          v-if="Number(draft.CommonSSIDEnable) === 0"
           class="edit-section"
           :data-testid="qa('wlan-basic-multi-interfaces-section')"
         >
@@ -555,7 +580,7 @@ onMounted(fetchConfig);
                       <input
                         type="checkbox"
                         :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-${slug(b)}`)"
-                        :checked="getInterfaceByBand(b)!.Enable === 1"
+                        :checked="Number(getInterfaceByBand(b)!.Enable) === 1"
                         @change="(e) => { getInterfaceByBand(b)!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                       >
                       <span class="slider"></span>
@@ -569,7 +594,7 @@ onMounted(fetchConfig);
                   <BaseInput
                     v-model="getInterfaceByBand(b)!.SSID"
                     :label="t('wireless.ssid')"
-                    :disabled="getInterfaceByBand(b)!.Enable === 0"
+                    :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                     :data-testid="qa(`wlan-basic-multi-iface-ssid-${slug(b)}`)"
                   />
                 </div>
@@ -579,7 +604,7 @@ onMounted(fetchConfig);
                     v-model="getInterfaceByBand(b)!.SecurityMode"
                     :label="t('wireless.authentication')"
                     :options="securityModeOptionsForInterface(getInterfaceByBand(b)!).map((m) => ({ label: m, value: m }))"
-                    :disabled="getInterfaceByBand(b)!.Enable === 0"
+                    :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                     :data-testid="qa(`wlan-basic-multi-iface-security-${slug(b)}`)"
                   />
                 </div>
@@ -590,14 +615,14 @@ onMounted(fetchConfig);
                       :modelValue="getInterfaceByBand(b)!.KeyPassPhrase ?? ''"
                       :label="t('wireless.password')"
                       :type="showPassphrase[b] ? 'text' : 'password'"
-                      :disabled="getInterfaceByBand(b)!.Enable === 0"
+                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                       :data-testid="qa(`wlan-basic-multi-iface-psk-${slug(b)}`)"
                       @update:modelValue="(v) => { getInterfaceByBand(b)!.KeyPassPhrase = String(v ?? ''); }"
                     />
                     <button
                       type="button"
                       class="icon-btn"
-                      :disabled="getInterfaceByBand(b)!.Enable === 0"
+                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                       :data-testid="qa(`wlan-basic-multi-iface-psk-toggle-${slug(b)}`)"
                       @click="showPassphrase[b] = !showPassphrase[b]"
                       :title="showPassphrase[b] ? t('wireless.hide') : t('wireless.show')"
@@ -730,13 +755,6 @@ onMounted(fetchConfig);
   font-weight: 600;
 }
 
-.col-name .sub-line {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-  line-height: 1.2;
-}
-
 .pill {
   display: inline-flex;
   padding: 2px 8px;
@@ -773,7 +791,7 @@ onMounted(fetchConfig);
 .edit-section {
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 10px;
+  padding: 1.5rem;
 }
 
 .section-title {
