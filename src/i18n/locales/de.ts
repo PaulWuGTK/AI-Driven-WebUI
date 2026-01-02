@@ -1064,7 +1064,8 @@ export default {
     saveFailed: 'Einstellungen konnten nicht gespeichert werden',
     underDevelopment: 'In Entwicklung',
     underDevelopmentDesc: 'Diese Seite befindet sich derzeit in der Entwicklung und wird in Kürze verfügbar sein.',
-    placeholder: 'Bitte geben Sie den Wert ein'
+    placeholder: 'Bitte geben Sie den Wert ein',
+    action: 'Aktion'
   },
   logs: {
     title: 'Systemprotokolle',

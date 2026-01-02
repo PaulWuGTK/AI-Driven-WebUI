@@ -1063,7 +1063,8 @@ export default {
     saveFailed: '설정을 저장하지 못했습니다',
     underDevelopment: '개발 중',
     underDevelopmentDesc: '이 페이지는 현재 개발 중이며 곧 제공될 예정입니다.',
-    placeholder: '값을 입력해주세요'
+    placeholder: '값을 입력해주세요',
+    action: '작업'
   },
   logs: {
     title: '시스템 로그',

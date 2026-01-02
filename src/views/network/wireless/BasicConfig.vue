@@ -792,6 +792,7 @@ onMounted(fetchConfig);
   margin-top: 6px;
   font-size: 12px;
   color: var(--text-secondary);
+  padding-left: 1.5rem;
 }
 
 .row-head {
@@ -822,6 +823,7 @@ onMounted(fetchConfig);
   justify-content: space-between;
   gap: 10px;
   width: 100%;
+  padding-left: 1.5rem;
 }
 
 /* In header rows, the switch should size to content so it can sit flush right. */
@@ -911,7 +913,7 @@ onMounted(fetchConfig);
 .iface-row {
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 10px;
+  padding: 1.5rem;
   background: #fff;
 }
 
@@ -946,6 +948,7 @@ onMounted(fetchConfig);
   display: grid;
   place-items: center;
   cursor: pointer;
+  margin-bottom: 2rem;
 }
 
 /* Minimal tweak: some browsers render Material Icons slightly low inside square buttons.

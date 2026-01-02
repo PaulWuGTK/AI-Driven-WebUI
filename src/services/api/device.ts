@@ -30,7 +30,8 @@ export const updateTR069Config = async (config: TR069Config): Promise<{ Manageme
   // Create a new object without ConnectionRequestURL and escape URLs
   const { ConnectionRequestURL, ...configToSend } = {
     ...config,
-    URL: escapeUrl(config.URL)
+//    URL: escapeUrl(config.URL)
+    URL: config.URL
   };
 
   const response = await fetch('/API/info?list=ManagementServer', {

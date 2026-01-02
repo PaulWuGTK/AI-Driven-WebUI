@@ -1064,7 +1064,8 @@ export default {
     saveFailed: '設定の保存に失敗しました',
     underDevelopment: '開発中',
     underDevelopmentDesc: 'このページは現在開発中です。まもなく公開されます。',
-    placeholder: '値を入力してください'
+    placeholder: '値を入力してください',
+    action: '操作'
   },
   logs: {
     title: 'システムログ',

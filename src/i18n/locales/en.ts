@@ -1111,7 +1111,8 @@ const translations = {
     saveFailed: 'Failed to save settings',
     underDevelopment: 'Under Development',
     underDevelopmentDesc: 'This page is currently under development and will be available soon.',
-    placeholder: 'Please Enter the value'
+    placeholder: 'Please Enter the value',
+    action: 'Action'
   },
   logs: {
     title: 'System Logs',

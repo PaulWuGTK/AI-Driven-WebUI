@@ -1065,7 +1065,8 @@ export default {
     saveFailed: '設定儲存失敗',
     underDevelopment: '開發中',
     underDevelopmentDesc: '此頁面正在開發中，即將推出。',
-    placeholder: '請輸入數值'
+    placeholder: '請輸入數值',
+    action: '操作'
   },
   logs: {
     title: '系統日誌',

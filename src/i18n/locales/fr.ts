@@ -1064,7 +1064,8 @@ export default {
     saveFailed: 'Échec de l’enregistrement des paramètres',
     underDevelopment: 'En développement',
     underDevelopmentDesc: 'Cette page est actuellement en développement et sera bientôt disponible.',
-    placeholder: 'Veuillez saisir une valeur'
+    placeholder: 'Veuillez saisir une valeur',
+    action: 'Action'
   },
   logs: {
     title: 'Journaux système',

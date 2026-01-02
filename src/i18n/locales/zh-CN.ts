@@ -1064,7 +1064,8 @@ export default {
     saveFailed: '设置保存失败',
     underDevelopment: '开发中',
     underDevelopmentDesc: '此页面正在开发中，即将推出。',
-    placeholder: '请输入值'
+    placeholder: '请输入值',
+    action: '操作'
   },
   logs: {
     title: '系统日志',
