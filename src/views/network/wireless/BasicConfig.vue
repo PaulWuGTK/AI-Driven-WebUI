@@ -57,7 +57,7 @@ const normalizeGroup = (group: WlanGroup): WlanGroup => {
   if (!copy.Interface) copy.Interface = [];
   for (const b of bands) {
     if (!copy.Interface.some((i) => i.Band === b)) {
-      const groupSSID = (copy as any).SSID || copy.SSIDGroupName || '';
+      const groupSSID = (copy as any).SSID || copy.Alias || '';
       const groupSecurityMode = (copy as any).SecurityMode || '';
       const groupKeyPassphrase = (copy as any).KeyPassPhrase || '';
       const groupSecurityModeAvailable = (copy as any).SecurityModeAvailable || '';
@@ -102,7 +102,7 @@ const fetchConfig = async () => {
         WlanBasic: {
           WlanGroup: [
             {
-              SSIDGroupName: t('wireless.groupDefaultName'),
+              Alias: t('wireless.groupDefaultName'),
               CommonSSIDEnable: legacy?.WlanBasic?.CommonSSIDEnable ?? 0,
               MLOEnable: legacy?.WlanBasic?.MLOEnable ?? 0,
               Interface: [
@@ -202,7 +202,17 @@ const updateLocal = () => {
    * without issuing a POST; then exit edit mode.
    */
   if (!data.value || editIndex.value === null || !draft.value) return;
-  const idx = editIndex.value;
+
+  // Get the edited group from the sorted array
+  const editedGroup = groups.value[editIndex.value];
+  if (!editedGroup) return;
+
+  // Find the index in the original unsorted array by matching the Index field
+  const originalIdx = data.value.WlanBasic.WlanGroup.findIndex(
+    (g) => (g as any).Index === (editedGroup as any).Index
+  );
+
+  if (originalIdx === -1) return;
 
   // Normalize to ensure band/interface entries exist
   const normalized = normalizeGroup(JSON.parse(JSON.stringify(draft.value)));
@@ -216,8 +226,8 @@ const updateLocal = () => {
     (normalized as any).Enable = commonSsidConfig.value.Enable;
     (normalized as any).SSIDAdvertisementEnabled = commonSsidConfig.value.SSIDAdvertisementEnabled;
   }
-  
-  data.value.WlanBasic.WlanGroup[idx] = normalized;
+
+  data.value.WlanBasic.WlanGroup[originalIdx] = normalized;
   cancelEdit();
 };
 
@@ -285,7 +295,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
     return {
       Index: (g as any).Index,
       Enable: (g as any).Enable,
-      Alias: (g as any).Alias || norm.SSIDGroupName,
+      Alias: (g as any).Alias || norm.Alias,
       SSID: groupSSID,
       KeyPassPhrase: groupKeyPassPhrase,
       SecurityMode: groupSecurityMode,
@@ -381,9 +391,9 @@ onMounted(fetchConfig);
           <div class="col col-actions">{{ t('common.action') }}</div>
         </div>
 
-        <div v-for="(g, idx) in groups" :key="`${g.SSIDGroupName}-${idx}`" class="group-table-row">
+        <div v-for="(g, idx) in groups" :key="`${g.Alias}-${idx}`" class="group-table-row">
           <div class="col col-name">
-            <div class="name-line">{{ g.SSIDGroupName }}</div>
+            <div class="name-line">{{ g.Alias }}</div>
           </div>
 
           <div class="col col-enable">
@@ -437,7 +447,7 @@ onMounted(fetchConfig);
       <template #header>
         <div class="card-header-row">
           <div class="card-title">
-            {{ t('common.edit') }}: {{ draft.SSIDGroupName }}
+            {{ t('common.edit') }}: {{ draft.Alias }}
           </div>
           <!-- Inline header actions removed per requirements -->
         </div>

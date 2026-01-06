@@ -60,9 +60,6 @@ export interface WlanGroup {
   /** Display order index for sorting */
   Index?: number;
 
-  /** UI label like "Home", "Guest", etc. */
-  SSIDGroupName: string;
-
   /** Group-level enable flag */
   Enable?: BooleanInt;
 
