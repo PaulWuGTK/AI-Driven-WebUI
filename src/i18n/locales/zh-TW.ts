@@ -353,7 +353,9 @@ export default {
     commonSsidShort: '共用 SSID',
     mloShort: 'MLO',
     show: '顯示',
-    hide: '隱藏'
+    hide: '隱藏',
+    hideSsid: '隱藏 SSID',
+    ssidGroupEnable: '啟用 SSID 群組'
   },
   guest: {
     title: '訪客存取',

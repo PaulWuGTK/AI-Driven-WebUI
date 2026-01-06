@@ -51,9 +51,15 @@ export interface WlanGroupInterface {
 
   /** Reference to SSID object in TR-181 data model */
   SSIDReference?: string;
+
+  /** SSID Advertisement flag: 1 = show SSID (Hide SSID off), 0 = hide SSID (Hide SSID on) */
+  SSIDAdvertisementEnabled?: BooleanInt;
 }
 
 export interface WlanGroup {
+  /** Display order index for sorting */
+  Index?: number;
+
   /** UI label like "Home", "Guest", etc. */
   SSIDGroupName: string;
 
@@ -89,6 +95,9 @@ export interface WlanGroup {
 
   /** Per-band interface settings */
   Interface: WlanGroupInterface[];
+
+  /** SSID Advertisement flag: 1 = show SSID (Hide SSID off), 0 = hide SSID (Hide SSID on) */
+  SSIDAdvertisementEnabled?: BooleanInt;
 }
 
 export interface WlanBasicMultiGetResponse {
@@ -103,6 +112,7 @@ export interface WlanBasicMultiGetResponse {
 
 export interface WlanBasicMultiPostRequest {
   WlanGroup: Array<{
+    Index?: number;
     Enable?: BooleanInt;
     Alias: string;
     SSID?: string;
@@ -112,6 +122,7 @@ export interface WlanBasicMultiPostRequest {
     MLOEnable: BooleanInt;
     BridgeInterface?: string;
     MFPConfig?: string | number;
+    SSIDAdvertisementEnabled?: BooleanInt;
     Interface: Array<{
       Enable: BooleanInt;
       Band: string;
@@ -122,6 +133,7 @@ export interface WlanBasicMultiPostRequest {
       MFPConfig?: string | number;
       AccessPointReference?: string;
       SSIDReference?: string;
+      SSIDAdvertisementEnabled?: BooleanInt;
     }>;
   }>;
 }

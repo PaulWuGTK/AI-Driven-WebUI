@@ -352,7 +352,9 @@ export default {
     commonSsidShort: 'SSID commun',
     mloShort: 'MLO',
     show: 'Afficher',
-    hide: 'Masquer'
+    hide: 'Masquer',
+    hideSsid: 'Masquer le SSID',
+    ssidGroupEnable: 'Activer le groupe SSID'
   },
   guest: {
     title: 'Accès invité',

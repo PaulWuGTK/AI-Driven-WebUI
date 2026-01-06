@@ -356,7 +356,9 @@ const translations = {
     commonSsidShort: 'Common SSID',
     mloShort: 'MLO',
     show: 'Show',
-    hide: 'Hide'
+    hide: 'Hide',
+    hideSsid: 'Hide SSID',
+    ssidGroupEnable: 'SSID Group Enable'
   },
   guest: {
     title: 'Guest Access',

@@ -45,6 +45,7 @@ const commonSsidConfig = ref<{
   SecurityMode: string;
   KeyPassPhrase: string;
   SecurityModeAvailable: string;
+  SSIDAdvertisementEnabled: number;
 } | null>(null);
 
 const bands = ['2.4GHz', '5GHz', '6GHz'] as const;
@@ -68,7 +69,8 @@ const normalizeGroup = (group: WlanGroup): WlanGroup => {
         SecurityMode: groupSecurityMode,
         SecurityModeAvailable: groupSecurityModeAvailable,
         KeyPassPhrase: groupKeyPassphrase,
-        MFPConfig: ''
+        MFPConfig: '',
+        SSIDAdvertisementEnabled: 1
       });
     }
   }
@@ -147,7 +149,14 @@ const fetchConfig = async () => {
   }
 };
 
-const groups = computed(() => data.value?.WlanBasic?.WlanGroup ?? []);
+const groups = computed(() => {
+  const wlanGroups = data.value?.WlanBasic?.WlanGroup ?? [];
+  return wlanGroups.slice().sort((a, b) => {
+    const indexA = a.Index ?? 0;
+    const indexB = b.Index ?? 0;
+    return indexA - indexB;
+  });
+});
 
 // PUBLIC_INTERFACE
 const enterEdit = (index: number) => {
@@ -166,7 +175,8 @@ const enterEdit = (index: number) => {
       SSID: (group as any).SSID ?? '',
       SecurityMode: (group as any).SecurityMode ?? '',
       KeyPassPhrase: (group as any).KeyPassPhrase ?? '',
-      SecurityModeAvailable: (group as any).SecurityModeAvailable ?? firstInterface?.SecurityModeAvailable ?? ''
+      SecurityModeAvailable: (group as any).SecurityModeAvailable ?? firstInterface?.SecurityModeAvailable ?? '',
+      SSIDAdvertisementEnabled: (group as any).SSIDAdvertisementEnabled ?? 1
     };
   }
 
@@ -204,6 +214,7 @@ const updateLocal = () => {
     (normalized as any).SecurityMode = commonSsidConfig.value.SecurityMode;
     (normalized as any).KeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
     (normalized as any).Enable = commonSsidConfig.value.Enable;
+    (normalized as any).SSIDAdvertisementEnabled = commonSsidConfig.value.SSIDAdvertisementEnabled;
   }
   
   data.value.WlanBasic.WlanGroup[idx] = normalized;
@@ -272,6 +283,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
     // Per-band mode: group-level fields stay as-is, interfaces keep their own values
 
     return {
+      Index: (g as any).Index,
       Enable: (g as any).Enable,
       Alias: (g as any).Alias || norm.SSIDGroupName,
       SSID: groupSSID,
@@ -281,6 +293,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
       MLOEnable: norm.MLOEnable,
       BridgeInterface: (g as any).BridgeInterface,
       MFPConfig: (g as any).MFPConfig,
+      SSIDAdvertisementEnabled: (g as any).SSIDAdvertisementEnabled,
       Interface: norm.Interface.map((i) => ({
         Enable: i.Enable,
         Band: i.Band,
@@ -290,7 +303,8 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
         SecurityMode: i.SecurityMode,
         MFPConfig: i.MFPConfig,
         AccessPointReference: (i as any).AccessPointReference,
-        SSIDReference: (i as any).SSIDReference
+        SSIDReference: (i as any).SSIDReference,
+        SSIDAdvertisementEnabled: i.SSIDAdvertisementEnabled
       }))
     };
   });
@@ -361,6 +375,7 @@ onMounted(fetchConfig);
       <div class="group-table" :data-testid="qa('wlan-basic-multi-group-table')">
         <div class="group-table-head">
           <div class="col col-name">{{ t('wireless.ssidGroupName') }}</div>
+          <div class="col col-enable">{{ t('wireless.ssidGroupEnable') }}</div>
           <div class="col col-common">{{ t('wireless.commonSsidEnable') }}</div>
           <div class="col col-mlo">{{ t('wireless.mloEnable') }}</div>
           <div class="col col-actions">{{ t('common.action') }}</div>
@@ -369,6 +384,12 @@ onMounted(fetchConfig);
         <div v-for="(g, idx) in groups" :key="`${g.SSIDGroupName}-${idx}`" class="group-table-row">
           <div class="col col-name">
             <div class="name-line">{{ g.SSIDGroupName }}</div>
+          </div>
+
+          <div class="col col-enable">
+            <span class="pill" :class="Number(g.Enable) === 1 ? 'on' : 'off'">
+              {{ Number(g.Enable) === 1 ? t('common.enabled') : t('common.disabled') }}
+            </span>
           </div>
 
           <div class="col col-common">
@@ -473,25 +494,26 @@ onMounted(fetchConfig);
           <div class="section-title">{{ t('wireless.commonSsidBandSettings') }}</div>
 
           <!-- Requirement: In Common SSID mode, this section must have ONLY its own Enable toggle. -->
-          <div class="row-head">
-            <div class="row-title">{{ t('common.enable') }}</div>
-            <div class="row-right">
-              <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-band-enable')">
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('wlan-basic-multi-common-band-enable-toggle')"
-                    :checked="Number(commonSsidConfig.Enable) === 1"
-                    @change="(e) => { commonSsidConfig!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
-                  >
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
+
 
           <!-- Common SSID fields: single block for SSID/Auth/PSK -->
-          <div class="common-ssid-fields compact-rows" :data-testid="qa('wlan-basic-multi-common-ssid-fields')">
+            <div class="iface-row" :data-testid="qa('wlan-basic-multi-common-ssid-fields')">
+                        <div class="row-head">
+              <div class="row-title">{{ t('common.enable') }}</div>
+              <div class="row-right">
+                <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-band-enable')">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      :data-testid="qa('wlan-basic-multi-common-band-enable-toggle')"
+                      :checked="Number(commonSsidConfig.Enable) === 1"
+                      @change="(e) => { commonSsidConfig!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
+                    >
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
             <div class="row row-3">
               <div class="cell cell-ssid">
                 <BaseInput
@@ -531,6 +553,24 @@ onMounted(fetchConfig);
                   >
                     <span class="material-icons">{{ showPassphrase['CommonSSID'] ? 'visibility_off' : 'visibility' }}</span>
                   </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row row-hide-ssid">
+              <div class="field">
+                <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-hide-ssid')">
+                  <span>{{ t('wireless.hideSsid') }}</span>
+                  <label class="switch" :class="{ 'is-disabled': Number(commonSsidConfig.Enable) === 0 }">
+                    <input
+                      type="checkbox"
+                      :data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle')"
+                      :checked="Number(commonSsidConfig.SSIDAdvertisementEnabled) === 0"
+                      :disabled="Number(commonSsidConfig.Enable) === 0"
+                      @change="(e) => { commonSsidConfig!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
+                    >
+                    <span class="slider"></span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -605,6 +645,24 @@ onMounted(fetchConfig);
                     >
                       <span class="material-icons">{{ showPassphrase[b] ? 'visibility_off' : 'visibility' }}</span>
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row row-hide-ssid">
+                <div class="field">
+                  <div class="switch-label" :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-${slug(b)}`)">
+                    <span>{{ t('wireless.hideSsid') }}</span>
+                    <label class="switch" :class="{ 'is-disabled': Number(getInterfaceByBand(b)!.Enable) === 0 }">
+                      <input
+                        type="checkbox"
+                        :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-${slug(b)}`)"
+                        :checked="Number(getInterfaceByBand(b)!.SSIDAdvertisementEnabled ?? 1) === 0"
+                        :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
+                        @change="(e) => { getInterfaceByBand(b)!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
+                      >
+                      <span class="slider"></span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -705,7 +763,7 @@ onMounted(fetchConfig);
 .group-table-head,
 .group-table-row {
   display: grid;
-  grid-template-columns: 1.6fr 0.6fr 0.6fr 0.5fr;
+  grid-template-columns: 1.6fr 0.8fr 0.6fr 0.6fr 0.5fr;
   gap: 8px;
   padding: 10px 12px;
   align-items: center;
@@ -780,6 +838,7 @@ onMounted(fetchConfig);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin: 0 1.5rem 0 1.5rem;
 }
 
 .hint {
@@ -795,7 +854,6 @@ onMounted(fetchConfig);
   gap: 10px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
 }
 
 /* Right-align header controls (e.g., slide switches) while keeping compact layout. */
@@ -817,7 +875,6 @@ onMounted(fetchConfig);
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  padding-left: 1.5rem;
 }
 
 /* In header rows, the switch should size to content so it can sit flush right. */
@@ -983,10 +1040,16 @@ onMounted(fetchConfig);
   color: var(--text-primary);
 }
 
+.row-hide-ssid {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
 @media (max-width: 960px) {
   .group-table-head,
   .group-table-row {
-    grid-template-columns: 1fr 0.6fr 0.6fr 0.6fr;
+    grid-template-columns: 1fr 0.8fr 0.6fr 0.6fr 0.6fr;
   }
 
   .fields-grid {

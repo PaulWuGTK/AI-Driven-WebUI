@@ -352,7 +352,9 @@ export default {
     commonSsidShort: '共通 SSID',
     mloShort: 'MLO',
     show: '表示',
-    hide: '非表示'
+    hide: '非表示',
+    hideSsid: 'SSID を隠す',
+    ssidGroupEnable: 'SSID グループを有効にする'
   },
   guest: {
     title: 'ゲストアクセス',

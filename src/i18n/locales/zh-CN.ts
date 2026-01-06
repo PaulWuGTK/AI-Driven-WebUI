@@ -352,7 +352,9 @@ export default {
     commonSsidShort: '共享 SSID',
     mloShort: 'MLO',
     show: '显示',
-    hide: '隐藏'
+    hide: '隐藏',
+    hideSsid: '隐藏 SSID',
+    ssidGroupEnable: '启用 SSID 组'
   },
   guest: {
     title: '访客访问',

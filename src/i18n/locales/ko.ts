@@ -351,7 +351,9 @@ export default {
     commonSsidShort: '공용 SSID',
     mloShort: 'MLO',
     show: '표시',
-    hide: '숨기기'
+    hide: '숨기기',
+    hideSsid: 'SSID 숨기기',
+    ssidGroupEnable: 'SSID 그룹 사용'
   },
   guest: {
     title: '게스트 액세스',

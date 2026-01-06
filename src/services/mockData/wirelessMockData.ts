@@ -167,6 +167,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
     WlanGroup: [
       {
         SSIDGroupName: "Home",
+        Index: 1,
         Enable: 1,
         Alias: "PRIV",
         SSID: "prplOS-Home",
@@ -218,6 +219,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
       },
       {
         SSIDGroupName: "Guest",
+        Index: 2,
         Enable: 1,
         Alias: "GUEST",
         SSID: "prplOS-Guest",
