@@ -42,11 +42,10 @@ const tabs = computed(() => {
   if (isDeveloperMode.value) {
     baseTabs.push(
       { id: 'guest', label: t('guest.title') },
-      { id: 'wlan', label: t('wireless.wlanExtender') }
+      { id: 'wlan', label: t('wireless.wlanExtender') },
+      { id: 'zones', label: t('wireless.wifiZones') }
     );
   }
-
-  baseTabs.push({ id: 'zones', label: t('wireless.wifiZones') });
 
   return baseTabs;
 });

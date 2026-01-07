@@ -855,7 +855,6 @@ onMounted(fetchConfig);
   margin-top: 6px;
   font-size: 12px;
   color: var(--text-secondary);
-  padding-left: 1.5rem;
 }
 
 .row-head {
