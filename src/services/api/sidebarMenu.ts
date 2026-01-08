@@ -20,7 +20,7 @@ export interface SidebarMenuResponse {
     Apps: SidebarMenuApp[];
     mode: 'Gateway' | 'Extender';
     language: SidebarMenuLanguage;
-    features?: Record<string, boolean>;
+    features: Record<string, boolean>;
   }
 }
 
@@ -51,7 +51,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
         },
         features: {
           thread: true,
-          matter: false
+          matter: false,
+          celluar:false
         }
       }
     };
@@ -115,7 +116,8 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
         },
         features: {
           thread: true,
-          matter: false
+          matter: false,
+          celluar:false
         }
       }
     };

@@ -16,6 +16,7 @@ const expandedMenus = ref<string[]>([]);
 const isMobileMenuOpen = ref(false);
 const deviceMode = ref<'Gateway' | 'Extender'>('Gateway');
 const hasStreambow = ref(false);
+const hasCellular = ref(false);
 const features = ref<Record<string, boolean>>({});
 
 const toggleMobileMenu = () => {
@@ -45,7 +46,7 @@ interface MenuItem {
   subItems?: SubMenuItem[];
 }
 
-const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean }>> = {
+const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean ;requiresCellular?:boolean}>> = {
   'Status': {
     'WAN': { gateway: true, extender: false },
     'WAN Failover': { gateway: true, extender: false },
@@ -57,7 +58,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Mesh Information': { gateway: true, extender: false },
     'LCM': { gateway: true, extender: true },
     'Dual Image': { gateway: true, extender: true },
-    'Cellular': { gateway: true, extender: false },
+    'Cellular': { gateway: true, extender: false, requiresCellular: true  },
     'Log': { gateway: true, extender: true }
   },
   'Basic Setup': {
@@ -65,7 +66,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'Backup WAN': { gateway: true, extender: false },
     'LAN': { gateway: true, extender: true },
     'WLAN': { gateway: true, extender: true },
-    'Cellular': { gateway: true, extender: false },
+    'Cellular': { gateway: true, extender: false, requiresCellular: true  },
     'NAT': { gateway: true, extender: false },
     'Security': { gateway: true, extender: false },
     'Routing': { gateway: true, extender: false }
@@ -253,6 +254,9 @@ const filterMenuItems = () => {
         if (visibility.requiresStreambow) {
           return hasStreambow.value;
         }
+        if (visibility.requiresCellular) {
+          return hasCellular.value;
+        }
 
         return isGateway ? visibility.gateway : visibility.extender;
       });
@@ -317,6 +321,8 @@ const fetchSidebarMenu = async () => {
         name.includes(keyword) || alias.includes(keyword)
       );
     });
+
+    hasCellular.value = response.SidebarMenu.features.cellular;
 
     if (response.SidebarMenu.language.current !== locale.value) {
       locale.value = response.SidebarMenu.language.current;
