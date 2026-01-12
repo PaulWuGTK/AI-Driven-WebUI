@@ -14,8 +14,8 @@ defineProps<{
 <template>
   <div class="controller-detail" :data-testid="qa('tr369-controller-detail-content')">
     <div class="panel-section" :data-testid="qa('tr369-controller-detail-section')">
-      <div class="section-title" :data-testid="qa('tr369-controller-detail-title')">{{ controller.Alias }}</div>
-      
+      <div class="section-title" :data-testid="qa('tr369-controller-detail-title')">{{ controller.ControllerEndpointID }}</div>
+
       <div class="card-content">
         <div class="info-grid">
           <div class="info-row">
@@ -25,10 +25,6 @@ defineProps<{
           <div class="info-row">
             <span class="info-label" :data-testid="qa('tr369-controller-detail-status-label')">{{ t('device.status') }}</span>
             <span class="info-value" :data-testid="qa('tr369-controller-detail-status-value')">{{ controller.Status }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label" :data-testid="qa('tr369-controller-detail-alias-label')">{{ t('device.alias') }}</span>
-            <span class="info-value" :data-testid="qa('tr369-controller-detail-alias-value')">{{ controller.Alias }}</span>
           </div>
           <div class="info-row">
             <span class="info-label" :data-testid="qa('tr369-controller-detail-endpoint-id-label')">{{ t('device.endpointId') }}</span>

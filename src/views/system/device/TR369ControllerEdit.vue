@@ -28,7 +28,7 @@ const handleSubmit = () => {
 
 <template>
   <div class="controller-edit" :data-testid="qa('tr369-controller-edit-content')">
-    <h2 :data-testid="qa('tr369-controller-edit-title')">{{ controller.Alias ? t('device.editController') : t('device.addController') }}</h2>
+    <h2 :data-testid="qa('tr369-controller-edit-title')">{{ controller.ControllerEndpointID ? t('device.editController') : t('device.addController') }}</h2>
 
     <form @submit.prevent="handleSubmit" :data-testid="qa('tr369-controller-edit-form')">
       <div class="form-group">
@@ -45,16 +45,6 @@ const handleSubmit = () => {
             <span class="slider"></span>
           </label>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label :data-testid="qa('tr369-controller-edit-alias-label')">{{ t('device.alias') }}</label>
-        <input
-          type="text"
-          :data-testid="qa('tr369-controller-edit-alias-input')"
-          v-model="editingController.Alias"
-          required
-        />
       </div>
 
       <div class="form-group">

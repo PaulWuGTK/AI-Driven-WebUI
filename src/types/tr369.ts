@@ -1,6 +1,5 @@
 export interface TR369Controller {
   Enable: number;
-  Alias: string;
   Status?: string;
   ControllerEndpointID: string;
   ControllerTopic: string;
