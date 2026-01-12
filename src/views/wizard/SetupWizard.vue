@@ -173,6 +173,25 @@ const handleFinish = async () => {
   router.push('/dashboard');
 };
 
+const handleSkipWizard = async () => {
+  try {
+    isApplying.value = true;
+
+    const response = await wizardApi.skipWizard();
+
+    if (response.WizardRouter.ok) {
+      etaSeconds.value = response.WizardRouter.eta_seconds;
+    } else {
+      isApplying.value = false;
+      throw new Error(response.WizardRouter.message);
+    }
+  } catch (error) {
+    console.error('Failed to skip wizard:', error);
+    alert('Failed to skip wizard. Please try again.');
+    isApplying.value = false;
+  }
+};
+
 const getStepComponent = () => {
   if (currentStep.value === 1) return PrivacyPolicy;
   if (currentStep.value === 2) return ModeSelect;
@@ -258,6 +277,7 @@ const getStepComponent = () => {
         :max-steps="maxSteps"
         @next="nextStep"
         @prev="prevStep"
+        @skip="handleSkipWizard"
         @mode-change="handleModeChange"
         @agent-mode-change="handleAgentSetupModeChange"
         @back-to-agent-setup="backToAgentSetup"

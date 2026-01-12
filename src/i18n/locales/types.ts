@@ -871,6 +871,9 @@ export interface Translations {
     wanModeCellular: string;
     privacyPolicyTitle: string;
     agreeButton: string;
+    nextButton: string;
+    manualConfiguration: string;
+    acceptTermsCheckbox: string;
   };
   common: {
     save: string;

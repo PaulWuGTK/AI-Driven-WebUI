@@ -4,6 +4,7 @@ import type {
   WizardConfig,
   WizardSubmitResponse,
   WizardSubmitData,
+  WizardSkipData,
   WizardAgentOnboardingRequest,
   WizardAgentStatusResponse,
   WizardAgentEndPageRequest,
@@ -72,6 +73,7 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
 function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
   return {
     WizardRouter: {
+      Action: 'Config',
       Wan: {
         WANMode: config.wan.wanMode
       },
@@ -142,6 +144,28 @@ export const wizardApi = {
       };
     }
     return await apiClient.post<WizardSubmitResponse>('/API/info?list=WizardRouter', submitData);
+  },
+
+  async skipWizard(): Promise<WizardSubmitResponse> {
+    const skipData: WizardSkipData = {
+      WizardRouter: {
+        Action: 'Skip'
+      }
+    };
+
+    if (isDevelopment) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Wizard skipped:', skipData);
+      return {
+        WizardRouter: {
+          ok: true,
+          message: 'Wizard skipped, switched to Gateway mode.',
+          job_id: 'skip-' + Date.now(),
+          eta_seconds: 30
+        }
+      };
+    }
+    return await apiClient.post<WizardSubmitResponse>('/API/info?list=WizardRouter', skipData);
   },
 
   async startAgentOnboarding(method: AgentSetupMode): Promise<void> {

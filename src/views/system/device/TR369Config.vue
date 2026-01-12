@@ -45,6 +45,7 @@ const handleAdd = () => {
 
   editingController.value = {
     Enable: 1,
+    Alias: '',
     ControllerEndpointID: '',
     ControllerTopic: '',
     AgentTopic: '',

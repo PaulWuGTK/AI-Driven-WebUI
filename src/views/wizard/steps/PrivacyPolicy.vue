@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-defineEmits(['next']);
+const emit = defineEmits(['next', 'skip']);
+
+const isAccepted = ref(false);
 </script>
 
 <template>
@@ -31,10 +34,30 @@ defineEmits(['next']);
         </ul>
       </div>
 
+      <div class="checkbox-container">
+        <label class="checkbox-label">
+          <input type="checkbox" v-model="isAccepted" class="checkbox-input" />
+          <span class="checkbox-text">{{ t('wizard.acceptTermsCheckbox') }}</span>
+        </label>
+      </div>
+
     </div>
 
     <div class="button-container">
-      <button class="btn-primary" @click="$emit('next')">{{ t('wizard.agreeButton') }}</button>
+      <button
+        class="btn-secondary"
+        @click="emit('skip')"
+        :disabled="!isAccepted"
+      >
+        {{ t('wizard.manualConfiguration') }}
+      </button>
+      <button
+        class="btn-primary"
+        @click="emit('next')"
+        :disabled="!isAccepted"
+      >
+        {{ t('wizard.nextButton') }}
+      </button>
     </div>
   </div>
 </template>
@@ -99,25 +122,74 @@ defineEmits(['next']);
   margin-bottom: 0.5rem;
 }
 
+.checkbox-container {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+  gap: 0.75rem;
+}
+
+.checkbox-input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.checkbox-text {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  user-select: none;
+}
+
 .button-container {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.btn-primary {
-  background: #0078d4;
-  color: white;
+.btn-primary,
+.btn-secondary {
   border: none;
   border-radius: 4px;
-  padding: 0.75rem 3rem;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
-.btn-primary:hover {
+.btn-primary {
+  background: #0078d4;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
   background: #006abd;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>

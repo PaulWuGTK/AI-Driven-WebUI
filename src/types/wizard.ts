@@ -59,10 +59,11 @@ export interface WizardConfig {
 
 export interface WizardSubmitData {
   WizardRouter: {
-    Wan: {
+    Action: 'Config' | 'Skip';
+    Wan?: {
       WANMode: string;
     };
-    WiFi: {
+    WiFi?: {
       CommonSSIDEnable: number;
       MLOEnable: number;
       MeshEnable: number;
@@ -93,10 +94,16 @@ export interface WizardSubmitData {
         Password: string;
       };
     };
-    Admin: {
+    Admin?: {
       Username: string;
       Password: string;
     };
+  };
+}
+
+export interface WizardSkipData {
+  WizardRouter: {
+    Action: 'Skip';
   };
 }
 
