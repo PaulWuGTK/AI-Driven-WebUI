@@ -37,6 +37,20 @@ const fetchConfig = async () => {
   }
 };
 
+const generateNextAlias = () => {
+  const existingAliases = tempControllers.value
+    .map(c => c.Alias)
+    .filter(alias => alias.startsWith('custom-'))
+    .map(alias => parseInt(alias.replace('custom-', '')))
+    .filter(num => !isNaN(num));
+
+  const nextNum = existingAliases.length > 0
+    ? Math.max(...existingAliases) + 1
+    : 1;
+
+  return `custom-${nextNum}`;
+};
+
 const handleAdd = () => {
   if (!canAddController.value) {
     alert(t('device.maxControllersReached'));
@@ -45,7 +59,7 @@ const handleAdd = () => {
 
   editingController.value = {
     Enable: 1,
-    Alias: '',
+    Alias: generateNextAlias(),
     ControllerEndpointID: '',
     ControllerTopic: '',
     AgentTopic: '',
@@ -174,7 +188,6 @@ onMounted(fetchConfig);
             <table>
               <thead>
                 <tr>
-                  <th :data-testid="qa('tr369-config-controllers-header-alias')">{{ t('device.alias') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-endpoint-id')">{{ t('device.endpointId') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-controller-topic')">{{ t('device.controllerTopic') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-status')">{{ t('device.status') }}</th>
@@ -183,7 +196,6 @@ onMounted(fetchConfig);
               </thead>
               <tbody>
                 <tr v-for="(controller, index) in tempControllers" :key="controller.Alias" :data-testid="qa(`tr369-config-controllers-row-${index}`)">
-                  <td :data-testid="qa(`tr369-config-controllers-alias-${index}`)">{{ controller.Alias }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-endpoint-id-${index}`)">{{ controller.ControllerEndpointID }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-controller-topic-${index}`)">{{ controller.ControllerTopic }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-status-${index}`)">{{ controller.Status }}</td>
@@ -207,10 +219,6 @@ onMounted(fetchConfig);
 
           <div class="mobile-cards" :data-testid="qa('tr369-config-controllers-mobile')">
             <div class="table-card" v-for="(controller, index) in tempControllers" :key="controller.Alias" :data-testid="qa(`tr369-config-controllers-card-${index}`)">
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-alias-label-${index}`)">{{ t('device.alias') }}</span>
-                <span class="card-value" :data-testid="qa(`tr369-config-controllers-card-alias-value-${index}`)">{{ controller.Alias }}</span>
-              </div>
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-endpoint-id-label-${index}`)">{{ t('device.endpointId') }}</span>
                 <span class="card-value" :data-testid="qa(`tr369-config-controllers-card-endpoint-id-value-${index}`)">{{ controller.ControllerEndpointID }}</span>
@@ -252,6 +260,7 @@ onMounted(fetchConfig);
         v-else-if="isEditing && editingController"
         :data-testid="qa('tr369-config-controller-edit')"
         :controller="editingController"
+        :existing-controllers="tempControllers"
         @save="handleSave"
         @cancel="isEditing = false"
       />

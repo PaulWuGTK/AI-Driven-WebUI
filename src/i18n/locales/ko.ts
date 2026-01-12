@@ -644,7 +644,9 @@ export default {
     action: '작업',
     agentEndpointId: '에이전트 EndpointID',
     maxControllersReached: '최대 컨트롤러 수(5)에 도달함',
-    controller: '컨트롤러 (MQTT)'
+    controller: '컨트롤러 (MQTT)',
+    duplicateEndpointId: '해당 컨트롤러 EndpointID가 이미 존재합니다. 다른 값을 사용해 주세요.',
+    duplicateControllerTopic: '해당 컨트롤러 토픽이 이미 존재합니다. 다른 값을 사용해 주세요.'
   },
   tr471: {
     title: 'TR-471 속도 테스트',

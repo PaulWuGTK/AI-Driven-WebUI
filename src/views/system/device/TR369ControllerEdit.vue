@@ -9,6 +9,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
   controller: TR369Controller;
+  existingControllers?: TR369Controller[];
 }>();
 
 const emit = defineEmits<{
@@ -17,11 +18,45 @@ const emit = defineEmits<{
 }>();
 
 const editingController = ref<TR369Controller>({ ...props.controller });
+const validationErrors = ref<string[]>([]);
 
 const protocolVersions = ['3.1','3.1.1', '5'];
 const transportProtocols = ['TCP/IP','TLS','WebSocket','WebSocketTLS'];
 
+const validateController = (): boolean => {
+  validationErrors.value = [];
+
+  if (!props.existingControllers) {
+    return true;
+  }
+
+  const otherControllers = props.existingControllers.filter(
+    c => c.Alias !== props.controller.Alias
+  );
+
+  const duplicateEndpointID = otherControllers.some(
+    c => c.ControllerEndpointID === editingController.value.ControllerEndpointID
+  );
+
+  if (duplicateEndpointID) {
+    validationErrors.value.push(t('device.duplicateEndpointId'));
+  }
+
+  const duplicateControllerTopic = otherControllers.some(
+    c => c.ControllerTopic === editingController.value.ControllerTopic
+  );
+
+  if (duplicateControllerTopic) {
+    validationErrors.value.push(t('device.duplicateControllerTopic'));
+  }
+
+  return validationErrors.value.length === 0;
+};
+
 const handleSubmit = () => {
+  if (!validateController()) {
+    return;
+  }
   emit('save', editingController.value);
 };
 </script>
@@ -29,6 +64,12 @@ const handleSubmit = () => {
 <template>
   <div class="controller-edit" :data-testid="qa('tr369-controller-edit-content')">
     <h2 :data-testid="qa('tr369-controller-edit-title')">{{ controller.Alias ? t('device.editController') : t('device.addController') }}</h2>
+
+    <div v-if="validationErrors.length > 0" class="validation-errors">
+      <div v-for="(error, index) in validationErrors" :key="index" class="error-message">
+        {{ error }}
+      </div>
+    </div>
 
     <form @submit.prevent="handleSubmit" :data-testid="qa('tr369-controller-edit-form')">
       <div class="form-group">
@@ -45,16 +86,6 @@ const handleSubmit = () => {
             <span class="slider"></span>
           </label>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label :data-testid="qa('tr369-controller-edit-alias-label')">{{ t('device.alias') }}</label>
-        <input
-          type="text"
-          :data-testid="qa('tr369-controller-edit-alias-input')"
-          v-model="editingController.Alias"
-          required
-        />
       </div>
 
       <div class="form-group">
@@ -114,7 +145,6 @@ const handleSubmit = () => {
           type="text"
           :data-testid="qa('tr369-controller-edit-username-input')"
           v-model="editingController.Username"
-          required
         />
       </div>
 
@@ -274,5 +304,22 @@ input:checked + .slider:before {
   .button-group .btn {
     width: 100%;
   }
+}
+
+.validation-errors {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+}
+
+.error-message {
+  color: #856404;
+  margin-bottom: 0.5rem;
+}
+
+.error-message:last-child {
+  margin-bottom: 0;
 }
 </style>

@@ -646,7 +646,9 @@ export default {
     action: '操作',
     agentEndpointId: '代理 EndpointID',
     maxControllersReached: '已達控制器最大數量（5）',
-    controller: '控制器（MQTT）'
+    controller: '控制器（MQTT）',
+    duplicateEndpointId: '控制器 EndpointID 已存在，請使用其他值。',
+    duplicateControllerTopic: '控制器 Topic 已存在，請使用其他值。'
   },
   tr471: {
     title: 'TR-471 速度測試',

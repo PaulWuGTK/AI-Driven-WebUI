@@ -681,7 +681,9 @@ const translations = {
     action: 'Action',
     agentEndpointId: 'Agent EndpointID',
     maxControllersReached: 'Maximum number of controllers (5) reached',
-    controller: 'Controller (MQTT)'
+    controller: 'Controller (MQTT)',
+    duplicateEndpointId: 'Controller EndpointID already exists. Please use a different value.',
+    duplicateControllerTopic: 'Controller Topic already exists. Please use a different value.'
   },
   tr471: {
     title: 'TR-471 Speed Test',

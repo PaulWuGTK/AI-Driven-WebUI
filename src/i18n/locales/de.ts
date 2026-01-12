@@ -645,7 +645,9 @@ export default {
     action: 'Aktion',
     agentEndpointId: 'Agent EndpointID',
     maxControllersReached: 'Maximale Anzahl an Controllern (5) erreicht',
-    controller: 'Controller (MQTT)'
+    controller: 'Controller (MQTT)',
+    duplicateEndpointId: 'Die EndpointID des Controllers ist bereits vorhanden. Bitte verwenden Sie einen anderen Wert.',
+    duplicateControllerTopic: 'Das Controller-Topic ist bereits vorhanden. Bitte verwenden Sie einen anderen Wert.'
   },
   tr471: {
     title: 'TR-471-Speedtest',

@@ -645,7 +645,9 @@ export default {
     action: '操作',
     agentEndpointId: 'エージェント EndpointID',
     maxControllersReached: 'コントローラーの最大数（5）に達しました',
-    controller: 'コントローラー（MQTT）'
+    controller: 'コントローラー（MQTT）',
+    duplicateEndpointId: 'このコントローラーの EndpointID は既に存在します。別の値を使用してください。',
+    duplicateControllerTopic: 'このコントローラーのトピックは既に存在します。別の値を使用してください。'
   },
   tr471: {
     title: 'TR-471 スピードテスト',

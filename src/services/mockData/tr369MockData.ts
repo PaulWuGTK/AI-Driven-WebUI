@@ -6,7 +6,7 @@ export const tr369MockData: TR369Response = {
     Controller: [
       {
         Enable: 1,
-        Alias: "friendly-tech",
+        Alias: "custom-1",
         Status: "Connected",
         ControllerEndpointID: "self:ft:1",
         ControllerTopic: "/controller",
@@ -25,7 +25,7 @@ export const tr369MockData: TR369Response = {
       },
       {
         Enable: 1,
-        Alias: "dcms",
+        Alias: "custom-2",
         Status: "Connected",
         ControllerEndpointID: "GenixController",
         ControllerTopic: "Genix/v1/controller",
