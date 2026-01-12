@@ -74,23 +74,18 @@ const handleDetail = (controller: TR369Controller) => {
 };
 
 const handleSave = async (controller: TR369Controller) => {
-  const existingIndex = tempControllers.value.findIndex(
-    c => c.ControllerEndpointID === editingController.value?.ControllerEndpointID
-  );
-
-  if (existingIndex !== -1) {
-    tempControllers.value[existingIndex] = controller;
-  } else {
-    tempControllers.value.push(controller);
-  }
-
+  const updatedControllers = editingController.value?.Alias
+    ? tempControllers.value.map(c => c.Alias === editingController.value?.Alias ? controller : c)
+    : [...tempControllers.value, controller];
+  
+  tempControllers.value = updatedControllers;
   isEditing.value = false;
   editingController.value = null;
 };
 
-const handleDelete = async (endpointId: string) => {
+const handleDelete = async (alias: string) => {
   if (!confirm(t('device.confirmDelete'))) return;
-  tempControllers.value = tempControllers.value.filter(c => c.ControllerEndpointID !== endpointId);
+  tempControllers.value = tempControllers.value.filter(c => c.Alias !== alias);
 };
 
 const showSuccessMessage = () => {
@@ -179,6 +174,7 @@ onMounted(fetchConfig);
             <table>
               <thead>
                 <tr>
+                  <th :data-testid="qa('tr369-config-controllers-header-alias')">{{ t('device.alias') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-endpoint-id')">{{ t('device.endpointId') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-controller-topic')">{{ t('device.controllerTopic') }}</th>
                   <th :data-testid="qa('tr369-config-controllers-header-status')">{{ t('device.status') }}</th>
@@ -186,7 +182,8 @@ onMounted(fetchConfig);
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(controller, index) in tempControllers" :key="controller.ControllerEndpointID" :data-testid="qa(`tr369-config-controllers-row-${index}`)">
+                <tr v-for="(controller, index) in tempControllers" :key="controller.Alias" :data-testid="qa(`tr369-config-controllers-row-${index}`)">
+                  <td :data-testid="qa(`tr369-config-controllers-alias-${index}`)">{{ controller.Alias }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-endpoint-id-${index}`)">{{ controller.ControllerEndpointID }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-controller-topic-${index}`)">{{ controller.ControllerTopic }}</td>
                   <td :data-testid="qa(`tr369-config-controllers-status-${index}`)">{{ controller.Status }}</td>
@@ -195,7 +192,7 @@ onMounted(fetchConfig);
                       <button class="btn-action" :data-testid="qa(`tr369-config-controllers-edit-${index}`)" @click="handleEdit(controller)" title="Edit">
                         <span class="material-icons">edit</span>
                       </button>
-                      <button class="btn-action" :data-testid="qa(`tr369-config-controllers-delete-${index}`)" @click="handleDelete(controller.ControllerEndpointID)" title="Delete">
+                      <button class="btn-action" :data-testid="qa(`tr369-config-controllers-delete-${index}`)" @click="handleDelete(controller.Alias)" title="Delete">
                         <span class="material-icons">delete</span>
                       </button>
                       <button class="btn-action" :data-testid="qa(`tr369-config-controllers-detail-${index}`)" @click="handleDetail(controller)" title="Detail">
@@ -209,7 +206,11 @@ onMounted(fetchConfig);
           </div>
 
           <div class="mobile-cards" :data-testid="qa('tr369-config-controllers-mobile')">
-            <div class="table-card" v-for="(controller, index) in tempControllers" :key="controller.ControllerEndpointID" :data-testid="qa(`tr369-config-controllers-card-${index}`)">
+            <div class="table-card" v-for="(controller, index) in tempControllers" :key="controller.Alias" :data-testid="qa(`tr369-config-controllers-card-${index}`)">
+              <div class="card-row">
+                <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-alias-label-${index}`)">{{ t('device.alias') }}</span>
+                <span class="card-value" :data-testid="qa(`tr369-config-controllers-card-alias-value-${index}`)">{{ controller.Alias }}</span>
+              </div>
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-endpoint-id-label-${index}`)">{{ t('device.endpointId') }}</span>
                 <span class="card-value" :data-testid="qa(`tr369-config-controllers-card-endpoint-id-value-${index}`)">{{ controller.ControllerEndpointID }}</span>
@@ -226,7 +227,7 @@ onMounted(fetchConfig);
                 <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-edit-${index}`)" @click="handleEdit(controller)" title="Edit">
                   <span class="material-icons">edit</span>
                 </button>
-                <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-delete-${index}`)" @click="handleDelete(controller.ControllerEndpointID)" title="Delete">
+                <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-delete-${index}`)" @click="handleDelete(controller.Alias)" title="Delete">
                   <span class="material-icons">delete</span>
                 </button>
                 <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-detail-${index}`)" @click="handleDetail(controller)" title="Detail">
