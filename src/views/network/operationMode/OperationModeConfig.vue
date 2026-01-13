@@ -4,14 +4,16 @@ import { useI18n } from 'vue-i18n';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../../../types/operationMode';
 import { getOperationMode, updateOperationMode } from '../../../services/api/operationMode';
 import { useQA } from '../../../utils/qa';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 const { qa } = useQA();
 
 const { t } = useI18n();
 const operationModeData = ref<OperationModeResponse | null>(null);
 const selectedMode = ref('');
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const showCountdown = ref(false);
+const countdownMessage = ref('');
 
 const fetchOperationMode = async () => {
   loading.value = true;
@@ -29,11 +31,23 @@ const fetchOperationMode = async () => {
   }
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const redirectToLogin = () => {
+  const timestamp = new Date().getTime();
+  let targetUrl = '';
+
+  if (selectedMode.value === 'Gateway') {
+    targetUrl = `http://192.168.1.1/login?t=${timestamp}`;
+  } else if (selectedMode.value === 'Bridge' || selectedMode.value === 'Extender') {
+    targetUrl = `http://192.168.1.100/login?t=${timestamp}`;
+  }
+
+  if (targetUrl) {
+    window.location.href = targetUrl;
+  }
+};
+
+const handleCountdownComplete = () => {
+  redirectToLogin();
 };
 
 const handleSubmit = async () => {
@@ -46,8 +60,9 @@ const handleSubmit = async () => {
       }
     };
     await updateOperationMode(updateData);
-    showSuccessMessage();
-    await fetchOperationMode();
+
+    countdownMessage.value = `Applying ${selectedMode.value} mode configuration...`;
+    showCountdown.value = true;
   } catch (err) {
     console.error('Error updating operation mode:', err);
     error.value = 'Failed to update operation mode';
@@ -115,11 +130,14 @@ onMounted(fetchOperationMode);
           </div>
         </div>
       </template>
-
-      <div v-if="showSuccess" class="success-message" :data-testid="qa('operation-mode-success-message')">
-        {{ t('common.apply') }} successful
-      </div>
     </div>
+
+    <BlockingOverlay
+      :is-visible="showCountdown"
+      :message="countdownMessage"
+      :duration="30"
+      @complete="handleCountdownComplete"
+    />
   </div>
 </template>
 
@@ -156,18 +174,6 @@ select:disabled {
   margin-top: 2rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
 .loading-state {
   display: flex;
   align-items: center;
@@ -186,13 +192,6 @@ select:disabled {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {

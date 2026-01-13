@@ -46,7 +46,7 @@ const startCountdown = () => {
       if (countdownTimer.value) {
         clearInterval(countdownTimer.value);
       }
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   }, 1000);
 };

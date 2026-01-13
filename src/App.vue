@@ -21,7 +21,7 @@ onMounted(() => {
   fetchWanStatus();
 });
 
-const isLoginPage = computed(() => route.path === '/login');
+const isLoginPage = computed(() => route.path === `/login?t=${Date.now()}`);
 const isWizardPage = computed(() => route.path === '/wizard');
 </script>
 

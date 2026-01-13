@@ -29,7 +29,7 @@ const fetchData = async () => {
     console.error('Error fetching dashboard data:', err);
     error.value = 'Failed to fetch dashboard data';
     if (err instanceof Error && (err.message.includes('401')||err.message.includes('403'))) {
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   } finally {
     loading.value = false;

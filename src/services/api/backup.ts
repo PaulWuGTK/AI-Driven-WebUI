@@ -188,7 +188,7 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
 
   setTimeout(() => {
     auth.clearSession();
-    window.location.href = '/login';
+    window.location.href = `/login?t=${Date.now()}`;
   }, 1000);
 
   return restoreResponse.json();

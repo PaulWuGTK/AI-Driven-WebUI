@@ -23,7 +23,7 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
       auth.clearSession();
-      window.location.href = '/login';
+      window.location.href = `/login?t=${Date.now()}`;
       throw new Error(`Authentication error: ${response.status}`);
     }
 
@@ -37,7 +37,7 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
     if (err instanceof Error && (err.message.includes('401') || err.message.includes('403'))) {
       const auth = AuthService.getInstance();
       auth.clearSession();
-      window.location.href = '/login';
+      window.location.href = `/login?t=${Date.now()}`;
     }
     throw err;
   }

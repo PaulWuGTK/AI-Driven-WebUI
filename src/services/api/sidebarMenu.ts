@@ -71,7 +71,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
       auth.clearSession();
-      window.location.href = '/login';
+      window.location.href = `/login?t=${Date.now()}`;
       throw new Error(`Failed to fetch sidebar menu: ${response.status}`);
     }
 
@@ -90,7 +90,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
          err.message.includes('Failed to fetch sidebar menu'))) {
       // Clear session and redirect to login
       auth.clearSession();
-      window.location.href = '/login';
+      
+      window.location.href = `/login?t=${Date.now()}`;
     }
     
     throw err;
@@ -145,7 +146,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
       auth.clearSession();
-      window.location.href = '/login';
+      window.location.href = `/login?t=${Date.now()}`;
       throw new Error(`Failed to update sidebar menu language: ${response.status}`);
     }
 
@@ -163,7 +164,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
          err.message.includes('401'))) {
       // Clear session and redirect to login
       auth.clearSession();
-      window.location.href = '/login';
+      window.location.href = `/login?t=${Date.now()}`;
     }
     
     throw err;

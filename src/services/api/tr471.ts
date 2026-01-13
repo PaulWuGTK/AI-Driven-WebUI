@@ -105,7 +105,7 @@ export const getTR471Config = async (): Promise<TR471Response> => {
 
   if (response.status === 401 || response.status === 403) {
     auth.clearSession();
-    window.location.href = '/login';
+    window.location.href = `/login?t=${Date.now()}`;
     throw new Error(`Authentication error: ${response.status}`);
   }
 
@@ -155,7 +155,7 @@ export const runTR471Test = async (config: Partial<TR471Config>): Promise<TR471R
 
   if (response.status === 401 || response.status === 403) {
     auth.clearSession();
-    window.location.href = '/login';
+    window.location.href = `/login?t=${Date.now()}`;
     throw new Error(`Authentication error: ${response.status}`);
   }
 

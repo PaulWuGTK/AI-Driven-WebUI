@@ -87,12 +87,17 @@ const handleDetail = (controller: TR369Controller) => {
   viewingController.value = controller;
 };
 
-const handleSave = async (controller: TR369Controller) => {
-  const updatedControllers = editingController.value?.Alias
-    ? tempControllers.value.map(c => c.Alias === editingController.value?.Alias ? controller : c)
-    : [...tempControllers.value, controller];
-  
-  tempControllers.value = updatedControllers;
+const handleSave = (controller: TR369Controller) => {
+  const idx = tempControllers.value.findIndex(c => c.Alias === controller.Alias);
+
+  if (idx >= 0) {
+    // edit
+    tempControllers.value.splice(idx, 1, controller);
+  } else {
+    // add
+    tempControllers.value.push(controller);
+  }
+
   isEditing.value = false;
   editingController.value = null;
 };

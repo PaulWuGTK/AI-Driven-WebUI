@@ -19,7 +19,7 @@ window.addEventListener('error', (event) => {
     // Clear authentication and redirect to login
     const auth = AuthService.getInstance();
     auth.clearSession();
-    window.location.href = '/login';
+    window.location.href = `/login?t=${Date.now()}`;
     
     // Prevent the default error handling
     event.preventDefault();
@@ -41,7 +41,7 @@ window.addEventListener('unhandledrejection', (event) => {
     // Clear authentication and redirect to login
     const auth = AuthService.getInstance();
     auth.clearSession();
-    window.location.href = '/login';
+    window.location.href = `/login?t=${Date.now()}`;
     
     // Prevent the default error handling
     event.preventDefault();

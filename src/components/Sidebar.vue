@@ -340,7 +340,7 @@ const fetchSidebarMenu = async () => {
          err.message.includes('Failed to fetch sidebar menu'))) {
       const auth = AuthService.getInstance();
       auth.clearSession();
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   }
 };
@@ -356,7 +356,7 @@ watch(() => locale.value, async (newLocale) => {
          error.message.includes('401'))) {
       const auth = AuthService.getInstance();
       auth.clearSession();
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   }
 });

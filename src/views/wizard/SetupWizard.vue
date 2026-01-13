@@ -42,7 +42,7 @@ const handleLanguageChange = (event: Event) => {
 const handleLogout = async () => {
   const authService = (await import('../../services/auth')).AuthService.getInstance();
   authService.clearSession();
-  router.push('/login');
+  router.push(`/login?t=${Date.now()}`);
 };
 
 const router = useRouter();

@@ -12,7 +12,7 @@ const { t, locale } = useI18n();
 
 const handleLogout = () => {
   AuthService.getInstance().clearSession();
-  router.push('/login');
+  router.push(`/login?t=${Date.now()}`);
 };
 
 const languageMap: Record<string, string> = {
@@ -56,7 +56,7 @@ const handleLanguageChange = async (event: Event) => {
          error.message.includes('403'))) {
       // Clear session and redirect to login
       AuthService.getInstance().clearSession();
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   }
 };
@@ -83,7 +83,7 @@ const fetchAvailableLanguages = async () => {
          error.message.includes('Failed to fetch sidebar menu'))) {
       // Clear session and redirect to login
       AuthService.getInstance().clearSession();
-      router.push('/login');
+      router.push(`/login?t=${Date.now()}`);
     }
   }
 };

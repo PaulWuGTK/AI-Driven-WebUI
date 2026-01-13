@@ -141,7 +141,7 @@ const startUpgradeCountdown = () => {
         countdownTimer.value = window.setInterval(tick, 1000);
       } else {
         // 第二段結束 → 導回登入（或你要的頁面）
-        router.push('/login');
+        router.push(`/login?t=${Date.now()}`);
       }
     }
   };
