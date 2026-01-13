@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig, WizardData } from '../../../types/wizard';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 defineProps<Props>();
 defineEmits(['next', 'prev']);
 const { t } = useI18n();
+const { qa } = useQA();
 </script>
 
 <template>
@@ -31,7 +33,7 @@ const { t } = useI18n();
 
       <div class="form-group">
         <label for="wan-mode">{{ t('wizard.wanModeLabel') }} <span class="required">*</span></label>
-        <select id="wan-mode" v-model="config.wan.wanMode" class="form-select">
+        <select id="wan-mode" v-model="config.wan.wanMode" class="form-select" :data-testid="qa('wizard-wan-mode-select')">
           <option v-for="mode in wizardData?.Wan.WANModeList" :key="mode" :value="mode">
             {{ mode.replace(/_/g, ' ') }}
           </option>
@@ -52,8 +54,8 @@ const { t } = useI18n();
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-wan-mode-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-wan-mode-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>

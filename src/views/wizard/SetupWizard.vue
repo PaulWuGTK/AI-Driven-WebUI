@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../utils/qa';
 import { wizardApi } from '../../services/api/wizard';
 import type { WizardData, WizardConfig, AgentSetupMode } from '../../types/wizard';
 import PrivacyPolicy from './steps/PrivacyPolicy.vue';
@@ -19,6 +20,7 @@ import ApplyingSettings from './steps/ApplyingSettings.vue';
 import WizardComplete from './steps/WizardComplete.vue';
 
 const { locale, t } = useI18n();
+const { qa } = useQA();
 
 const availableLanguages = ref([
   { code: 'en', label: 'English' },
@@ -217,34 +219,35 @@ const getStepComponent = () => {
 </script>
 
 <template>
-  <div class="wizard-container">
-    <header class="wizard-header">
-      <div class="logo">Gemtek</div>
+  <div class="wizard-container" :data-testid="qa('wizard-container')">
+    <header class="wizard-header" :data-testid="qa('wizard-header')">
+      <div class="logo" :data-testid="qa('wizard-logo')">Gemtek</div>
       <div class="header-controls">
         <div class="language-select-container">
           <span class="material-icons">language</span>
           <select
             class="language-select"
+            :data-testid="qa('wizard-language-select')"
             :value="locale"
             @change="handleLanguageChange"
           >
-            <option v-for="lang in availableLanguages" :key="lang.code" :value="lang.code">
+            <option v-for="lang in availableLanguages" :key="lang.code" :value="lang.code" :data-testid="qa(`wizard-language-option-${lang.code}`)">
               {{ lang.label }}
             </option>
           </select>
         </div>
-        <button class="header-btn">
+        <button class="header-btn" :data-testid="qa('wizard-username-display')">
           <span class="material-icons">person</span>
           {{ username }}
         </button>
-        <button class="header-btn" @click="handleLogout">
+        <button class="header-btn" :data-testid="qa('wizard-logout-button')" @click="handleLogout">
           <span class="material-icons">logout</span>
           {{ t('header.logout') }}
         </button>
       </div>
     </header>
 
-    <div v-if="loading" class="loading">Loading...</div>
+    <div v-if="loading" class="loading" :data-testid="qa('wizard-loading')">Loading...</div>
 
     <div v-else-if="isApplying" class="wizard-content">
       <ApplyingSettings

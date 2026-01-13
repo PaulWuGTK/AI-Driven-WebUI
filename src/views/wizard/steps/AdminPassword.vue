@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 const props = defineProps<Props>();
 defineEmits(['next', 'prev']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const confirmPassword = ref('');
 const showPassword = ref(false);
@@ -60,6 +62,7 @@ const isValid = computed(() => {
             v-model="config.admin.username"
             :placeholder="t('wizard.usernamePlaceholder')"
             class="form-input"
+            :data-testid="qa('wizard-admin-username-input')"
             required
           />
         </div>
@@ -74,9 +77,10 @@ const isValid = computed(() => {
               :placeholder="t('wizard.passwordPlaceholder')"
               class="form-input"
               :class="{ 'input-error': config.admin.password && !isPasswordValid }"
+              :data-testid="qa('wizard-admin-password-input')"
               required
             />
-            <button type="button" class="password-toggle" @click="showPassword = !showPassword">
+            <button type="button" class="password-toggle" :data-testid="qa('wizard-admin-password-toggle')" @click="showPassword = !showPassword">
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -93,9 +97,10 @@ const isValid = computed(() => {
               :placeholder="t('wizard.confirmPasswordPlaceholder')"
               class="form-input"
               :class="{ 'input-error': !passwordsMatch }"
+              :data-testid="qa('wizard-admin-confirm-password-input')"
               required
             />
-            <button type="button" class="password-toggle" @click="showConfirmPassword = !showConfirmPassword">
+            <button type="button" class="password-toggle" :data-testid="qa('wizard-admin-confirm-password-toggle')" @click="showConfirmPassword = !showConfirmPassword">
               <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -116,8 +121,8 @@ const isValid = computed(() => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')" :disabled="!isValid">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-admin-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-admin-next-button')" @click="$emit('next')" :disabled="!isValid">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>

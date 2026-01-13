@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
+const { qa } = useQA();
 const emit = defineEmits(['next', 'skip']);
 
 const isAccepted = ref(false);
 </script>
 
 <template>
-  <div class="step-container">
+  <div class="step-container" :data-testid="qa('wizard-privacy-policy-container')">
     <div class="step-card">
-      <h1 class="step-title">{{ t('wizard.privacyPolicyTitle') }}</h1>
+      <h1 class="step-title" :data-testid="qa('wizard-privacy-policy-title')">{{ t('wizard.privacyPolicyTitle') }}</h1>
 
-      <div class="privacy-content">
+      <div class="privacy-content" :data-testid="qa('wizard-privacy-policy-content')">
         <p>Gemtek Privacy Policy (the "Policy") governs and applies to personal information collected by Gemtek Technology Co., Ltd. ("Gemtek") from you through Gemtek websites (the "Websites"), products supplied by Gemtek (the "Products"), or services provided by Gemtek (the "Services"). The Policy also describes Gemtek's practices regarding how such information is collected and used. By visiting the Websites or using the Products or Services, you accept the terms and conditions set forth in this Policy.</p>
 
         <h3>1. Collection of Information</h3>
@@ -36,7 +38,7 @@ const isAccepted = ref(false);
 
       <div class="checkbox-container">
         <label class="checkbox-label">
-          <input type="checkbox" v-model="isAccepted" class="checkbox-input" />
+          <input type="checkbox" v-model="isAccepted" class="checkbox-input" :data-testid="qa('wizard-privacy-policy-accept-checkbox')" />
           <span class="checkbox-text">{{ t('wizard.acceptTermsCheckbox') }}</span>
         </label>
       </div>
@@ -46,6 +48,7 @@ const isAccepted = ref(false);
     <div class="button-container">
       <button
         class="btn-secondary"
+        :data-testid="qa('wizard-privacy-policy-skip-button')"
         @click="emit('skip')"
         :disabled="!isAccepted"
       >
@@ -53,6 +56,7 @@ const isAccepted = ref(false);
       </button>
       <button
         class="btn-primary"
+        :data-testid="qa('wizard-privacy-policy-next-button')"
         @click="emit('next')"
         :disabled="!isAccepted"
       >

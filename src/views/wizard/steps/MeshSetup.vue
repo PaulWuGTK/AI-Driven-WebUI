@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 defineProps<Props>();
 defineEmits(['next', 'prev']);
 const { t } = useI18n();
+const { qa } = useQA();
 </script>
 
 <template>
@@ -40,15 +42,15 @@ const { t } = useI18n();
           </span>
         </div>
         <label class="toggle-switch">
-          <input type="checkbox" v-model="config.mesh.enable" />
+          <input type="checkbox" v-model="config.mesh.enable" :data-testid="qa('wizard-mesh-enable-toggle')" />
           <span class="slider"></span>
         </label>
       </div>
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-mesh-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-mesh-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
@@ -142,13 +144,13 @@ const { t } = useI18n();
   cursor: pointer;
   position: relative;
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  color: #636969;   /* 文字顏色（會被 ::before 繼承） */
+  color: #636969;
 }
 
 .info-icon:hover {
   background-color: #004F83;
   border-color: #999;
-  color: #fff;      /* hover 時變白 */
+  color: #fff;
 }
 
 .info-icon::before {
@@ -160,8 +162,8 @@ const { t } = useI18n();
 
 .tooltip-box {
   position: absolute;
-  left: calc(100% + 10px);  /* 在 icon 右邊 10px */
-  top: 50%;                 /* 垂直置中 */
+  left: calc(100% + 10px);
+  top: 50%;
   transform: translateY(-50%);
   width: 260px;
   padding: 12px;
@@ -177,19 +179,17 @@ const { t } = useI18n();
   transition: opacity 0.2s, visibility 0.2s;
 }
 
-/* 外層：藍色邊的左向三角形 */
 .tooltip-box::before {
   content: "";
   position: absolute;
-  top: 50%;                        /* 垂直置中 */
-  left: 0;                         /* 貼左邊 */
+  top: 50%;
+  left: 0;
   transform: translate(-100%, -50%);
-  border-width: 8px 8px 8px 0;     /* 左向三角形 */
+  border-width: 8px 8px 8px 0;
   border-style: solid;
   border-color: transparent #004F83 transparent transparent;
 }
 
-/* 內層：白底三角形，做出只有邊框效果 */
 .tooltip-box::after {
   content: "";
   position: absolute;

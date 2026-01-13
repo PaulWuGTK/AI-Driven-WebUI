@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 defineProps<Props>();
 defineEmits(['prev', 'submit']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const showCommonPassword = ref(false);
 const showAdminPassword = ref(false);
@@ -182,8 +184,8 @@ const showBandPasswords = ref({
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('submit')">{{ t('common.apply') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-review-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-review-submit-button')" @click="$emit('submit')">{{ t('common.apply') }}</button>
     </div>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 import routerModeImage from '../../../assets/icons/wizard/pict_router_mode.svg';
 import agentModeImage from '../../../assets/icons/wizard/pict_agent_mode.svg';
@@ -14,6 +15,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['next', 'prev', 'mode-change']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const selectedMode = ref<'router' | 'agent'>(props.config.mode);
 
@@ -28,12 +30,12 @@ const handleNext = () => {
 </script>
 
 <template>
-  <div class="step-container">
+  <div class="step-container" :data-testid="qa('wizard-mode-select-container')">
     <div class="step-card">
-      <h1 class="step-title">{{ t('wizard.modeSelectTitle') }}</h1>
+      <h1 class="step-title" :data-testid="qa('wizard-mode-select-title')">{{ t('wizard.modeSelectTitle') }}</h1>
       <p class="step-subtitle">{{ t('wizard.modeSelectSubtitle') }}</p>
 
-      <div class="progress-bar">
+      <div class="progress-bar" :data-testid="qa('wizard-mode-select-progress')">
         <div
           v-for="step in maxSteps"
           :key="step"
@@ -46,6 +48,7 @@ const handleNext = () => {
         <div
           class="mode-card"
           :class="{ selected: selectedMode === 'router' }"
+          :data-testid="qa('wizard-mode-select-router')"
           @click="selectMode('router')"
         >
           <div class="mode-diagram">
@@ -58,6 +61,7 @@ const handleNext = () => {
         <div
           class="mode-card"
           :class="{ selected: selectedMode === 'agent' }"
+          :data-testid="qa('wizard-mode-select-agent')"
           @click="selectMode('agent')"
         >
           <div class="mode-diagram">
@@ -71,8 +75,8 @@ const handleNext = () => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="handleNext">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-mode-select-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-mode-select-next-button')" @click="handleNext">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>

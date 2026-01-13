@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { AgentSetupMode } from '../../../types/wizard';
 
 import agentModeWpsImage from '../../../assets/icons/wizard/pict_agent_mode_wps_client_wireless.svg';
@@ -13,6 +14,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['next', 'prev', 'agent-mode-change']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const selectedMode = ref<AgentSetupMode>(props.agentSetupMode);
 
@@ -44,6 +46,7 @@ const selectMode = (mode: AgentSetupMode) => {
         <button
           class="mode-btn"
           :class="{ active: selectedMode === 'wps' }"
+          :data-testid="qa('wizard-agent-setup-wps-button')"
           @click="selectMode('wps')"
         >
           {{ t('wizard.agentSetupViaWps') }}
@@ -51,6 +54,7 @@ const selectMode = (mode: AgentSetupMode) => {
         <button
           class="mode-btn"
           :class="{ active: selectedMode === 'ethernet' }"
+          :data-testid="qa('wizard-agent-setup-ethernet-button')"
           @click="selectMode('ethernet')"
         >
           {{ t('wizard.agentSetupViaEthernet') }}
@@ -86,8 +90,8 @@ const selectMode = (mode: AgentSetupMode) => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-agent-setup-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-agent-setup-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>

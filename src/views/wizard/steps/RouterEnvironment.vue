@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import routerModeWireImage from '../../../assets/icons/wizard/pict_router_mode_client_wired.svg';
 
 defineEmits(['next', 'prev']);
 const { t } = useI18n();
+const { qa } = useQA();
 </script>
 
 <template>
@@ -47,8 +49,8 @@ const { t } = useI18n();
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-router-env-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-router-env-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -11,6 +12,7 @@ const props = defineProps<Props>();
 defineEmits(['next', 'prev']);
 
 const { t } = useI18n();
+const { qa } = useQA();
 const showPassword = ref(false);
 
 const savedBandPasswords = ref({
@@ -156,7 +158,7 @@ const showWpa3Warning = computed(() => {
             </span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.smartConnect" />
+            <input type="checkbox" v-model="config.wifi.smartConnect" :data-testid="qa('wizard-wifi-smart-connect-toggle')" />
             <span class="slider"></span>
           </label>
         </div>
@@ -171,7 +173,7 @@ const showWpa3Warning = computed(() => {
             </span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" />
+            <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" :data-testid="qa('wizard-wifi-mlo-toggle')" />
             <span class="slider"></span>
           </label>
         </div>
@@ -185,13 +187,14 @@ const showWpa3Warning = computed(() => {
             v-model="config.wifi.common.ssid"
             :placeholder="t('wizard.ssidPlaceholder')"
             class="form-input"
+            :data-testid="qa('wizard-wifi-common-ssid-input')"
             required
           />
         </div>
 
         <div class="form-group">
           <label>{{ t('wizard.securityType') }} <span class="required">*</span></label>
-          <select v-model="config.wifi.common.security" class="form-select">
+          <select v-model="config.wifi.common.security" class="form-select" :data-testid="qa('wizard-wifi-common-security-select')">
             <option v-for="option in commonSecurityOptions" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
@@ -207,11 +210,12 @@ const showWpa3Warning = computed(() => {
               v-model="config.wifi.common.password"
               :placeholder="t('wizard.passwordPlaceholderWifi')"
               class="form-input"
+              :data-testid="qa('wizard-wifi-common-password-input')"
               minlength="8"
               maxlength="63"
               required
             />
-            <button type="button" class="password-toggle" @click="showPassword = !showPassword">
+            <button type="button" class="password-toggle" :data-testid="qa('wizard-wifi-common-password-toggle')" @click="showPassword = !showPassword">
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -365,8 +369,8 @@ const showWpa3Warning = computed(() => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" @click="$emit('next')">{{ t('common.next') }}</button>
+      <button class="btn-secondary" :data-testid="qa('wizard-wifi-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
+      <button class="btn-primary" :data-testid="qa('wizard-wifi-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
     </div>
   </div>
 </template>
