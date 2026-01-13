@@ -310,6 +310,7 @@ const translations = {
     bandwidth: 'Bandwidth',
     channel: 'Channel',
     autoChannel: 'Auto Channel',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS Configuration',
     wpsPushButton: 'WPS Push Button',
     wpsPushButtonDesc: 'Click "WPS Push Button", then press the WPS pushbutton on the device you want to connect within two minutes',

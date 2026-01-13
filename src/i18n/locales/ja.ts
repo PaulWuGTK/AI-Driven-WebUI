@@ -306,6 +306,7 @@ export default {
     bandwidth: '帯域幅',
     channel: 'チャンネル',
     autoChannel: '自動チャンネル',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS設定',
     wpsPushButton: 'WPSプッシュボタン',
     wpsPushButtonDesc: '「WPSプッシュボタン」をクリックし、2分以内に接続したいデバイスのWPSボタンを押してください',

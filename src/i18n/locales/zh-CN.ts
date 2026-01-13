@@ -306,6 +306,7 @@ export default {
     bandwidth: '带宽',
     channel: '信道',
     autoChannel: '自动选择信道',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS配置',
     wpsPushButton: 'WPS按钮',
     wpsPushButtonDesc: '点击"WPS按钮"，然后在两分钟内按下要连接设备上的WPS按钮',

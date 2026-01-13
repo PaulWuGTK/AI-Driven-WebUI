@@ -307,6 +307,7 @@ export default {
     bandwidth: '頻寬',
     channel: '頻道',
     autoChannel: '自動選擇頻道',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS設定',
     wpsPushButton: 'WPS按鈕',
     wpsPushButtonDesc: '點擊「WPS按鈕」，然後在兩分鐘內按下要連接裝置上的WPS按鈕',

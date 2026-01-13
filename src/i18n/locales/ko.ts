@@ -305,6 +305,7 @@ export default {
     bandwidth: '대역폭',
     channel: '채널',
     autoChannel: '자동 채널',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS 설정',
     wpsPushButton: 'WPS 푸시 버튼',
     wpsPushButtonDesc: 'WPS 푸시 버튼을 클릭한 후 2분 이내에 연결하려는 장치의 WPS 버튼을 누르세요',

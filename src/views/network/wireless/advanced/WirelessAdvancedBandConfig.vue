@@ -106,6 +106,22 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
           </option>
         </select>
       </div>
+
+      <div class="form-group">
+        <div class="switch-label">
+          <span :data-testid="qa(`wireless-advanced-band-config-mu-mimo-label-${slug(title)}`)">{{ t('wireless.muMimo') }}</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-${slug(title)}`)"
+              :checked="modelValue.MultiUserMIMOEnabled === 1"
+              @change="updateConfig('MultiUserMIMOEnabled', ($event.target as HTMLInputElement).checked ? 1 : 0)"
+              :disabled="modelValue.RadioEnable === 0"
+            />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
     </div>
   </div>
 </template>

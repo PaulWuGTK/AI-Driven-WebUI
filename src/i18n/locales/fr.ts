@@ -306,6 +306,7 @@ export default {
     bandwidth: 'Bande passante',
     channel: 'Canal',
     autoChannel: 'Canal automatique',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'Configuration WPS',
     wpsPushButton: 'Bouton WPS',
     wpsPushButtonDesc: 'Cliquez sur "Bouton WPS" puis appuyez sur le bouton WPS de l\'appareil à connecter dans les deux minutes',

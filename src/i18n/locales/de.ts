@@ -306,6 +306,7 @@ export default {
     bandwidth: 'Bandbreite',
     channel: 'Kanal',
     autoChannel: 'Automatischer Kanal',
+    muMimo: 'MU-MIMO',
     wpsConfiguration: 'WPS-Konfiguration',
     wpsPushButton: 'WPS-Drucktaste',
     wpsPushButtonDesc: 'Klicken Sie auf "WPS-Drucktaste" und drücken Sie dann innerhalb von zwei Minuten die WPS-Taste am Gerät, das Sie verbinden möchten',

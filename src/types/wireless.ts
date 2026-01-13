@@ -26,6 +26,7 @@ export interface WlanAdvancedConfig {
   Channel: string | number;
   ChannelBandwidth: string;
   AutoChannelEnable: number;
+  MultiUserMIMOEnabled?: number;
   // Keep these for UI display only
   ModeList?: string;
   ChannelBandwidthList?: string;

@@ -237,6 +237,7 @@ export interface Translations {
     bandwidth: string;
     channel: string;
     autoChannel: string;
+    muMimo: string;
     wpsConfiguration: string;
     wpsPushButton: string;
     wpsPushButtonDesc: string;
