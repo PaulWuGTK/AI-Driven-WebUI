@@ -14,6 +14,7 @@ export default {
     lcm: 'LCM',
     dualImage: '듀얼 이미지',
     cellular: '셀룰러',
+    operationMode: '동작 모드',
     logs: '로그',
     basicSetup: '기본 설정',
     backupWan: '백업 WAN',
@@ -564,6 +565,13 @@ export default {
     cancel: '취소',
     apply: '적용',
     placeholder: '값을 입력해주세요'
+  },
+  operationMode: {
+    title: '동작 모드 관리',
+    mode: '모드',
+    gateway: '게이트웨이',
+    extender: '확장기',
+    bridge: '브리지'
   },
   ssh: {
     title: 'SSH',

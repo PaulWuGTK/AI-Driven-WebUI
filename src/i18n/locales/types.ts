@@ -462,6 +462,13 @@ export interface Translations {
     apply: string;
     placeholder: string;
   };
+  operationMode: {
+    title: string;
+    mode: string;
+    gateway: string;
+    extender: string;
+    bridge: string;
+  };
   ssh: {
     title: string;
     serverManagement: string;

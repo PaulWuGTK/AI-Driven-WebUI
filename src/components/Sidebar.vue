@@ -67,6 +67,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
     'LAN': { gateway: true, extender: true },
     'WLAN': { gateway: true, extender: true },
     'Cellular': { gateway: true, extender: false, requiresCellular: true  },
+    'Operation Mode': { gateway: true, extender: true },
     'NAT': { gateway: true, extender: false },
     'Security': { gateway: true, extender: false },
     'Routing': { gateway: true, extender: false }
@@ -151,6 +152,7 @@ const baseMenuItems: MenuItem[] = [
         ]
       },
       { name: 'Cellular', path: '/basic/cellular', translationKey: 'menu.cellular' },
+      { name: 'Operation Mode', path: '/basic/operation-mode', translationKey: 'menu.operationMode' },
       {
         name: 'NAT',
         path: '/basic/nat',

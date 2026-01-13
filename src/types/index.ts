@@ -9,6 +9,7 @@ export * from './lan';
 export * from './lcm';
 export * from './mesh';
 export * from './ntp';
+export * from './operationMode';
 export * from './ssh';
 export * from './statistics';
 export * from './timezone';

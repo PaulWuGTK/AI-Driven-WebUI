@@ -14,6 +14,7 @@ export default {
     lcm: 'LCM',
     dualImage: 'Double Image',
     cellular: 'Cellulaire',
+    operationMode: 'Mode de fonctionnement',
     logs: 'Journaux',
     basicSetup: 'Configuration de base',
     backupWan: 'WAN de secours',
@@ -565,6 +566,13 @@ export default {
     cancel: 'Annuler',
     apply: 'Appliquer',
     placeholder: 'Veuillez saisir une valeur'
+  },
+  operationMode: {
+    title: 'Gestion du mode de fonctionnement',
+    mode: 'Mode',
+    gateway: 'Passerelle',
+    extender: 'Répéteur',
+    bridge: 'Pont'
   },
   ssh: {
     title: 'SSH',

@@ -14,6 +14,7 @@ export default {
     lcm: 'LCM',
     dualImage: 'デュアルイメージ',
     cellular: 'セルラー',
+    operationMode: '動作モード',
     logs: 'ログ',
     basicSetup: '基本設定',
     backupWan: 'バックアップWAN',
@@ -565,6 +566,13 @@ export default {
     cancel: 'キャンセル',
     apply: '適用',
     placeholder: '値を入力してください'
+  },
+  operationMode: {
+    title: '動作モード管理',
+    mode: 'モード',
+    gateway: 'ゲートウェイ',
+    extender: 'エクステンダー',
+    bridge: 'ブリッジ'
   },
   ssh: {
     title: 'SSH',

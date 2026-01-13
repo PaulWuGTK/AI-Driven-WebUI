@@ -228,6 +228,12 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/basic/operation-mode',
+      name: 'BasicOperationMode',
+      component: () => import('../views/network/operationMode/OperationModeConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/basic/nat/port-forwarding',
       component: () => import('../views/InProgress.vue'),
       beforeEnter: requireAuth

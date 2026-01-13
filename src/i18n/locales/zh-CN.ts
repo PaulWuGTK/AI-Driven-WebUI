@@ -14,6 +14,7 @@ export default {
     lcm: 'LCM',
     dualImage: '双映像档',
     cellular: '移动网络',
+    operationMode: '操作模式',
     logs: '日志',
     basicSetup: '基本设置',
     backupWan: '备用 WAN',
@@ -565,6 +566,13 @@ export default {
     cancel: '取消',
     apply: '应用',
     placeholder: '请输入值'
+  },
+  operationMode: {
+    title: '操作模式管理',
+    mode: '模式',
+    gateway: '网关',
+    extender: '扩展器',
+    bridge: '桥接'
   },
   ssh: {
     title: 'SSH',

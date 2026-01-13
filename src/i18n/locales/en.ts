@@ -14,6 +14,7 @@ const translations = {
     lcm: 'LCM',
     dualImage: 'Dual Image',
     cellular: 'Cellular',
+    operationMode: 'Operation Mode',
     logs: 'Log',
     basicSetup: 'Basic Setup',
     backupWan: 'Backup WAN',
@@ -601,6 +602,13 @@ const translations = {
     cancel: 'Cancel',
     apply: 'Apply',
     placeholder: 'Please Enter the value'
+  },
+  operationMode: {
+    title: 'Operation Mode Management',
+    mode: 'Mode',
+    gateway: 'Gateway',
+    extender: 'Extender',
+    bridge: 'Bridge'
   },
   ssh: {
     title: 'SSH',

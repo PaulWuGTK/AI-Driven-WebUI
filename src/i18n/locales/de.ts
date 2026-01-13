@@ -14,6 +14,7 @@ export default {
     lcm: 'LCM',
     dualImage: 'Dual-Image',
     cellular: 'Mobilfunk',
+    operationMode: 'Betriebsmodus',
     logs: 'Protokolle',
     basicSetup: 'Grundeinrichtung',
     backupWan: 'Backup-WAN',
@@ -565,6 +566,13 @@ export default {
     cancel: 'Abbrechen',
     apply: 'Anwenden',
     placeholder: 'Bitte geben Sie den Wert ein'
+  },
+  operationMode: {
+    title: 'Betriebsmodus-Verwaltung',
+    mode: 'Modus',
+    gateway: 'Gateway',
+    extender: 'Extender',
+    bridge: 'Bridge'
   },
   ssh: {
     title: 'SSH',

@@ -6,6 +6,7 @@ import type { NtpResponse, NtpUpdateRequest } from '../types/ntp';
 import type { LogResponse } from '../types/log';
 import type { QosBandwidthResponse, QosRuleResponse } from '../types/qos';
 import type { BackupWANResponse, BackupWANRequest } from '../types/backupWan';
+import type { OperationModeResponse, OperationModeUpdateRequest } from '../types/operationMode';
 
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
@@ -16,6 +17,7 @@ import { getMeshMockData } from './mockData/dashboard/meshMock';
 import { generateMockLogs } from './mockData/logMockData';
 import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { mockBackupWANData } from './mockData/backupWanMockData';
+import { operationModeMockData } from './mockData/operationModeMockData';
 
 export const getMockWanStatus = (): WanStatusResponse => wanMockData;
 export const getMockLanStatus = (): LanStatusResponse => lanMockData;
@@ -27,6 +29,7 @@ export const getMockLogs = (request?: any): LogResponse => generateMockLogs(requ
 export const getMockQosBandwidth = (): QosBandwidthResponse => qosBandwidthMockData;
 export const getMockQosRule = (): QosRuleResponse => qosRuleMockData;
 export const getMockBackupWAN = (): BackupWANResponse => mockBackupWANData;
+export const getMockOperationMode = (): OperationModeResponse => operationModeMockData;
 
 export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
   const servers = data.Ntp.NtpServers.split(',').map(s => s.trim());
@@ -55,6 +58,15 @@ export const updateMockBackupWAN = (data: BackupWANRequest): BackupWANResponse =
         CheckMethod: hc.CheckMethod as 'Ping' | 'DNS',
         Status: 'Disabled'
       }))
+    }
+  };
+};
+
+export const updateMockOperationMode = (data: OperationModeUpdateRequest): OperationModeResponse => {
+  return {
+    OperationMode: {
+      ...operationModeMockData.OperationMode,
+      Mode: data.OperationMode.Mode
     }
   };
 };
