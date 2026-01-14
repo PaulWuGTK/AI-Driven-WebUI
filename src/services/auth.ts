@@ -38,7 +38,7 @@ export class AuthService {
     return !!this.sessionId;
   }
 
-  async login(username: string, password: string): Promise<boolean> {
+  async login(username: string, password: string, captchaId?: string, captcha?: string): Promise<boolean> {
     try {
       // Use mock data in development
       if (this.isDevelopment) {
@@ -68,12 +68,19 @@ export class AuthService {
       }
 
       // Production API call
+      const requestBody: any = { username, password };
+
+      if (captchaId && captcha) {
+        requestBody.captchaId = captchaId;
+        requestBody.captcha = captcha;
+      }
+
       const response = await fetch('/session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {

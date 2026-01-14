@@ -1,25 +1,72 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
+import { getMockCaptcha } from '../services/mockData/authMockData';
+
 const { isQAMode, qa, slug } = useQA();
+const isDevelopment = import.meta.env.DEV;
 
 const router = useRouter();
 const username = ref('');
 const password = ref('');
+const captcha = ref('');
+const captchaId = ref('');
+const captchaImage = ref('');
 const error = ref('');
 const loading = ref(false);
+const captchaLoading = ref(false);
+
+const fetchCaptcha = async () => {
+  captchaLoading.value = true;
+  error.value = '';
+
+  try {
+    let data;
+
+    if (isDevelopment) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      data = getMockCaptcha();
+    } else {
+      const response = await fetch('/API/info?list=LoginCaptcha');
+      data = await response.json();
+    }
+
+    if (data.LoginCaptcha) {
+      captchaId.value = data.LoginCaptcha.captchaId;
+      const mimeType = isDevelopment ? 'image/svg+xml' : 'image/png';
+      captchaImage.value = `data:${mimeType};base64,${data.LoginCaptcha.imageBase64}`;
+      captcha.value = '';
+    }
+  } catch (err) {
+    console.error('Failed to fetch captcha:', err);
+    error.value = 'Failed to load captcha';
+  } finally {
+    captchaLoading.value = false;
+  }
+};
 
 const handleLogin = async () => {
   if (loading.value) return;
+
+  if (!captcha.value.trim()) {
+    error.value = 'Please enter the captcha code';
+    return;
+  }
 
   loading.value = true;
   error.value = '';
 
   try {
     const auth = AuthService.getInstance();
-    const success = await auth.login(username.value, password.value);
+    const success = await auth.login(
+      username.value,
+      password.value,
+      captchaId.value,
+      captcha.value
+    );
+
     if (success) {
       if (auth.needsWizard()) {
         await router.push('/wizard');
@@ -28,14 +75,20 @@ const handleLogin = async () => {
       }
     } else {
       error.value = 'Invalid username or password';
+      await fetchCaptcha();
     }
   } catch (err) {
     console.error('Login error:', err);
     error.value = err instanceof Error ? err.message : 'Login failed. Please try again.';
+    await fetchCaptcha();
   } finally {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  fetchCaptcha();
+});
 </script>
 
 <template>
@@ -67,8 +120,43 @@ const handleLogin = async () => {
             :disabled="loading"
           />
         </div>
+        <div class="form-group">
+          <label for="captcha" :data-testid="qa('login-captcha-label')">Verification Code</label>
+          <div class="captcha-container">
+            <div class="captcha-image-wrapper">
+              <img
+                v-if="captchaImage"
+                :src="captchaImage"
+                alt="Captcha"
+                class="captcha-image"
+                :data-testid="qa('login-captcha-image')"
+              />
+              <div v-else class="captcha-loading">Loading...</div>
+            </div>
+            <button
+              type="button"
+              @click="fetchCaptcha"
+              :disabled="captchaLoading || loading"
+              class="captcha-refresh-button"
+              :data-testid="qa('login-captcha-refresh')"
+              title="Refresh captcha"
+            >
+              ↻
+            </button>
+          </div>
+          <input
+            id="captcha"
+            :data-testid="qa('login-captcha-input')"
+            v-model="captcha"
+            type="text"
+            required
+            placeholder="Enter verification code"
+            :disabled="loading || captchaLoading"
+            maxlength="6"
+          />
+        </div>
         <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">{{ error }}</div>
-        <button type="submit" class="login-button" :disabled="loading" :data-testid="qa('login-submit-button')">
+        <button type="submit" class="login-button" :disabled="loading || captchaLoading" :data-testid="qa('login-submit-button')">
           {{ loading ? 'Logging in...' : 'Login' }}
         </button>
       </form>
@@ -106,7 +194,7 @@ const handleLogin = async () => {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .form-group {
@@ -147,7 +235,7 @@ input:disabled {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .login-button:hover:not(:disabled) {
@@ -163,6 +251,67 @@ input:disabled {
   color: #dc3545;
   font-size: 0.9rem;
   text-align: center;
-  margin-top: -0.5rem;
+  margin-top: -0.75rem;
+}
+
+.captcha-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.captcha-image-wrapper {
+  flex: 1;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  overflow: hidden;
+}
+
+.captcha-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.captcha-loading {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.captcha-refresh-button {
+  width: 50px;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #0c78be;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.captcha-refresh-button:hover:not(:disabled) {
+  background: #f0f8ff;
+  border-color: #0c78be;
+}
+
+.captcha-refresh-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.captcha-refresh-button:active:not(:disabled) {
+  transform: rotate(180deg);
 }
 </style>
