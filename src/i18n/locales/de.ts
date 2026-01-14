@@ -324,6 +324,7 @@ export default {
     wpsStatus: 'WPS-Status',
     easyMesh: 'EasyMesh',
     commonSsidConfig: 'Gemeinsame SSID-Konfiguration',
+    backhaulSsidConfig: 'Backhaul-SSID-Konfiguration',
     pushButtonTitle: 'Neues Gerät per Tastendruck verbinden',
     pinConnectTitle: 'Neues Gerät per PIN-Code verbinden',
     devicePinTitle: 'PIN-Code zum Hinzufügen dieses Geräts zu einem Netzwerk',

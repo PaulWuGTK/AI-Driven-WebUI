@@ -49,7 +49,7 @@ interface MenuItem {
 const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean ;requiresCellular?:boolean}>> = {
   'Status': {
     'WAN': { gateway: true, extender: false },
-    'WAN Failover': { gateway: true, extender: false },
+    'WAN Failover': { gateway: false, extender: false },
     'LAN': { gateway: true, extender: true },
     'WLAN': { gateway: true, extender: true },
     'Statistics': { gateway: true, extender: true },
@@ -63,7 +63,7 @@ const menuVisibility: Record<string, Record<string, { gateway: boolean; extender
   },
   'Basic Setup': {
     'WAN': { gateway: true, extender: false },
-    'Backup WAN': { gateway: true, extender: false },
+    'Backup WAN': { gateway: false, extender: false },
     'LAN': { gateway: true, extender: true },
     'WLAN': { gateway: true, extender: true },
     'Cellular': { gateway: true, extender: false, requiresCellular: true  },

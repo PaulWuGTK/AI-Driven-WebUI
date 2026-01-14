@@ -324,6 +324,7 @@ export default {
     wpsStatus: 'WPS状態',
     easyMesh: 'EasyMesh',
     commonSsidConfig: '共通SSID設定',
+    backhaulSsidConfig: 'バックホール SSID 設定',
     pushButtonTitle: 'プッシュボタンで新しいデバイスを接続',
     pinConnectTitle: 'PINコードで新しいデバイスを接続',
     devicePinTitle: 'このデバイスをネットワークに追加するためのPINコード',

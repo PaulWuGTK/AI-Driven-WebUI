@@ -328,6 +328,7 @@ const translations = {
     wpsStatus: 'WPS Status',
     easyMesh: 'EasyMesh',
     commonSsidConfig: 'Common SSID Configuration',
+    backhaulSsidConfig: 'Backhaul SSID Configuration',
     commonSsidBandSettings: 'Common SSID Band Settings',
     pushButtonTitle: 'Connect a new device by pushbutton',
     pinConnectTitle: 'Connect a new device by PIN',

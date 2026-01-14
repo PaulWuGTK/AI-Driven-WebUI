@@ -89,7 +89,7 @@ onMounted(fetchMeshConfig);
 
     <template v-else-if="meshData">
       <!-- Show info banner when Mesh is disabled by MLO -->
-      <div v-if="isMeshDisabledByMLO" class="mlo-status" :data-testid="qa('wireless-mesh-config-mlo-status')">
+      <div v-if="0" class="mlo-status" :data-testid="qa('wireless-mesh-config-mlo-status')">
         <div class="info-banner" :data-testid="qa('wireless-mesh-config-mlo-info-banner')">
           <span class="material-icons">info</span>
           <span>{{ t('wireless.mloMeshWarning') }}</span>
@@ -111,7 +111,7 @@ onMounted(fetchMeshConfig);
       </div>
 
       <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-ssid-section')">
-        <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.commonSsidConfig') }}</div>
+        <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.backhaulSsidConfig') }}</div>
         <div class="ssid-content" :data-testid="qa('wireless-mesh-config-ssid-content')">
           <div class="form-group">
             <label :data-testid="qa('wireless-mesh-config-ssid-label')">SSID</label>

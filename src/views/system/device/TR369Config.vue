@@ -132,7 +132,8 @@ const handleApply = async () => {
         Controller: sanitizedControllers
       }
     });
-    controllers.value = [...sanitizedControllers];
+//    controllers.value = [...sanitizedControllers];
+    await fetchConfig();
     showSuccessMessage();
   } catch (err) {
     console.error('Error updating TR-369 config:', err);

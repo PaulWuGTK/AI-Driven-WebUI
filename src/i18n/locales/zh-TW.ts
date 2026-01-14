@@ -325,6 +325,7 @@ export default {
     wpsStatus: 'WPS狀態',
     easyMesh: 'EasyMesh',
     commonSsidConfig: '通用SSID設定',
+    backhaulSsidConfig: '回程 SSID 設定',
     pushButtonTitle: '透過按鈕連接新裝置',
     pinConnectTitle: '透過 PIN 碼連接新裝置',
     devicePinTitle: '將此裝置加入網路的 PIN 碼',
