@@ -143,7 +143,7 @@ onMounted(fetchMeshConfig);
 
       <div class="mlo-section" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-mlo-section')">
         <div class="switch-label">
-          <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO</span>
+          <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO Enable</span>
           <label class="switch">
             <input
               type="checkbox"
