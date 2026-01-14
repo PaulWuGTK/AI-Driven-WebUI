@@ -66,7 +66,11 @@ export interface WlanWpsResponse {
 export interface WlanMeshResponse {
   WlanMesh: {
     MeshEnable: number;
-    MLOEnable?: number; // Added MLOEnable parameter
-    CommonSSID: string;
+    Enable: number;
+    SSID: string;
+    SecurityMode: string;
+    Password: string;
+    MLOEnable: number;
+    CommonSSIDEnable: number;
   };
 }

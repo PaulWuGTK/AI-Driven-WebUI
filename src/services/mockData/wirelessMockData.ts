@@ -157,8 +157,12 @@ export const updateWlanWpsMock = (data: { WlanWps: { Enable?: number; Action?: s
 export const wlanMeshMockData: WlanMeshResponse = {
   WlanMesh: {
     MeshEnable: 0,
-    MLOEnable: 1,
-    CommonSSID: "prplOS"
+    Enable: 0,
+    SSID: "Gemtek_prplmesh",
+    SecurityMode: "WPA2-WPA3-Personal",
+    Password: "password",
+    MLOEnable: 0,
+    CommonSSIDEnable: 1
   }
 };
 

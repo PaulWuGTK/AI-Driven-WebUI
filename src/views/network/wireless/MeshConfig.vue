@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
@@ -17,9 +17,10 @@ const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showBlockingOverlay = ref(false);
 
-// Computed property to check if Mesh is disabled by MLO
-const isMeshDisabledByMLO = computed(() => {
-  return meshData.value?.WlanMesh.MLOEnable === 1;
+watch(() => meshData.value?.WlanMesh.MeshEnable, (newValue) => {
+  if (meshData.value && newValue !== undefined) {
+    meshData.value.WlanMesh.Enable = newValue;
+  }
 });
 
 const fetchMeshConfig = async () => {
@@ -44,7 +45,6 @@ const showSuccessMessage = () => {
 
 const handleBlockingComplete = () => {
   showBlockingOverlay.value = false;
-  // 保持在 mesh 分頁並重新載入頁面
   const currentPath = route.path;
   router.replace({ path: currentPath, query: { tab: 'mesh' } }).then(() => {
     router.go(0);
@@ -59,12 +59,15 @@ const handleSubmit = async () => {
     await updateWlanMesh({
       WlanMesh: {
         MeshEnable: Number(meshData.value.WlanMesh.MeshEnable),
-        CommonSSID: meshData.value.WlanMesh.CommonSSID
+        Enable: Number(meshData.value.WlanMesh.Enable),
+        SSID: meshData.value.WlanMesh.SSID,
+        SecurityMode: meshData.value.WlanMesh.SecurityMode,
+        Password: meshData.value.WlanMesh.Password,
+        MLOEnable: Number(meshData.value.WlanMesh.MLOEnable),
+        CommonSSIDEnable: Number(meshData.value.WlanMesh.CommonSSIDEnable)
       }
     });
     showSuccessMessage();
-    
-    // Show blocking overlay instead of immediate refresh
   } catch (err) {
     console.error('Error updating mesh config:', err);
     error.value = 'Failed to update mesh config';
@@ -88,14 +91,6 @@ onMounted(fetchMeshConfig);
     </div>
 
     <template v-else-if="meshData">
-      <!-- Show info banner when Mesh is disabled by MLO -->
-      <div v-if="0" class="mlo-status" :data-testid="qa('wireless-mesh-config-mlo-status')">
-        <div class="info-banner" :data-testid="qa('wireless-mesh-config-mlo-info-banner')">
-          <span class="material-icons">info</span>
-          <span>{{ t('wireless.mloMeshWarning') }}</span>
-        </div>
-      </div>
-
       <div class="switch-label">
         <span :data-testid="qa('wireless-mesh-config-enable-label')">{{ t('wireless.easyMesh') }}</span>
         <label class="switch">
@@ -118,10 +113,47 @@ onMounted(fetchMeshConfig);
             <input
               type="text"
               :data-testid="qa('wireless-mesh-config-ssid-input')"
-              v-model="meshData.WlanMesh.CommonSSID"
-              required
+              v-model="meshData.WlanMesh.SSID"
+              disabled
+              class="disabled-input"
             />
           </div>
+          <div class="form-group">
+            <label :data-testid="qa('wireless-mesh-config-security-label')">Security Mode</label>
+            <input
+              type="text"
+              :data-testid="qa('wireless-mesh-config-security-input')"
+              v-model="meshData.WlanMesh.SecurityMode"
+              disabled
+              class="disabled-input"
+            />
+          </div>
+          <div class="form-group">
+            <label :data-testid="qa('wireless-mesh-config-password-label')">Password</label>
+            <input
+              type="password"
+              :data-testid="qa('wireless-mesh-config-password-input')"
+              v-model="meshData.WlanMesh.Password"
+              disabled
+              class="disabled-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="mlo-section" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-mlo-section')">
+        <div class="switch-label">
+          <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :data-testid="qa('wireless-mesh-config-mlo-toggle')"
+              v-model="meshData.WlanMesh.MLOEnable"
+              :true-value="1"
+              :false-value="0"
+            >
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
 
@@ -207,8 +239,20 @@ input:disabled + .slider {
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
 }
 
+.disabled-info {
+  padding: 1rem 1.5rem;
+  background-color: #f5f5f5;
+  color: #d32f2f;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 .ssid-content {
   padding: 1.5rem;
+}
+
+.mlo-section {
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
@@ -231,6 +275,12 @@ input {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
+}
+
+.disabled-input {
+  background-color: #f5f5f5;
+  color: #9e9e9e;
+  cursor: not-allowed;
 }
 
 .button-group {
