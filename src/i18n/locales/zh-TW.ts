@@ -933,8 +933,18 @@ export default {
     title: '登入',
     username: '使用者名稱',
     password: '密碼',
+    captcha: '驗證碼',
     submit: '登入',
-    error: '使用者名稱或密碼無效'
+    error: '使用者名稱或密碼錯誤',
+    captchaInvalid: '驗證碼不正確，請再試一次。',
+    captchaTimeout: '驗證碼已過期，請重新取得。',
+    accountLocked: '嘗試失敗次數過多，帳號已被鎖定 {minutes} 分鐘。',
+    accountLockedSeconds: '嘗試失敗次數過多，帳號已被鎖定。請在 {seconds} 秒後再試一次。',
+    sessionFailed: '使用者名稱或密碼無效。',
+    pleaseEnterCaptcha: '請輸入驗證碼。',
+    networkError: '網路錯誤，請檢查連線後再試一次。',
+    captchaLoadFailed: '驗證碼載入失敗，請重新整理頁面。',
+    unknownError: '發生未預期的錯誤，請再試一次。'
   },
   wizard: {
     completeTitle: '完成！',

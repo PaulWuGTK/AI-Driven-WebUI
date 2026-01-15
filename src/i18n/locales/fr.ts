@@ -930,10 +930,20 @@ export default {
   },
   login: {
     title: 'Connexion',
-    username: 'Nom d\'utilisateur',
+    username: 'Nom d’utilisateur',
     password: 'Mot de passe',
-    submit: 'Connexion',
-    error: 'Nom d\'utilisateur ou mot de passe invalide'
+    captcha: 'Code de vérification',
+    submit: 'Se connecter',
+    error: 'Nom d’utilisateur ou mot de passe incorrect.',
+    captchaInvalid: 'Code de vérification invalide. Veuillez réessayer.',
+    captchaTimeout: 'Le code de vérification a expiré. Veuillez le renouveler.',
+    accountLocked: 'Trop de tentatives échouées. Le compte est verrouillé pendant {minutes} minutes.',
+    accountLockedSeconds: 'Trop de tentatives échouées. Le compte est verrouillé. Veuillez réessayer dans {seconds} secondes.',
+    sessionFailed: 'Nom d’utilisateur ou mot de passe invalide.',
+    pleaseEnterCaptcha: 'Veuillez saisir le code de vérification.',
+    networkError: 'Erreur réseau. Vérifiez votre connexion puis réessayez.',
+    captchaLoadFailed: 'Impossible de charger le code de vérification. Veuillez actualiser la page.',
+    unknownError: 'Une erreur inattendue est survenue. Veuillez réessayer.'
   },
   wizard: {
     completeTitle: 'Terminé !',

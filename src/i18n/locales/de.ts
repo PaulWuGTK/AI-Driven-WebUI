@@ -929,11 +929,21 @@ export default {
     dashboardPort: 'Das Matter-Dashboard ist unter Port 8889 verfügbar.'
   },
   login: {
-    title: 'Login',
-    username: 'Benutzer',
+    title: 'Anmeldung',
+    username: 'Benutzername',
     password: 'Passwort',
-    submit: 'Login',
-    error: 'Ungültiger Benutzername oder ungültiges Passwort'
+    captcha: 'Bestätigungscode',
+    submit: 'Anmelden',
+    error: 'Benutzername oder Passwort ist ungültig.',
+    captchaInvalid: 'Der Bestätigungscode ist ungültig. Bitte erneut versuchen.',
+    captchaTimeout: 'Der Bestätigungscode ist abgelaufen. Bitte neu laden.',
+    accountLocked: 'Zu viele Fehlversuche. Das Konto ist für {minutes} Minuten gesperrt.',
+    accountLockedSeconds: 'Zu viele Fehlversuche. Das Konto ist gesperrt. Bitte versuchen Sie es in {seconds} Sekunden erneut.',
+    sessionFailed: 'Benutzername oder Passwort ist ungültig.',
+    pleaseEnterCaptcha: 'Bitte geben Sie den Bestätigungscode ein.',
+    networkError: 'Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
+    captchaLoadFailed: 'Der Bestätigungscode konnte nicht geladen werden. Bitte laden Sie die Seite neu.',
+    unknownError: 'Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.'
   },
   wizard: {
     completeTitle: 'Abgeschlossen!',

@@ -61,11 +61,26 @@ export class AuthService {
     );
 
     if (!verify?.Login || verify.Login.status !== 'ok') {
-      const msg =
-        verify?.Login?.status === 'locked'
-          ? `Too many attempts. Retry after ${verify.Login.retryAfter ?? 60}s.`
-          : (verify?.Login?.error || 'Captcha verification failed.');
-      throw new Error(msg);
+      const loginResponse = verify?.Login;
+
+      if (loginResponse?.status === 'locked') {
+        const error: any = new Error('Account locked');
+        error.status = 'locked';
+        error.retryAfter = loginResponse.retryAfter || 0;
+        error.lockUntil = loginResponse.lockUntil || 0;
+        throw error;
+      }
+
+      if (loginResponse?.status === 'captcha_invalid') {
+        const error: any = new Error('Invalid captcha');
+        error.status = 'captcha_invalid';
+        error.failCount = loginResponse.failCount || 0;
+        throw error;
+      }
+
+      const error: any = new Error(loginResponse?.error || 'Captcha verification failed');
+      error.status = loginResponse?.status || 'failed';
+      throw error;
     }
 
     // A-2) create session (must be browser → to receive Set-Cookie)

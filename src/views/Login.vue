@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
 import { getMockCaptcha } from '../services/mockData/authMockData';
 
 const { isQAMode, qa, slug } = useQA();
 const isDevelopment = import.meta.env.DEV;
+const { t } = useI18n();
 
 const router = useRouter();
 const username = ref('');
@@ -17,10 +19,26 @@ const captchaImage = ref('');
 const error = ref('');
 const loading = ref(false);
 const captchaLoading = ref(false);
+const isLocked = ref(false);
+const lockRetryAfter = ref(0);
+const captchaTimeout = ref<number | null>(null);
+const lockCountdown = ref<number | null>(null);
 
-const fetchCaptcha = async () => {
+const resetCaptchaTimer = () => {
+  if (captchaTimeout.value) {
+    clearTimeout(captchaTimeout.value);
+  }
+  captchaTimeout.value = window.setTimeout(() => {
+    captcha.value = '';
+    fetchCaptcha(true);
+  }, 60000); // 1 minute timeout
+};
+
+const fetchCaptcha = async (clearError = false) => {
   captchaLoading.value = true;
-  error.value = '';
+  if (clearError) {
+    error.value = '';
+  }
 
   try {
     let data;
@@ -30,6 +48,9 @@ const fetchCaptcha = async () => {
       data = getMockCaptcha();
     } else {
       const response = await fetch('/API/info?list=LoginCaptcha');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch captcha: ${response.status}`);
+      }
       data = await response.json();
     }
 
@@ -38,25 +59,63 @@ const fetchCaptcha = async () => {
       const mimeType = isDevelopment ? 'image/svg+xml' : 'image/png';
       captchaImage.value = `data:${mimeType};base64,${data.LoginCaptcha.imageBase64}`;
       captcha.value = '';
+      resetCaptchaTimer();
+    } else {
+      throw new Error('Invalid captcha response');
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to fetch captcha:', err);
-    error.value = 'Failed to load captcha';
+    error.value = t('login.captchaLoadFailed');
   } finally {
     captchaLoading.value = false;
   }
 };
 
+const startLockCountdown = (retryAfter: number) => {
+  isLocked.value = true;
+  lockRetryAfter.value = retryAfter;
+
+  if (lockCountdown.value) {
+    clearInterval(lockCountdown.value);
+  }
+
+  lockCountdown.value = window.setInterval(() => {
+    lockRetryAfter.value--;
+    if (lockRetryAfter.value <= 0) {
+      isLocked.value = false;
+      if (lockCountdown.value) {
+        clearInterval(lockCountdown.value);
+        lockCountdown.value = null;
+      }
+      error.value = '';
+      fetchCaptcha(true);
+    }
+  }, 1000);
+};
+
+const lockMessage = computed(() => {
+  if (lockRetryAfter.value >= 60) {
+    const minutes = Math.ceil(lockRetryAfter.value / 60);
+    return t('login.accountLocked', { minutes });
+  }
+  return t('login.accountLockedSeconds', { seconds: lockRetryAfter.value });
+});
+
 const handleLogin = async () => {
-  if (loading.value) return;
+  if (loading.value || isLocked.value) return;
 
   if (!captcha.value.trim()) {
-    error.value = 'Please enter the captcha code';
+    error.value = t('login.pleaseEnterCaptcha');
     return;
   }
 
   loading.value = true;
   error.value = '';
+
+  if (captchaTimeout.value) {
+    clearTimeout(captchaTimeout.value);
+    captchaTimeout.value = null;
+  }
 
   try {
     const auth = AuthService.getInstance();
@@ -74,20 +133,75 @@ const handleLogin = async () => {
         await router.push('/dashboard');
       }
     } else {
-      error.value = 'Invalid username or password';
-      await fetchCaptcha();
+      error.value = t('login.error');
+      await fetchCaptcha(false);
     }
-  } catch (err) {
-    console.error('Login error:', err);
-    error.value = err instanceof Error ? err.message : 'Login failed. Please try again.';
-    await fetchCaptcha();
+  } catch (err: any) {
+    // Handle locked account
+    if (err.status === 'locked') {
+      const retrySeconds = err.retryAfter || 180;
+      startLockCountdown(retrySeconds);
+      if (retrySeconds >= 60) {
+        const minutes = Math.ceil(retrySeconds / 60);
+        error.value = t('login.accountLocked', { minutes });
+      } else {
+        error.value = t('login.accountLockedSeconds', { seconds: retrySeconds });
+      }
+      return; // Don't fetch new captcha when locked
+    }
+
+    // Handle invalid captcha
+    if (err.status === 'captcha_invalid') {
+      error.value = t('login.captchaInvalid');
+      await fetchCaptcha(false); // Keep error message
+      return;
+    }
+
+    // Handle expired captcha
+    if (err.status === 'captcha_expired') {
+      error.value = t('login.captchaTimeout');
+      await fetchCaptcha(false); // Keep error message
+      return;
+    }
+
+    // Handle session login failure (invalid username/password)
+    if (err.message && err.message.includes('Session login failed')) {
+      error.value = t('login.sessionFailed');
+      await fetchCaptcha(false); // Keep error message
+      return;
+    }
+
+    // Handle network errors
+    if (err.message && (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('Failed to fetch'))) {
+      error.value = t('login.networkError');
+      await fetchCaptcha(false); // Keep error message
+      return;
+    }
+
+    // Default error handling - show user-friendly message
+    if (err.message && err.message.length > 100) {
+      // If error message is too long, show generic error
+      error.value = t('login.unknownError');
+    } else {
+      error.value = err.message || t('login.error');
+    }
+    await fetchCaptcha(false); // Keep error message
   } finally {
     loading.value = false;
   }
 };
 
 onMounted(() => {
-  fetchCaptcha();
+  fetchCaptcha(true);
+});
+
+onUnmounted(() => {
+  if (captchaTimeout.value) {
+    clearTimeout(captchaTimeout.value);
+  }
+  if (lockCountdown.value) {
+    clearInterval(lockCountdown.value);
+  }
 });
 </script>
 
@@ -135,7 +249,7 @@ onMounted(() => {
             </div>
             <button
               type="button"
-              @click="fetchCaptcha"
+              @click="() => fetchCaptcha(true)"
               :disabled="captchaLoading || loading"
               class="captcha-refresh-button"
               :data-testid="qa('login-captcha-refresh')"
@@ -155,9 +269,11 @@ onMounted(() => {
             maxlength="6"
           />
         </div>
-        <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">{{ error }}</div>
-        <button type="submit" class="login-button" :disabled="loading || captchaLoading" :data-testid="qa('login-submit-button')">
-          {{ loading ? 'Logging in...' : 'Login' }}
+        <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">
+          {{ isLocked ? lockMessage : error }}
+        </div>
+        <button type="submit" class="login-button" :disabled="loading || captchaLoading || isLocked" :data-testid="qa('login-submit-button')">
+          {{ loading ? 'Logging in...' : isLocked ? `Locked (${lockRetryAfter}s)` : 'Login' }}
         </button>
       </form>
     </div>
@@ -251,7 +367,16 @@ input:disabled {
   color: #dc3545;
   font-size: 0.9rem;
   text-align: center;
-  margin-top: -0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .captcha-container {

@@ -932,8 +932,18 @@ export default {
     title: '登录',
     username: '用户名',
     password: '密码',
+    captcha: '验证码',
     submit: '登录',
-    error: '用户名或密码无效'
+    error: '用户名或密码错误',
+    captchaInvalid: '验证码不正确，请重试。',
+    captchaTimeout: '验证码已过期，请重新获取。',
+    accountLocked: '尝试失败次数过多，账号已被锁定 {minutes} 分钟。',
+    accountLockedSeconds: '尝试失败次数过多，账号已被锁定。请在 {seconds} 秒后重试。',
+    sessionFailed: '用户名或密码无效。',
+    pleaseEnterCaptcha: '请输入验证码。',
+    networkError: '网络错误，请检查连接后重试。',
+    captchaLoadFailed: '验证码加载失败，请刷新页面。',
+    unknownError: '发生未知错误，请稍后再试。'
   },
   wizard: {
     completeTitle: '完成！',

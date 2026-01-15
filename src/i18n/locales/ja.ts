@@ -932,8 +932,18 @@ export default {
     title: 'ログイン',
     username: 'ユーザー名',
     password: 'パスワード',
+    captcha: '認証コード',
     submit: 'ログイン',
-    error: 'ユーザー名またはパスワードが無効です'
+    error: 'ユーザー名またはパスワードが正しくありません。',
+    captchaInvalid: '認証コードが正しくありません。もう一度お試しください。',
+    captchaTimeout: '認証コードの有効期限が切れました。再取得してください。',
+    accountLocked: '失敗回数が多すぎます。アカウントは {minutes} 分間ロックされます。',
+    accountLockedSeconds: '失敗回数が多すぎます。アカウントはロックされています。{seconds} 秒後に再度お試しください。',
+    sessionFailed: 'ユーザー名またはパスワードが無効です。',
+    pleaseEnterCaptcha: '認証コードを入力してください。',
+    networkError: 'ネットワークエラーが発生しました。接続を確認してから、再度お試しください。',
+    captchaLoadFailed: '認証コードの読み込みに失敗しました。ページを再読み込みしてください。',
+    unknownError: '予期しないエラーが発生しました。もう一度お試しください。'
   },
   wizard: {
     completeTitle: '完了！',

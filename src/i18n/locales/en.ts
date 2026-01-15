@@ -968,8 +968,18 @@ const translations = {
     title: 'Login',
     username: 'Username',
     password: 'Password',
+    captcha: 'Verification Code',
     submit: 'Login',
-    error: 'Invalid username or password'
+    error: 'Invalid username or password',
+    captchaInvalid: 'Invalid verification code. Please try again.',
+    captchaTimeout: 'Verification code has expired. Please refresh.',
+    accountLocked: 'Too many failed attempts. Account is locked for {minutes} minutes.',
+    accountLockedSeconds: 'Too many failed attempts. Account is locked. Please try again in {seconds} seconds.',
+    sessionFailed: 'Invalid username or password.',
+    pleaseEnterCaptcha: 'Please enter the verification code',
+    networkError: 'Network error. Please check your connection and try again.',
+    captchaLoadFailed: 'Failed to load verification code. Please refresh the page.',
+    unknownError: 'An unexpected error occurred. Please try again.'
   },
   wizard: {
     completeTitle: 'Finish!',

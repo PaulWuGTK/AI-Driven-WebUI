@@ -931,8 +931,18 @@ export default {
     title: '로그인',
     username: '사용자 이름',
     password: '비밀번호',
+    captcha: '인증 코드',
     submit: '로그인',
-    error: '잘못된 사용자 이름 또는 비밀번호입니다'
+    error: '사용자 이름 또는 비밀번호가 올바르지 않습니다.',
+    captchaInvalid: '인증 코드가 올바르지 않습니다. 다시 시도해 주세요.',
+    captchaTimeout: '인증 코드가 만료되었습니다. 새로 받아 주세요.',
+    accountLocked: '실패 시도가 너무 많습니다. 계정이 {minutes}분 동안 잠겼습니다.',
+    accountLockedSeconds: '실패 시도가 너무 많습니다. 계정이 잠겨 있습니다. {seconds}초 후에 다시 시도해 주세요.',
+    sessionFailed: '사용자 이름 또는 비밀번호가 유효하지 않습니다.',
+    pleaseEnterCaptcha: '인증 코드를 입력해 주세요.',
+    networkError: '네트워크 오류입니다. 연결을 확인한 후 다시 시도해 주세요.',
+    captchaLoadFailed: '인증 코드를 불러오지 못했습니다. 페이지를 새로 고침해 주세요.',
+    unknownError: '예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.'
   },
   wizard: {
     completeTitle: '완료되었습니다!',
