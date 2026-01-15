@@ -1,6 +1,9 @@
-import type { LoginResponse } from '../types/auth';
+import type { LoginResponse,LoginVerifyResponse } from '../types/auth';
 import { loginMockData } from './mockData/authMockData';
 import { wizardApi } from './api/wizard';
+import { callApi } from './apiClient';
+
+
 
 export class AuthService {
   private static instance: AuthService;
@@ -38,81 +41,55 @@ export class AuthService {
     return !!this.sessionId;
   }
 
-  async login(username: string, password: string, captchaId?: string, captcha?: string): Promise<boolean> {
-    try {
-      // Use mock data in development
-      if (this.isDevelopment) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Simulate authentication check
-        if (username === 'admin' && password === 'admin') {
-          this.setSessionId(loginMockData.sessionID);
-          localStorage.setItem('username', username);
-
-          // Check wizard status from wizard API
-          try {
-            const wizardData = await wizardApi.getWizardInfo();
-            if (wizardData.OpMode === 'Init') {
-              localStorage.setItem('wizardRequired', 'true');
-            } else {
-              localStorage.removeItem('wizardRequired');
-            }
-          } catch (err) {
-            console.warn('Failed to check wizard status:', err);
-          }
-
-          return true;
-        }
-        throw new Error('Invalid username or password');
-      }
-
-      // Production API call
-      const requestBody: any = { username, password };
-
-      if (captchaId && captcha) {
-        requestBody.captchaId = captchaId;
-        requestBody.captcha = captcha;
-      }
-
-      const response = await fetch('/session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        throw new Error('Invalid username or password');
-      }
-
-      const data = await response.json() as LoginResponse;
-
-      if (data.sessionID) {
-        this.setSessionId(data.sessionID);
-        localStorage.setItem('username', username);
-
-        // Check wizard status from wizard API
-        try {
-          const wizardData = await wizardApi.getWizardInfo();
-          if (wizardData.OpMode === 'Init') {
-            localStorage.setItem('wizardRequired', 'true');
-          } else {
-            localStorage.removeItem('wizardRequired');
-          }
-        } catch (err) {
-          console.warn('Failed to check wizard status:', err);
-        }
-
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+  async login(username: string, password: string, captchaId: string, captcha: string): Promise<boolean> {
+    if (this.isDevelopment) {
+      const mockData = loginMockData;
+      this.setSessionId(mockData.sessionID);
+      localStorage.setItem('username', username);
+      return true;
     }
+
+    // A-1) verify captcha (Lua)
+    const verifyBody = { Login: { username, captchaId, captcha } };
+    const verify = await callApi<LoginVerifyResponse>(
+      '/API/info?list=Login',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(verifyBody)
+      }
+    );
+
+    if (!verify?.Login || verify.Login.status !== 'ok') {
+      const msg =
+        verify?.Login?.status === 'locked'
+          ? `Too many attempts. Retry after ${verify.Login.retryAfter ?? 60}s.`
+          : (verify?.Login?.error || 'Captcha verification failed.');
+      throw new Error(msg);
+    }
+
+    // A-2) create session (must be browser → to receive Set-Cookie)
+    const sessionResp = await fetch('/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
+    });
+
+    const sessionText = await sessionResp.text();
+    if (!sessionResp.ok) {
+      throw new Error(`Session login failed: ${sessionResp.status} ${sessionText}`);
+    }
+
+    const sessionData = JSON.parse(sessionText) as LoginResponse;
+
+    if (!sessionData?.sessionID) {
+      throw new Error('Session login failed: missing sessionID');
+    }
+
+    this.setSessionId(sessionData.sessionID);
+    localStorage.setItem('username', username);
+    return true;
   }
 
   needsWizard(): boolean {

@@ -4,3 +4,12 @@ export interface LoginResponse {
   idleTimeout: number;
   sessionID: string;
 }
+
+export interface LoginVerifyResponse {
+  Login: {
+    status: 'ok' | 'captcha_invalid' | 'captcha_expired' | 'locked' | 'failed';
+    retryAfter?: number;
+    error?: string;
+    next?: string;
+  };
+}

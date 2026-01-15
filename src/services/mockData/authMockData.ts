@@ -1,11 +1,10 @@
 import type { LoginResponse } from '../../types/auth';
 
-export const loginMockData: LoginResponse & { wizardCheck?: boolean } = {
+export const loginMockData: LoginResponse = {
   absoluteTimeout: 3600,
   loginAttempts: 0,
   idleTimeout: 600,
-  sessionID: "dfcyPRISVuLeKSiNSGeJyotChGxdIeSpM9fkHOWmqbfv7gUvKCAFqSufdcirgJwF",
-  wizardCheck: true
+  sessionID: "dfcyPRISVuLeKSiNSGeJyotChGxdIeSpM9fkHOWmqbfv7gUvKCAFqSufdcirgJwF"
 };
 
 function generateRandomCaptcha(): string {
