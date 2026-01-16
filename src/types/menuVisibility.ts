@@ -85,11 +85,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'basicSetup.wan': {
-    netLayoutTypes: { prpl: true, genix: true, cht: false },
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.wanCht': {
-    netLayoutTypes: { prpl: false, genix: false, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.backupWan': {
@@ -117,11 +117,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'basicSetup.wlan.basicConfig': {
-    netLayoutTypes: { prpl: true, genix: false, cht: false },
+    netLayoutTypes: { prpl: true, genix: false, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.basicConfigMulti': {
-    netLayoutTypes: { prpl: false, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: true, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.advancedConfig': {
