@@ -8,6 +8,7 @@ export * from './ipFiltering';
 export * from './lan';
 export * from './lcm';
 export * from './mesh';
+export * from './menuVisibility';
 export * from './ntp';
 export * from './operationMode';
 export * from './ssh';

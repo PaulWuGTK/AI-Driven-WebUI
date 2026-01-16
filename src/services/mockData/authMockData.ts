@@ -55,7 +55,7 @@ export function getMockCaptcha() {
 export const wizardMockData = {
   WizardRouter: {
     ModelName: "WREQ-130BE-PRPL",
-    OpMode: "Gateway",
+    OpMode: "Init",
     Wan: {
       WANMode: "demo_wanmode",
       WANModeList: [

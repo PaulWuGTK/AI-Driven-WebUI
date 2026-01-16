@@ -46,6 +46,17 @@ export class AuthService {
       const mockData = loginMockData;
       this.setSessionId(mockData.sessionID);
       localStorage.setItem('username', username);
+          try {
+      const wizardData = await wizardApi.getWizardInfo();
+      console.log("paultest wizardData.OpMode:",wizardData.OpMode);
+      if (wizardData.OpMode === 'Init') {
+          localStorage.setItem('wizardRequired', 'true');
+        } else {
+          localStorage.removeItem('wizardRequired');
+        }
+      } catch (err) {
+        console.warn('Failed to check wizard status:', err);
+      }
       return true;
     }
 
@@ -104,6 +115,17 @@ export class AuthService {
 
     this.setSessionId(sessionData.sessionID);
     localStorage.setItem('username', username);
+    try {
+      const wizardData = await wizardApi.getWizardInfo();
+      console.log("paultest wizardData.OpMode:",wizardData.OpMode);
+      if (wizardData.OpMode === 'Init') {
+        localStorage.setItem('wizardRequired', 'true');
+      } else {
+        localStorage.removeItem('wizardRequired');
+      }
+    } catch (err) {
+      console.warn('Failed to check wizard status:', err);
+    }
     return true;
   }
 

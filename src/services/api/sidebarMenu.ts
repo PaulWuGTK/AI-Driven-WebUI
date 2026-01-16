@@ -18,7 +18,8 @@ export interface SidebarMenuApp {
 export interface SidebarMenuResponse {
   SidebarMenu: {
     Apps: SidebarMenuApp[];
-    mode: 'Gateway' | 'Extender';
+    mode: 'Gateway' | 'Extender' | 'Bridge' | 'Init';
+    NetLayoutType: 'prpl' | 'genix' | 'cht';
     language: SidebarMenuLanguage;
     features: Record<string, boolean>;
   }
@@ -45,6 +46,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
           }
         ],
         mode: "Gateway",
+        NetLayoutType: "cht",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: "en"
@@ -52,7 +54,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
         features: {
           thread: true,
           matter: false,
-          celluar:false
+          cellular: false
         }
       }
     };
@@ -111,6 +113,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
           }
         ],
         mode: "Gateway",
+        NetLayoutType: "cht",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: language
@@ -118,7 +121,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
         features: {
           thread: true,
           matter: false,
-          celluar:false
+          cellular: false
         }
       }
     };

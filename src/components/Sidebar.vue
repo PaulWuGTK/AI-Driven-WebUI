@@ -5,7 +5,9 @@ import { useI18n } from 'vue-i18n';
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
-const { isQAMode, qa, slug } = useQA();
+import { isMenuVisible, type NetLayoutType, type OperationMode } from '../types/menuVisibility';
+
+const { qa, slug } = useQA();
 
 const router = useRouter();
 const route = useRoute();
@@ -14,9 +16,9 @@ const activeMenu = ref('Status');
 const activeSubItem = ref('');
 const expandedMenus = ref<string[]>([]);
 const isMobileMenuOpen = ref(false);
-const deviceMode = ref<'Gateway' | 'Extender'>('Gateway');
+const operationMode = ref<OperationMode>('Gateway');
+const netLayoutType = ref<NetLayoutType>('prpl');
 const hasStreambow = ref(false);
-const hasCellular = ref(false);
 const features = ref<Record<string, boolean>>({});
 
 const toggleMobileMenu = () => {
@@ -26,7 +28,6 @@ const toggleMobileMenu = () => {
 import homeIcon from '/src/assets/icons/icon-1/ico-home.svg';
 import statusIcon from '/src/assets/icons/icon-1/menu-status.svg';
 import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
-import wifiIcon from '/src/assets/icons/icon-1/menu-wifi.svg';
 import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
 import applicationIcon from '/src/assets/icons/icon-1/menu-application.svg';
@@ -35,6 +36,7 @@ interface SubMenuItem {
   name: string;
   path: string;
   translationKey: string;
+  menuKey: string;
   children?: SubMenuItem[];
 }
 
@@ -42,185 +44,150 @@ interface MenuItem {
   name: string;
   icon: string;
   translationKey: string;
+  menuKey: string;
   path?: string;
   subItems?: SubMenuItem[];
 }
 
-const menuVisibility: Record<string, Record<string, { gateway: boolean; extender: boolean; requiresStreambow?: boolean ;requiresCellular?:boolean}>> = {
-  'Status': {
-    'WAN': { gateway: true, extender: false },
-    'WAN Failover': { gateway: false, extender: false },
-    'LAN': { gateway: true, extender: true },
-    'WLAN': { gateway: true, extender: true },
-    'Statistics': { gateway: true, extender: true },
-    'Throughput': { gateway: true, extender: true },
-    'WiFi Neighbor': { gateway: true, extender: false },
-    'Mesh Information': { gateway: true, extender: false },
-    'LCM': { gateway: true, extender: true },
-    'Dual Image': { gateway: true, extender: true },
-    'Cellular': { gateway: true, extender: false, requiresCellular: true  },
-    'Log': { gateway: true, extender: true }
-  },
-  'Basic Setup': {
-    'WAN': { gateway: true, extender: false },
-    'Backup WAN': { gateway: false, extender: false },
-    'LAN': { gateway: true, extender: true },
-    'WLAN': { gateway: true, extender: true },
-    'Cellular': { gateway: true, extender: false, requiresCellular: true  },
-    'Operation Mode': { gateway: true, extender: true },
-    'NAT': { gateway: true, extender: false },
-    'Security': { gateway: true, extender: false },
-    'Routing': { gateway: true, extender: false }
-  },
-  'Advance Setup': {
-    'SSH Service': { gateway: true, extender: false },
-    'Service Control': { gateway: true, extender: false },
-    'QoS': { gateway: true, extender: false }
-  },
-  'Application': {
-    'UPnP': { gateway: true, extender: false },
-    'DDNS': { gateway: true, extender: false }
-  },
-  'Management': {
-    'Reboot': { gateway: true, extender: true },
-    'Account Management': { gateway: true, extender: false },
-    'NTP': { gateway: true, extender: false },
-    'Device Management': { gateway: true, extender: false },
-    'Settings': { gateway: true, extender: true },
-    'Tools': { gateway: true, extender: true }
-  },
-  'Speed Test': {
-    'XperienceControl': { gateway: false, extender: false, requiresStreambow: true },
-    'TR-471': { gateway: true, extender: false }
-  }
-};
 
 const baseMenuItems: MenuItem[] = [
   {
     name: 'Home',
     icon: homeIcon,
     path: '/dashboard',
-    translationKey: 'menu.home'
+    translationKey: 'menu.home',
+    menuKey: 'home'
   },
   {
     name: 'Status',
     icon: statusIcon,
     translationKey: 'menu.status',
+    menuKey: 'status',
     subItems: [
-      { name: 'WAN', path: '/status/wan', translationKey: 'menu.wan' },
-      { name: 'WAN Failover', path: '/status/wan-failover', translationKey: 'menu.wanFailover' },
-      { name: 'LAN', path: '/status/lan', translationKey: 'menu.lan' },
-      { name: 'WLAN', path: '/status/wlan', translationKey: 'menu.wlan' },
-      { name: 'Statistics', path: '/status/statistics', translationKey: 'menu.statistics' },
-      { name: 'Throughput', path: '/status/system-stats', translationKey: 'menu.throughput' },
-      { name: 'WiFi Neighbor', path: '/status/wifi-neighbor', translationKey: 'menu.wifiNeighbor' },
-      { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo' },
-      { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm' },
-      { name: 'Dual Image', path: '/status/dual-image', translationKey: 'menu.dualImage' },
-      { name: 'Cellular', path: '/status/cellular', translationKey: 'menu.cellular' },
-      { name: 'Log', path: '/status/log', translationKey: 'menu.logs' }
+      { name: 'WAN', path: '/status/wan', translationKey: 'menu.wan', menuKey: 'status.wan' },
+      { name: 'WAN Failover', path: '/status/wan-failover', translationKey: 'menu.wanFailover', menuKey: 'status.wanFailover' },
+      { name: 'LAN', path: '/status/lan', translationKey: 'menu.lan', menuKey: 'status.lan' },
+      { name: 'WLAN', path: '/status/wlan', translationKey: 'menu.wlan', menuKey: 'status.wlan' },
+      { name: 'Statistics', path: '/status/statistics', translationKey: 'menu.statistics', menuKey: 'status.statistics' },
+      { name: 'Throughput', path: '/status/system-stats', translationKey: 'menu.throughput', menuKey: 'status.throughput' },
+      { name: 'WiFi Neighbor', path: '/status/wifi-neighbor', translationKey: 'menu.wifiNeighbor', menuKey: 'status.wifiNeighbor' },
+      { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo', menuKey: 'status.meshInfo' },
+      { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm', menuKey: 'status.lcm' },
+      { name: 'Dual Image', path: '/status/dual-image', translationKey: 'menu.dualImage', menuKey: 'status.dualImage' },
+      { name: 'Cellular', path: '/status/cellular', translationKey: 'menu.cellular', menuKey: 'status.cellular' },
+      { name: 'Log', path: '/status/log', translationKey: 'menu.logs', menuKey: 'status.log' }
     ]
   },
   {
     name: 'Basic Setup',
     icon: basicIcon,
     translationKey: 'menu.basicSetup',
+    menuKey: 'basicSetup',
     subItems: [
-      { name: 'WAN', path: '/basic/wan', translationKey: 'menu.wan' },
-      { name: 'Backup WAN', path: '/basic/backup-wan', translationKey: 'menu.backupWan' },
+      { name: 'WAN', path: '/basic/wan', translationKey: 'menu.wan', menuKey: 'basicSetup.wan' },
+      { name: 'Backup WAN', path: '/basic/backup-wan', translationKey: 'menu.backupWan', menuKey: 'basicSetup.backupWan' },
       {
         name: 'LAN',
         path: '/basic/lan',
         translationKey: 'menu.lan',
+        menuKey: 'basicSetup.lan',
         children: [
-          { name: 'IPv4 Configuration', path: '/basic/lan/ipv4', translationKey: 'menu.ipv4Config' },
-          { name: 'IPv6 Configuration', path: '/basic/lan/ipv6', translationKey: 'menu.ipv6Config' },
-          { name: 'Device Connected', path: '/basic/lan/devices', translationKey: 'menu.deviceConnected' }
+          { name: 'IPv4 Configuration', path: '/basic/lan/ipv4', translationKey: 'menu.ipv4Config', menuKey: 'basicSetup.lan.ipv4' },
+          { name: 'IPv6 Configuration', path: '/basic/lan/ipv6', translationKey: 'menu.ipv6Config', menuKey: 'basicSetup.lan.ipv6' },
+          { name: 'Device Connected', path: '/basic/lan/devices', translationKey: 'menu.deviceConnected', menuKey: 'basicSetup.lan.deviceConnected' }
         ]
       },
       {
         name: 'WLAN',
         path: '/basic/wlan',
         translationKey: 'menu.wlan',
+        menuKey: 'basicSetup.wlan',
         children: [
-          { name: 'Basic Config', path: '/basic/wlan/basic', translationKey: 'menu.basicConfig' },
-          { name: 'Advanced Config', path: '/basic/wlan/advanced', translationKey: 'menu.advancedConfig' },
-          { name: 'WPS Configuration', path: '/basic/wlan/wps', translationKey: 'menu.wpsConfig' },
-          { name: 'Mesh Network', path: '/basic/wlan/mesh', translationKey: 'menu.meshNetwork' },
-          { name: 'WiFi Zones', path: '/basic/wlan/zones', translationKey: 'menu.wifiZones' },
-          { name: 'Wireless Extender', path: '/basic/wlan/extender', translationKey: 'menu.wirelessExtender' }
+          { name: 'Basic Config', path: '/basic/wlan/basic', translationKey: 'menu.basicConfig', menuKey: 'basicSetup.wlan.basicConfig' },
+          { name: 'Advanced Config', path: '/basic/wlan/advanced', translationKey: 'menu.advancedConfig', menuKey: 'basicSetup.wlan.advancedConfig' },
+          { name: 'WPS Configuration', path: '/basic/wlan/wps', translationKey: 'menu.wpsConfig', menuKey: 'basicSetup.wlan.wpsConfig' },
+          { name: 'Mesh Network', path: '/basic/wlan/mesh', translationKey: 'menu.meshNetwork', menuKey: 'basicSetup.wlan.meshNetwork' },
+          { name: 'WiFi Zones', path: '/basic/wlan/zones', translationKey: 'menu.wifiZones', menuKey: 'basicSetup.wlan.wifiZones' },
+          { name: 'Wireless Extender', path: '/basic/wlan/extender', translationKey: 'menu.wirelessExtender', menuKey: 'basicSetup.wlan.wirelessExtender' }
         ]
       },
-      { name: 'Cellular', path: '/basic/cellular', translationKey: 'menu.cellular' },
-      { name: 'Operation Mode', path: '/basic/operation-mode', translationKey: 'menu.operationMode' },
+      { name: 'Cellular', path: '/basic/cellular', translationKey: 'menu.cellular', menuKey: 'basicSetup.cellular' },
+      { name: 'Operation Mode', path: '/basic/operation-mode', translationKey: 'menu.operationMode' ,menuKey: 'basicSetup.operationMode'},
       {
         name: 'NAT',
         path: '/basic/nat',
         translationKey: 'menu.nat',
+        menuKey: 'basicSetup.nat',
         children: [
-          { name: 'Port Forwarding', path: '/basic/nat?tab=portforwarding', translationKey: 'menu.portForwarding' },
-          { name: 'DMZ Host', path: '/basic/nat?tab=dmz', translationKey: 'menu.dmzHost' },
-          { name: 'ALG', path: '/basic/nat?tab=alg', translationKey: 'menu.alg' }
+          { name: 'Port Forwarding', path: '/basic/nat?tab=portforwarding', translationKey: 'menu.portForwarding', menuKey: 'basicSetup.nat.portForwarding' },
+          { name: 'DMZ Host', path: '/basic/nat?tab=dmz', translationKey: 'menu.dmzHost', menuKey: 'basicSetup.nat.dmzHost' },
+          { name: 'ALG', path: '/basic/nat?tab=alg', translationKey: 'menu.alg', menuKey: 'basicSetup.nat.alg' }
         ]
       },
       {
         name: 'Security',
         path: '/basic/security',
         translationKey: 'menu.security',
+        menuKey: 'basicSetup.security',
         children: [
-          { name: 'IP Filtering', path: '/basic/security?tab=ipfiltering', translationKey: 'menu.ipFiltering' },
-          { name: 'MAC Filtering', path: '/basic/security?tab=macfiltering', translationKey: 'menu.macFiltering' }
+          { name: 'IP Filtering', path: '/basic/security?tab=ipfiltering', translationKey: 'menu.ipFiltering', menuKey: 'basicSetup.security.ipFiltering' },
+          { name: 'MAC Filtering', path: '/basic/security?tab=macfiltering', translationKey: 'menu.macFiltering', menuKey: 'basicSetup.security.macFiltering' }
         ]
       },
-      { name: 'Routing', path: '/basic/routing', translationKey: 'menu.routing' }
+      { name: 'Routing', path: '/basic/routing', translationKey: 'menu.routing', menuKey: 'basicSetup.routing' }
     ]
   },
   {
     name: 'Advance Setup',
     icon: advancedIcon,
     translationKey: 'menu.advanceSetup',
+    menuKey: 'advanceSetup',
     subItems: [
-      { name: 'SSH Service', path: '/advance/ssh', translationKey: 'menu.sshService' },
-      { name: 'Service Control', path: '/advance/service-control', translationKey: 'menu.serviceControl' },
-      { name: 'QoS', path: '/advance/qos', translationKey: 'menu.qos' }
+      { name: 'SSH Service', path: '/advance/ssh', translationKey: 'menu.sshService', menuKey: 'advanceSetup.sshService' },
+      { name: 'Service Control', path: '/advance/service-control', translationKey: 'menu.serviceControl', menuKey: 'advanceSetup.serviceControl' },
+      { name: 'QoS', path: '/advance/qos', translationKey: 'menu.qos', menuKey: 'advanceSetup.qos' }
     ]
   },
   {
     name: 'Application',
     icon: applicationIcon,
     translationKey: 'menu.application',
+    menuKey: 'application',
     subItems: [
-      { name: 'UPnP', path: '/application/upnp', translationKey: 'menu.upnp' },
-      { name: 'DDNS', path: '/application/ddns', translationKey: 'menu.ddns' }
+      { name: 'UPnP', path: '/application/upnp', translationKey: 'menu.upnp', menuKey: 'application.upnp' },
+      { name: 'DDNS', path: '/application/ddns', translationKey: 'menu.ddns', menuKey: 'application.ddns' }
     ]
   },
   {
     name: 'Management',
     icon: managementIcon,
     translationKey: 'menu.management',
+    menuKey: 'management',
     subItems: [
-      { name: 'Reboot', path: '/management/reboot', translationKey: 'menu.reboot' },
-      { name: 'Account Management', path: '/management/account', translationKey: 'menu.account' },
-      { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp' },
-      { name: 'Device Management', path: '/management/device', translationKey: 'menu.device' },
+      { name: 'Reboot', path: '/management/reboot', translationKey: 'menu.reboot', menuKey: 'management.reboot' },
+      { name: 'Account Management', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.account' },
+      { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp', menuKey: 'management.ntp' },
+      { name: 'Device Management', path: '/management/device', translationKey: 'menu.device', menuKey: 'management.device' },
       {
         name: 'Settings',
         path: '/management/settings',
         translationKey: 'menu.settings',
+        menuKey: 'management.settings',
         children: [
-          { name: 'Reset to Default', path: '/management/settings/reset', translationKey: 'menu.resetToDefault' },
-          { name: 'Backup/Restore', path: '/management/settings/backup', translationKey: 'menu.backupRestore' },
-          { name: 'Update Software', path: '/management/settings/update', translationKey: 'menu.updateSoftware' }
+          { name: 'Reset to Default', path: '/management/settings/reset', translationKey: 'menu.resetToDefault', menuKey: 'management.settings.resetToDefault' },
+          { name: 'Backup/Restore', path: '/management/settings/backup', translationKey: 'menu.backupRestore', menuKey: 'management.settings.backupRestore' },
+          { name: 'Update Software', path: '/management/settings/update', translationKey: 'menu.updateSoftware', menuKey: 'management.settings.updateSoftware' }
         ]
       },
       {
         name: 'Tools',
         path: '/management/tools',
         translationKey: 'menu.tools',
+        menuKey: 'management.tools',
         children: [
-          { name: 'Ping Diagnosis', path: '/management/tools/ping', translationKey: 'menu.pingDiagnosis' },
-          { name: 'Trace Route Diagnosis', path: '/management/tools/traceroute', translationKey: 'menu.traceRouteDiagnosis' },
-          { name: 'DNS Diagnosis', path: '/management/tools/dns', translationKey: 'menu.dnsDiagnosis' }
+          { name: 'Ping Diagnosis', path: '/management/tools/ping', translationKey: 'menu.pingDiagnosis', menuKey: 'management.tools.pingDiagnosis' },
+          { name: 'Trace Route Diagnosis', path: '/management/tools/traceroute', translationKey: 'menu.traceRouteDiagnosis', menuKey: 'management.tools.traceRoute' },
+          { name: 'DNS Diagnosis', path: '/management/tools/dns', translationKey: 'menu.dnsDiagnosis', menuKey: 'management.tools.dnsDiagnosis' }
         ]
       }
     ]
@@ -229,50 +196,100 @@ const baseMenuItems: MenuItem[] = [
     name: 'Speed Test',
     icon: applicationIcon,
     translationKey: 'menu.speedTest',
+    menuKey: 'speedtest',
     subItems: [
-      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl' },
-      { name: 'TR-471', path: '/system/diagnostics/tr471', translationKey: 'menu.tr471' }
+      { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl', menuKey: 'speedtest.xperienceControl' },
+      { name: 'TR-471', path: '/system/diagnostics/tr471', translationKey: 'menu.tr471', menuKey: 'speedtest.tr471' }
     ]
   }
 ];
 
 const menuItems = ref<MenuItem[]>(baseMenuItems);
 
+const filterSubItems = (subItems: SubMenuItem[]): SubMenuItem[] => {
+  return subItems
+    .filter(subItem => {
+      const visible = isMenuVisible(
+        subItem.menuKey,
+        netLayoutType.value,
+        operationMode.value,
+        features.value
+      );
+      return visible;
+    })
+    .map(subItem => {
+      if (subItem.children) {
+        const filteredChildren = subItem.children.filter(child =>
+          isMenuVisible(
+            child.menuKey,
+            netLayoutType.value,
+            operationMode.value,
+            features.value
+          )
+        );
+        return {
+          ...subItem,
+          children: filteredChildren.length > 0 ? filteredChildren : undefined
+        };
+      }
+      return subItem;
+    });
+};
+
 const filterMenuItems = () => {
-  const isGateway = deviceMode.value === 'Gateway';
+  menuItems.value = baseMenuItems
+    .filter(item => {
+      return isMenuVisible(
+        item.menuKey,
+        netLayoutType.value,
+        operationMode.value,
+        features.value
+      );
+    })
+    .map(item => {
+      if (item.subItems) {
+        const filteredSubItems = filterSubItems(item.subItems);
 
-  menuItems.value = baseMenuItems.map(item => {
-    // Skip filtering for Home (top-level menu item without subItems)
-    if (item.name === 'Home') return item;
+        if (filteredSubItems.length === 0) return null;
 
-    if (item.subItems) {
-      const filteredSubItems = item.subItems.filter(subItem => {
-        const visibilityCategory = menuVisibility[item.name];
-        if (!visibilityCategory) return true;
+        return {
+          ...item,
+          subItems: filteredSubItems
+        };
+      }
 
-        const visibility = visibilityCategory[subItem.name];
-        if (!visibility) return true;
+      return item;
+    })
+    .filter((item): item is MenuItem => item !== null);
 
-        if (visibility.requiresStreambow) {
-          return hasStreambow.value;
+  if (hasStreambow.value) {
+    const xperienceControlVisible = isMenuVisible(
+      'speedtest.xperienceControl',
+      netLayoutType.value,
+      operationMode.value,
+      features.value
+    );
+
+    if (xperienceControlVisible) {
+      const speedTestIndex = menuItems.value.findIndex(item => item.menuKey === 'speedtest');
+      if (speedTestIndex >= 0) {
+        const speedTestMenu = menuItems.value[speedTestIndex];
+        if (speedTestMenu.subItems) {
+          const xperienceControlExists = speedTestMenu.subItems.some(
+            sub => sub.menuKey === 'speedtest.xperienceControl'
+          );
+          if (!xperienceControlExists) {
+            speedTestMenu.subItems.unshift({
+              name: 'XperienceControl',
+              path: '/application/xperience-control',
+              translationKey: 'menu.xperienceControl',
+              menuKey: 'speedtest.xperienceControl'
+            });
+          }
         }
-        if (visibility.requiresCellular) {
-          return hasCellular.value;
-        }
-
-        return isGateway ? visibility.gateway : visibility.extender;
-      });
-
-      if (filteredSubItems.length === 0) return null;
-
-      return {
-        ...item,
-        subItems: filteredSubItems
-      };
+      }
     }
-
-    return item;
-  }).filter((item): item is MenuItem => item !== null);
+  }
 };
 
 const toggleMenu = (menuName: string) => {
@@ -310,8 +327,16 @@ const STREAMBOW_KEYWORDS = ['streambow'];
 const fetchSidebarMenu = async () => {
   try {
     const response = await getSidebarMenu();
-    deviceMode.value = response.SidebarMenu.mode;
 
+    const modeMapping: Record<string, OperationMode> = {
+      'Init': 'Init',
+      'Gateway': 'Gateway',
+      'Bridge': 'Bridge',
+      'Extender': 'Extender'
+    };
+
+    operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
+    netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
     features.value = response.SidebarMenu.features || {};
 
     hasStreambow.value = response.SidebarMenu.Apps.some(app => {
@@ -323,8 +348,6 @@ const fetchSidebarMenu = async () => {
         name.includes(keyword) || alias.includes(keyword)
       );
     });
-
-    hasCellular.value = response.SidebarMenu.features.cellular;
 
     if (response.SidebarMenu.language.current !== locale.value) {
       locale.value = response.SidebarMenu.language.current;
