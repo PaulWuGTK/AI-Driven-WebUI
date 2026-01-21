@@ -365,7 +365,8 @@ const translations = {
     ssidRequired: 'SSID is required',
     ssidTooShort: 'SSID must be at least {min} byte',
     ssidTooLong: 'SSID exceeds maximum length ({current}/{max} bytes)',
-    ssidBytesInfo: '{bytes} bytes'
+    ssidBytesInfo: '{bytes} bytes',
+    ssidInvalidCharacters: 'SSID contains invalid characters (only English, numbers, symbols, and Chinese allowed)'
   },
   guest: {
     title: 'Guest Access',

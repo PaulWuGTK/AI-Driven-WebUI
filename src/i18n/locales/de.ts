@@ -361,7 +361,8 @@ export default {
     ssidRequired: 'SSID ist erforderlich',
     ssidTooShort: 'SSID muss mindestens {min} Byte lang sein',
     ssidTooLong: 'SSID überschreitet die maximale Länge ({current}/{max} Bytes)',
-    ssidBytesInfo: '{bytes} Bytes'
+    ssidBytesInfo: '{bytes} Bytes',
+    ssidInvalidCharacters: 'SSID enthält ungültige Zeichen (nur Englisch, Zahlen, Symbole und Chinesisch erlaubt)'
   },
   guest: {
     title: 'Gastzugang',

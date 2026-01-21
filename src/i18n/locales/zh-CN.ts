@@ -358,10 +358,11 @@ export default {
     hide: '隐藏',
     hideSsid: '隐藏 SSID',
     ssidGroupEnable: '启用 SSID 组',
-    ssidRequired: '必须填写 SSID',
-    ssidTooShort: 'SSID 至少需要 {min} 个字节',
-    ssidTooLong: 'SSID 超出最大长度（{current}/{max} 字节）',
-    ssidBytesInfo: '{bytes} 个字节'
+    ssidRequired: 'SSID 不能为空',
+    ssidTooShort: 'SSID 长度至少需要 {min} 字节',
+    ssidTooLong: 'SSID 超出最大长度 ({current}/{max} 字节)',
+    ssidBytesInfo: '{bytes} 字节',
+    ssidInvalidCharacters: 'SSID 包含无效字符（仅允许英文、数字、符号和中文）'
   },
   guest: {
     title: '访客访问',

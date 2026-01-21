@@ -361,7 +361,8 @@ export default {
     ssidRequired: 'Le SSID est requis',
     ssidTooShort: 'Le SSID doit comporter au moins {min} octet',
     ssidTooLong: 'Le SSID dépasse la longueur maximale ({current}/{max} octets)',
-    ssidBytesInfo: '{bytes} octets'
+    ssidBytesInfo: '{bytes} octets',
+    ssidInvalidCharacters: 'Le SSID contient des caractères non valides (seuls l\'anglais, les chiffres, les symboles et le chinois sont autorisés)'
   },
   guest: {
     title: 'Accès invité',

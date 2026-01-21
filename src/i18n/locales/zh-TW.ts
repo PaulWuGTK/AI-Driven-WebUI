@@ -359,10 +359,11 @@ export default {
     hide: '隱藏',
     hideSsid: '隱藏 SSID',
     ssidGroupEnable: '啟用 SSID 群組',
-    ssidRequired: '必須輸入 SSID',
-    ssidTooShort: 'SSID 至少需 {min} 個位元組',
-    ssidTooLong: 'SSID 超過長度上限（{current}/{max} 位元組）',
-    ssidBytesInfo: '{bytes} 個位元組'
+    ssidRequired: 'SSID 不能為空',
+    ssidTooShort: 'SSID 長度至少需要 {min} 位元組',
+    ssidTooLong: 'SSID 超出最大長度 ({current}/{max} 位元組)',
+    ssidBytesInfo: '{bytes} 位元組',
+    ssidInvalidCharacters: 'SSID 包含無效字元（僅允許英文、數字、符號和中文）'
   },
   guest: {
     title: '訪客存取',

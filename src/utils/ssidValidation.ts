@@ -28,7 +28,19 @@ export function getByteLength(str: string): number {
 }
 
 /**
+ * Check if SSID contains only allowed characters
+ * Allowed: English letters, numbers, ASCII special characters, Chinese characters
+ * Not allowed: Korean, Japanese, Russian, Arabic, Emoji, etc.
+ */
+export function hasValidCharacters(ssid: string): boolean {
+  // Allow: ASCII printable characters (0x20-0x7E) and CJK Unified Ideographs (Chinese: 0x4E00-0x9FFF)
+  const validCharPattern = /^[\x20-\x7E\u4E00-\u9FFF]*$/;
+  return validCharPattern.test(ssid);
+}
+
+/**
  * Validate SSID length (1-32 bytes, supports Chinese and English)
+ * Character restrictions: English, numbers, ASCII symbols, Chinese only
  */
 export function validateSsid(ssid: string, t: (key: string, params?: any) => string): SsidValidationResult {
   const byteLength = getByteLength(ssid);
@@ -38,6 +50,15 @@ export function validateSsid(ssid: string, t: (key: string, params?: any) => str
       isValid: false,
       errorMessage: t('wireless.ssidRequired'),
       byteLength: 0
+    };
+  }
+
+  // Check for invalid characters
+  if (!hasValidCharacters(ssid)) {
+    return {
+      isValid: false,
+      errorMessage: t('wireless.ssidInvalidCharacters'),
+      byteLength
     };
   }
 

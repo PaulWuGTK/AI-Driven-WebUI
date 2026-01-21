@@ -358,10 +358,11 @@ export default {
     hide: '非表示',
     hideSsid: 'SSID を隠す',
     ssidGroupEnable: 'SSID グループを有効にする',
-    ssidRequired: 'SSID は必須項目です',
-    ssidTooShort: 'SSID は少なくとも {min} バイト必要です',
-    ssidTooLong: 'SSID が最大長を超えています（{current}/{max} バイト）',
-    ssidBytesInfo: '{bytes} バイト'
+    ssidRequired: 'SSID は必須です',
+    ssidTooShort: 'SSID は最低 {min} バイト必要です',
+    ssidTooLong: 'SSID が最大長を超えています ({current}/{max} バイト)',
+    ssidBytesInfo: '{bytes} バイト',
+    ssidInvalidCharacters: 'SSID に無効な文字が含まれています（英語、数字、記号、中国語のみ使用可能）'
   },
   guest: {
     title: 'ゲストアクセス',

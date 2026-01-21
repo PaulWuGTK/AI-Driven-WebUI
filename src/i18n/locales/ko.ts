@@ -357,10 +357,11 @@ export default {
     hide: '숨기기',
     hideSsid: 'SSID 숨기기',
     ssidGroupEnable: 'SSID 그룹 사용',
-    ssidRequired: 'SSID를 입력해야 합니다',
+    ssidRequired: 'SSID는 필수입니다',
     ssidTooShort: 'SSID는 최소 {min}바이트 이상이어야 합니다',
     ssidTooLong: 'SSID가 최대 길이를 초과했습니다 ({current}/{max}바이트)',
-    ssidBytesInfo: '{bytes}바이트'
+    ssidBytesInfo: '{bytes} 바이트',
+    ssidInvalidCharacters: 'SSID에 유효하지 않은 문자가 포함되어 있습니다 (영어, 숫자, 기호, 중국어만 사용 가능)'
   },
   guest: {
     title: '게스트 액세스',
