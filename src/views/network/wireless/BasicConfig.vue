@@ -10,6 +10,7 @@ import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
 import { useQA } from '../../../utils/qa';
 import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
+import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
 import type {
   WlanBasicMultiGetResponse,
   WlanBasicMultiPostRequest,
@@ -36,6 +37,8 @@ const lastGetSnapshot = ref<WlanBasicMultiGetResponse | null>(null);
 const editIndex = ref<number | null>(null);
 const draft = ref<WlanGroup | null>(null);
 const showPassphrase = reactive<Record<string, boolean>>({});
+const ssidErrors = reactive<Record<string, string>>({});
+const ssidByteLengths = reactive<Record<string, number>>({});
 
 // Separate storage for Common SSID configuration
 // This prevents Common SSID settings from overwriting per-band settings
@@ -185,6 +188,22 @@ const enterEdit = (index: number) => {
     showPassphrase[`${b}`] = false;
   }
   showPassphrase['CommonSSID'] = false;
+
+  // Clear SSID errors and initialize byte lengths
+  Object.keys(ssidErrors).forEach(key => delete ssidErrors[key]);
+  Object.keys(ssidByteLengths).forEach(key => delete ssidByteLengths[key]);
+
+  // Initialize SSID validation for common SSID
+  if (commonSsidConfig.value) {
+    validateSsidField(commonSsidConfig.value.SSID, 'CommonSSID');
+  }
+
+  // Initialize SSID validation for per-band interfaces
+  if (draft.value?.Interface) {
+    draft.value.Interface.forEach((iface) => {
+      validateSsidField(iface.SSID || '', iface.Band);
+    });
+  }
 };
 
 // PUBLIC_INTERFACE
@@ -262,6 +281,32 @@ const securityModeOptionsForCommonSsid = computed((): string[] => {
 
 const getInterfaceByBand = (band: string): WlanGroupInterface | undefined => {
   return draft.value?.Interface?.find((x) => x.Band === band);
+};
+
+const validateSsidField = (ssid: string, key: string) => {
+  const validation = validateSsid(ssid, t);
+  ssidByteLengths[key] = validation.byteLength;
+
+  if (!validation.isValid) {
+    ssidErrors[key] = validation.errorMessage || '';
+  } else {
+    delete ssidErrors[key];
+  }
+
+  return validation.isValid;
+};
+
+const handleSsidInput = (value: string, key: string, callback: (val: string) => void) => {
+  const byteLength = getByteLength(value);
+
+  if (byteLength <= SSID_MAX_BYTES) {
+    callback(value);
+    validateSsidField(value, key);
+  } else {
+    // Show error message when exceeding max bytes
+    ssidByteLengths[key] = byteLength;
+    ssidErrors[key] = t('wireless.ssidTooLong', { current: byteLength, max: SSID_MAX_BYTES });
+  }
 };
 
 const onCommonSsidToggle = () => {
@@ -527,10 +572,14 @@ onMounted(fetchConfig);
             <div class="row row-3">
               <div class="cell cell-ssid">
                 <BaseInput
-                  v-model="commonSsidConfig.SSID"
+                  :modelValue="commonSsidConfig.SSID"
                   :label="t('wireless.ssid')"
                   :disabled="Number(commonSsidConfig.Enable) === 0"
+                  :error="!!ssidErrors['CommonSSID']"
+                  :errorMessage="ssidErrors['CommonSSID']"
+                  :helpText="ssidByteLengths['CommonSSID'] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths['CommonSSID'] }) : ''"
                   :data-testid="qa('wlan-basic-multi-common-ssid-ssid')"
+                  @update:modelValue="(v) => handleSsidInput(String(v), 'CommonSSID', (val) => { commonSsidConfig!.SSID = val; })"
                 />
               </div>
 
@@ -618,10 +667,14 @@ onMounted(fetchConfig);
               <div class="row row-3">
                 <div class="cell cell-ssid">
                   <BaseInput
-                    v-model="getInterfaceByBand(b)!.SSID"
+                    :modelValue="getInterfaceByBand(b)!.SSID"
                     :label="t('wireless.ssid')"
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
+                    :error="!!ssidErrors[b]"
+                    :errorMessage="ssidErrors[b]"
+                    :helpText="ssidByteLengths[b] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths[b] }) : ''"
                     :data-testid="qa(`wlan-basic-multi-iface-ssid-${slug(b)}`)"
+                    @update:modelValue="(v) => handleSsidInput(String(v), b, (val) => { getInterfaceByBand(b)!.SSID = val; })"
                   />
                 </div>
 
@@ -982,7 +1035,7 @@ onMounted(fetchConfig);
 .row {
   display: grid;
   gap: 10px;
-  align-items: end;
+  align-items: start;
 }
 
 .row-3 {
@@ -991,6 +1044,11 @@ onMounted(fetchConfig);
 
 .cell {
   min-width: 0;
+}
+
+/* Ensure form groups in grid cells align properly */
+.cell :deep(.form-group) {
+  margin-bottom: 0;
 }
 
 .pass-row {

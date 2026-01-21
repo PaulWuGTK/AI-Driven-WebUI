@@ -358,7 +358,11 @@ export default {
     show: '顯示',
     hide: '隱藏',
     hideSsid: '隱藏 SSID',
-    ssidGroupEnable: '啟用 SSID 群組'
+    ssidGroupEnable: '啟用 SSID 群組',
+    ssidRequired: '必須輸入 SSID',
+    ssidTooShort: 'SSID 至少需 {min} 個位元組',
+    ssidTooLong: 'SSID 超過長度上限（{current}/{max} 位元組）',
+    ssidBytesInfo: '{bytes} 個位元組'
   },
   guest: {
     title: '訪客存取',
@@ -944,7 +948,8 @@ export default {
     pleaseEnterCaptcha: '請輸入驗證碼。',
     networkError: '網路錯誤，請檢查連線後再試一次。',
     captchaLoadFailed: '驗證碼載入失敗，請重新整理頁面。',
-    unknownError: '發生未預期的錯誤，請再試一次。'
+    unknownError: '發生未預期的錯誤，請再試一次。',
+    sessionExpired: '因為閒置時間過長，您的登入工作階段已過期，請重新登入。',
   },
   wizard: {
     completeTitle: '完成！',

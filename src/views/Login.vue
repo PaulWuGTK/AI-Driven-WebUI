@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
@@ -11,6 +11,7 @@ const isDevelopment = import.meta.env.DEV;
 const { t } = useI18n();
 
 const router = useRouter();
+const route = useRoute();
 const username = ref('');
 const password = ref('');
 const captcha = ref('');
@@ -23,6 +24,7 @@ const isLocked = ref(false);
 const lockRetryAfter = ref(0);
 const captchaTimeout = ref<number | null>(null);
 const lockCountdown = ref<number | null>(null);
+const logoutMessage = ref('');
 
 const resetCaptchaTimer = () => {
   if (captchaTimeout.value) {
@@ -192,6 +194,13 @@ const handleLogin = async () => {
 };
 
 onMounted(() => {
+  // Check if user was logged out due to inactivity
+  if (route.query.reason === 'timeout') {
+    logoutMessage.value = t('login.sessionExpired');
+    // Clear the query parameter
+    router.replace({ path: '/login' });
+  }
+
   fetchCaptcha(true);
 });
 
@@ -268,6 +277,9 @@ onUnmounted(() => {
             :disabled="loading || captchaLoading"
             maxlength="6"
           />
+        </div>
+        <div v-if="logoutMessage" class="info-message" :data-testid="qa('login-logout-message')">
+          {{ logoutMessage }}
         </div>
         <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">
           {{ isLocked ? lockMessage : error }}
@@ -372,6 +384,22 @@ input:disabled {
   padding: 0.75rem;
   background-color: #fee;
   border: 1px solid #fcc;
+  border-radius: 4px;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-message {
+  color: #0c5460;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
   border-radius: 4px;
   min-height: 2.5rem;
   display: flex;

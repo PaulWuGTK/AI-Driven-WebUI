@@ -48,7 +48,6 @@ export class AuthService {
       localStorage.setItem('username', username);
           try {
       const wizardData = await wizardApi.getWizardInfo();
-      console.log("paultest wizardData.OpMode:",wizardData.OpMode);
       if (wizardData.OpMode === 'Init') {
           localStorage.setItem('wizardRequired', 'true');
         } else {
@@ -117,7 +116,6 @@ export class AuthService {
     localStorage.setItem('username', username);
     try {
       const wizardData = await wizardApi.getWizardInfo();
-      console.log("paultest wizardData.OpMode:",wizardData.OpMode);
       if (wizardData.OpMode === 'Init') {
         localStorage.setItem('wizardRequired', 'true');
       } else {

@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import type { WanStatusResponse } from './types/wan';
 import { getMockWanStatus } from './services/mockApi';
+import { AuthService } from './services/auth';
+import { AutoLogoutService } from './services/autoLogout';
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
 
 const route = useRoute();
+const router = useRouter();
 const wanData = ref<WanStatusResponse | null>(null);
+const autoLogout = AutoLogoutService.getInstance();
 
 const fetchWanStatus = async () => {
   try {
@@ -19,10 +23,36 @@ const fetchWanStatus = async () => {
 
 onMounted(() => {
   fetchWanStatus();
+
+  // Initialize auto logout service with router
+  autoLogout.init(router);
+
+  // Start auto logout if user is authenticated
+  const auth = AuthService.getInstance();
+  if (auth.isAuthenticated() && route.path !== '/login' && route.path !== '/wizard') {
+    autoLogout.start();
+  }
+});
+
+onUnmounted(() => {
+  autoLogout.stop();
 });
 
 const isLoginPage = computed(() => route.path === '/login');
 const isWizardPage = computed(() => route.path === '/wizard');
+
+// Watch route changes to manage auto logout
+watch(() => route.path, (newPath) => {
+  const auth = AuthService.getInstance();
+
+  if (newPath === '/login' || newPath === '/wizard') {
+    // Stop auto logout on login and wizard pages
+    autoLogout.stop();
+  } else if (auth.isAuthenticated()) {
+    // Start auto logout on other pages if authenticated
+    autoLogout.start();
+  }
+});
 </script>
 
 <template>

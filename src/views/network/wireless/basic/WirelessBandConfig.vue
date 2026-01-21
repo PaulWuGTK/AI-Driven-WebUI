@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanBasicConfig } from '../../../../types/wireless';
 import { useQA } from '../../../../utils/qa';
+import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../../utils/ssidValidation';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
@@ -16,6 +17,8 @@ const emit = defineEmits<{
 }>();
 
 const showPassword = ref(false);
+const ssidError = ref('');
+const ssidByteLength = ref(0);
 
 const securityModes = computed(() => 
   (props.modelValue.SecurityModeAvailable ?? '').split(',')
@@ -27,6 +30,40 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
     [field]: value
   });
 };
+
+const validateSsidField = (ssid: string) => {
+  const validation = validateSsid(ssid, t);
+  ssidByteLength.value = validation.byteLength;
+
+  if (!validation.isValid) {
+    ssidError.value = validation.errorMessage || '';
+  } else {
+    ssidError.value = '';
+  }
+
+  return validation.isValid;
+};
+
+const handleSsidInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = target.value;
+  const byteLength = getByteLength(value);
+
+  if (byteLength <= SSID_MAX_BYTES) {
+    updateConfig('SSID', value);
+    validateSsidField(value);
+  } else {
+    // Show error message when exceeding max bytes
+    ssidByteLength.value = byteLength;
+    ssidError.value = t('wireless.ssidTooLong', { current: byteLength, max: SSID_MAX_BYTES });
+    // Revert to previous value
+    target.value = props.modelValue.SSID || '';
+  }
+};
+
+watch(() => props.modelValue.SSID, (newSsid) => {
+  validateSsidField(newSsid || '');
+}, { immediate: true });
 </script>
 
 <template>
@@ -58,9 +95,16 @@ const updateConfig = (field: keyof WlanBasicConfig, value: string | number) => {
           type="text"
           :data-testid="qa(`wireless-band-config-ssid-input-${slug(title)}`)"
           :value="modelValue.SSID"
-          @input="updateConfig('SSID', ($event.target as HTMLInputElement).value)"
+          :class="{ 'is-invalid': ssidError }"
+          @input="handleSsidInput"
           :disabled="title !== 'MLO' && modelValue.Enable === 0"
         />
+        <span v-if="ssidError" class="error-message" :data-testid="qa(`wireless-band-config-ssid-error-${slug(title)}`)">
+          {{ ssidError }}
+        </span>
+        <span v-else-if="ssidByteLength > 0" class="help-text" :data-testid="qa(`wireless-band-config-ssid-bytes-${slug(title)}`)">
+          {{ t('wireless.ssidBytesInfo', { bytes: ssidByteLength }) }}
+        </span>
       </div>
 
       <div class="form-group">
@@ -161,6 +205,29 @@ input, select {
 input:disabled, select:disabled {
   background-color: var(--bg-secondary);
   cursor: not-allowed;
+}
+
+input.is-invalid {
+  border-color: #dc3545;
+}
+
+input.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.error-message {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+.help-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 .password-input {

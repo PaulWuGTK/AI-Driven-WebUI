@@ -357,7 +357,11 @@ export default {
     show: 'Afficher',
     hide: 'Masquer',
     hideSsid: 'Masquer le SSID',
-    ssidGroupEnable: 'Activer le groupe SSID'
+    ssidGroupEnable: 'Activer le groupe SSID',
+    ssidRequired: 'Le SSID est requis',
+    ssidTooShort: 'Le SSID doit comporter au moins {min} octet',
+    ssidTooLong: 'Le SSID dépasse la longueur maximale ({current}/{max} octets)',
+    ssidBytesInfo: '{bytes} octets'
   },
   guest: {
     title: 'Accès invité',
@@ -943,7 +947,8 @@ export default {
     pleaseEnterCaptcha: 'Veuillez saisir le code de vérification.',
     networkError: 'Erreur réseau. Vérifiez votre connexion puis réessayez.',
     captchaLoadFailed: 'Impossible de charger le code de vérification. Veuillez actualiser la page.',
-    unknownError: 'Une erreur inattendue est survenue. Veuillez réessayer.'
+    unknownError: 'Une erreur inattendue est survenue. Veuillez réessayer.',
+    sessionExpired: 'Votre session a expiré en raison d’une inactivité. Veuillez vous reconnecter.'
   },
   wizard: {
     completeTitle: 'Terminé !',

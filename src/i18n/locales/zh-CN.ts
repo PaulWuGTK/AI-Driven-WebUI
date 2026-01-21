@@ -357,7 +357,11 @@ export default {
     show: '显示',
     hide: '隐藏',
     hideSsid: '隐藏 SSID',
-    ssidGroupEnable: '启用 SSID 组'
+    ssidGroupEnable: '启用 SSID 组',
+    ssidRequired: '必须填写 SSID',
+    ssidTooShort: 'SSID 至少需要 {min} 个字节',
+    ssidTooLong: 'SSID 超出最大长度（{current}/{max} 字节）',
+    ssidBytesInfo: '{bytes} 个字节'
   },
   guest: {
     title: '访客访问',
@@ -943,7 +947,8 @@ export default {
     pleaseEnterCaptcha: '请输入验证码。',
     networkError: '网络错误，请检查连接后重试。',
     captchaLoadFailed: '验证码加载失败，请刷新页面。',
-    unknownError: '发生未知错误，请稍后再试。'
+    unknownError: '发生未知错误，请稍后再试。',
+    sessionExpired: '由于长时间未操作，会话已过期，请重新登录。'
   },
   wizard: {
     completeTitle: '完成！',

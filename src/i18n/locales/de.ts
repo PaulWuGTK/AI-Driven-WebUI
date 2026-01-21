@@ -357,7 +357,11 @@ export default {
     show: 'Anzeigen',
     hide: 'Ausblenden',
     hideSsid: 'SSID ausblenden',
-    ssidGroupEnable: 'SSID-Gruppe aktivieren'
+    ssidGroupEnable: 'SSID-Gruppe aktivieren',
+    ssidRequired: 'SSID ist erforderlich',
+    ssidTooShort: 'SSID muss mindestens {min} Byte lang sein',
+    ssidTooLong: 'SSID überschreitet die maximale Länge ({current}/{max} Bytes)',
+    ssidBytesInfo: '{bytes} Bytes'
   },
   guest: {
     title: 'Gastzugang',
@@ -943,7 +947,8 @@ export default {
     pleaseEnterCaptcha: 'Bitte geben Sie den Bestätigungscode ein.',
     networkError: 'Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
     captchaLoadFailed: 'Der Bestätigungscode konnte nicht geladen werden. Bitte laden Sie die Seite neu.',
-    unknownError: 'Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.'
+    unknownError: 'Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.',
+    sessionExpired: 'Ihre Sitzung ist aufgrund von Inaktivität abgelaufen. Bitte melden Sie sich erneut an.'
   },
   wizard: {
     completeTitle: 'Abgeschlossen!',

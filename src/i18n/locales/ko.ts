@@ -356,7 +356,11 @@ export default {
     show: '표시',
     hide: '숨기기',
     hideSsid: 'SSID 숨기기',
-    ssidGroupEnable: 'SSID 그룹 사용'
+    ssidGroupEnable: 'SSID 그룹 사용',
+    ssidRequired: 'SSID를 입력해야 합니다',
+    ssidTooShort: 'SSID는 최소 {min}바이트 이상이어야 합니다',
+    ssidTooLong: 'SSID가 최대 길이를 초과했습니다 ({current}/{max}바이트)',
+    ssidBytesInfo: '{bytes}바이트'
   },
   guest: {
     title: '게스트 액세스',
@@ -942,7 +946,8 @@ export default {
     pleaseEnterCaptcha: '인증 코드를 입력해 주세요.',
     networkError: '네트워크 오류입니다. 연결을 확인한 후 다시 시도해 주세요.',
     captchaLoadFailed: '인증 코드를 불러오지 못했습니다. 페이지를 새로 고침해 주세요.',
-    unknownError: '예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.'
+    unknownError: '예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.',
+    sessionExpired: '오랫동안 사용하지 않아 세션이 만료되었습니다. 다시 로그인해 주세요.'
   },
   wizard: {
     completeTitle: '완료되었습니다!',

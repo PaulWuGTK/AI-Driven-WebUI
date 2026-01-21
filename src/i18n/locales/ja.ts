@@ -357,7 +357,11 @@ export default {
     show: '表示',
     hide: '非表示',
     hideSsid: 'SSID を隠す',
-    ssidGroupEnable: 'SSID グループを有効にする'
+    ssidGroupEnable: 'SSID グループを有効にする',
+    ssidRequired: 'SSID は必須項目です',
+    ssidTooShort: 'SSID は少なくとも {min} バイト必要です',
+    ssidTooLong: 'SSID が最大長を超えています（{current}/{max} バイト）',
+    ssidBytesInfo: '{bytes} バイト'
   },
   guest: {
     title: 'ゲストアクセス',
@@ -943,7 +947,8 @@ export default {
     pleaseEnterCaptcha: '認証コードを入力してください。',
     networkError: 'ネットワークエラーが発生しました。接続を確認してから、再度お試しください。',
     captchaLoadFailed: '認証コードの読み込みに失敗しました。ページを再読み込みしてください。',
-    unknownError: '予期しないエラーが発生しました。もう一度お試しください。'
+    unknownError: '予期しないエラーが発生しました。もう一度お試しください。',
+    sessionExpired: '一定時間操作がなかったため、セッションの有効期限が切れました。もう一度ログインしてください。'
   },
   wizard: {
     completeTitle: '完了！',

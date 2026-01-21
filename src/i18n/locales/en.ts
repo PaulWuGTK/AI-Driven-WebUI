@@ -361,7 +361,11 @@ const translations = {
     show: 'Show',
     hide: 'Hide',
     hideSsid: 'Hide SSID',
-    ssidGroupEnable: 'SSID Group Enable'
+    ssidGroupEnable: 'SSID Group Enable',
+    ssidRequired: 'SSID is required',
+    ssidTooShort: 'SSID must be at least {min} byte',
+    ssidTooLong: 'SSID exceeds maximum length ({current}/{max} bytes)',
+    ssidBytesInfo: '{bytes} bytes'
   },
   guest: {
     title: 'Guest Access',
@@ -979,7 +983,8 @@ const translations = {
     pleaseEnterCaptcha: 'Please enter the verification code',
     networkError: 'Network error. Please check your connection and try again.',
     captchaLoadFailed: 'Failed to load verification code. Please refresh the page.',
-    unknownError: 'An unexpected error occurred. Please try again.'
+    unknownError: 'An unexpected error occurred. Please try again.',
+    sessionExpired: 'Your session has expired due to inactivity. Please log in again.'
   },
   wizard: {
     completeTitle: 'Finish!',
