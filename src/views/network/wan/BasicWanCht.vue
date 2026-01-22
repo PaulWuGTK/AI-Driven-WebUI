@@ -1,0 +1,340 @@
+<template>
+  <h2 class="page-title">{{ $t('basicWanCht.title') }}</h2>
+  <div class="status-content">
+    <div v-if="!editMode" class="management-view">
+      <div class="panel-section">
+        <div class="section-title">{{ $t('basicWanCht.wanManagement') }}</div>
+        <div class="card-content">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ $t('basicWanCht.status') }}</th>
+                  <th>{{ $t('basicWanCht.description') }}</th>
+                  <th>{{ $t('basicWanCht.defaultGateway') }}</th>
+                  <th>{{ $t('basicWanCht.vlanType') }}</th>
+                  <th>{{ $t('basicWanCht.vlanIdColumn') }}</th>
+                  <th>{{ $t('basicWanCht.protocol') }}</th>
+                  <th>{{ $t('basicWanCht.action') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in tableData" :key="row.type">
+                  <td>
+                    <BaseBadge :variant="row.status === 'Up' ? 'success' : 'neutral'">
+                      {{ row.status }}
+                    </BaseBadge>
+                  </td>
+                  <td>{{ row.description }}</td>
+                  <td>{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</td>
+                  <td>{{ row.vlanType }}</td>
+                  <td>{{ row.vlanId }}</td>
+                  <td>{{ row.protocol }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="btn-action" @click="editConnection(row.type)" title="Edit">
+                        <span class="material-icons">edit</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mobile-cards">
+            <div class="table-card" v-for="row in tableData" :key="row.type">
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.status') }}</span>
+                <span class="card-value">
+                  <BaseBadge :variant="row.status === 'Up' ? 'success' : 'neutral'">
+                    {{ row.status }}
+                  </BaseBadge>
+                </span>
+              </div>
+
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.description') }}</span>
+                <span class="card-value">{{ row.description }}</span>
+              </div>
+
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.defaultGateway') }}</span>
+                <span class="card-value">{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</span>
+              </div>
+
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.vlanType') }}</span>
+                <span class="card-value">{{ row.vlanType }}</span>
+              </div>
+
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.vlanIdColumn') }}</span>
+                <span class="card-value">{{ row.vlanId }}</span>
+              </div>
+
+              <div class="card-row">
+                <span class="card-label">{{ $t('basicWanCht.protocol') }}</span>
+                <span class="card-value">{{ row.protocol }}</span>
+              </div>
+
+              <div class="card-actions">
+                <button class="btn-action" @click="editConnection(row.type)" title="Edit">
+                  <span class="material-icons">edit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="button-group">
+            <button class="btn btn-secondary" @click="handleCancel">
+              {{ $t('common.cancel') }}
+            </button>
+            <button class="btn btn-primary" @click="handleApply">
+              {{ $t('common.apply') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="edit-view">
+      <PPPoEEditForm
+        v-if="editType === 'PPPoE' && editData"
+        v-model="editData.PPPoE"
+      />
+      <IPoEEditForm
+        v-else-if="editType === 'IPoE' && editData"
+        v-model="editData.IPoE"
+      />
+      <BridgeEditForm
+        v-else-if="editType === 'Bridge' && editData"
+        v-model="editData.Bridge"
+      />
+
+      <div class="button-group">
+        <button class="btn btn-secondary" @click="cancelEdit">
+          {{ $t('common.cancel') }}
+        </button>
+        <button class="btn btn-primary" @click="saveEdit">
+          {{ $t('common.save') }}
+        </button>
+      </div>
+    </div>
+
+    <BlockingOverlay :is-visible="loading" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { basicWanChtApi } from '../../../services/api/basicWanCht';
+import type { BasicWanChtConfig, BasicWanChtTableRow } from '../../../types/basicWanCht';
+import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
+import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
+import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
+import { BaseBadge } from '../../../components/common';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+
+const { t } = useI18n();
+
+const loading = ref(false);
+const config = ref<BasicWanChtConfig | null>(null);
+const editData = ref<BasicWanChtConfig | null>(null);
+const editMode = ref(false);
+const editType = ref<'PPPoE' | 'IPoE' | 'Bridge' | null>(null);
+
+const tableData = computed<BasicWanChtTableRow[]>(() => {
+  if (!config.value) return [];
+
+  const rows: BasicWanChtTableRow[] = [];
+
+  const pppoe = config.value.PPPoE;
+  rows.push({
+    type: 'PPPoE',
+    status: pppoe.Enable ? 'Up' : 'Down',
+    description: 'PPPoE',
+    defaultGateway: pppoe.DefaultGateway,
+    vlanType: pppoe.VLAN ? 'VLAN' : 'Untagged',
+    vlanId: pppoe.VLAN ? pppoe.VLANID : '-',
+    protocol: pppoe.Protocol
+  });
+
+  const ipoe = config.value.IPoE;
+  rows.push({
+    type: 'IPoE',
+    status: ipoe.Enable ? 'Up' : 'Down',
+    description: 'IPoE',
+    defaultGateway: false,
+    vlanType: ipoe.VLAN ? 'VLAN' : 'Untagged',
+    vlanId: ipoe.VLAN ? ipoe.VLANID : '-',
+    protocol: ipoe.Protocol
+  });
+
+  const bridge = config.value.Bridge;
+  rows.push({
+    type: 'Bridge',
+    status: bridge.Enable ? 'Up' : 'Down',
+    description: 'Bridge',
+    defaultGateway: false,
+    vlanType: bridge.VLAN ? 'VLAN' : 'Untagged',
+    vlanId: bridge.VLAN ? bridge.VLANID : '-',
+    protocol: bridge.Protocol
+  });
+
+  return rows;
+});
+
+const loadConfig = async () => {
+  try {
+    loading.value = true;
+    config.value = await basicWanChtApi.getConfig();
+  } catch (error) {
+    console.error('Failed to load WAN configuration:', error);
+    alert(t('basicWanCht.loadError'));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const editConnection = (type: 'PPPoE' | 'IPoE' | 'Bridge') => {
+  editType.value = type;
+  editData.value = JSON.parse(JSON.stringify(config.value));
+  editMode.value = true;
+};
+
+const cancelEdit = () => {
+  editMode.value = false;
+  editType.value = null;
+  editData.value = null;
+};
+
+const saveEdit = () => {
+  if (editData.value && config.value) {
+    config.value = editData.value;
+    editMode.value = false;
+    editType.value = null;
+    editData.value = null;
+  }
+};
+
+const handleCancel = () => {
+  loadConfig();
+};
+
+const handleApply = async () => {
+  if (!config.value) return;
+
+  try {
+    loading.value = true;
+    await basicWanChtApi.updateConfig(config.value);
+    alert(t('basicWanCht.saveSuccess'));
+  } catch (error) {
+    console.error('Failed to save WAN configuration:', error);
+    alert(t('basicWanCht.saveError'));
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  loadConfig();
+});
+</script>
+
+<style scoped>
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-action:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.edit-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.edit-view .button-group {
+  padding: 0 1.5rem;
+}
+
+.mobile-cards {
+  display: none;
+}
+
+.table-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+}
+
+.card-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.card-value {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
+}
+</style>

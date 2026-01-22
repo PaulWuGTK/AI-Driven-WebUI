@@ -85,6 +85,7 @@ const baseMenuItems: MenuItem[] = [
     menuKey: 'basicSetup',
     subItems: [
       { name: 'WAN', path: '/basic/wan', translationKey: 'menu.wan', menuKey: 'basicSetup.wan' },
+      { name: 'WAN Cht', path: '/basic/wan-cht', translationKey: 'menu.wan', menuKey: 'basicSetup.wanCht' },
       { name: 'Backup WAN', path: '/basic/backup-wan', translationKey: 'menu.backupWan', menuKey: 'basicSetup.backupWan' },
       {
         name: 'LAN',
