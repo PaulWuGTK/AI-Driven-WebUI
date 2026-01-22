@@ -1,6 +1,12 @@
 <template>
   <h2 class="page-title">{{ $t('basicWanCht.title') }}</h2>
   <div class="status-content">
+    <div v-if="showSuccess" class="success-message">
+      {{ $t('common.saveSuccess') }}
+    </div>
+    <div v-if="showFail" class="success-message">
+      {{ $t('common.saveFailed') }}
+    </div>
     <div v-if="!editMode" class="management-view">
       <div class="panel-section">
         <div class="section-title">{{ $t('basicWanCht.wanManagement') }}</div>
@@ -122,7 +128,7 @@
       </div>
     </div>
 
-    <BlockingOverlay :is-visible="loading" />
+    <!--BlockingOverlay :is-visible="loading" /-->
   </div>
 </template>
 
@@ -135,11 +141,11 @@ import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
 import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
 import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
 import { BaseBadge } from '../../../components/common';
-import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 const { t } = useI18n();
-
-const loading = ref(false);
+const showSuccess = ref(false);
+const showFail = ref(false);
+//const loading = ref(false);
 const config = ref<BasicWanChtConfig | null>(null);
 const editData = ref<BasicWanChtConfig | null>(null);
 const editMode = ref(false);
@@ -186,15 +192,30 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
   return rows;
 });
 
+const showSuccessMessage = () => {
+  showSuccess.value = true;
+  setTimeout(() => {
+    showSuccess.value = false;
+  }, 3000);
+};
+const showFailMessage = () => {
+  showFail.value = true;
+  setTimeout(() => {
+    showFail.value = false;
+  }, 3000);
+};
+
+
 const loadConfig = async () => {
   try {
-    loading.value = true;
+//    loading.value = true;
     config.value = await basicWanChtApi.getConfig();
   } catch (error) {
     console.error('Failed to load WAN configuration:', error);
-    alert(t('basicWanCht.loadError'));
+//    alert(t('basicWanCht.loadError'));
+
   } finally {
-    loading.value = false;
+//    loading.value = false;
   }
 };
 
@@ -227,14 +248,16 @@ const handleApply = async () => {
   if (!config.value) return;
 
   try {
-    loading.value = true;
+//    loading.value = true;
     await basicWanChtApi.updateConfig(config.value);
-    alert(t('basicWanCht.saveSuccess'));
+//    alert(t('basicWanCht.saveSuccess'));
+    showSuccessMessage();
   } catch (error) {
+    showFailMessage();
     console.error('Failed to save WAN configuration:', error);
-    alert(t('basicWanCht.saveError'));
+//    alert(t('basicWanCht.saveError'));
   } finally {
-    loading.value = false;
+//    loading.value = false;
   }
 };
 
@@ -318,6 +341,25 @@ onMounted(() => {
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 0.75rem;
+}
+
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1100;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {
