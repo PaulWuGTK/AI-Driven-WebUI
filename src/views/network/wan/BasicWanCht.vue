@@ -4,8 +4,11 @@
     <div v-if="showSuccess" class="success-message">
       {{ $t('common.saveSuccess') }}
     </div>
-    <div v-if="showFail" class="success-message">
+    <div v-if="showFail" class="fail-message">
       {{ $t('common.saveFailed') }}
+    </div>
+    <div v-if="showLoadFail" class="fail-message">
+      {{ $t('common.loadError') }}
     </div>
     <div v-if="!editMode" class="management-view">
       <div class="panel-section">
@@ -145,6 +148,7 @@ import { BaseBadge } from '../../../components/common';
 const { t } = useI18n();
 const showSuccess = ref(false);
 const showFail = ref(false);
+const showLoadFail = ref(false);
 //const loading = ref(false);
 const config = ref<BasicWanChtConfig | null>(null);
 const editData = ref<BasicWanChtConfig | null>(null);
@@ -204,13 +208,19 @@ const showFailMessage = () => {
     showFail.value = false;
   }, 3000);
 };
-
+const showLoadFailMessage = () => {
+  showLoadFail.value = true;
+  setTimeout(() => {
+    showLoadFail.value = false;
+  }, 3000);
+};
 
 const loadConfig = async () => {
   try {
 //    loading.value = true;
     config.value = await basicWanChtApi.getConfig();
   } catch (error) {
+    showLoadFailMessage();
     console.error('Failed to load WAN configuration:', error);
 //    alert(t('basicWanCht.loadError'));
 
@@ -348,6 +358,18 @@ onMounted(() => {
   top: 20px;
   right: 20px;
   background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1100;
+}
+
+.fail-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #f11c2e;
   color: white;
   padding: 1rem 2rem;
   border-radius: 4px;

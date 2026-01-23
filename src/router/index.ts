@@ -477,6 +477,25 @@ const router = createRouter({
       name: 'IotMatter',
       component: () => import('../views/iot/matter/MatterDashboard.vue'),
       beforeEnter: requireAuth
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: (to) => {
+        const auth = AuthService.getInstance();
+
+        // 未登入：導去 login，順便帶 next 方便登入後跳回
+        if (!auth.isAuthenticated()) {
+          return { path: '/login', query: { next: to.fullPath } };
+        }
+
+        // 需要 wizard：導去 wizard
+        if (auth.needsWizard()) {
+          return { path: '/wizard' };
+        }
+
+        // 已登入但路由不存在：回首頁（你也可以改成固定去 /login）
+        return { path: '/' };
+      }
     }
   ]
 });
