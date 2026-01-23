@@ -4,7 +4,7 @@ export interface BasicWanChtPPPoE {
   Username: string;
   Password: string;
   ServiceName: string;
-  ConnectionType: string;
+  ConnectionTrigger: string;
   IdleTime: number;
   MTU: number;
   DefaultGateway: boolean;

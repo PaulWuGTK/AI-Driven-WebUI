@@ -37,19 +37,19 @@
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.connectionType') }}</label>
+          <label>{{ $t('basicWanCht.connectTrigger') }}</label>
           <BaseSelect
-            v-model="localData.ConnectionType"
+            v-model="localData.ConnectionTrigger"
             :options="[
-              { label: $t('basicWanCht.alwaysConnected'), value: 'AlwaysConnected' },
-              { label: $t('basicWanCht.triggerByTraffic'), value: 'TriggerByTraffic' }
+              { label: $t('basicWanCht.alwaysOn'), value: 'AlwaysOn' },
+              { label: $t('basicWanCht.onDemand'), value: 'OnDemand' }
             ]"
           />
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.idleTime') }}</label>
-          <BaseInput v-model.number="localData.IdleTime" type="number" :disabled="localData.ConnectionType !== 'TriggerByTraffic'" />
+          <BaseInput v-model.number="localData.IdleTime" type="number" :disabled="localData.ConnectionTrigger !== 'TriggerByTraffic'" />
         </div>
 
         <div class="form-group">

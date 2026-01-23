@@ -8,7 +8,7 @@ export const basicWanChtMockData: BasicWanChtResponse = {
       Username: 'test@hinet.net',
       Password: 'password123',
       ServiceName: '',
-      ConnectionType: 'AlwaysConnected',
+      ConnectionTrigger: 'AlwaysOn',
       IdleTime: 0,
       MTU: 1492,
       DefaultGateway: true,

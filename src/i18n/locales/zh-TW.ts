@@ -1350,6 +1350,9 @@ export default {
     connectionType: '連線類型',
     alwaysConnected: '永遠連線',
     triggerByTraffic: '自動－由流量觸發',
+    connectTrigger: '連線觸發條件',
+    alwaysOn: 'AlwaysOn',
+    onDemand: 'OnDemand',
     idleTime: '閒置時間',
     idleTimeModifiable: '當連線類型為「自動－由流量觸發」時，此欄位可修改。',
     mtu: 'MTU（{min}～{max}）',
@@ -1380,6 +1383,6 @@ export default {
     staticFieldRequired: '當協定為 Static 時，此欄位為必填且不得為空。',
     loadError: '載入 WAN 設定失敗。',
     saveSuccess: 'WAN 設定已成功儲存。',
-    saveError: '儲存 WAN 設定失敗。',
+    saveError: '儲存 WAN 設定失敗。'
   }
 };
