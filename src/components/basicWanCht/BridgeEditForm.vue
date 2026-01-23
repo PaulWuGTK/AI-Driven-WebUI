@@ -29,12 +29,12 @@
         <div class="form-group">
           <label>{{ $t('basicWanCht.lanInterface') }}</label>
           <div class="interface-list">
-            <div v-for="iface in localData.SupportedLANInterfaces" :key="iface" class="switch-label">
+            <div v-for="iface in (localData.ListSupportedLANInterfaces || [])" :key="iface" class="switch-label">
               <span>{{ iface }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
-                  :checked="localData.LANInterfaces.includes(iface)"
+                  :checked="localData.ListLANInterfaces.includes(iface)"
                   @change="(e) => toggleInterface(iface, (e.target as HTMLInputElement).checked)"
                 >
                 <span class="slider"></span>
@@ -49,7 +49,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                v-model="localData.VLAN"
+                v-model="localData.VLANEnable"
               >
               <span class="slider"></span>
             </label>
@@ -58,12 +58,12 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.priorityBit') }}</label>
-          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLAN" />
+          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLANEnable" />
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.vlanId') }}</label>
-          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLAN" />
+          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLANEnable" />
         </div>
       </div>
     </div>
@@ -90,11 +90,11 @@ const localData = ref<BasicWanChtBridge>({ ...props.modelValue });
 
 const toggleInterface = (iface: string, checked: boolean) => {
   if (checked) {
-    if (!localData.value.LANInterfaces.includes(iface)) {
-      localData.value.LANInterfaces.push(iface);
+    if (!localData.value.ListLANInterfaces.includes(iface)) {
+      localData.value.ListLANInterfaces.push(iface);
     }
   } else {
-    localData.value.LANInterfaces = localData.value.LANInterfaces.filter(i => i !== iface);
+    localData.value.ListLANInterfaces = localData.value.ListLANInterfaces.filter(i => i !== iface);
   }
 };
 

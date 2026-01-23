@@ -18,8 +18,19 @@ export const basicWanChtApi = {
       console.log('Mock: Updated BasicWanCht config:', config);
       return Promise.resolve();
     }
+
+    const { ListConnectionTrigger, ListDNSMode, ...pppoeData } = config.PPPoE;
+    const { ListProtocol, ListDNSMode: ipoeListDNSMode, ...ipoeData } = config.IPoE;
+    const { ListSupportedLANInterfaces, ...bridgeData } = config.Bridge;
+
+    const postData = {
+      PPPoE: pppoeData,
+      IPoE: ipoeData,
+      Bridge: bridgeData
+    };
+
     await apiClient.post('/API/info?list=BasicWanCht', {
-      BasicWanCht: config
+      BasicWanCht: postData
     });
   }
 };

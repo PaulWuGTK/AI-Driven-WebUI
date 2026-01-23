@@ -8,51 +8,55 @@ export interface BasicWanChtPPPoE {
   IdleTime: number;
   MTU: number;
   DefaultGateway: boolean;
-  PassThrough: boolean;
-  IPv4: boolean;
-  IPv6: boolean;
+  PassthroughEnable: boolean;
+  IPv4Enable: boolean;
+  IPv6Enable: boolean;
   DNSMode: string;
   PrimaryDNS: string;
   SecondaryDNS: string;
-  NAT: boolean;
-  IGMP: boolean;
-  VLAN: boolean;
+  NATEnable: boolean;
+  IGMPEnable: boolean;
+  VLANEnable: boolean;
   VLANPriority: number;
   VLANID: number;
+  ListConnectionTrigger?: string[];
+  ListDNSMode?: string[];
 }
 
 export interface BasicWanChtIPoE {
   Enable: boolean;
   Protocol: string;
   MTU: number;
-  IPv4: boolean;
-  IPv6: boolean;
-  Option60: boolean;
-  VendorID: string;
-  Option61: boolean;
-  DUID: string;
+  IPv4Enable: boolean;
+  IPv6Enable: boolean;
+  Option60Enable: boolean;
+  Option60Value: string;
+  Option61Enable: boolean;
+  Option61Value: string;
   DNSMode: string;
   PrimaryDNS: string;
   SecondaryDNS: string;
-  NAT: boolean;
-  IGMP: boolean;
-  VLAN: boolean;
+  NATEnable: boolean;
+  IGMPEnable: boolean;
+  VLANEnable: boolean;
   VLANPriority: number;
   VLANID: number;
   IPAddress: string;
   SubnetMask: string;
   Gateway: string;
+  ListProtocol?: string[];
+  ListDNSMode?: string[];
 }
 
 export interface BasicWanChtBridge {
   Enable: boolean;
   Protocol: string;
   MTU: number;
-  SupportedLANInterfaces: string[];
-  LANInterfaces: string[];
-  VLAN: boolean;
+  VLANEnable: boolean;
   VLANPriority: number;
   VLANID: number;
+  ListSupportedLANInterfaces?: string[];
+  ListLANInterfaces: string[];
 }
 
 export interface BasicWanChtConfig {

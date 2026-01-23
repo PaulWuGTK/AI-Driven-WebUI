@@ -162,8 +162,8 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
     status: pppoe.Enable ? 'Up' : 'Down',
     description: 'PPPoE',
     defaultGateway: pppoe.DefaultGateway,
-    vlanType: pppoe.VLAN ? 'VLAN' : 'Untagged',
-    vlanId: pppoe.VLAN ? pppoe.VLANID : '-',
+    vlanType: pppoe.VLANEnable ? 'VLAN' : 'Untagged',
+    vlanId: pppoe.VLANEnable ? pppoe.VLANID : '-',
     protocol: pppoe.Protocol
   });
 
@@ -173,8 +173,8 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
     status: ipoe.Enable ? 'Up' : 'Down',
     description: 'IPoE',
     defaultGateway: false,
-    vlanType: ipoe.VLAN ? 'VLAN' : 'Untagged',
-    vlanId: ipoe.VLAN ? ipoe.VLANID : '-',
+    vlanType: ipoe.VLANEnable ? 'VLAN' : 'Untagged',
+    vlanId: ipoe.VLANEnable ? ipoe.VLANID : '-',
     protocol: ipoe.Protocol
   });
 
@@ -184,8 +184,8 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
     status: bridge.Enable ? 'Up' : 'Down',
     description: 'Bridge',
     defaultGateway: false,
-    vlanType: bridge.VLAN ? 'VLAN' : 'Untagged',
-    vlanId: bridge.VLAN ? bridge.VLANID : '-',
+    vlanType: bridge.VLANEnable ? 'VLAN' : 'Untagged',
+    vlanId: bridge.VLANEnable ? bridge.VLANID : '-',
     protocol: bridge.Protocol
   });
 

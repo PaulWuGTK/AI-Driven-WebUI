@@ -56,7 +56,7 @@
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="localData.IPv4"
+                  v-model="localData.IPv4Enable"
                 >
                 <span class="slider"></span>
               </label>
@@ -69,7 +69,7 @@
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="localData.IPv6"
+                  v-model="localData.IPv6Enable"
                 >
                 <span class="slider"></span>
               </label>
@@ -82,7 +82,7 @@
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="localData.Option60"
+                  v-model="localData.Option60Enable"
                 >
                 <span class="slider"></span>
               </label>
@@ -91,7 +91,7 @@
 
           <div class="form-group">
             <label>{{ $t('basicWanCht.vendorId') }}</label>
-            <BaseInput v-model="localData.VendorID" :disabled="!localData.Option60" />
+            <BaseInput v-model="localData.Option60Value" :disabled="!localData.Option60Enable" />
           </div>
 
           <div class="form-group">
@@ -100,7 +100,7 @@
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="localData.Option61"
+                  v-model="localData.Option61Enable"
                 >
                 <span class="slider"></span>
               </label>
@@ -109,7 +109,7 @@
 
           <div class="form-group">
             <label>{{ $t('basicWanCht.duid') }}</label>
-            <BaseInput v-model="localData.DUID" />
+            <BaseInput v-model="localData.Option61Value" />
           </div>
         </template>
 
@@ -141,7 +141,7 @@
               <label class="switch">
                 <input
                   type="checkbox"
-                  v-model="localData.NAT"
+                  v-model="localData.NATEnable"
                 >
                 <span class="slider"></span>
               </label>
@@ -155,7 +155,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                v-model="localData.IGMP"
+                v-model="localData.IGMPEnable"
               >
               <span class="slider"></span>
             </label>
@@ -168,7 +168,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                v-model="localData.VLAN"
+                v-model="localData.VLANEnable"
               >
               <span class="slider"></span>
             </label>
@@ -177,12 +177,12 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.priorityBit') }}</label>
-          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLAN" />
+          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLANEnable" />
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.vlanId') }}</label>
-          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLAN" />
+          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLANEnable" />
         </div>
       </div>
     </div>
