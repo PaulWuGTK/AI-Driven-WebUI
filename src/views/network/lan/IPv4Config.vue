@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
 import { useQA } from '../../../utils/qa';
+import IPChangeRedirect from '../../../components/IPChangeRedirect.vue';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
@@ -12,6 +13,9 @@ const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const editingIndex = ref<number | null>(null);
+const originalIPAddress = ref<string>('');
+const showRedirectDialog = ref(false);
+const newIPAddress = ref<string>('');
 
 // Local state for IP Address Reservation
 const reservations = ref<IPAddressReservation[]>([]);
@@ -86,6 +90,7 @@ const fetchLanBasic = async () => {
     const response = await getLanBasic();
     lanData.value = response;
     reservations.value = [...response.LanBasic.IPAddressReservation];
+    originalIPAddress.value = response.LanBasic.LANIPSetting.IPAddress;
   } catch (err) {
     console.error('Error fetching LAN basic:', err);
     error.value = 'Failed to fetch LAN settings';
@@ -230,12 +235,20 @@ const validateLANSettings = (): boolean => {
 
 const handleApply = async () => {
   if (!lanData.value) return;
-  
+
   error.value = null;
   if (!validateLANSettings()) {
     return;
   }
 
+  const currentIP = lanData.value.LanBasic.LANIPSetting.IPAddress;
+  const ipChanged = currentIP !== originalIPAddress.value;
+
+  if (ipChanged) {
+      newIPAddress.value = currentIP;
+      showRedirectDialog.value = true;
+  }
+  
   loading.value = true;
   try {
     await updateLanBasic({
@@ -248,17 +261,26 @@ const handleApply = async () => {
         IPAddressReservation: reservations.value
       }
     });
+
     showSuccess.value = true;
     setTimeout(() => {
       showSuccess.value = false;
     }, 3000);
     await fetchLanBasic();
+  
   } catch (err) {
     console.error('Error updating LAN settings:', err);
     error.value = 'Failed to update LAN settings';
   } finally {
     loading.value = false;
   }
+};
+
+const handleRedirect = () => {
+  const protocol = window.location.protocol;
+  const port = window.location.port ? `:${window.location.port}` : '';
+  const newURL = `${protocol}//${newIPAddress.value}${port}${window.location.pathname}`;
+  window.location.href = newURL;
 };
 
 const handleIPInput = (event: Event, field: string) => {
@@ -596,6 +618,13 @@ onMounted(fetchLanBasic);
     <div v-if="showSuccess" class="success-message" :data-testid="qa('ipv4-configuration-success-message')">
       {{ t('common.apply') }} successful
     </div>
+
+    <IPChangeRedirect
+      :is-visible="showRedirectDialog"
+      :new-i-p="newIPAddress"
+      :duration="15"
+      @redirect="handleRedirect"
+    />
   </div>
 </template>
 

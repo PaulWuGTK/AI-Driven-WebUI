@@ -520,7 +520,11 @@ export default {
     hostName: '主机名称',
     refresh: '刷新',
     apply: '应用',
-    cancel: '取消'
+    cancel: '取消',
+    ipChangeSuccess: 'IP 地址修改成功',
+    ipChangeMessage: 'LAN IP 地址已修改为 {newIP}，页面将自动跳转到新的地址。',
+    redirectingIn: '即将跳转：',
+    redirectNow: '立即跳转'
   },
   serviceControl: {
     title: '服务控制',

@@ -520,7 +520,11 @@ export default {
     hostName: 'Host-Name',
     refresh: 'Aktualisieren',
     apply: 'Anwenden',
-    cancel: 'Abbrechen'
+    cancel: 'Abbrechen',
+    ipChangeSuccess: 'IP-Adresse erfolgreich geändert',
+    ipChangeMessage: 'Die LAN-IP-Adresse wurde auf {newIP} geändert. Die Seite wird automatisch zur neuen Adresse weitergeleitet.',
+    redirectingIn: 'Weiterleitung in:',
+    redirectNow: 'Jetzt weiterleiten'
   },
   serviceControl: {
     title: 'Dienststeuerung',

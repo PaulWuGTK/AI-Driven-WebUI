@@ -519,7 +519,11 @@ export default {
     hostName: '호스트 이름',
     refresh: '새로고침',
     apply: '적용',
-    cancel: '취소'
+    cancel: '취소',
+    ipChangeSuccess: 'IP 주소가 성공적으로 변경되었습니다',
+    ipChangeMessage: 'LAN IP 주소가 {newIP}로 변경되었습니다. 페이지는 새 주소로 자동 리다이렉트됩니다.',
+    redirectingIn: '리다이렉트까지 남은 시간:',
+    redirectNow: '지금 바로 이동'
   },
   serviceControl: {
     title: '서비스 제어',

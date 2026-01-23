@@ -524,7 +524,11 @@ const translations = {
     hostName: 'Host Name',
     refresh: 'Refresh',
     apply: 'Apply',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    ipChangeSuccess: 'IP Address Changed Successfully',
+    ipChangeMessage: 'The LAN IP address has been changed to {newIP}. The page will automatically redirect to the new address.',
+    redirectingIn: 'Redirecting in:',
+    redirectNow: 'Redirect Now'
   },
   serviceControl: {
     title: 'Service Control',

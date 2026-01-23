@@ -410,6 +410,10 @@ export interface Translations {
     refresh: string;
     apply: string;
     cancel: string;
+    ipChangeSuccess: string;
+    ipChangeMessage: string;
+    redirectingIn: string;
+    redirectNow: string;
   };
   serviceControl: {
     title: string;

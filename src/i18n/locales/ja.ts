@@ -520,7 +520,11 @@ export default {
     hostName: 'ホスト名',
     refresh: '更新',
     apply: '適用',
-    cancel: 'キャンセル'
+    cancel: 'キャンセル',
+    ipChangeSuccess: 'IP アドレスの変更が完了しました',
+    ipChangeMessage: 'LAN IP アドレスが {newIP} に変更されました。ページは自動的に新しいアドレスへリダイレクトされます。',
+    redirectingIn: 'リダイレクトまで：',
+    redirectNow: '今すぐリダイレクト'
   },
   serviceControl: {
     title: 'サービス制御',

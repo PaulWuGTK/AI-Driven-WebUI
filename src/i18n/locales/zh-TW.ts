@@ -521,7 +521,11 @@ export default {
     hostName: '主機名稱',
     refresh: '重新整理',
     apply: '套用',
-    cancel: '取消'
+    cancel: '取消',
+    ipChangeSuccess: 'IP 位址變更成功',
+    ipChangeMessage: 'LAN IP 位址已變更為 {newIP}，頁面將自動導向至新的位址。',
+    redirectingIn: '即將重新導向：',
+    redirectNow: '立即重新導向'
   },
   serviceControl: {
     title: '服務控制',
