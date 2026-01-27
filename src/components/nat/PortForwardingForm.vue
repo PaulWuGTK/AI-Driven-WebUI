@@ -1,15 +1,16 @@
 <template>
-  <div class="port-forward-edit">
+  <div class="port-forward-edit" :data-testid="qa('port-forward-edit')">
     <h3>{{ isEdit ? $t('portForwarding.editRule') : $t('portForwarding.addRule') }}</h3>
     <form @submit.prevent="handleSubmit">
       <div class="form-section">
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('portForwarding.enablePortForwarding') }}</span>
+            <span :data-testid="qa('port-forward-enable-label')">{{ $t('portForwarding.enablePortForwarding') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 :checked="formData.Enable"
+                :data-testid="qa('port-forward-enable-toggle')"
                 @change="formData.Enable = ($event.target as HTMLInputElement).checked"
               />
               <span class="slider"></span>
@@ -105,6 +106,9 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import type { PortForwardRule } from '../../types/portForwarding';
+import { useQA } from '../../utils/qa';
+
+const { qa } = useQA();
 
 interface Props {
   rule: PortForwardRule;

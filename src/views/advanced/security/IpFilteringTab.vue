@@ -1,41 +1,66 @@
 <template>
-  <div class="ip-filtering-tab">
-    <div v-if="showSuccess" class="success-message">
+  <div class="ip-filtering-tab" :data-testid="qa('ip-filtering-tab')">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('ip-filtering-success')">
       {{ $t('common.saveSuccess') }}
     </div>
 
     <div class="form-group toggle-group">
-      <label>{{ $t('ipFiltering.enableIpFiltering') }}</label>
+      <label :data-testid="qa('ip-filtering-enable-label')">{{ $t('ipFiltering.enableIpFiltering') }}</label>
       <label class="switch">
-        <input type="checkbox" v-model="config.Enable" @change="onEnableChange">
+        <input
+          type="checkbox"
+          v-model="config.Enable"
+          :data-testid="qa('ip-filtering-enable-toggle')"
+          @change="onEnableChange"
+        >
         <span class="slider"></span>
       </label>
     </div>
 
     <template v-if="config.Enable">
       <div class="form-group radio-group">
-        <label>{{ $t('ipFiltering.ipFilteringMode') }}</label>
+        <label :data-testid="qa('ip-filtering-mode-label')">{{ $t('ipFiltering.ipFilteringMode') }}</label>
         <div class="radio-options">
           <label class="radio-label">
-            <input type="radio" value="Blacklist" v-model="filterMode">
+            <input
+              type="radio"
+              value="Blacklist"
+              v-model="filterMode"
+              :data-testid="qa('ip-filtering-mode-blacklist')"
+            >
             <span>{{ $t('ipFiltering.blacklist') }}</span>
           </label>
           <label class="radio-label">
-            <input type="radio" value="Whitelist" v-model="filterMode">
+            <input
+              type="radio"
+              value="Whitelist"
+              v-model="filterMode"
+              :data-testid="qa('ip-filtering-mode-whitelist')"
+            >
             <span>{{ $t('ipFiltering.whitelist') }}</span>
           </label>
         </div>
       </div>
 
       <div class="form-group radio-group">
-        <label>{{ $t('ipFiltering.filterMode') }}</label>
+        <label :data-testid="qa('ip-filtering-version-label')">{{ $t('ipFiltering.filterMode') }}</label>
         <div class="radio-options">
           <label class="radio-label">
-            <input type="radio" value="IPv4" v-model="ipVersion">
+            <input
+              type="radio"
+              value="IPv4"
+              v-model="ipVersion"
+              :data-testid="qa('ip-filtering-version-ipv4')"
+            >
             <span>{{ $t('ipFiltering.enableIpv4') }}</span>
           </label>
           <label class="radio-label">
-            <input type="radio" value="IPv6" v-model="ipVersion">
+            <input
+              type="radio"
+              value="IPv6"
+              v-model="ipVersion"
+              :data-testid="qa('ip-filtering-version-ipv6')"
+            >
             <span>{{ $t('ipFiltering.enableIpv6') }}</span>
           </label>
         </div>
@@ -146,6 +171,9 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { ipFilteringApi } from '../../../services/api/ipFiltering';
 import type { IpFilteringConfig, IpFilterEntry, IpFilterMode, IpVersion } from '../../../types/ipFiltering';
+import { useQA } from '../../../utils/qa';
+
+const { qa } = useQA();
 
 const config = ref<IpFilteringConfig>({
   Enable: false,

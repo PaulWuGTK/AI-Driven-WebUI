@@ -14,6 +14,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :required="required"
+        :data-testid="dataTestid"
         :class="inputClasses"
         @input="handleInput"
         @blur="handleBlur"
@@ -46,6 +47,7 @@ interface Props {
   errorMessage?: string;
   helpText?: string;
   id?: string;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

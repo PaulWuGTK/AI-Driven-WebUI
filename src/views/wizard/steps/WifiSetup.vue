@@ -159,7 +159,7 @@ const showWpa3Warning = computed(() => {
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.smartConnect" :data-testid="qa('wizard-wifi-smart-connect-toggle')" />
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('wizard-wifi-smart-connect-toggle-slider')"></span>
           </label>
         </div>
 
@@ -174,7 +174,7 @@ const showWpa3Warning = computed(() => {
           </label>
           <label class="toggle-switch">
             <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" :data-testid="qa('wizard-wifi-mlo-toggle')" />
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('wizard-wifi-mlo-toggle-slider')"></span>
           </label>
         </div>
       </div>
@@ -229,19 +229,19 @@ const showWpa3Warning = computed(() => {
           <div class="band-toggle">
             <label>{{ t('wizard.enable24ghz') }}</label>
             <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['2g'].enabled" />
-              <span class="slider"></span>
+              <input type="checkbox" v-model="config.wifi.bands['2g'].enabled" :data-testid="qa('wizard-wifi-band-2g-enable-toggle')" />
+              <span class="slider" :data-testid="qa('wizard-wifi-band-2g-enable-toggle-slider')"></span>
             </label>
           </div>
           <div v-if="config.wifi.bands['2g'].enabled" class="band-fields">
             <div class="form-group">
               <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['2g'].ssid" class="form-input" />
+              <input type="text" v-model="config.wifi.bands['2g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-2g-ssid-input')" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>{{ t('wizard.securityType') }}</label>
-                <select v-model="config.wifi.bands['2g'].security" class="form-select">
+                <select v-model="config.wifi.bands['2g'].security" class="form-select" :data-testid="qa('wizard-wifi-band-2g-security-select')">
                   <option v-for="option in band2gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
                   </option>
@@ -254,6 +254,7 @@ const showWpa3Warning = computed(() => {
                   v-model="config.wifi.bands['2g'].password"
                   class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
+                  :data-testid="qa('wizard-wifi-band-2g-password-input')"
                 />
               </div>
             </div>
@@ -265,19 +266,19 @@ const showWpa3Warning = computed(() => {
           <div class="band-toggle">
             <label>{{ t('wizard.enable5ghz') }}</label>
             <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['5g'].enabled" />
-              <span class="slider"></span>
+              <input type="checkbox" v-model="config.wifi.bands['5g'].enabled" :data-testid="qa('wizard-wifi-band-5g-enable-toggle')" />
+              <span class="slider" :data-testid="qa('wizard-wifi-band-5g-enable-toggle-slider')"></span>
             </label>
           </div>
           <div v-if="config.wifi.bands['5g'].enabled" class="band-fields">
             <div class="form-group">
               <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['5g'].ssid" class="form-input" />
+              <input type="text" v-model="config.wifi.bands['5g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-5g-ssid-input')" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>{{ t('wizard.securityType') }}</label>
-                <select v-model="config.wifi.bands['5g'].security" class="form-select">
+                <select v-model="config.wifi.bands['5g'].security" class="form-select" :data-testid="qa('wizard-wifi-band-5g-security-select')">
                   <option v-for="option in band5gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
                   </option>
@@ -290,6 +291,7 @@ const showWpa3Warning = computed(() => {
                   v-model="config.wifi.bands['5g'].password"
                   class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
+                  :data-testid="qa('wizard-wifi-band-5g-password-input')"
                 />
               </div>
             </div>
@@ -301,19 +303,19 @@ const showWpa3Warning = computed(() => {
           <div class="band-toggle">
             <label>{{ t('wizard.enable6ghz') }}</label>
             <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['6g'].enabled" />
-              <span class="slider"></span>
+              <input type="checkbox" v-model="config.wifi.bands['6g'].enabled" :data-testid="qa('wizard-wifi-band-6g-enable-toggle')" />
+              <span class="slider" :data-testid="qa('wizard-wifi-band-6g-enable-toggle-slider')"></span>
             </label>
           </div>
           <div v-if="config.wifi.bands['6g'].enabled" class="band-fields">
             <div class="form-group">
               <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['6g'].ssid" class="form-input" />
+              <input type="text" v-model="config.wifi.bands['6g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-6g-ssid-input')" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>{{ t('wizard.securityType') }}</label>
-                <select v-model="config.wifi.bands['6g'].security" class="form-select">
+                <select v-model="config.wifi.bands['6g'].security" class="form-select" :data-testid="qa('wizard-wifi-band-6g-security-select')">
                   <option v-for="option in band6gSecurityOptions" :key="option.value" :value="option.value">
                     {{ option.label }}
                   </option>
@@ -326,6 +328,7 @@ const showWpa3Warning = computed(() => {
                   v-model="config.wifi.bands['6g'].password"
                   class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
+                  :data-testid="qa('wizard-wifi-band-6g-password-input')"
                 />
               </div>
             </div>
@@ -345,8 +348,8 @@ const showWpa3Warning = computed(() => {
             </span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.psc" />
-            <span class="slider"></span>
+            <input type="checkbox" v-model="config.wifi.psc" :data-testid="qa('wizard-wifi-psc-toggle')" />
+            <span class="slider" :data-testid="qa('wizard-wifi-psc-toggle-slider')"></span>
           </label>
         </div>
 
@@ -360,8 +363,8 @@ const showWpa3Warning = computed(() => {
             </span>
           </label>
           <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.pmf" />
-            <span class="slider"></span>
+            <input type="checkbox" v-model="config.wifi.pmf" :data-testid="qa('wizard-wifi-pmf-toggle')" />
+            <span class="slider" :data-testid="qa('wizard-wifi-pmf-toggle-slider')"></span>
           </label>
         </div>
       </div>

@@ -6,6 +6,7 @@
       :checked="modelValue"
       :disabled="disabled"
       :required="required"
+      :data-testid="dataTestid"
       class="form-check-input"
       @change="handleChange"
     />
@@ -24,6 +25,7 @@ interface Props {
   disabled?: boolean;
   required?: boolean;
   id?: string;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

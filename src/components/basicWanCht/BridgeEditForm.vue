@@ -1,43 +1,45 @@
 <template>
-  <div class="bridge-form">
+  <div class="bridge-form" :data-testid="qa('bridge-form')">
     <div class="panel-section">
       <div class="section-title">Bridge</div>
       <div class="card-content">
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('basicWanCht.enable') }}</span>
+            <span :data-testid="qa('bridge-enable-label')">{{ $t('basicWanCht.enable') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 v-model="localData.Enable"
+                :data-testid="qa('bridge-enable-toggle')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('bridge-enable-toggle-slider')"></span>
             </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.protocol') }}</label>
-          <BaseInput v-model="localData.Protocol" :disabled="true" />
+          <label :data-testid="qa('bridge-protocol-label')">{{ $t('basicWanCht.protocol') }}</label>
+          <BaseInput v-model="localData.Protocol" :disabled="true" :data-testid="qa('bridge-protocol-input')" />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.mtu', { min: 576, max: 1500 }) }}</label>
-          <BaseInput v-model.number="localData.MTU" type="number" min="576" max="1500" />
+          <label :data-testid="qa('bridge-mtu-label')">{{ $t('basicWanCht.mtu', { min: 576, max: 1500 }) }}</label>
+          <BaseInput v-model.number="localData.MTU" type="number" min="576" max="1500" :data-testid="qa('bridge-mtu-input')" />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.lanInterface') }}</label>
+          <label :data-testid="qa('bridge-lan-interface-label')">{{ $t('basicWanCht.lanInterface') }}</label>
           <div class="interface-list">
             <div v-for="iface in (localData.ListSupportedLANInterfaces || [])" :key="iface" class="switch-label">
-              <span>{{ iface }}</span>
+              <span :data-testid="qa(`bridge-lan-interface-${slug(iface)}`)">{{ iface }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   :checked="localData.ListLANInterfaces.includes(iface)"
+                  :data-testid="qa(`bridge-lan-interface-toggle-${slug(iface)}`)"
                   @change="(e) => toggleInterface(iface, (e.target as HTMLInputElement).checked)"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa(`bridge-lan-interface-toggle-slider-${slug(iface)}`)"></span>
               </label>
             </div>
           </div>
@@ -45,25 +47,36 @@
 
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('basicWanCht.vlan') }}</span>
+            <span :data-testid="qa('bridge-vlan-enable-label')">{{ $t('basicWanCht.vlan') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 v-model="localData.VLANEnable"
+                :data-testid="qa('bridge-vlan-enable-toggle')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('bridge-vlan-enable-toggle-slider')"></span>
             </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.priorityBit') }}</label>
-          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLANEnable" />
+          <label :data-testid="qa('bridge-vlan-priority-label')">{{ $t('basicWanCht.priorityBit') }}</label>
+          <BaseInput
+            v-model.number="localData.VLANPriority"
+            type="number"
+            :disabled="!localData.VLANEnable"
+            :data-testid="qa('bridge-vlan-priority-input')"
+          />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('basicWanCht.vlanId') }}</label>
-          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLANEnable" />
+          <label :data-testid="qa('bridge-vlan-id-label')">{{ $t('basicWanCht.vlanId') }}</label>
+          <BaseInput
+            v-model.number="localData.VLANID"
+            type="number"
+            :disabled="!localData.VLANEnable"
+            :data-testid="qa('bridge-vlan-id-input')"
+          />
         </div>
       </div>
     </div>
@@ -74,6 +87,9 @@
 import { ref, watch } from 'vue';
 import type { BasicWanChtBridge } from '../../types/basicWanCht';
 import { BaseInput } from '../common';
+import { useQA } from '../../utils/qa';
+
+const { qa, slug } = useQA();
 
 interface Props {
   modelValue: BasicWanChtBridge;

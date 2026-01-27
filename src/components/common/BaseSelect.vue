@@ -8,6 +8,7 @@
       :value="modelValue"
       :disabled="disabled"
       :required="required"
+      :data-testid="dataTestid"
       :class="selectClasses"
       @change="handleChange"
     >
@@ -46,6 +47,7 @@ interface Props {
   errorMessage?: string;
   helpText?: string;
   id?: string;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

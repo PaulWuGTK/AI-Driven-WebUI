@@ -513,7 +513,7 @@ onMounted(fetchConfig);
                     :checked="Number(draft.CommonSSIDEnable) === 1"
                     @change="(e) => { draft!.CommonSSIDEnable = (e.target as HTMLInputElement).checked ? 1 : 0; onCommonSsidToggle(); }"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle-slider')"></span>
                 </label>
               </div>
             </div>
@@ -529,7 +529,7 @@ onMounted(fetchConfig);
                     :disabled="Number(draft.CommonSSIDEnable) === 0"
                     @change="(e) => { draft!.MLOEnable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('wlan-basic-multi-mlo-enable-toggle-slider')"></span>
                 </label>
               </div>
 
@@ -564,7 +564,7 @@ onMounted(fetchConfig);
                       :checked="Number(commonSsidConfig.Enable) === 1"
                       @change="(e) => { commonSsidConfig!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                     >
-                    <span class="slider"></span>
+                    <span class="slider" :data-testid="qa('wlan-basic-multi-common-band-enable-toggle-slider')"></span>
                   </label>
                 </div>
               </div>
@@ -628,7 +628,7 @@ onMounted(fetchConfig);
                       :disabled="Number(commonSsidConfig.Enable) === 0"
                       @change="(e) => { commonSsidConfig!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
                     >
-                    <span class="slider"></span>
+                    <span class="slider" :data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle-slider')"></span>
                   </label>
                 </div>
               </div>
@@ -658,7 +658,7 @@ onMounted(fetchConfig);
                         :checked="Number(getInterfaceByBand(b)!.Enable) === 1"
                         @change="(e) => { getInterfaceByBand(b)!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
                       >
-                      <span class="slider"></span>
+                      <span class="slider" :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-slider-${slug(b)}`)"></span>
                     </label>
                   </div>
                 </div>
@@ -724,7 +724,7 @@ onMounted(fetchConfig);
                         :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                         @change="(e) => { getInterfaceByBand(b)!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
                       >
-                      <span class="slider"></span>
+                      <span class="slider" :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-slider-${slug(b)}`)"></span>
                     </label>
                   </div>
                 </div>
@@ -1067,7 +1067,6 @@ onMounted(fetchConfig);
   display: grid;
   place-items: center;
   cursor: pointer;
-  margin-bottom: 2rem;
 }
 
 /* Minimal tweak: some browsers render Material Icons slightly low inside square buttons.

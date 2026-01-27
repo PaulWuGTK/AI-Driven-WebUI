@@ -1,17 +1,18 @@
 <template>
-  <div class="ipoe-form">
+  <div class="ipoe-form" :data-testid="qa('ipoe-form')">
     <div class="panel-section">
       <div class="section-title">IPoE - {{ localData.Protocol === 'DHCP' ? 'DHCP' : 'Static' }}</div>
       <div class="card-content">
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('basicWanCht.enable') }}</span>
+            <span :data-testid="qa('ipoe-enable-label')">{{ $t('basicWanCht.enable') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 v-model="localData.Enable"
+                :data-testid="qa('ipoe-enable-toggle')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ipoe-enable-toggle-slider')"></span>
             </label>
           </div>
         </div>
@@ -20,6 +21,7 @@
           <label>{{ $t('basicWanCht.ipv4Protocol') }}</label>
           <BaseSelect
             v-model="localData.Protocol"
+            :data-testid="qa('ipoe-ipv4-protocol-select')"
             :options="[
               { label: 'DHCP', value: 'DHCP' },
               { label: 'Static', value: 'Static' }
@@ -29,87 +31,91 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.mtu', { min: 576, max: 1500 }) }}</label>
-          <BaseInput v-model.number="localData.MTU" type="number" min="576" max="1500" />
+          <BaseInput v-model.number="localData.MTU" type="number" min="576" max="1500" :data-testid="qa('ipoe-mtu-input')" />
         </div>
 
         <template v-if="localData.Protocol === 'Static'">
           <div class="form-group">
             <label>{{ $t('basicWanCht.ipAddress') }}</label>
-            <BaseInput v-model="localData.IPAddress" />
+            <BaseInput v-model="localData.IPAddress" :data-testid="qa('ipoe-ip-address-input')" />
           </div>
 
           <div class="form-group">
             <label>{{ $t('basicWanCht.subnetMask') }}</label>
-            <BaseInput v-model="localData.SubnetMask" />
+            <BaseInput v-model="localData.SubnetMask" :data-testid="qa('ipoe-subnet-mask-input')" />
           </div>
 
           <div class="form-group">
             <label>{{ $t('basicWanCht.gatewayIpAddress') }}</label>
-            <BaseInput v-model="localData.Gateway" />
+            <BaseInput v-model="localData.Gateway" :data-testid="qa('ipoe-gateway-input')" />
           </div>
         </template>
 
         <template v-if="localData.Protocol === 'DHCP'">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ $t('basicWanCht.ipv4') }}</span>
+              <span :data-testid="qa('ipoe-ipv4-label')">{{ $t('basicWanCht.ipv4') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="localData.IPv4Enable"
+                  :data-testid="qa('ipoe-ipv4-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipoe-ipv4-toggle-slider')"></span>
               </label>
             </div>
           </div>
 
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ $t('basicWanCht.ipv6') }}</span>
+              <span :data-testid="qa('ipoe-ipv6-label')">{{ $t('basicWanCht.ipv6') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="localData.IPv6Enable"
+                  :data-testid="qa('ipoe-ipv6-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipoe-ipv6-toggle-slider')"></span>
               </label>
             </div>
           </div>
 
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ $t('basicWanCht.dhcpOption60') }}</span>
+              <span :data-testid="qa('ipoe-option60-label')">{{ $t('basicWanCht.dhcpOption60') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="localData.Option60Enable"
+                  :data-testid="qa('ipoe-option60-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipoe-option60-toggle-slider')"></span>
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <label>{{ $t('basicWanCht.vendorId') }}</label>
-            <BaseInput v-model="localData.Option60Value" :disabled="!localData.Option60Enable" />
+            <label :data-testid="qa('ipoe-vendor-id-label')">{{ $t('basicWanCht.vendorId') }}</label>
+            <BaseInput v-model="localData.Option60Value" :disabled="!localData.Option60Enable" :data-testid="qa('ipoe-vendor-id-input')" />
           </div>
 
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ $t('basicWanCht.dhcpOption61') }}</span>
+              <span :data-testid="qa('ipoe-option61-label')">{{ $t('basicWanCht.dhcpOption61') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="localData.Option61Enable"
+                  :data-testid="qa('ipoe-option61-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipoe-option61-toggle-slider')"></span>
               </label>
             </div>
           </div>
 
           <div class="form-group">
             <label>{{ $t('basicWanCht.duid') }}</label>
-            <BaseInput v-model="localData.Option61Value" />
+            <BaseInput v-model="localData.Option61Value" :data-testid="qa('ipoe-duid-input')" />
           </div>
         </template>
 
@@ -117,6 +123,7 @@
           <label>{{ $t('basicWanCht.dnsIpAddress') }}</label>
           <BaseSelect
             v-model="localData.DNSMode"
+            :data-testid="qa('ipoe-dns-mode-select')"
             :options="[
               { label: $t('basicWanCht.autoObtainFromISP'), value: 'Auto' },
               { label: $t('basicWanCht.manual'), value: 'Manual' }
@@ -126,24 +133,25 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.primaryDNS') }}</label>
-          <BaseInput v-model="localData.PrimaryDNS" :disabled="localData.DNSMode === 'Auto'" />
+          <BaseInput v-model="localData.PrimaryDNS" :disabled="localData.DNSMode === 'Auto'" :data-testid="qa('ipoe-primary-dns-input')" />
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.secondaryDNS') }}</label>
-          <BaseInput v-model="localData.SecondaryDNS" :disabled="localData.DNSMode === 'Auto'" />
+          <BaseInput v-model="localData.SecondaryDNS" :disabled="localData.DNSMode === 'Auto'" :data-testid="qa('ipoe-secondary-dns-input')" />
         </div>
 
         <template v-if="localData.Protocol === 'Static'">
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ $t('basicWanCht.natFunction') }}</span>
+              <span :data-testid="qa('ipoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="localData.NATEnable"
+                  :data-testid="qa('ipoe-nat-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipoe-nat-toggle-slider')"></span>
               </label>
             </div>
           </div>
@@ -151,38 +159,40 @@
 
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('basicWanCht.igmpProxy') }}</span>
+            <span :data-testid="qa('ipoe-igmp-label')">{{ $t('basicWanCht.igmpProxy') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 v-model="localData.IGMPEnable"
+                :data-testid="qa('ipoe-igmp-toggle')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ipoe-igmp-toggle-slider')"></span>
             </label>
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
-            <span>{{ $t('basicWanCht.vlan') }}</span>
+            <span :data-testid="qa('ipoe-vlan-label')">{{ $t('basicWanCht.vlan') }}</span>
             <label class="switch">
               <input
                 type="checkbox"
                 v-model="localData.VLANEnable"
+                :data-testid="qa('ipoe-vlan-toggle')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ipoe-vlan-toggle-slider')"></span>
             </label>
           </div>
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.priorityBit') }}</label>
-          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLANEnable" />
+          <BaseInput v-model.number="localData.VLANPriority" type="number" :disabled="!localData.VLANEnable" :data-testid="qa('ipoe-vlan-priority-input')" />
         </div>
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.vlanId') }}</label>
-          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLANEnable" />
+          <BaseInput v-model.number="localData.VLANID" type="number" :disabled="!localData.VLANEnable" :data-testid="qa('ipoe-vlan-id-input')" />
         </div>
       </div>
     </div>
@@ -193,6 +203,9 @@
 import { ref, watch } from 'vue';
 import type { BasicWanChtIPoE } from '../../types/basicWanCht';
 import { BaseInput, BaseSelect } from '../common';
+import { useQA } from '../../utils/qa';
+
+const { qa } = useQA();
 
 interface Props {
   modelValue: BasicWanChtIPoE;

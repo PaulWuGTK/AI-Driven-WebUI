@@ -4,7 +4,10 @@ import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import type { ServiceControlRule, ServiceControlOptions, ServiceOption } from '../../../types/serviceControl';
 
+import { useQA } from '../../../utils/qa';
+
 const { t } = useI18n();
+const { qa } = useQA();
 
 const props = defineProps<{
   rule: ServiceControlRule;
@@ -132,23 +135,24 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 </script>
 
 <template>
-  <div class="modal-overlay">
+  <div class="modal-overlay" :data-testid="qa('service-control-modal')">
     <div class="modal-content">
       <div class="modal-header">
         <h3>{{ editingRule.Service ? t('serviceControl.editRule') : t('serviceControl.addRule') }}</h3>
-        <button class="close-button" @click="$emit('cancel')">&times;</button>
+        <button class="close-button" @click="$emit('cancel')" :data-testid="qa('service-control-close')">&times;</button>
       </div>
-      
+
       <div class="modal-body">
         <form @submit.prevent="handleSubmit">
           <!-- Enable/Disable Toggle -->
           <div class="form-group">
             <div class="switch-label">
-              <span>{{ t('common.enable') }}</span>
+              <span :data-testid="qa('service-control-enable-label')">{{ t('common.enable') }}</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   v-model="editingRule.Enable"
+                  :data-testid="qa('service-control-enable-toggle')"
                 >
                 <span class="slider"></span>
               </label>
@@ -221,11 +225,12 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- Source IP Range Toggle -->
           <div class="form-group">
             <div class="switch-label">
-              <span>Specify Source IP Range</span>
+              <span :data-testid="qa('service-control-source-ip-range-label')">Specify Source IP Range</span>
               <label class="switch">
                 <input
                   type="checkbox"
                   :checked="showSourceIPRange"
+                  :data-testid="qa('service-control-source-ip-range-toggle')"
                   @change="toggleSourceIPRange"
                 >
                 <span class="slider"></span>
