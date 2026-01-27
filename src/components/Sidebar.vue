@@ -407,6 +407,7 @@ watch(() => route.path, (newPath) => {
     '/advance/ssh': ['/advanced/ssh'],
     '/advance/service-control': ['/advanced/service-control'],
     '/advance/qos': ['/advanced/qos'],
+    '/advance/lcm': ['/advanced/lcm'],
     '/application/ddns': ['/advanced/ddns'],
     '/management/tools': ['/system/diagnostics'],
     '/management/tools/ping': ['/system/diagnostics/ping'],

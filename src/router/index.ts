@@ -331,6 +331,10 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/advance/lcm',
+      redirect: '/advanced/lcm'
+    },
+    {
       path: '/system/ntp',
       name: 'SystemNtp',
       component: () => import('../views/system/ntp/NtpConfig.vue'),
