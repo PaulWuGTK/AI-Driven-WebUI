@@ -146,7 +146,8 @@ const baseMenuItems: MenuItem[] = [
     subItems: [
       { name: 'SSH Service', path: '/advance/ssh', translationKey: 'menu.sshService', menuKey: 'advanceSetup.sshService' },
       { name: 'Service Control', path: '/advance/service-control', translationKey: 'menu.serviceControl', menuKey: 'advanceSetup.serviceControl' },
-      { name: 'QoS', path: '/advance/qos', translationKey: 'menu.qos', menuKey: 'advanceSetup.qos' }
+      { name: 'QoS', path: '/advance/qos', translationKey: 'menu.qos', menuKey: 'advanceSetup.qos' },
+      { name: 'LCM', path: '/advanced/lcm', translationKey: 'menu.lcm', menuKey: 'advanceSetup.lcm' }
     ]
   },
   {

@@ -325,6 +325,12 @@ const router = createRouter({
       redirect: '/advanced/ddns'
     },
     {
+      path: '/advanced/lcm',
+      name: 'AdvancedLcm',
+      component: () => import('../views/advanced/LcmConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/system/ntp',
       name: 'SystemNtp',
       component: () => import('../views/system/ntp/NtpConfig.vue'),

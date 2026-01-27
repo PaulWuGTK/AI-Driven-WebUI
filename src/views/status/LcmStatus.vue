@@ -46,7 +46,7 @@ onUnmounted(() => {
 
 <template>
   <div class="page-container">
-    <h1 class="page-title" :data-testid="qa('lcm-title')">{{ t('lcm.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('lcm-title')">{{ t('lcm.titleStatus') }}</h1>
 
     <div class="status-content" :data-testid="qa('lcm-content')">
       <div v-if="loading && !lcmData" class="loading-state" :data-testid="qa('lcm-loading')">
