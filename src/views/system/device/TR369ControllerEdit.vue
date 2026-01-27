@@ -65,8 +65,17 @@ const handleSubmit = () => {
   <div class="controller-edit" :data-testid="qa('tr369-controller-edit-content')">
     <h2 :data-testid="qa('tr369-controller-edit-title')">{{ controller.Alias ? t('device.editController') : t('device.addController') }}</h2>
 
-    <div v-if="validationErrors.length > 0" class="validation-errors">
-      <div v-for="(error, index) in validationErrors" :key="index" class="error-message">
+    <div
+      v-if="validationErrors.length > 0"
+      class="validation-errors"
+      :data-testid="qa('tr369-controller-edit-validation-errors')"
+    >
+      <div
+        v-for="(error, index) in validationErrors"
+        :key="index"
+        class="error-message"
+        :data-testid="qa(`tr369-controller-edit-validation-error-${index}`)"
+      >
         {{ error }}
       </div>
     </div>
@@ -83,7 +92,7 @@ const handleSubmit = () => {
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('tr369-controller-edit-enable-toggle-slider')"></span>
           </label>
         </div>
       </div>
