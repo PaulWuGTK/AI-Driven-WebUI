@@ -338,7 +338,7 @@ export default {
     source: '소스',
     destination: '목적지',
     type: '유형',
-    autoRestart: 'AutoRestart',
+    autoRestart: '자동 재시작',
     enable: '사용',
     disable: '사용 안 함',
     maximumRetryCount: '최대 재시도 횟수',
@@ -346,7 +346,14 @@ export default {
     executionUnit: '실행 유닛',
     uptime: '가동 시간',
     start: '시작',
-    stop: '중지'
+    stop: '중지',
+    systemResourceUsage: '시스템 리소스 사용 현황',
+    availableMemory: '사용 가능한 메모리',
+    availableDiskSpace: '사용 가능한 디스크 공간',
+    state: '상태',
+    pid: 'PID',
+    ipAddress: 'IP 주소',
+    rootUid: '루트 UID'
   },
   systemStats: {
     title: '시스템 통계',

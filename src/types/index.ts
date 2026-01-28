@@ -7,6 +7,7 @@ export * from './dualImage';
 export * from './ipFiltering';
 export * from './lan';
 export * from './lcm';
+export * from './lcmMonitor';
 export * from './mesh';
 export * from './menuVisibility';
 export * from './ntp';

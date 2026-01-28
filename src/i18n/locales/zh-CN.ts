@@ -339,7 +339,7 @@ export default {
     source: '来源',
     destination: '目的地',
     type: '类型',
-    autoRestart: 'AutoRestart',
+    autoRestart: '自动重启',
     enable: '启用',
     disable: '禁用',
     maximumRetryCount: '最大重试次数',
@@ -347,7 +347,14 @@ export default {
     executionUnit: '执行单元',
     uptime: '运行时间',
     start: '启动',
-    stop: '停止'
+    stop: '停止',
+    systemResourceUsage: '系统资源使用情况',
+    availableMemory: '可用内存',
+    availableDiskSpace: '可用磁盘空间',
+    state: '状态',
+    pid: 'PID',
+    ipAddress: 'IP 地址',
+    rootUid: 'Root UID'
   },
   systemStats: {
     title: '系统统计',

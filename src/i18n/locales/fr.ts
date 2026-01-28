@@ -339,7 +339,7 @@ export default {
     source: 'Source',
     destination: 'Destination',
     type: 'Type',
-    autoRestart: 'AutoRestart',
+    autoRestart: 'Redémarrage automatique',
     enable: 'Activer',
     disable: 'Désactiver',
     maximumRetryCount: 'Nombre maximal de tentatives',
@@ -347,7 +347,14 @@ export default {
     executionUnit: 'Unité d’exécution',
     uptime: 'Temps de fonctionnement',
     start: 'Démarrer',
-    stop: 'Arrêter'
+    stop: 'Arrêter',
+    systemResourceUsage: 'Utilisation des ressources système',
+    availableMemory: 'Mémoire disponible',
+    availableDiskSpace: 'Espace disque disponible',
+    state: 'État',
+    pid: 'PID',
+    ipAddress: 'Adresse IP',
+    rootUid: 'UID root'
   },
   systemStats: {
     title: 'Statistiques système',

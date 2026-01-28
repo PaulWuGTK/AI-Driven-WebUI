@@ -340,7 +340,7 @@ export default {
     source: '來源',
     destination: '目的地',
     type: '類型',
-    autoRestart: 'AutoRestart',
+    autoRestart: '自動重新啟動',
     enable: '啟用',
     disable: '停用',
     maximumRetryCount: '最大重試次數',
@@ -348,7 +348,14 @@ export default {
     executionUnit: '執行單元',
     uptime: '運行時間',
     start: '啟動',
-    stop: '停止'
+    stop: '停止',
+    systemResourceUsage: '系統資源使用狀況',
+    availableMemory: '可用記憶體',
+    availableDiskSpace: '可用磁碟空間',
+    state: '狀態',
+    pid: 'PID',
+    ipAddress: 'IP 位址',
+    rootUid: 'Root UID'
   },
   systemStats: {
     title: '系統統計',

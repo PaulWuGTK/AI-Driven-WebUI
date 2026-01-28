@@ -339,7 +339,7 @@ export default {
     source: '送信元',
     destination: '宛先',
     type: 'タイプ',
-    autoRestart: 'AutoRestart',
+    autoRestart: '自動再起動',
     enable: '有効',
     disable: '無効',
     maximumRetryCount: '最大リトライ回数',
@@ -347,7 +347,14 @@ export default {
     executionUnit: '実行ユニット',
     uptime: '稼働時間',
     start: '開始',
-    stop: '停止'
+    stop: '停止',
+    systemResourceUsage: 'システムリソース使用状況',
+    availableMemory: '利用可能メモリ',
+    availableDiskSpace: '利用可能ディスク容量',
+    state: '状態',
+    pid: 'PID',
+    ipAddress: 'IP アドレス',
+    rootUid: 'ルート UID'
   },
   systemStats: {
     title: 'システム統計',

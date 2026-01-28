@@ -349,7 +349,14 @@ const translations = {
     executionUnit: 'Execution Unit',
     uptime: 'Uptime',
     start: 'Start',
-    stop: 'Stop'
+    stop: 'Stop',
+    systemResourceUsage: 'System Resource Usage',
+    availableMemory: 'Available Memory',
+    availableDiskSpace: 'Available Disk Space',
+    state: 'State',
+    pid: 'PID',
+    ipAddress: 'IP Address',
+    rootUid: 'Root UID'
   },
   systemStats: {
     title: 'System Stats',
