@@ -218,9 +218,9 @@ watch(localData, (newValue) => {
   emit('update:modelValue', newValue);
 }, { deep: true });
 
-watch(() => props.modelValue, (newValue) => {
-  localData.value = { ...newValue };
-}, { deep: true });
+// watch(() => props.modelValue, (newValue) => {
+//   localData.value = { ...newValue };
+// }, { deep: true });
 </script>
 
 <style scoped>

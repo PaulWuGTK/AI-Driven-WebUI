@@ -8,7 +8,7 @@
       {{ $t('common.saveFailed') }}
     </div>
     <div v-if="showLoadFail" class="fail-message">
-      {{ $t('common.loadError') }}
+      {{ $t('basicWanCht.loadError') }}
     </div>
     <div v-if="!editMode" class="management-view">
       <div class="panel-section">
