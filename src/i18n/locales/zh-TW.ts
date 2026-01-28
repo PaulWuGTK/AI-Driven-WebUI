@@ -344,7 +344,11 @@ export default {
     enable: '啟用',
     disable: '停用',
     maximumRetryCount: '最大重試次數',
-    readonly: '唯讀'
+    readonly: '唯讀',
+    executionUnit: '執行單元',
+    uptime: '運行時間',
+    start: '啟動',
+    stop: '停止'
   },
   systemStats: {
     title: '系統統計',

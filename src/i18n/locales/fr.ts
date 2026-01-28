@@ -343,7 +343,11 @@ export default {
     enable: 'Activer',
     disable: 'Désactiver',
     maximumRetryCount: 'Nombre maximal de tentatives',
-    readonly: 'Lecture seule'
+    readonly: 'Lecture seule',
+    executionUnit: 'Unité d’exécution',
+    uptime: 'Temps de fonctionnement',
+    start: 'Démarrer',
+    stop: 'Arrêter'
   },
   systemStats: {
     title: 'Statistiques système',

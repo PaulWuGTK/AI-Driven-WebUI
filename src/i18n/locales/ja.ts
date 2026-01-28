@@ -343,7 +343,11 @@ export default {
     enable: '有効',
     disable: '無効',
     maximumRetryCount: '最大リトライ回数',
-    readonly: '読み取り専用'
+    readonly: '読み取り専用',
+    executionUnit: '実行ユニット',
+    uptime: '稼働時間',
+    start: '開始',
+    stop: '停止'
   },
   systemStats: {
     title: 'システム統計',

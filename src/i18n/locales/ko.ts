@@ -342,7 +342,11 @@ export default {
     enable: '사용',
     disable: '사용 안 함',
     maximumRetryCount: '최대 재시도 횟수',
-    readonly: '읽기 전용'
+    readonly: '읽기 전용',
+    executionUnit: '실행 유닛',
+    uptime: '가동 시간',
+    start: '시작',
+    stop: '중지'
   },
   systemStats: {
     title: '시스템 통계',

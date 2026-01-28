@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ExecEnvTab from './lcm/ExecEnvTab.vue';
 import DeploymentUnitTab from './lcm/DeploymentUnitTab.vue';
+import ExecutionUnitTab from './lcm/ExecutionUnitTab.vue';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();
@@ -45,10 +46,10 @@ const tabs = computed(() => [
             :data-testid="qa('lcm-deployment-unit-tab')"
           />
 
-          <div v-else-if="activeTab === 'executionunit'" class="in-progress">
-            <span class="material-icons">construction</span>
-            <p>{{ t('common.inProgress') }}</p>
-          </div>
+          <ExecutionUnitTab
+            v-else-if="activeTab === 'executionunit'"
+            :data-testid="qa('lcm-execution-unit-tab')"
+          />
 
           <div v-else-if="activeTab === 'monitor'" class="in-progress">
             <span class="material-icons">construction</span>

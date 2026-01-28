@@ -345,7 +345,11 @@ const translations = {
     enable: 'Enable',
     disable: 'Disable',
     maximumRetryCount: 'Maximum Retry Count',
-    readonly: 'readonly'
+    readonly: 'readonly',
+    executionUnit: 'Execution Unit',
+    uptime: 'Uptime',
+    start: 'Start',
+    stop: 'Stop'
   },
   systemStats: {
     title: 'System Stats',

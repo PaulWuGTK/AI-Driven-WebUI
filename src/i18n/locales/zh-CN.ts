@@ -343,7 +343,11 @@ export default {
     enable: '启用',
     disable: '禁用',
     maximumRetryCount: '最大重试次数',
-    readonly: '只读'
+    readonly: '只读',
+    executionUnit: '执行单元',
+    uptime: '运行时间',
+    start: '启动',
+    stop: '停止'
   },
   systemStats: {
     title: '系统统计',
