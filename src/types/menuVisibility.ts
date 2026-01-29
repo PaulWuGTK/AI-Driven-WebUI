@@ -137,7 +137,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.wifiZones': {
-    netLayoutTypes: { prpl: false, genix: true, cht: false },
+    netLayoutTypes: { prpl: true, genix: true, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.wlan.wirelessExtender': {

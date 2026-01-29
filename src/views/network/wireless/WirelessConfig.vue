@@ -9,6 +9,8 @@ import WirelessMeshConfig from './MeshConfig.vue';
 import WirelessExtenderTab from './ExtenderConfig.vue';
 import GuestNetworkTab from './GuestNetwork.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
+import { getSidebarMenu } from '../../../services/api/sidebarMenu';
+import { isMenuVisible, type NetLayoutType, type OperationMode } from '../../../types/menuVisibility';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -16,6 +18,27 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const activeTab = ref('basic');
+
+const operationMode = ref<OperationMode>('Gateway');
+const netLayoutType = ref<NetLayoutType>('prpl');
+const features = ref<Record<string, boolean>>({});
+
+const fetchMenuContext = async () => {
+  try {
+    const response = await getSidebarMenu();
+    const modeMapping: Record<string, OperationMode> = {
+      Init: 'Init',
+      Gateway: 'Gateway',
+      Bridge: 'Bridge',
+      Extender: 'Extender'
+    };
+    operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
+    netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
+    features.value = response.SidebarMenu.features || {};
+  } catch (e) {
+    console.warn('fetchMenuContext failed, fallback to defaults', e);
+  }
+};
 
 // 檢查是否啟用開發者模式（通過 URL 參數）
 const isDeveloperMode = computed(() => {
@@ -29,21 +52,27 @@ watch(() => route.query.dev, (newValue) => {
   }
 }, { immediate: true });
 
-// 使用 computed 來動態生成 tabs,這樣在語言改變時會自動更新
-const tabs = computed(() => {
-  const baseTabs = [
-    { id: 'basic', label: t('wireless.basicConfig') },
-    { id: 'advanced', label: t('wireless.advancedConfig') },
-    { id: 'wps', label: t('wireless.wpsConfig') },
-    { id: 'mesh', label: t('wireless.meshNetwork') }
-  ];
+type Tab = {
+  id: string;
+  label: string;
+  menuKey?: string;
+};
 
-  // 只有在開發者模式下才顯示這些 tab
+const tabs = computed<Tab[]>(() => {
+  const baseTabs: Tab[] = [
+    { id: 'basic',    label: t('wireless.basicConfig'),    menuKey: 'basicSetup.wlan.basicConfig' },
+    { id: 'advanced', label: t('wireless.advancedConfig'), menuKey: 'basicSetup.wlan.advancedConfig' },
+    { id: 'wps',      label: t('wireless.wpsConfig'),      menuKey: 'basicSetup.wlan.wpsConfig' },
+    { id: 'mesh',     label: t('wireless.meshNetwork'),    menuKey: 'basicSetup.wlan.meshNetwork' },
+    { id: 'zones',    label: t('wireless.wifiZones'),      menuKey: 'basicSetup.wlan.wifiZones' },
+  ].filter(tab =>
+    !tab.menuKey || isMenuVisible(tab.menuKey, netLayoutType.value, operationMode.value, features.value)
+  );
+
   if (isDeveloperMode.value) {
     baseTabs.push(
       { id: 'guest', label: t('guest.title') },
-      { id: 'wlan', label: t('wireless.wlanExtender') },
-      { id: 'zones', label: t('wireless.wifiZones') }
+      { id: 'wlan',  label: t('wireless.wlanExtender') }
     );
   }
 
@@ -51,11 +80,18 @@ const tabs = computed(() => {
 });
 
 // 監聽路由參數變化來設定活動分頁
-watch(() => route.query.tab, (newTab) => {
-  if (newTab && typeof newTab === 'string' && tabs.value.some(tab => tab.id === newTab)) {
-    activeTab.value = newTab;
+const ensureActiveTab = () => {
+  const tabFromQuery = typeof route.query.tab === 'string' ? route.query.tab : '';
+  const exists = tabFromQuery && tabs.value.some(t => t.id === tabFromQuery);
+  const nextTab = exists ? tabFromQuery : (tabs.value[0]?.id || 'basic');
+
+  if (activeTab.value !== nextTab) activeTab.value = nextTab;
+  if (!exists) {
+    router.replace({ path: route.path, query: { ...route.query, tab: nextTab } });
   }
-}, { immediate: true });
+};
+
+watch([() => route.query.tab, tabs], ensureActiveTab, { immediate: true });
 
 // 當分頁改變時更新 URL 參數
 const handleTabChange = (tabId: string) => {

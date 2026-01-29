@@ -13,6 +13,8 @@ import {
 } from '../../../services/api/lcmDeploymentUnit';
 import { useQA } from '../../../utils/qa';
 
+type NetworkMode = '' | 'ShareParentNetwork' | 'PortForwarding';
+
 const { qa } = useQA();
 const { t } = useI18n();
 
@@ -34,7 +36,7 @@ const formData = ref({
   Password: '',
   InstalledEE: '',
   Privileged: true,
-  NetworkMode: 'ShareParentNetwork' as 'ShareParentNetwork' | 'PortForwarding',
+  NetworkMode: 'ShareParentNetwork' as NetworkMode,
   PortForwarding: [] as PortForwarding[],
   HostObject: [] as HostObject[],
   AutoRestartEnable: true,
@@ -99,13 +101,13 @@ const validateForm = (): boolean => {
     isValid = false;
   }
 
-  if (!formData.value.Username.trim()) {
-    formErrors.value.Username = t('lcm.usernameRequired');
-    isValid = false;
-  }
+  const username = formData.value.Username.trim();
+  const password = formData.value.Password.trim();
 
-  if (!formData.value.Password.trim()) {
-    formErrors.value.Password = t('lcm.passwordRequired');
+  // Username/Password are optional, but if one is provided, require the other.
+  if ((username && !password) || (!username && password)) {
+    if (!username) formErrors.value.Username = t('lcm.usernameRequired');
+    if (!password) formErrors.value.Password = t('lcm.passwordRequired');
     isValid = false;
   }
 
@@ -126,7 +128,7 @@ const openAddModal = () => {
     Password: '',
     InstalledEE: execEnvList.value[0]?.Name || '',
     Privileged: true,
-    NetworkMode: 'ShareParentNetwork',
+    NetworkMode: '',
     PortForwarding: [],
     HostObject: [],
     AutoRestartEnable: true,
@@ -151,10 +153,10 @@ const openEditModal = (item: DeploymentUnitItem) => {
     Password: '',
     InstalledEE: item.InstalledEE,
     Privileged: item.Privileged,
-    NetworkMode: item.NetworkConfig.ShareParentNetwork
+    NetworkMode: item.NetworkConfig?.ShareParentNetwork
       ? 'ShareParentNetwork'
-      : 'PortForwarding',
-    PortForwarding: [...item.NetworkConfig.PortForwarding],
+      : ((item.NetworkConfig?.PortForwarding?.length || 0) > 0 ? 'PortForwarding' : ''),
+    PortForwarding: [...(item.NetworkConfig?.PortForwarding || [])],
     HostObject: [...item.HostObject],
     AutoRestartEnable: item.AutoRestart.Enable,
     MaxRetryCount: item.AutoRestart.MaxRetryCount
@@ -203,61 +205,39 @@ const handleSave = async () => {
   if (!validateForm()) {
     return;
   }
-
-  loading.value = true;
   try {
-    if (isEditMode.value) {
-      await updateLcmDeploymentUnit({
-        AdvancedLcmDeploymentUnit: {
-          Action: 'Update',
-          URL: formData.value.URL,
-          UUID: formData.value.UUID,
-          DUID: editingItem.value!.DUID,
-          Username: formData.value.Username,
-          Password: formData.value.Password,
-          InstalledEE: formData.value.InstalledEE,
-          Privileged: formData.value.Privileged,
-          NetworkConfig: {
-            ShareParentNetwork: formData.value.NetworkMode === 'ShareParentNetwork',
-            AccessInterfaces: [],
-            PortForwarding:
-              formData.value.NetworkMode === 'PortForwarding'
-                ? formData.value.PortForwarding
-                : []
-          },
-          HostObject: formData.value.HostObject,
-          AutoRestart: {
-            Enable: formData.value.AutoRestartEnable,
-            MaxRetryCount: formData.value.MaxRetryCount
-          }
+    const username = formData.value.Username.trim(); // 同事要 ''，所以永遠送字串
+    const password = formData.value.Password.trim();
+
+    const networkConfig = formData.value.NetworkMode
+      ? {
+          ShareParentNetwork: formData.value.NetworkMode === 'ShareParentNetwork',
+          AccessInterfaces: [],
+          PortForwarding:
+            formData.value.NetworkMode === 'PortForwarding'
+              ? formData.value.PortForwarding
+              : []
         }
-      });
-    } else {
-      await updateLcmDeploymentUnit({
-        AdvancedLcmDeploymentUnit: {
-          Action: 'Install',
-          URL: formData.value.URL,
-          UUID: formData.value.UUID,
-          Username: formData.value.Username,
-          Password: formData.value.Password,
-          InstalledEE: formData.value.InstalledEE,
-          Privileged: formData.value.Privileged,
-          NetworkConfig: {
-            ShareParentNetwork: formData.value.NetworkMode === 'ShareParentNetwork',
-            AccessInterfaces: [],
-            PortForwarding:
-              formData.value.NetworkMode === 'PortForwarding'
-                ? formData.value.PortForwarding
-                : []
-          },
-          HostObject: formData.value.HostObject,
-          AutoRestart: {
-            Enable: formData.value.AutoRestartEnable,
-            MaxRetryCount: formData.value.MaxRetryCount
-          }
-        }
-      });
-    }
+      : undefined; // NetworkMode 空 => 不送 NetworkConfig
+
+    const payload: any = {
+      Action: isEditMode.value ? 'Update' : 'Install',
+      URL: formData.value.URL,
+      UUID: formData.value.UUID,
+      ...(isEditMode.value ? { DUID: editingItem.value!.DUID } : {}),
+      Username: username,
+      Password: password,
+      InstalledEE: formData.value.InstalledEE,
+      Privileged: formData.value.Privileged,
+      ...(networkConfig ? { NetworkConfig: networkConfig } : {}),
+      HostObject: formData.value.HostObject,
+      AutoRestart: {
+        Enable: formData.value.AutoRestartEnable,
+        MaxRetryCount: formData.value.MaxRetryCount
+      }
+    };
+
+    await updateLcmDeploymentUnit({ AdvancedLcmDeploymentUnit: payload });
 
     await fetchConfig();
     showSuccessMessage();
@@ -494,7 +474,6 @@ onMounted(fetchConfig);
               <div class="form-group">
                 <label>
                   {{ t('lcm.username') }}
-                  <span class="required">*</span>
                 </label>
                 <input
                   type="text"
@@ -510,7 +489,6 @@ onMounted(fetchConfig);
               <div class="form-group">
                 <label>
                   {{ t('lcm.password') }}
-                  <span class="required">*</span>
                 </label>
                 <input
                   type="password"
@@ -570,6 +548,7 @@ onMounted(fetchConfig);
                 v-model="formData.NetworkMode"
                 :data-testid="qa('lcm-deployment-unit-modal-network-mode')"
               >
+                <option value="">--</option>
                 <option value="ShareParentNetwork">{{ t('lcm.shareParentNetwork') }}</option>
                 <option value="PortForwarding">{{ t('lcm.portForwarding') }}</option>
               </select>
