@@ -1,7 +1,7 @@
 export interface BasicWanChtPPPoE {
   Enable: boolean;
   Protocol: string;
-  Username: string;
+  UserName: string;
   Password: string;
   ServiceName: string;
   ConnectionTrigger: string;

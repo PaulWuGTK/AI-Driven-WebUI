@@ -5,7 +5,7 @@ export const basicWanChtMockData: BasicWanChtResponse = {
     PPPoE: {
       Enable: false,
       Protocol: 'PPPoE',
-      Username: 'test',
+      UserName: 'test',
       Password: 'pass',
       ServiceName: '',
       ConnectionTrigger: 'AlwaysOn',

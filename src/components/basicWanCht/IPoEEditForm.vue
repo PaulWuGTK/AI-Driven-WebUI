@@ -10,6 +10,8 @@
               <input
                 type="checkbox"
                 v-model="localData.Enable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('ipoe-enable-toggle')"
               >
               <span class="slider" :data-testid="qa('ipoe-enable-toggle-slider')"></span>
@@ -59,6 +61,8 @@
                 <input
                   type="checkbox"
                   v-model="localData.IPv4Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('ipoe-ipv4-toggle')"
                 >
                 <span class="slider" :data-testid="qa('ipoe-ipv4-toggle-slider')"></span>
@@ -73,6 +77,8 @@
                 <input
                   type="checkbox"
                   v-model="localData.IPv6Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('ipoe-ipv6-toggle')"
                 >
                 <span class="slider" :data-testid="qa('ipoe-ipv6-toggle-slider')"></span>
@@ -87,6 +93,8 @@
                 <input
                   type="checkbox"
                   v-model="localData.Option60Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('ipoe-option60-toggle')"
                 >
                 <span class="slider" :data-testid="qa('ipoe-option60-toggle-slider')"></span>
@@ -105,6 +113,8 @@
               <label class="switch">
                 <input
                   type="checkbox"
+                  :true-value="1"
+                  :false-value="0"
                   v-model="localData.Option61Enable"
                   :data-testid="qa('ipoe-option61-toggle')"
                 >
@@ -148,6 +158,8 @@
               <label class="switch">
                 <input
                   type="checkbox"
+                  :true-value="1"
+                  :false-value="0"
                   v-model="localData.NATEnable"
                   :data-testid="qa('ipoe-nat-toggle')"
                 >
@@ -163,6 +175,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.IGMPEnable"
                 :data-testid="qa('ipoe-igmp-toggle')"
               >
@@ -177,6 +191,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.VLANEnable"
                 :data-testid="qa('ipoe-vlan-toggle')"
               >
@@ -220,13 +236,24 @@ const emit = defineEmits<Emits>();
 
 const localData = ref<BasicWanChtIPoE>({ ...props.modelValue });
 
-watch(localData, (newValue) => {
-  emit('update:modelValue', newValue);
-}, { deep: true });
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    localData.value = JSON.parse(JSON.stringify(newValue)) as BasicWanChtIPoE;
+  },
+  { deep: true, immediate: true }
+);
 
-// watch(() => props.modelValue, (newValue) => {
-//   localData.value = { ...newValue };
-// }, { deep: true });
+watch(
+  localData,
+  (newValue) => {
+    const fromChild = JSON.stringify(newValue);
+    const fromParent = JSON.stringify(props.modelValue);
+    if (fromChild === fromParent) return;
+    emit('update:modelValue', newValue);
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>

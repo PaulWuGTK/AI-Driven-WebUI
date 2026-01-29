@@ -9,6 +9,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.Enable"
                 :data-testid="qa('bridge-enable-toggle')"
               >
@@ -35,6 +37,8 @@
               <label class="switch">
                 <input
                   type="checkbox"
+                  :true-value="1"
+                  :false-value="0"
                   :checked="localData.ListLANInterfaces.includes(iface)"
                   :data-testid="qa(`bridge-lan-interface-toggle-${slug(iface)}`)"
                   @change="(e) => toggleInterface(iface, (e.target as HTMLInputElement).checked)"
@@ -51,6 +55,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.VLANEnable"
                 :data-testid="qa('bridge-vlan-enable-toggle')"
               >
@@ -114,13 +120,24 @@ const toggleInterface = (iface: string, checked: boolean) => {
   }
 };
 
-watch(localData, (newValue) => {
-  emit('update:modelValue', newValue);
-}, { deep: true });
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    localData.value = JSON.parse(JSON.stringify(newValue)) as BasicWanChtBridge;
+  },
+  { deep: true, immediate: true }
+);
 
-// watch(() => props.modelValue, (newValue) => {
-//   localData.value = { ...newValue };
-// }, { deep: true });
+watch(
+  localData,
+  (newValue) => {
+    const fromChild = JSON.stringify(newValue);
+    const fromParent = JSON.stringify(props.modelValue);
+    if (fromChild === fromParent) return;
+    emit('update:modelValue', newValue);
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>

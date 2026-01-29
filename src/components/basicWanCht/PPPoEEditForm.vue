@@ -10,6 +10,8 @@
               <input
                 type="checkbox"
                 v-model="localData.Enable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('pppoe-enable-toggle')"
               >
               <span class="slider" :data-testid="qa('pppoe-enable-toggle-slider')"></span>
@@ -24,7 +26,7 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.username') }}</label>
-          <BaseInput v-model="localData.Username" :data-testid="qa('pppoe-username-input')" />
+          <BaseInput v-model="localData.UserName" :data-testid="qa('pppoe-username-input')" />
         </div>
 
         <div class="form-group">
@@ -66,6 +68,8 @@
               <input
                 type="checkbox"
                 v-model="localData.DefaultGateway"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('pppoe-default-gateway-toggle')"
               >
               <span class="slider" :data-testid="qa('pppoe-default-gateway-toggle-slider')"></span>
@@ -79,6 +83,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.PassthroughEnable"
                 :data-testid="qa('pppoe-passthrough-toggle')"
               >
@@ -93,6 +99,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.IPv4Enable"
                 :data-testid="qa('pppoe-ipv4-toggle')"
               >
@@ -107,6 +115,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.IPv6Enable"
                 :data-testid="qa('pppoe-ipv6-toggle')"
               >
@@ -143,6 +153,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.NATEnable"
                 :data-testid="qa('pppoe-nat-toggle')"
               >
@@ -157,6 +169,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.IGMPEnable"
                 :data-testid="qa('pppoe-igmp-toggle')"
               >
@@ -171,6 +185,8 @@
             <label class="switch">
               <input
                 type="checkbox"
+                :true-value="1"
+                :false-value="0"
                 v-model="localData.VLANEnable"
                 :data-testid="qa('pppoe-vlan-toggle')"
               >
@@ -213,14 +229,32 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const localData = ref<BasicWanChtPPPoE>({ ...props.modelValue });
+// 1) 父層改 modelValue → 同步到 localData
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    // 深拷貝一次，避免直接共用 reference
+    localData.value = JSON.parse(JSON.stringify(newValue)) as BasicWanChtPPPoE;
+  },
+  { deep: true, immediate: true }
+);
 
-watch(localData, (newValue) => {
-  emit('update:modelValue', newValue);
-}, { deep: true });
+// 2) 表單改 localData → 回寫父層
+watch(
+  localData,
+  (newValue) => {
+    const fromChild = JSON.stringify(newValue);
+    const fromParent = JSON.stringify(props.modelValue);
 
-// watch(() => props.modelValue, (newValue) => {
-//   localData.value = { ...newValue };
-// }, { deep: true });
+    // 內容一樣就不要 emit，避免 props watcher + local watcher 互相打架
+    if (fromChild === fromParent) {
+      return;
+    }
+
+    emit('update:modelValue', newValue);
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>
