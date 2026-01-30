@@ -93,7 +93,7 @@ defineEmits<{
               :checked="service.HostEnable === 1"
               @change="$emit('update:service', { ...service, HostEnable: ($event.target as HTMLInputElement).checked ? 1 : 0 })"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('ddns-form-enable-toggle-slider')"></span>
           </label>
         </label>
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="port-forward-edit" :data-testid="qa('port-forward-edit')">
     <h3>{{ isEdit ? $t('portForwarding.editRule') : $t('portForwarding.addRule') }}</h3>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit" :data-testid="qa('port-forward-form')">
       <div class="form-section">
         <div class="form-group">
           <div class="switch-label">
@@ -13,14 +13,14 @@
                 :data-testid="qa('port-forward-enable-toggle')"
                 @change="formData.Enable = ($event.target as HTMLInputElement).checked"
               />
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('port-forward-enable-toggle-slider')"></span>
             </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.interfaceSelection') }}</label>
-          <select v-model="formData.Interface" required>
+          <label :data-testid="qa('port-forward-interface-label')">{{ $t('portForwarding.interfaceSelection') }}</label>
+          <select v-model="formData.Interface" required :data-testid="qa('port-forward-interface-select')">
             <option v-for="wan in wanList" :key="wan" :value="wan">
               {{ wan }}
             </option>
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.externalPortStart') }}</label>
+          <label :data-testid="qa('port-forward-external-port-start-label')">{{ $t('portForwarding.externalPortStart') }}</label>
           <input
             type="number"
             v-model="externalPortStart"
@@ -36,32 +36,35 @@
             min="1"
             max="65535"
             required
+            :data-testid="qa('port-forward-external-port-start-input')"
           />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.externalPortEnd') }}</label>
+          <label :data-testid="qa('port-forward-external-port-end-label')">{{ $t('portForwarding.externalPortEnd') }}</label>
           <input
             type="number"
             v-model="externalPortEnd"
             placeholder="1-65535"
             min="1"
             max="65535"
+            :data-testid="qa('port-forward-external-port-end-input')"
           />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.localIPAddress') }}</label>
+          <label :data-testid="qa('port-forward-internal-ip-label')">{{ $t('portForwarding.localIPAddress') }}</label>
           <input
             type="text"
             v-model="formData.InternalIPAdress"
             placeholder="e.g., 192.168.1.100"
             required
+            :data-testid="qa('port-forward-internal-ip-input')"
           />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.localPort') }}</label>
+          <label :data-testid="qa('port-forward-internal-port-label')">{{ $t('portForwarding.localPort') }}</label>
           <input
             type="number"
             v-model="internalPort"
@@ -69,12 +72,13 @@
             min="1"
             max="65535"
             required
+            :data-testid="qa('port-forward-internal-port-input')"
           />
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.protocol') }}</label>
-          <select v-model="formData.Protocol" required>
+          <label :data-testid="qa('port-forward-protocol-label')">{{ $t('portForwarding.protocol') }}</label>
+          <select v-model="formData.Protocol" required :data-testid="qa('port-forward-protocol-select')">
             <option v-for="proto in protoList" :key="proto" :value="proto">
               {{ proto }}
             </option>
@@ -82,20 +86,26 @@
         </div>
 
         <div class="form-group">
-          <label>{{ $t('portForwarding.comment') }}</label>
+          <label :data-testid="qa('port-forward-description-label')">{{ $t('portForwarding.comment') }}</label>
           <input
             type="text"
             v-model="formData.Description"
             :placeholder="$t('common.placeholder')"
+            :data-testid="qa('port-forward-description-input')"
           />
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-secondary" @click="handleCancel">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          :data-testid="qa('port-forward-cancel-btn')"
+          @click="handleCancel"
+        >
           {{ $t('common.cancel') }}
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" :data-testid="qa('port-forward-apply-btn')">
           {{ $t('common.apply') }}
         </button>
       </div>

@@ -206,19 +206,17 @@ const handleSave = async () => {
     return;
   }
   try {
-    const username = formData.value.Username.trim(); // 同事要 ''，所以永遠送字串
+    const username = formData.value.Username.trim();
     const password = formData.value.Password.trim();
 
-    const networkConfig = formData.value.NetworkMode
-      ? {
-          ShareParentNetwork: formData.value.NetworkMode === 'ShareParentNetwork',
-          AccessInterfaces: [],
-          PortForwarding:
-            formData.value.NetworkMode === 'PortForwarding'
-              ? formData.value.PortForwarding
-              : []
-        }
-      : undefined; // NetworkMode 空 => 不送 NetworkConfig
+    const networkConfig = {
+      ShareParentNetwork: formData.value.NetworkMode === 'ShareParentNetwork',
+      AccessInterfaces: [] as string[],
+      PortForwarding:
+        formData.value.NetworkMode === 'PortForwarding'
+          ? formData.value.PortForwarding
+          : []
+    };
 
     const payload: any = {
       Action: isEditMode.value ? 'Update' : 'Install',
@@ -229,7 +227,7 @@ const handleSave = async () => {
       Password: password,
       InstalledEE: formData.value.InstalledEE,
       Privileged: formData.value.Privileged,
-      ...(networkConfig ? { NetworkConfig: networkConfig } : {}),
+      NetworkConfig: networkConfig,
       HostObject: formData.value.HostObject,
       AutoRestart: {
         Enable: formData.value.AutoRestartEnable,
