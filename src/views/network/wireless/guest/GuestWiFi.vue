@@ -115,7 +115,7 @@ onMounted(fetchGuestWiFi);
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('guest-wifi-enable-toggle-slider')"></span>
           </label>
         </div>
       </div>
@@ -132,7 +132,7 @@ onMounted(fetchGuestWiFi);
               :false-value="0"
               :disabled="guestWiFiData.GuestWiFi.Enable === 0 || isMLODisabledByMesh"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('guest-wifi-mlo-enable-toggle-slider')"></span>
           </label>
         </div>
       </div>

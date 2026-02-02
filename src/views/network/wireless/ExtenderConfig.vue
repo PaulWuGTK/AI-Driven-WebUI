@@ -263,7 +263,7 @@ onMounted(() => {
                     :checked="tempExtenderEnabled === 1"
                     @change="handleExtenderEnabledChange"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('wireless-extender-enabled-toggle-slider')"></span>
                 </label>
               </div>
             </div>

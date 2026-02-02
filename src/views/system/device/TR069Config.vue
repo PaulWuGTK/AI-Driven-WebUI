@@ -91,7 +91,7 @@ onMounted(fetchConfig);
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('tr069-config-enable-cwmp-slider')"></span>
           </label>
         </div>
       </div>
@@ -195,7 +195,7 @@ onMounted(fetchConfig);
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('tr069-config-periodic-inform-enable-slider')"></span>
           </label>
         </div>
       </div>

@@ -154,7 +154,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
                   v-model="editingRule.Enable"
                   :data-testid="qa('service-control-enable-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('service-control-enable-slider')"></span>
               </label>
             </div>
           </div>
@@ -233,7 +233,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
                   :data-testid="qa('service-control-source-ip-range-toggle')"
                   @change="toggleSourceIPRange"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('service-control-source-ip-range-slider')"></span>
               </label>
             </div>
           </div>

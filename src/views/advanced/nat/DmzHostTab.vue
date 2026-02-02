@@ -98,7 +98,7 @@ onMounted(fetchDmz);
                 v-model="dmzData.AdvancedDmz.Enable"
                 :data-testid="qa('dmz-enable-checkbox')"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('dmz-enable-slider')"></span>
             </label>
           </div>
         </div>

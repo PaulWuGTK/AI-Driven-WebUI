@@ -255,7 +255,7 @@ onMounted(() => {
                   :data-testid="qa('thread-config-enable-toggle')"
                   v-model="tempThreadEnabled"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('thread-config-enable-toggle-slider')"></span>
               </label>
             </div>
           </div>

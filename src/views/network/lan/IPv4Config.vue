@@ -330,7 +330,7 @@ onMounted(fetchLanBasic);
                   :true-value="1"
                   :false-value="0"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipv4-configuration-lan-ip-enable-slider')"></span>
               </label>
             </div>
           </div>
@@ -375,7 +375,7 @@ onMounted(fetchLanBasic);
                   :true-value="1"
                   :false-value="0"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('ipv4-configuration-dhcp-enable-slider')"></span>
               </label>
             </div>
           </div>
@@ -497,7 +497,7 @@ onMounted(fetchLanBasic);
                           :true-value="1"
                           :false-value="0"
                         >
-                        <span class="slider"></span>
+                        <span class="slider" :data-testid="qa(`ipv4-configuration-reservation-enable-slider-${resIndex}`)"></span>
                       </label>
                     </div>
                   </td>
@@ -570,7 +570,7 @@ onMounted(fetchLanBasic);
                       :true-value="1"
                       :false-value="0"
                     >
-                    <span class="slider"></span>
+                    <span class="slider" :data-testid="qa(`ipv4-configuration-reservation-card-enable-slider-${resIndex}`)"></span>
                   </label>
                 </div>
               </div>

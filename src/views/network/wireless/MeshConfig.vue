@@ -101,7 +101,7 @@ onMounted(fetchMeshConfig);
             :true-value="1"
             :false-value="0"
           >
-          <span class="slider"></span>
+          <span class="slider" :data-testid="qa('wireless-mesh-config-enable-toggle-slider')"></span>
         </label>
       </div>
 
@@ -152,7 +152,7 @@ onMounted(fetchMeshConfig);
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('wireless-mesh-config-mlo-toggle-slider')"></span>
           </label>
         </div>
       </div>

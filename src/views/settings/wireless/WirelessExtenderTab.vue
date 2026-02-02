@@ -231,7 +231,7 @@ onMounted(() => {
                   @change="tempExtenderEnabled = ($event.target as HTMLInputElement).checked ? 1 : 0"
                   :data-testid="qa('wireless-extender-enable-toggle')"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('wireless-extender-enable-toggle-slider')"></span>
               </label>
             </div>
           </div>

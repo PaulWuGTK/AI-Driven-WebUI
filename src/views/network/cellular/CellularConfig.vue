@@ -129,7 +129,7 @@ onMounted(() => {
                     v-model="formData.interfaceEnable"
                     :data-testid="qa('cellular-interface-enable')"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('cellular-interface-enable-slider')"></span>
                 </label>
               </div>
             </div>
@@ -143,7 +143,7 @@ onMounted(() => {
                     v-model="formData.roamingEnabled"
                     :data-testid="qa('cellular-roaming-enabled')"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('cellular-roaming-enabled-slider')"></span>
                 </label>
               </div>
             </div>

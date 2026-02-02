@@ -45,7 +45,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
               :checked="modelValue.RadioEnable === 1"
               @change="updateConfig('RadioEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa(`wireless-advanced-band-config-enable-toggle-slider-${slug(title)}`)"></span>
           </label>
         </div>
       </div>
@@ -91,7 +91,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
                 @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
                 :disabled="modelValue.RadioEnable === 0"
               />
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-slider-${slug(title)}`)"></span>
             </label>
           </div>
         </div>
@@ -118,7 +118,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
               @change="updateConfig('MultiUserMIMOEnabled', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               :disabled="modelValue.RadioEnable === 0"
             />
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-slider-${slug(title)}`)"></span>
           </label>
         </div>
       </div>

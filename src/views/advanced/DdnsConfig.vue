@@ -271,7 +271,7 @@ onMounted(fetchDdns);
                       :true-value="1"
                       :false-value="0"
                     >
-                    <span class="slider"></span>
+                    <span class="slider" :data-testid="qa('ddns-edit-enable-slider')"></span>
                   </label>
                 </div>
               </div>

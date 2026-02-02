@@ -109,7 +109,7 @@ onMounted(() => {
                   v-model="upnpEnable"
                   :data-testid="qa('upnp-enable-input')"
                 />
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('upnp-enable-slider')"></span>
               </label>
             </div>
           </label>
@@ -167,7 +167,12 @@ onMounted(() => {
 
             <div class="service-list-content">
               <div class="clients-info">
-                <span class="clients-count">{{ t('upnp.totalClients') }}: {{ totalClients }}</span>
+                +<span
+                  class="clients-count"
+                  :data-testid="qa('upnp-total-clients')"
+                >
+                  {{ t('upnp.totalClients') }}: {{ totalClients }}
+                </span>
               </div>
 
             <!-- PC版表格 -->
@@ -185,7 +190,13 @@ onMounted(() => {
                 </thead>
                 <tbody>
                   <tr v-if="portMappings.length === 0">
-                    <td colspan="6" class="no-data">{{ t('upnp.noServices') }}</td>
+                    <td
+                      colspan="6"
+                      class="no-data"
+                      :data-testid="qa('upnp-no-data')"
+                    >
+                      {{ t('upnp.noServices') }}
+                    </td>
                   </tr>
                   <tr
                     v-else

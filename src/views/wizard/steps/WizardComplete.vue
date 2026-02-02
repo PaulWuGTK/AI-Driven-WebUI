@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import iconResultSucceedImage from '../../../assets/icons/wizard/ico-result-succeed.svg';
 
 interface Props {
@@ -11,27 +12,28 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['finish']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const displaySsid = computed(() => props.ssid || 'WNRFQQ-9d93-WPA3');
 const displayModel = computed(() => props.deviceModel || '');
 </script>
 
 <template>
-  <div class="complete-container">
-    <div class="complete-card">
-      <div class="success-icon">
-        <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" />
+  <div class="complete-container" :data-testid="qa('wizard-complete-container')">
+    <div class="complete-card" :data-testid="qa('wizard-complete-card')">
+      <div class="success-icon" :data-testid="qa('wizard-complete-icon')">
+        <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" :data-testid="qa('wizard-complete-image')" />
       </div>
 
-      <h1 v-if="displayModel" class="device-name">{{ displayModel }}</h1>
+      <h1 v-if="displayModel" class="device-name" :data-testid="qa('wizard-complete-model')">{{ displayModel }}</h1>
 
-      <h2>{{ t('wizard.completeTitle') }}</h2>
+      <h2 :data-testid="qa('wizard-complete-title')">{{ t('wizard.completeTitle') }}</h2>
 
-      <p class="message">
+      <p class="message" :data-testid="qa('wizard-complete-message')">
         {{ t('wizard.message', { ssid: displaySsid }) }}
       </p>
 
-      <button class="btn-finish" @click="$emit('finish')">
+      <button class="btn-finish" :data-testid="qa('wizard-complete-finish-button')" @click="$emit('finish')">
         {{ t('wizard.goToDashboard') }}
       </button>
     </div>

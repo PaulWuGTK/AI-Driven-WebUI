@@ -193,7 +193,7 @@ onMounted(() => {
                   v-model="commissionerEnabled"
                   @change="updateCommissionerEnabled"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('thread-commissioner-enable-toggle-slider')"></span>
               </label>
             </div>
           </div>

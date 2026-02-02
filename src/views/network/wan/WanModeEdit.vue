@@ -154,7 +154,7 @@ const validateVLANPriority = (value: number) => {
               :true-value="1"
               :false-value="0"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa('wan-mode-edit-enable-sensing-toggle-slider')"></span>
           </label>
         </div>
       </div>
@@ -231,7 +231,7 @@ const validateVLANPriority = (value: number) => {
             </select>
           </div>
 
-          <template v-if="showVLAN(iface)" :data-testid="qa(`wan-mode-edit-vlan-settings-${ifaceIndex}`)">
+          <div v-if="showVLAN(iface)" :data-testid="qa(`wan-mode-edit-vlan-settings-${ifaceIndex}`)">
             <div class="form-group">
               <label :data-testid="qa(`wan-mode-edit-vlan-id-label-${ifaceIndex}`)">{{ t('wanManagement.vlanId') }}</label>
               <input
@@ -255,9 +255,9 @@ const validateVLANPriority = (value: number) => {
                 @input="iface.VLANPriority = validateVLANPriority(Number(($event.target as HTMLInputElement).value))"
               />
             </div>
-          </template>
+          </div>
 
-          <template v-if="showPPPoE(iface)" :data-testid="qa(`wan-mode-edit-pppoe-settings-${ifaceIndex}`)">
+          <div v-if="showPPPoE(iface)" :data-testid="qa(`wan-mode-edit-pppoe-settings-${ifaceIndex}`)">
             <div class="form-group">
               <label :data-testid="qa(`wan-mode-edit-pppoe-username-label-${ifaceIndex}`)">{{ t('wanManagement.pppoeUsername') }}</label>
               <input
@@ -281,7 +281,7 @@ const validateVLANPriority = (value: number) => {
                 @input="iface.PPPoEPassword = validatePPPoEInput(($event.target as HTMLInputElement).value, 'password')"
               />
             </div>
-          </template>
+          </div>
 
           <template v-if="showStaticIPv4(iface)" :data-testid="qa(`wan-mode-edit-static-ipv4-${ifaceIndex}`)">
             <div class="static-section" :data-testid="qa(`wan-mode-edit-static-ipv4-section-${ifaceIndex}`)">

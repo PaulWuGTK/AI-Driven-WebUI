@@ -1,19 +1,19 @@
 <template>
-  <div class="page-container">
-    <h1 class="page-title">{{ $t('backupWan.title') }}</h1>
+  <div class="page-container" :data-testid="qa('backup-wan-container')">
+    <h1 class="page-title" :data-testid="qa('backup-wan-title')">{{ $t('backupWan.title') }}</h1>
 
-    <div class="page-content">
-      <div v-if="showSuccess" class="success-message">
+    <div class="page-content" :data-testid="qa('backup-wan-content')">
+      <div v-if="showSuccess" class="success-message" :data-testid="qa('backup-wan-success')">
         {{ $t('common.saveSuccess') }}
       </div>
-      <div v-if="loading" class="loading-container">
+      <div v-if="loading" class="loading-container" :data-testid="qa('backup-wan-loading')">
         <BaseSpinner />
       </div>
 
-      <form v-else @submit.prevent="handleSubmit" class="backup-wan-form">
-        <div class="panel-section">
+      <form v-else @submit.prevent="handleSubmit" class="backup-wan-form" :data-testid="qa('backup-wan-form')">
+        <div class="panel-section" :data-testid="qa('backup-wan-panel')">
           <div class="card-content">
-            <div class="form-group">
+            <div class="form-group" :data-testid="qa('backup-wan-enable-group')">
               <div class="switch-label">
                 <span>{{ $t('backupWan.backupWan') }}</span>
                 <label class="switch">
@@ -21,27 +21,30 @@
                     type="checkbox"
                     v-model="formData.Enable"
                     @change="handleBackupWanToggle"
+                    :data-testid="qa('backup-wan-enable-toggle')"
                   />
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('backup-wan-enable-slider')"></span>
                 </label>
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" :data-testid="qa('backup-wan-physical-type-group')">
               <label>{{ $t('backupWan.physicalType') }}</label>
               <BaseSelect
                 v-model="formData.PhysicalType"
                 :options="physicalTypeOptions"
                 :disabled="!formData.Enable"
+                :data-testid="qa('backup-wan-physical-type-select')"
               />
             </div>
 
-            <div class="form-group">
+            <div class="form-group" :data-testid="qa('backup-wan-interface-group')">
               <label>{{ $t('backupWan.interface') }}</label>
               <BaseSelect
                 v-model="formData.PhysicalInterface"
                 :options="interfaceOptions"
                 :disabled="!formData.Enable"
+                :data-testid="qa('backup-wan-interface-select')"
               />
             </div>
 
@@ -52,8 +55,9 @@
                   <input
                     type="checkbox"
                     v-model="formData.WHCEnable"
+                    :data-testid="qa('backup-wan-health-check-toggle')"
                   />
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('backup-wan-health-check-slider')"></span>
                 </label>
               </div>
             </div>
@@ -136,11 +140,11 @@
                 </div>
               </div>
             </div>
-            <div class="form-actions">
-              <BaseButton type="button" variant="secondary" @click="handleCancel">
+            <div class="form-actions" :data-testid="qa('backup-wan-actions')">
+              <BaseButton type="button" variant="secondary" @click="handleCancel" :data-testid="qa('backup-wan-cancel-button')">
                 {{ $t('common.cancel') }}
               </BaseButton>
-              <BaseButton type="submit" variant="primary" :disabled="loading">
+              <BaseButton type="submit" variant="primary" :disabled="loading" :data-testid="qa('backup-wan-apply-button')">
                 {{ $t('common.apply') }}
               </BaseButton>
             </div>
@@ -157,8 +161,10 @@ import { useRouter } from 'vue-router';
 import { backupWanApi } from '../../../services/api/backupWan';
 import type { BackupWANConfig, BackupWANRequest } from '../../../types/backupWan';
 import { BaseCard, BaseButton, BaseInput, BaseSelect, BaseSpinner } from '../../../components/common';
+import { useQA } from '../../../utils/qa';
 
 const router = useRouter();
+const { qa } = useQA();
 const loading = ref(false);
 const originalData = ref<BackupWANConfig | null>(null);
 const showSuccess = ref(false);

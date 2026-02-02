@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import iconUpdatingImage from '../../../assets/icons/wizard/ico_updating.svg';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['complete']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const remainingTime = ref(props.etaSeconds);
 
@@ -43,22 +45,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="applying-container">
-    <div class="applying-card">
-      <div class="loading-icon">
+  <div class="applying-container" :data-testid="qa('wizard-applying-container')">
+    <div class="applying-card" :data-testid="qa('wizard-applying-card')">
+      <div class="loading-icon" :data-testid="qa('wizard-applying-icon')">
         <object
           :data="iconUpdatingImage"
           type="image/svg+xml"
           class="mode-image"
+          :data-testid="qa('wizard-applying-image')"
         ></object>
       </div>
 
-      <div class="countdown">{{ formatTime(remainingTime) }}</div>
+      <div class="countdown" :data-testid="qa('wizard-applying-countdown')">{{ formatTime(remainingTime) }}</div>
 
-      <h2>{{ t('wizard.applyingTitle') }}</h2>
+      <h2 :data-testid="qa('wizard-applying-title')">{{ t('wizard.applyingTitle') }}</h2>
 
-      <p class="message">{{ t('wizard.applyingMessage') }}</p>
-      <p class="warning">{{ t('wizard.applyingWarning') }}</p>
+      <p class="message" :data-testid="qa('wizard-applying-message')">{{ t('wizard.applyingMessage') }}</p>
+      <p class="warning" :data-testid="qa('wizard-applying-warning')">{{ t('wizard.applyingWarning') }}</p>
     </div>
   </div>
 </template>

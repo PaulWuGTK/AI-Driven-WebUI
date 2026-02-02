@@ -103,7 +103,7 @@ onMounted(fetchDmz);
                   :data-testid="qa('dmz-enable-toggle')"
                   v-model="dmzData.AdvancedDmz.Enable"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('dmz-enable-slider')"></span>
               </label>
             </div>
           </div>

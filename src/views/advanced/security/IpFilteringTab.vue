@@ -13,7 +13,7 @@
           :data-testid="qa('ip-filtering-enable-toggle')"
           @change="onEnableChange"
         >
-        <span class="slider"></span>
+        <span class="slider" :data-testid="qa('ip-filtering-enable-slider')"></span>
       </label>
     </div>
 

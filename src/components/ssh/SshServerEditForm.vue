@@ -137,7 +137,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.Enable === 1"
                 @change="updateServer('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-enable-toggle-slider')"></span>
             </label>
           </label>
         </div>
@@ -220,7 +220,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.AllowAllIPv4 === 1"
                 @change="updateServer('AllowAllIPv4', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle-slider')"></span>
             </label>
           </label>
         </div>
@@ -246,7 +246,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.AllowAllIPv6 === 1"
                 @change="updateServer('AllowAllIPv6', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle-slider')"></span>
             </label>
           </label>
         </div>
@@ -275,7 +275,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.AllowPasswordLogin === 1"
                 @change="updateServer('AllowPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-allow-password-login-toggle-slider')"></span>
             </label>
           </label>
         </div>
@@ -290,7 +290,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.AllowRootLogin === 1"
                 @change="updateServer('AllowRootLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-allow-root-login-toggle-slider')"></span>
             </label>
           </label>
         </div>
@@ -305,7 +305,7 @@ const handleCustomKeepAliveChange = (event: Event) => {
                 :checked="server.AllowRootPasswordLogin === 1"
                 @change="updateServer('AllowRootPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
               >
-              <span class="slider"></span>
+              <span class="slider" :data-testid="qa('ssh-server-edit-root-password-login-toggle-slider')"></span>
             </label>
           </label>
         </div>

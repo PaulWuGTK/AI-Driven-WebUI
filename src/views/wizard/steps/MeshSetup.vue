@@ -43,7 +43,7 @@ const { qa } = useQA();
         </div>
         <label class="toggle-switch">
           <input type="checkbox" v-model="config.mesh.enable" :data-testid="qa('wizard-mesh-enable-toggle')" />
-          <span class="slider"></span>
+          <span class="slider" :data-testid="qa('wizard-mesh-enable-slider')"></span>
         </label>
       </div>
     </div>

@@ -1,47 +1,47 @@
 <template>
-  <h2 class="page-title">{{ $t('basicWanCht.title') }}</h2>
-  <div class="status-content">
-    <div v-if="showSuccess" class="success-message">
+  <h2 class="page-title" :data-testid="qa('basic-wan-cht-title')">{{ $t('basicWanCht.title') }}</h2>
+  <div class="status-content" :data-testid="qa('basic-wan-cht-content')">
+    <div v-if="showSuccess" class="success-message" :data-testid="qa('basic-wan-cht-success')">
       {{ $t('common.saveSuccess') }}
     </div>
-    <div v-if="showFail" class="fail-message">
+    <div v-if="showFail" class="fail-message" :data-testid="qa('basic-wan-cht-error')">
       {{ $t('common.saveFailed') }}
     </div>
-    <div v-if="showLoadFail" class="fail-message">
+    <div v-if="showLoadFail" class="fail-message" :data-testid="qa('basic-wan-cht-load-error')">
       {{ $t('basicWanCht.loadError') }}
     </div>
-    <div v-if="!editMode" class="management-view">
+    <div v-if="!editMode" class="management-view" :data-testid="qa('basic-wan-cht-management')">
       <div class="panel-section">
         <div class="section-title">{{ $t('basicWanCht.wanManagement') }}</div>
         <div class="card-content">
-          <div class="table-container">
-            <table>
+          <div class="table-container" :data-testid="qa('basic-wan-cht-table-container')">
+            <table :data-testid="qa('basic-wan-cht-table')">
               <thead>
-                <tr>
-                  <th>{{ $t('basicWanCht.status') }}</th>
-                  <th>{{ $t('basicWanCht.description') }}</th>
-                  <th>{{ $t('basicWanCht.defaultGateway') }}</th>
-                  <th>{{ $t('basicWanCht.vlanType') }}</th>
-                  <th>{{ $t('basicWanCht.vlanIdColumn') }}</th>
-                  <th>{{ $t('basicWanCht.protocol') }}</th>
-                  <th>{{ $t('basicWanCht.action') }}</th>
+                <tr :data-testid="qa('basic-wan-cht-table-header')">
+                  <th :data-testid="qa('basic-wan-cht-header-status')">{{ $t('basicWanCht.status') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-description')">{{ $t('basicWanCht.description') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-gateway')">{{ $t('basicWanCht.defaultGateway') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-vlan-type')">{{ $t('basicWanCht.vlanType') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-vlan-id')">{{ $t('basicWanCht.vlanIdColumn') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-protocol')">{{ $t('basicWanCht.protocol') }}</th>
+                  <th :data-testid="qa('basic-wan-cht-header-action')">{{ $t('basicWanCht.action') }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="row in tableData" :key="row.type">
-                  <td>
+                <tr v-for="row in tableData" :key="row.type" :data-testid="qa(`basic-wan-cht-row-${row.type.toLowerCase()}`)">
+                  <td :data-testid="qa(`basic-wan-cht-status-${row.type.toLowerCase()}`)">
                     <BaseBadge :variant="row.status === 'Up' ? 'success' : 'neutral'">
                       {{ row.status }}
                     </BaseBadge>
                   </td>
-                  <td>{{ row.description }}</td>
-                  <td>{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</td>
-                  <td>{{ row.vlanType }}</td>
-                  <td>{{ row.vlanId }}</td>
-                  <td>{{ row.protocol }}</td>
-                  <td>
+                  <td :data-testid="qa(`basic-wan-cht-description-${row.type.toLowerCase()}`)">{{ row.description }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-gateway-${row.type.toLowerCase()}`)">{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-vlan-type-${row.type.toLowerCase()}`)">{{ row.vlanType }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-vlan-id-${row.type.toLowerCase()}`)">{{ row.vlanId }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-protocol-${row.type.toLowerCase()}`)">{{ row.protocol }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-actions-${row.type.toLowerCase()}`)">
                     <div class="action-buttons">
-                      <button class="btn-action" @click="editConnection(row.type)" title="Edit">
+                      <button class="btn-action" :data-testid="qa(`basic-wan-cht-edit-${row.type.toLowerCase()}`)" @click="editConnection(row.type)" title="Edit">
                         <span class="material-icons">edit</span>
                       </button>
                     </div>
@@ -95,11 +95,11 @@
           </div>
 
 
-          <div class="button-group">
-            <button class="btn btn-secondary" @click="handleCancel">
+          <div class="button-group" :data-testid="qa('basic-wan-cht-button-group')">
+            <button class="btn btn-secondary" :data-testid="qa('basic-wan-cht-cancel-button')" @click="handleCancel">
               {{ $t('common.cancel') }}
             </button>
-            <button class="btn btn-primary" @click="handleApply">
+            <button class="btn btn-primary" :data-testid="qa('basic-wan-cht-apply-button')" @click="handleApply">
               {{ $t('common.apply') }}
             </button>
           </div>
@@ -107,25 +107,28 @@
       </div>
     </div>
 
-    <div v-else class="edit-view">
+    <div v-else class="edit-view" :data-testid="qa('basic-wan-cht-edit-view')">
       <PPPoEEditForm
         v-if="editType === 'PPPoE' && editData"
         v-model="editData.PPPoE"
+        :data-testid="qa('basic-wan-cht-pppoe-form')"
       />
       <IPoEEditForm
         v-else-if="editType === 'IPoE' && editData"
         v-model="editData.IPoE"
+        :data-testid="qa('basic-wan-cht-ipoe-form')"
       />
       <BridgeEditForm
         v-else-if="editType === 'Bridge' && editData"
         v-model="editData.Bridge"
+        :data-testid="qa('basic-wan-cht-bridge-form')"
       />
 
-      <div class="button-group">
-        <button class="btn btn-secondary" @click="cancelEdit">
+      <div class="button-group" :data-testid="qa('basic-wan-cht-edit-button-group')">
+        <button class="btn btn-secondary" :data-testid="qa('basic-wan-cht-edit-cancel-button')" @click="cancelEdit">
           {{ $t('common.cancel') }}
         </button>
-        <button class="btn btn-primary" @click="saveEdit">
+        <button class="btn btn-primary" :data-testid="qa('basic-wan-cht-edit-save-button')" @click="saveEdit">
           {{ $t('common.save') }}
         </button>
       </div>
@@ -144,8 +147,10 @@ import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
 import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
 import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
 import { BaseBadge } from '../../../components/common';
+import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
+const { qa } = useQA();
 const showSuccess = ref(false);
 const showFail = ref(false);
 const showLoadFail = ref(false);

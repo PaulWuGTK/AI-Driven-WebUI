@@ -155,7 +155,7 @@ onMounted(fetchMacFiltering);
             v-model="macFilteringEnabled"
             :data-testid="qa('general-mac-enable-checkbox')"
           />
-          <span class="slider"></span>
+          <span class="slider" :data-testid="qa('general-mac-enable-slider')"></span>
         </label>
       </div>
 

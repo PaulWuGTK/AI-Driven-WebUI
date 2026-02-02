@@ -23,12 +23,12 @@ const showBandPasswords = ref({
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-card">
-      <h1 class="step-title">{{ t('wizard.reviewTitle') }}</h1>
-      <p class="step-subtitle">{{ t('wizard.reviewSubtitle') }}</p>
+  <div class="step-container" :data-testid="qa('wizard-review-container')">
+    <div class="step-card" :data-testid="qa('wizard-review-card')">
+      <h1 class="step-title" :data-testid="qa('wizard-review-title')">{{ t('wizard.reviewTitle') }}</h1>
+      <p class="step-subtitle" :data-testid="qa('wizard-review-subtitle')">{{ t('wizard.reviewSubtitle') }}</p>
 
-      <div class="progress-bar">
+      <div class="progress-bar" :data-testid="qa('wizard-review-progress')">
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
@@ -39,33 +39,33 @@ const showBandPasswords = ref({
         <div class="progress-step active"></div>
       </div>
 
-      <div class="review-container">
-        <div class="review-section">
-          <h3>{{ t('wizard.reviewDeviceMode') }}</h3>
-          <div class="review-item">
+      <div class="review-container" :data-testid="qa('wizard-review-sections')">
+        <div class="review-section" :data-testid="qa('wizard-review-mode-section')">
+          <h3 :data-testid="qa('wizard-review-mode-title')">{{ t('wizard.reviewDeviceMode') }}</h3>
+          <div class="review-item" :data-testid="qa('wizard-review-mode-item')">
             <span class="label">{{ t('wizard.reviewMode') }}</span>
-            <span class="value">{{ config.mode === 'router' ? t('wizard.routerModeTitle') : t('wizard.agentModeTitle') }}</span>
+            <span class="value" :data-testid="qa('wizard-review-mode-value')">{{ config.mode === 'router' ? t('wizard.routerModeTitle') : t('wizard.agentModeTitle') }}</span>
           </div>
         </div>
 
-        <div v-if="config.mode === 'router'" class="review-section">
-          <h3>{{ t('wizard.reviewWanConnection') }}</h3>
-          <div class="review-item">
+        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-wan-section')">
+          <h3 :data-testid="qa('wizard-review-wan-title')">{{ t('wizard.reviewWanConnection') }}</h3>
+          <div class="review-item" :data-testid="qa('wizard-review-wan-item')">
             <span class="label">{{ t('wizard.reviewConnectionType') }}</span>
-            <span class="value">{{ config.wan.wanMode.replace(/_/g, ' ') }}</span>
+            <span class="value" :data-testid="qa('wizard-review-wan-value')">{{ config.wan.wanMode.replace(/_/g, ' ') }}</span>
           </div>
         </div>
 
-        <div v-if="config.mode === 'router'" class="review-section">
-          <h3>{{ t('wizard.reviewSmartMesh') }}</h3>
-          <div class="review-item">
+        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-mesh-section')">
+          <h3 :data-testid="qa('wizard-review-mesh-title')">{{ t('wizard.reviewSmartMesh') }}</h3>
+          <div class="review-item" :data-testid="qa('wizard-review-mesh-item')">
             <span class="label">{{ t('wizard.reviewStatus') }}</span>
-            <span class="value">{{ config.mesh.enable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
+            <span class="value" :data-testid="qa('wizard-review-mesh-value')">{{ config.mesh.enable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
           </div>
         </div>
 
-        <div v-if="config.mode === 'router'" class="review-section">
-          <h3>{{ t('wizard.reviewWifiConfiguration') }}</h3>
+        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-wifi-section')">
+          <h3 :data-testid="qa('wizard-review-wifi-title')">{{ t('wizard.reviewWifiConfiguration') }}</h3>
           <div class="review-item">
             <span class="label">{{ t('wizard.smartConnect') }}:</span>
             <span class="value">{{ config.wifi.smartConnect ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
@@ -162,24 +162,24 @@ const showBandPasswords = ref({
           </div>
         </div>
 
-        <div v-if="config.mode === 'router'" class="review-section">
-          <h3>{{ t('wizard.reviewAdministrator') }}</h3>
-          <div class="review-item">
+        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-admin-section')">
+          <h3 :data-testid="qa('wizard-review-admin-title')">{{ t('wizard.reviewAdministrator') }}</h3>
+          <div class="review-item" :data-testid="qa('wizard-review-admin-username-item')">
             <span class="label">{{ t('wizard.username') }}:</span>
-            <span class="value">{{ config.admin.username }}</span>
+            <span class="value" :data-testid="qa('wizard-review-admin-username-value')">{{ config.admin.username }}</span>
           </div>
-          <div class="review-item password-row">
+          <div class="review-item password-row" :data-testid="qa('wizard-review-admin-password-item')">
             <span class="label">{{ t('wizard.reviewPassword') }}</span>
-            <span class="value">{{ showAdminPassword ? config.admin.password : '•'.repeat(config.admin.password.length) }}</span>
-            <button type="button" class="password-toggle-btn" @click="showAdminPassword = !showAdminPassword">
+            <span class="value" :data-testid="qa('wizard-review-admin-password-value')">{{ showAdminPassword ? config.admin.password : '•'.repeat(config.admin.password.length) }}</span>
+            <button type="button" class="password-toggle-btn" :data-testid="qa('wizard-review-admin-password-toggle')" @click="showAdminPassword = !showAdminPassword">
               <span class="material-icons">{{ showAdminPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div class="info-box">
-        <p>{{ t('wizard.reviewApplyMessage') }}</p>
+      <div class="info-box" :data-testid="qa('wizard-review-info-box')">
+        <p :data-testid="qa('wizard-review-apply-message')">{{ t('wizard.reviewApplyMessage') }}</p>
       </div>
     </div>
 

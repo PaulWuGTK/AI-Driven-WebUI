@@ -84,7 +84,7 @@ watch(() => props.modelValue.SSID, (newSsid) => {
               :checked="modelValue.Enable === 1"
               @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
             >
-            <span class="slider"></span>
+            <span class="slider" :data-testid="qa(`wireless-band-config-enable-toggle-slider-${slug(title)}`)"></span>
           </label>
         </div>
       </div>

@@ -230,7 +230,7 @@ onMounted(fetchGuestLAN);
                   :true-value="1"
                   :false-value="0"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('guest-lan-ip-enable-toggle-slider')"></span>
               </label>
             </div>
           </div>
@@ -275,7 +275,7 @@ onMounted(fetchGuestLAN);
                   :true-value="1"
                   :false-value="0"
                 >
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('guest-lan-dhcp-enable-toggle-slider')"></span>
               </label>
             </div>
           </div>

@@ -9,12 +9,12 @@ const { qa } = useQA();
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-card">
-      <h1 class="step-title">{{ t('wizard.routerEnvironmentTitle') }}</h1>
-      <p class="step-subtitle">{{ t('wizard.routerEnvironmentSubtitle') }}</p>
+  <div class="step-container" :data-testid="qa('wizard-router-env-container')">
+    <div class="step-card" :data-testid="qa('wizard-router-env-card')">
+      <h1 class="step-title" :data-testid="qa('wizard-router-env-title')">{{ t('wizard.routerEnvironmentTitle') }}</h1>
+      <p class="step-subtitle" :data-testid="qa('wizard-router-env-subtitle')">{{ t('wizard.routerEnvironmentSubtitle') }}</p>
 
-      <div class="progress-bar">
+      <div class="progress-bar" :data-testid="qa('wizard-router-env-progress')">
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
@@ -25,23 +25,23 @@ const { qa } = useQA();
         <div class="progress-step"></div>
       </div>
 
-      <div class="environment-diagram">
-        <img :src="routerModeWireImage" alt="Router Mode Wire Diagram" class="mode-image" />
+      <div class="environment-diagram" :data-testid="qa('wizard-router-env-diagram')">
+        <img :src="routerModeWireImage" alt="Router Mode Wire Diagram" class="mode-image" :data-testid="qa('wizard-router-env-image')" />
       </div>
 
-      <div class="info-container">
-        <div class="info-step">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h4>{{ t('wizard.step1Title') }}</h4>
-            <p>{{ t('wizard.step1Description') }}</p>
+      <div class="info-container" :data-testid="qa('wizard-router-env-info')">
+        <div class="info-step" :data-testid="qa('wizard-router-env-step-1')">
+          <div class="step-number" :data-testid="qa('wizard-router-env-step-1-number')">1</div>
+          <div class="step-content" :data-testid="qa('wizard-router-env-step-1-content')">
+            <h4 :data-testid="qa('wizard-router-env-step-1-title')">{{ t('wizard.step1Title') }}</h4>
+            <p :data-testid="qa('wizard-router-env-step-1-description')">{{ t('wizard.step1Description') }}</p>
           </div>
         </div>
-        <div class="info-step">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h4>{{ t('wizard.step2Title') }}</h4>
-            <p>{{ t('wizard.step2Description') }}</p>
+        <div class="info-step" :data-testid="qa('wizard-router-env-step-2')">
+          <div class="step-number" :data-testid="qa('wizard-router-env-step-2-number')">2</div>
+          <div class="step-content" :data-testid="qa('wizard-router-env-step-2-content')">
+            <h4 :data-testid="qa('wizard-router-env-step-2-title')">{{ t('wizard.step2Title') }}</h4>
+            <p :data-testid="qa('wizard-router-env-step-2-description')">{{ t('wizard.step2Description') }}</p>
           </div>
         </div>
       </div>

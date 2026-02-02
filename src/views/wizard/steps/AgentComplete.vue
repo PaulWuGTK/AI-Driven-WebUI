@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import { wizardApi } from '../../../services/api/wizard';
 import iconResultSucceedImage from '../../../assets/icons/wizard/ico-result-succeed.svg';
 
@@ -11,6 +12,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const { t } = useI18n();
+const { qa } = useQA();
 const isRedirecting = ref(false);
 
 const handleFinish = async () => {
@@ -32,24 +34,25 @@ const deviceModel = props.wizardData?.ModelName || '';
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-card">
-      <div class="success-content">
-        <div class="device-icon">
-          <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" />
+  <div class="step-container" :data-testid="qa('wizard-agent-complete-container')">
+    <div class="step-card" :data-testid="qa('wizard-agent-complete-card')">
+      <div class="success-content" :data-testid="qa('wizard-agent-complete-content')">
+        <div class="device-icon" :data-testid="qa('wizard-agent-complete-icon')">
+          <img :src="iconResultSucceedImage" alt="Updating" class="mode-image" :data-testid="qa('wizard-agent-complete-image')" />
         </div>
 
-        <h1 v-if="deviceModel" class="device-model">{{ deviceModel }}</h1>
+        <h1 v-if="deviceModel" class="device-model" :data-testid="qa('wizard-agent-complete-model')">{{ deviceModel }}</h1>
 
-        <h2 class="finish-title">{{ t('wizard.agentCompleteTitle') }}</h2>
+        <h2 class="finish-title" :data-testid="qa('wizard-agent-complete-title')">{{ t('wizard.agentCompleteTitle') }}</h2>
 
-        <div class="instructions">
-          <p>{{ t('wizard.instruction1') }}</p>
-          <p>{{ t('wizard.instruction2') }}</p>
+        <div class="instructions" :data-testid="qa('wizard-agent-complete-instructions')">
+          <p :data-testid="qa('wizard-agent-complete-instruction-1')">{{ t('wizard.instruction1') }}</p>
+          <p :data-testid="qa('wizard-agent-complete-instruction-2')">{{ t('wizard.instruction2') }}</p>
         </div>
 
         <button
           class="finish-button"
+          :data-testid="qa('wizard-agent-complete-finish-button')"
           @click="handleFinish"
           :disabled="isRedirecting"
         >

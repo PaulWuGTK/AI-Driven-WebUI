@@ -235,7 +235,12 @@ const handleSave = async () => {
       }
     };
 
-    await updateLcmDeploymentUnit({ AdvancedLcmDeploymentUnit: payload });
+    const res = await updateLcmDeploymentUnit({ AdvancedLcmDeploymentUnit: payload });
+
+    const du = (res as any)?.AdvancedLcmDeploymentUnit;
+    if (du && typeof du === 'object' && du.NOK) {
+      throw new Error(du.NOK);
+    }
 
     await fetchConfig();
     showSuccessMessage();
@@ -253,12 +258,17 @@ const handleDelete = async (duid: string) => {
 
   loading.value = true;
   try {
-    await updateLcmDeploymentUnit({
+    const res = await updateLcmDeploymentUnit({
       AdvancedLcmDeploymentUnit: {
         Action: 'Uninstall',
         DUID: duid
       }
     });
+
+    const du = (res as any)?.AdvancedLcmDeploymentUnit;
+    if (du && typeof du === 'object' && du.NOK) {
+      throw new Error(du.NOK);
+    }
 
     await fetchConfig();
     showSuccessMessage();

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQA } from '../../../utils/qa';
 import { wizardApi } from '../../../services/api/wizard';
 import type { AgentSetupMode } from '../../../types/wizard';
 
@@ -11,6 +12,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['back-to-agent-setup', 'agent-success']);
 const { t } = useI18n();
+const { qa } = useQA();
 
 const countdown = ref(120);
 const linkStatus = ref<'Down' | 'Up' | undefined>(undefined);
@@ -108,31 +110,31 @@ const formatTime = (seconds: number) => {
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-card">
-      <h1 class="step-title">{{ t('wizard.processingTitle') }}</h1>
-      <p class="step-subtitle">{{ t('wizard.processingSubtitle') }}</p>
+  <div class="step-container" :data-testid="qa('wizard-agent-processing-container')">
+    <div class="step-card" :data-testid="qa('wizard-agent-processing-card')">
+      <h1 class="step-title" :data-testid="qa('wizard-agent-processing-title')">{{ t('wizard.processingTitle') }}</h1>
+      <p class="step-subtitle" :data-testid="qa('wizard-agent-processing-subtitle')">{{ t('wizard.processingSubtitle') }}</p>
 
-      <div class="progress-bar">
+      <div class="progress-bar" :data-testid="qa('wizard-agent-processing-progress')">
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
       </div>
 
-      <div class="processing-container">
-        <div class="spinner"></div>
-        <h3>{{ statusMessage }}</h3>
-        <p class="status-info">
-          Link: <strong>{{ linkStatus }}</strong> |
-          Status: <strong>{{ onboardingStatus }}</strong>
+      <div class="processing-container" :data-testid="qa('wizard-agent-processing-status')">
+        <div class="spinner" :data-testid="qa('wizard-agent-processing-spinner')"></div>
+        <h3 :data-testid="qa('wizard-agent-processing-message')">{{ statusMessage }}</h3>
+        <p class="status-info" :data-testid="qa('wizard-agent-processing-info')">
+          Link: <strong :data-testid="qa('wizard-agent-processing-link-status')">{{ linkStatus }}</strong> |
+          Status: <strong :data-testid="qa('wizard-agent-processing-onboarding-status')">{{ onboardingStatus }}</strong>
         </p>
-        <div class="countdown">
-          <p>{{ t('wizard.timeoutIn') }} <strong>{{ formatTime(countdown) }}</strong></p>
+        <div class="countdown" :data-testid="qa('wizard-agent-processing-countdown')">
+          <p>{{ t('wizard.timeoutIn') }} <strong :data-testid="qa('wizard-agent-processing-countdown-value')">{{ formatTime(countdown) }}</strong></p>
         </div>
       </div>
 
-      <div class="info-box">
+      <div class="info-box" :data-testid="qa('wizard-agent-processing-timeout-message')">
         <p>{{ t('wizard.timeoutMessage') }}</p>
       </div>
     </div>

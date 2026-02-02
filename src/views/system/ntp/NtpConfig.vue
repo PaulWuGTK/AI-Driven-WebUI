@@ -133,7 +133,7 @@ onMounted(fetchNtpSettings);
                     :data-testid="qa('ntp-daylight-saving-toggle')"
                     v-model="daylightSaving"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('ntp-daylight-saving-slider')"></span>
                 </label>
               </div>
             </div>
@@ -147,7 +147,7 @@ onMounted(fetchNtpSettings);
                     :data-testid="qa('ntp-enable-toggle')"
                     v-model="ntpEnabled"
                   >
-                  <span class="slider"></span>
+                  <span class="slider" :data-testid="qa('ntp-enable-slider')"></span>
                 </label>
               </div>
             </div>

@@ -154,7 +154,7 @@ onMounted(fetchWpsConfig);
             :checked="tempWpsEnabled === 1"
             @change="handleEnableToggle(($event.target as HTMLInputElement).checked)"
           >
-          <span class="slider"></span>
+          <span class="slider" :data-testid="qa('wireless-wps-config-enable-toggle-slider')"></span>
         </label>
       </div>
     </div>
