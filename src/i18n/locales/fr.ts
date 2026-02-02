@@ -307,6 +307,7 @@ export default {
     memRange: 'La mémoire doit être comprise entre 1 et {max}',
     diskRange: 'Le disque doit être compris entre 1 et {max}',
     confirmDelete: 'Voulez-vous vraiment supprimer cet environnement d’exécution ?',
+    confirmDeleteDeployment: 'Voulez-vous vraiment supprimer cette unité de déploiement ?',
     deploymentUnit: 'Unité de déploiement',
     addDU: 'Ajouter une DU',
     updateDU: 'Mettre à jour la DU',

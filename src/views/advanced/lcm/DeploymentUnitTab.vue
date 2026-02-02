@@ -254,7 +254,7 @@ const handleSave = async () => {
 };
 
 const handleDelete = async (duid: string) => {
-  if (!confirm(t('lcm.confirmDelete'))) return;
+  if (!confirm(t('lcm.confirmDeleteDeployment'))) return;
 
   loading.value = true;
   try {

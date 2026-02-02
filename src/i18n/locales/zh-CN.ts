@@ -307,6 +307,7 @@ export default {
     memRange: '内存必须在 1 到 {max} 之间',
     diskRange: '磁盘必须在 1 到 {max} 之间',
     confirmDelete: '确定要删除此执行环境吗？',
+    confirmDeleteDeployment: '确定要删除此部署单元吗？',
     deploymentUnit: '部署单元',
     addDU: '新增 DU',
     updateDU: '更新 DU',

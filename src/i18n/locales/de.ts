@@ -307,6 +307,7 @@ export default {
     memRange: 'Speicher muss zwischen 1 und {max} liegen',
     diskRange: 'Speicherplatz muss zwischen 1 und {max} liegen',
     confirmDelete: 'Möchten Sie diese Ausführungsumgebung wirklich löschen?',
+    confirmDeleteDeployment: 'Möchten Sie diese Deployment-Unit wirklich löschen?',
     deploymentUnit: 'Deployment-Unit',
     addDU: 'DU hinzufügen',
     updateDU: 'DU aktualisieren',

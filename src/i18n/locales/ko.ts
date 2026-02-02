@@ -306,6 +306,7 @@ export default {
     memRange: '메모리는 1에서 {max} 사이여야 합니다',
     diskRange: '디스크는 1에서 {max} 사이여야 합니다',
     confirmDelete: '이 실행 환경을 삭제하시겠습니까?',
+    confirmDeleteDeployment: '이 배포 유닛을 삭제하시겠습니까?',
     deploymentUnit: '배포 유닛',
     addDU: 'DU 추가',
     updateDU: 'DU 업데이트',

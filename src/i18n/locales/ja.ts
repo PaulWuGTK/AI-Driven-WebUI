@@ -307,6 +307,7 @@ export default {
     memRange: 'メモリは 1～{max} の範囲で設定してください',
     diskRange: 'ディスクは 1～{max} の範囲で設定してください',
     confirmDelete: 'この実行環境を削除してもよろしいですか？',
+    confirmDeleteDeployment: 'このデプロイメントユニットを削除してもよろしいですか？',
     deploymentUnit: 'デプロイメントユニット',
     addDU: 'DU を追加',
     updateDU: 'DU を更新',
