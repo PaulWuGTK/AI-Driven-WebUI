@@ -1,6 +1,6 @@
 <template>
-  <div class="qos-bandwidth-tab">
-    <BaseCard>
+  <div class="qos-bandwidth-tab" data-testid="qos-bandwidth-tab">
+    <BaseCard data-testid="qos-bandwidth-card">
       <div class="form-group">
          <label class="switch-label">
           <div class="form-label">{{ t('qos.enableQos') }}</div>
@@ -8,13 +8,14 @@
             <input
               type="checkbox"
               v-model="formData.Enable"
+              data-testid="qos-enable-checkbox"
             />
             <span class="slider"></span>
           </label>
         </label>
-      
+
         <template v-if="formData.Enable">
-          <div class="bandwidth-inputs">
+          <div class="bandwidth-inputs" data-testid="bandwidth-inputs">
             <div class="bandwidth-field">
               <label class="form-label">{{ t('qos.downloadBandwidth') }}</label>
               <div class="input-group">
@@ -22,6 +23,7 @@
                   v-model="formData.Bandwidth.Download"
                   type="number"
                   :min="1"
+                  data-testid="download-bandwidth-input"
                 />
                 <span class="unit">Mb/s</span>
               </div>
@@ -34,14 +36,15 @@
                   v-model="formData.Bandwidth.Upload"
                   type="number"
                   :min="1"
+                  data-testid="upload-bandwidth-input"
                 />
                 <span class="unit">Mb/s</span>
               </div>
             </div>
           </div>
 
-          <div class="priority-table-container">
-            <table class="priority-table">
+          <div class="priority-table-container" data-testid="priority-table-container">
+            <table class="priority-table" data-testid="priority-table">
               <thead>
                 <tr>
                   <th>{{ t('qos.priority') }}</th>
@@ -52,7 +55,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr data-testid="priority-row-high">
                   <td class="priority-label">{{ t('qos.high') }}</td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.High?.min }">
@@ -65,10 +68,11 @@
                         class="small-input"
                         @blur="validateMinMax('High', 'Min')"
                         @input="validateMinMax('High', 'Min')"
+                        data-testid="priority-high-min-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.High?.min" class="error-message">{{ validationErrors.High.min }}</div>
+                    <div v-if="validationErrors.High?.min" class="error-message" data-testid="priority-high-min-error">{{ validationErrors.High.min }}</div>
                   </td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.High?.max }">
@@ -81,15 +85,16 @@
                         class="small-input"
                         @blur="validateMinMax('High', 'Max')"
                         @input="validateMinMax('High', 'Max')"
+                        data-testid="priority-high-max-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.High?.max" class="error-message">{{ validationErrors.High.max }}</div>
+                    <div v-if="validationErrors.High?.max" class="error-message" data-testid="priority-high-max-error">{{ validationErrors.High.max }}</div>
                   </td>
-                  <td>{{ calculateSpeed('High') }}</td>
+                  <td data-testid="priority-high-speed">{{ calculateSpeed('High') }}</td>
                   <td>{{ t('qos.goesFirst') }}</td>
                 </tr>
-                <tr>
+                <tr data-testid="priority-row-medium">
                   <td class="priority-label">{{ t('qos.medium') }}</td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.Medium?.min }">
@@ -102,10 +107,11 @@
                         class="small-input"
                         @blur="validateMinMax('Medium', 'Min')"
                         @input="validateMinMax('Medium', 'Min')"
+                        data-testid="priority-medium-min-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.Medium?.min" class="error-message">{{ validationErrors.Medium.min }}</div>
+                    <div v-if="validationErrors.Medium?.min" class="error-message" data-testid="priority-medium-min-error">{{ validationErrors.Medium.min }}</div>
                   </td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.Medium?.max }">
@@ -118,15 +124,16 @@
                         class="small-input"
                         @blur="validateMinMax('Medium', 'Max')"
                         @input="validateMinMax('Medium', 'Max')"
+                        data-testid="priority-medium-max-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.Medium?.max" class="error-message">{{ validationErrors.Medium.max }}</div>
+                    <div v-if="validationErrors.Medium?.max" class="error-message" data-testid="priority-medium-max-error">{{ validationErrors.Medium.max }}</div>
                   </td>
-                  <td>{{ calculateSpeed('Medium') }}</td>
+                  <td data-testid="priority-medium-speed">{{ calculateSpeed('Medium') }}</td>
                   <td>{{ t('qos.normalLane') }}</td>
                 </tr>
-                <tr>
+                <tr data-testid="priority-row-low">
                   <td class="priority-label">{{ t('qos.low') }}</td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.Low?.min }">
@@ -139,10 +146,11 @@
                         class="small-input"
                         @blur="validateMinMax('Low', 'Min')"
                         @input="validateMinMax('Low', 'Min')"
+                        data-testid="priority-low-min-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.Low?.min" class="error-message">{{ validationErrors.Low.min }}</div>
+                    <div v-if="validationErrors.Low?.min" class="error-message" data-testid="priority-low-min-error">{{ validationErrors.Low.min }}</div>
                   </td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors.Low?.max }">
@@ -155,15 +163,16 @@
                         class="small-input"
                         @blur="validateMinMax('Low', 'Max')"
                         @input="validateMinMax('Low', 'Max')"
+                        data-testid="priority-low-max-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors.Low?.max" class="error-message">{{ validationErrors.Low.max }}</div>
+                    <div v-if="validationErrors.Low?.max" class="error-message" data-testid="priority-low-max-error">{{ validationErrors.Low.max }}</div>
                   </td>
-                  <td>{{ calculateSpeed('Low') }}</td>
+                  <td data-testid="priority-low-speed">{{ calculateSpeed('Low') }}</td>
                   <td>{{ t('qos.yieldsWhenBusy') }}</td>
                 </tr>
-                <tr>
+                <tr data-testid="priority-row-low-latency">
                   <td class="priority-label">{{ t('qos.lowLatency') }}</td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors['Low-latency']?.min }">
@@ -176,10 +185,11 @@
                         class="small-input"
                         @blur="validateMinMax('Low-latency', 'Min')"
                         @input="validateMinMax('Low-latency', 'Min')"
+                        data-testid="priority-low-latency-min-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors['Low-latency']?.min" class="error-message">{{ validationErrors['Low-latency'].min }}</div>
+                    <div v-if="validationErrors['Low-latency']?.min" class="error-message" data-testid="priority-low-latency-min-error">{{ validationErrors['Low-latency'].min }}</div>
                   </td>
                   <td>
                     <div class="percent-input" :class="{ 'has-error': validationErrors['Low-latency']?.max }">
@@ -192,12 +202,13 @@
                         class="small-input"
                         @blur="validateMinMax('Low-latency', 'Max')"
                         @input="validateMinMax('Low-latency', 'Max')"
+                        data-testid="priority-low-latency-max-input"
                       />
                       <span>%</span>
                     </div>
-                    <div v-if="validationErrors['Low-latency']?.max" class="error-message">{{ validationErrors['Low-latency'].max }}</div>
+                    <div v-if="validationErrors['Low-latency']?.max" class="error-message" data-testid="priority-low-latency-max-error">{{ validationErrors['Low-latency'].max }}</div>
                   </td>
-                  <td>{{ calculateSpeed('Low-latency') }}</td>
+                  <td data-testid="priority-low-latency-speed">{{ calculateSpeed('Low-latency') }}</td>
                   <td>{{ t('qos.lowDelayFirst') }}</td>
                 </tr>
               </tbody>
@@ -205,11 +216,11 @@
           </div>
         </template>
 
-        <div class="button-group">
-          <BaseButton @click="handleCancel" variant="secondary">
+        <div class="button-group" data-testid="button-group">
+          <BaseButton @click="handleCancel" variant="secondary" data-testid="cancel-button">
             {{ t('common.cancel') }}
           </BaseButton>
-          <BaseButton @click="handleSave" variant="primary">
+          <BaseButton @click="handleSave" variant="primary" data-testid="apply-button">
             {{ t('common.apply') }}
           </BaseButton>
         </div>
