@@ -13,6 +13,7 @@ export * from './menuVisibility';
 export * from './ntp';
 export * from './operationMode';
 export * from './ssh';
+export * from './staticRoute';
 export * from './statistics';
 export * from './timezone';
 export * from './tr471';

@@ -281,7 +281,8 @@ const router = createRouter({
     },
     {
       path: '/basic/routing',
-      component: () => import('../views/InProgress.vue'),
+      name: 'BasicRouting',
+      component: () => import('../views/network/routing/RoutingConfig.vue'),
       beforeEnter: requireAuth
     },
     {
