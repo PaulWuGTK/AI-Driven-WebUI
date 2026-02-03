@@ -7,6 +7,7 @@ import type { LogResponse } from '../types/log';
 import type { QosBandwidthResponse, QosRuleResponse } from '../types/qos';
 import type { BackupWANResponse, BackupWANRequest } from '../types/backupWan';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../types/operationMode';
+import type { StaticRouteResponse, StaticRouteUpdateRequest } from '../types/staticRoute';
 
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
@@ -18,6 +19,7 @@ import { generateMockLogs } from './mockData/logMockData';
 import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { mockBackupWANData } from './mockData/backupWanMockData';
 import { operationModeMockData } from './mockData/operationModeMockData';
+import { staticRouteMockData } from './mockData/staticRouteMockData';
 
 export const getMockWanStatus = (): WanStatusResponse => wanMockData;
 export const getMockLanStatus = (): LanStatusResponse => lanMockData;
@@ -30,6 +32,7 @@ export const getMockQosBandwidth = (): QosBandwidthResponse => qosBandwidthMockD
 export const getMockQosRule = (): QosRuleResponse => qosRuleMockData;
 export const getMockBackupWAN = (): BackupWANResponse => mockBackupWANData;
 export const getMockOperationMode = (): OperationModeResponse => operationModeMockData;
+export const getMockStaticRoute = (): StaticRouteResponse => staticRouteMockData;
 
 export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
   const servers = data.Ntp.NtpServers.split(',').map(s => s.trim());
@@ -67,6 +70,21 @@ export const updateMockOperationMode = (data: OperationModeUpdateRequest): Opera
     OperationMode: {
       ...operationModeMockData.OperationMode,
       Mode: data.OperationMode.Mode
+    }
+  };
+};
+
+export const updateMockStaticRoute = (data: StaticRouteUpdateRequest): StaticRouteResponse => {
+  return {
+    StaticRoute: {
+      IPv4: data.StaticRoute.IPv4.map(route => ({
+        ...route,
+        WanIfList: ["IPoE", "PPPoE", "Default"]
+      })),
+      IPv6: data.StaticRoute.IPv6.map(route => ({
+        ...route,
+        WanIfList: ["IPoE", "PPPoE", "Default"]
+      }))
     }
   };
 };

@@ -142,10 +142,6 @@ onMounted(fetchRoutes);
 
     <template v-else>
       <div class="panel-section" :data-testid="qa('static-route-section')">
-        <div class="info-message" :data-testid="qa('static-route-info')">
-          {{ t('routing.staticRouteDescription') }}
-        </div>
-
         <div class="header-row">
           <div class="section-title-sp" :data-testid="qa('static-route-title')">
             {{ t('routing.staticRoute') }}

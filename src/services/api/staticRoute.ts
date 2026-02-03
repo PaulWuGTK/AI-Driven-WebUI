@@ -1,12 +1,23 @@
-import apiClient from '../apiClient';
+import { callApi } from '../apiClient';
 import type { StaticRouteResponse, StaticRouteUpdateRequest } from '../../types/staticRoute';
+import { getMockStaticRoute, updateMockStaticRoute } from '../mockApi';
+
+const isDevelopment = import.meta.env.DEV;
+const API_BASE_URL = '/API';
 
 export const getStaticRoute = async (): Promise<StaticRouteResponse> => {
-  const response = await apiClient.get<StaticRouteResponse>('/API/info?list=StaticRoute');
-  return response;
+  if (isDevelopment) {
+    return getMockStaticRoute();
+  }
+  return callApi<StaticRouteResponse>(`${API_BASE_URL}/info?list=StaticRoute`);
 };
 
 export const updateStaticRoute = async (data: StaticRouteUpdateRequest): Promise<StaticRouteResponse> => {
-  const response = await apiClient.post<StaticRouteResponse>('/API/info?list=StaticRoute', data);
-  return response;
+  if (isDevelopment) {
+    return updateMockStaticRoute(data);
+  }
+  return callApi<StaticRouteResponse>(`${API_BASE_URL}/info?list=StaticRoute`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
 };

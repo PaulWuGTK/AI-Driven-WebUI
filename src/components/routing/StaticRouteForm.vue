@@ -190,13 +190,13 @@ const handleClose = () => {
           <div class="form-group">
             <label class="toggle-label">
               {{ t('routing.enable') }}
-              <div class="toggle-switch">
+              <div class="switch">
                 <input
                   type="checkbox"
                   v-model="formData.Enable"
                   :data-testid="qa('static-route-form-enable')"
                 />
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('static-route-form-enable-slider')"></span>
               </div>
             </label>
           </div>
@@ -263,13 +263,13 @@ const handleClose = () => {
           <div class="form-group">
             <label class="toggle-label">
               {{ t('routing.useGatewayIpAddress') }}
-              <div class="toggle-switch">
+              <div class="switch">
                 <input
                   type="checkbox"
                   v-model="formData.UsedGWIp"
                   :data-testid="qa('static-route-form-use-gw-ip')"
                 />
-                <span class="slider"></span>
+                <span class="slider" :data-testid="qa('static-route-form-use-gw-ip-slider')"></span>
               </div>
             </label>
           </div>
@@ -437,37 +437,6 @@ const handleClose = () => {
   height: 0;
 }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.3s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: var(--primary-color);
-}
-
-input:checked + .slider:before {
-  transform: translateX(24px);
-}
 
 .required {
   color: #dc3545;
