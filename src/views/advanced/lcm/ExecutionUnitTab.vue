@@ -244,7 +244,7 @@ onMounted(fetchConfig);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
+  justify-content: left;
 }
 
 .action-btn {

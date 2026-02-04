@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StaticRouteTab from './StaticRouteTab.vue';
 import DnsRouteTab from './DnsRouteTab.vue';
+import TabInProgress from '../../../components/TabInProgress.vue';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -37,7 +38,7 @@ const tabs = computed(() => [
 
         <div class="tab-content" :data-testid="qa('routing-config-tab-content')">
           <StaticRouteTab v-if="activeTab === 'static-route'" :data-testid="qa('routing-static-route-tab')" />
-          <DnsRouteTab v-else-if="activeTab === 'dns-route'" :data-testid="qa('routing-dns-route-tab')" />
+          <TabInProgress v-else-if="activeTab === 'dns-route'" :data-testid="qa('routing-dns-route-tab')" />
         </div>
       </div>
     </div>
