@@ -33,7 +33,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'status.wan': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: true, genix: true, cht: false },
+    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
+  },
+  'status.wanCht': {
+    netLayoutTypes: { prpl: false, genix: false, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'status.wanFailover': {

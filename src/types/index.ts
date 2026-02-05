@@ -15,6 +15,7 @@ export * from './operationMode';
 export * from './ssh';
 export * from './staticRoute';
 export * from './statistics';
+export * from './statusWanCht';
 export * from './timezone';
 export * from './tr471';
 export * from './upnp';

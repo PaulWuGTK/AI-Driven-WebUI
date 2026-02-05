@@ -47,6 +47,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/status/wan-cht',
+      component: () => import('../views/status/WanStatusCht.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/status/lan',
       component: () => import('../views/status/LanStatus.vue'),
       beforeEnter: requireAuth

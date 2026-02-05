@@ -46,7 +46,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
           }
         ],
         mode: "Gateway",
-        NetLayoutType: "prpl",
+        NetLayoutType: "cht",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: "en"
