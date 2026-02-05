@@ -82,6 +82,12 @@ onMounted(() => {
           </div>
           <div class="detail-row">
             <div class="detail-item">
+              <span class="detail-label" :data-testid="qa('wan-cht-pppoe-status-label')">{{ t('wanCht.status') }}</span>
+              <span class="detail-value" :data-testid="qa('wan-cht-pppoe-status-value')">{{ wanData.StatusWanCht.PPPoE.Status }}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-item">
               <span class="detail-label" :data-testid="qa('wan-cht-pppoe-ipv4-address-label')">{{ t('wanCht.ipv4Address') }}</span>
               <span class="detail-value" :data-testid="qa('wan-cht-pppoe-ipv4-address-value')">{{ getDisplayValue(wanData.StatusWanCht.PPPoE.IPv4Address) }}</span>
             </div>
@@ -169,6 +175,12 @@ onMounted(() => {
           </div>
           <div class="detail-row">
             <div class="detail-item">
+              <span class="detail-label" :data-testid="qa('wan-cht-ipoe-status-label')">{{ t('wanCht.status') }}</span>
+              <span class="detail-value" :data-testid="qa('wan-cht-ipoe-status-value')">{{ wanData.StatusWanCht.IPoE.Status }}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-item">
               <span class="detail-label" :data-testid="qa('wan-cht-ipoe-ipv4-address-label')">{{ t('wanCht.ipv4Address') }}</span>
               <span class="detail-value" :data-testid="qa('wan-cht-ipoe-ipv4-address-value')">{{ getDisplayValue(wanData.StatusWanCht.IPoE.IPv4Address) }}</span>
             </div>
@@ -246,6 +258,12 @@ onMounted(() => {
               <span class="detail-value" :data-testid="qa('wan-cht-bridge-protocol-value')">{{ wanData.StatusWanCht.Bridge.Protocol }}</span>
             </div>
           </div>
+          <div class="detail-row">
+            <div class="detail-item">
+              <span class="detail-label" :data-testid="qa('wan-cht-bridge-status-label')">{{ t('wanCht.status') }}</span>
+              <span class="detail-value" :data-testid="qa('wan-cht-bridge-status-value')">{{ wanData.StatusWanCht.Bridge.Status }}</span>
+            </div>
+          </div>
         </div>
         </div>
       </div>
@@ -268,6 +286,7 @@ onMounted(() => {
                   <th :data-testid="qa('wan-cht-table-subnet-mask-header')">{{ t('wanCht.subnetMask') }}</th>
                   <th :data-testid="qa('wan-cht-table-gateway-header')">{{ t('wanCht.gateway') }}</th>
                   <th :data-testid="qa('wan-cht-table-primary-dns-header')">{{ t('wanCht.primaryDNS') }}</th>
+                  <th :data-testid="qa('wan-cht-table-status-header')">{{ t('wanCht.status') }}</th>
                   <th :data-testid="qa('wan-cht-table-actions-header')">{{ t('wanCht.action') }}</th>
                 </tr>
               </thead>
@@ -279,6 +298,7 @@ onMounted(() => {
                   <td :data-testid="qa('wan-cht-table-pppoe-mask')">{{ getDisplayValue(wanData.StatusWanCht.PPPoE.SubnetMask) }}</td>
                   <td :data-testid="qa('wan-cht-table-pppoe-gateway')">{{ getDisplayValue(wanData.StatusWanCht.PPPoE.IPv4Gateway) }}</td>
                   <td :data-testid="qa('wan-cht-table-pppoe-dns')">{{ getDisplayValue(wanData.StatusWanCht.PPPoE.IPv4PrimaryDNS) }}</td>
+                  <td :data-testid="qa('wan-cht-table-pppoe-status')">{{ wanData.StatusWanCht.PPPoE.Status }}</td>
                   <td :data-testid="qa('wan-cht-table-pppoe-actions')">
                     <button class="btn-action" @click="showDetails('PPPoE')" :data-testid="qa('wan-cht-table-pppoe-details')" title="Details">
                       <span class="material-icons">info</span>
@@ -292,6 +312,7 @@ onMounted(() => {
                   <td :data-testid="qa('wan-cht-table-ipoe-mask')">{{ getDisplayValue(wanData.StatusWanCht.IPoE.SubnetMask) }}</td>
                   <td :data-testid="qa('wan-cht-table-ipoe-gateway')">{{ getDisplayValue(wanData.StatusWanCht.IPoE.IPv4Gateway) }}</td>
                   <td :data-testid="qa('wan-cht-table-ipoe-dns')">{{ getDisplayValue(wanData.StatusWanCht.IPoE.IPv4PrimaryDNS) }}</td>
+                  <td :data-testid="qa('wan-cht-table-ipoe-status')">{{ wanData.StatusWanCht.IPoE.Status }}</td>
                   <td :data-testid="qa('wan-cht-table-ipoe-actions')">
                     <button class="btn-action" @click="showDetails('IPoE')" :data-testid="qa('wan-cht-table-ipoe-details')" title="Details">
                       <span class="material-icons">info</span>
@@ -305,6 +326,7 @@ onMounted(() => {
                   <td :data-testid="qa('wan-cht-table-bridge-mask')">-</td>
                   <td :data-testid="qa('wan-cht-table-bridge-gateway')">-</td>
                   <td :data-testid="qa('wan-cht-table-bridge-dns')">-</td>
+                  <td :data-testid="qa('wan-cht-table-bridge-status')">{{ wanData.StatusWanCht.Bridge.Status }}</td>
                   <td :data-testid="qa('wan-cht-table-bridge-actions')">
                     <button class="btn-action" @click="showDetails('Bridge')" :data-testid="qa('wan-cht-table-bridge-details')" title="Details">
                       <span class="material-icons">info</span>
@@ -341,6 +363,10 @@ onMounted(() => {
                 <span class="card-label">{{ t('wanCht.primaryDNS') }}</span>
                 <span class="card-value">{{ getDisplayValue(wanData.StatusWanCht.PPPoE.IPv4PrimaryDNS) }}</span>
               </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('wanCht.status') }}</span>
+                <span class="card-value">{{ wanData.StatusWanCht.PPPoE.Status }}</span>
+              </div>
               <div class="card-actions">
                 <button class="btn-action" @click="showDetails('PPPoE')" :data-testid="qa('wan-cht-mobile-card-pppoe-details')" title="Details">
                   <span class="material-icons">info</span>
@@ -373,6 +399,10 @@ onMounted(() => {
                 <span class="card-label">{{ t('wanCht.primaryDNS') }}</span>
                 <span class="card-value">{{ getDisplayValue(wanData.StatusWanCht.IPoE.IPv4PrimaryDNS) }}</span>
               </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('wanCht.status') }}</span>
+                <span class="card-value">{{ wanData.StatusWanCht.IPoE.Status }}</span>
+              </div>
               <div class="card-actions">
                 <button class="btn-action" @click="showDetails('IPoE')" :data-testid="qa('wan-cht-mobile-card-ipoe-details')" title="Details">
                   <span class="material-icons">info</span>
@@ -404,6 +434,10 @@ onMounted(() => {
               <div class="card-row">
                 <span class="card-label">{{ t('wanCht.primaryDNS') }}</span>
                 <span class="card-value">-</span>
+              </div>
+              <div class="card-row">
+                <span class="card-label">{{ t('wanCht.status') }}</span>
+                <span class="card-value">{{ wanData.StatusWanCht.Bridge.Status }}</span>
               </div>
               <div class="card-actions">
                 <button class="btn-action" @click="showDetails('Bridge')" :data-testid="qa('wan-cht-mobile-card-bridge-details')" title="Details">

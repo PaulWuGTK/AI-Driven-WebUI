@@ -170,7 +170,8 @@ export default {
     gateway: 'ゲートウェイ',
     primaryDNS: 'プライマリDNS',
     details: '詳細',
-    action: '操作'
+    action: '操作',
+    status: '状態'
   },
   lan: {
     title: 'LAN',

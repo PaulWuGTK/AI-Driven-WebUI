@@ -1,6 +1,7 @@
 export interface StatusWanChtConnection {
   Interface: string;
   Protocol: string;
+  Status: string;
   IPv4Address?: string;
   IPv4Gateway?: string;
   SubnetMask?: string;

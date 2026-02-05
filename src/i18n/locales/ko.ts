@@ -169,7 +169,8 @@ export default {
     gateway: '게이트웨이',
     primaryDNS: '기본 DNS',
     details: '상세 정보',
-    action: '작업'
+    action: '작업',
+    status: '상태'
   },
   lan: {
     title: 'LAN',

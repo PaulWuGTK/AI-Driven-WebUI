@@ -172,7 +172,8 @@ const translations = {
     gateway: 'Gateway',
     primaryDNS: 'Primary DNS',
     details: 'Details',
-    action: 'Action'
+    action: 'Action',
+    status: 'Status'
   },
   lan: {
     title: 'LAN',

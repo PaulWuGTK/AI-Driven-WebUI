@@ -170,7 +170,8 @@ export default {
     gateway: 'Passerelle',
     primaryDNS: 'DNS principal',
     details: 'Détails',
-    action: 'Action'
+    action: 'Action',
+    status: 'Statut'
   },
   lan: {
     title: 'LAN',

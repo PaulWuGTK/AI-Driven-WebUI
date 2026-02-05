@@ -171,7 +171,8 @@ export default {
     gateway: '閘道',
     primaryDNS: '主要 DNS',
     details: '詳細資訊',
-    action: '操作'
+    action: '操作',
+    status: '狀態'
   },
   lan: {
     title: 'LAN 狀態',

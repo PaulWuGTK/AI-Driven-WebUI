@@ -170,7 +170,8 @@ export default {
     gateway: '网关',
     primaryDNS: '首选 DNS',
     details: '详细信息',
-    action: '操作'
+    action: '操作',
+    status: '状态'
   },
   lan: {
     title: 'LAN',

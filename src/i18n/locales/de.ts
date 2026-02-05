@@ -170,7 +170,8 @@ export default {
     gateway: 'Gateway',
     primaryDNS: 'Primärer DNS',
     details: 'Details',
-    action: 'Aktion'
+    action: 'Aktion',
+    status: 'Status'
   },
   lan: {
     title: 'LAN',
