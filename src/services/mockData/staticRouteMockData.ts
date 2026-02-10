@@ -10,8 +10,7 @@ export const staticRouteMockData: StaticRouteResponse = {
         DestMask: "255.255.255.0",
         GatewayIp: "10.10.10.1",
         UsedGWIp: true,
-        WanIf: "IPoE",
-        WanIfList: ["IPoE", "PPPoE", "Default"]
+        WanIf: "IPoE"
       },
       {
         Enable: false,
@@ -20,8 +19,7 @@ export const staticRouteMockData: StaticRouteResponse = {
         DestMask: "255.255.255.0",
         GatewayIp: "10.10.10.1",
         UsedGWIp: true,
-        WanIf: "PPPoE",
-        WanIfList: ["IPoE", "PPPoE", "Default"]
+        WanIf: "PPPoE"
       }
     ],
     IPv6: [
@@ -32,9 +30,9 @@ export const staticRouteMockData: StaticRouteResponse = {
         DestMask: "64",
         GatewayIp: "fe80::1",
         UsedGWIp: true,
-        WanIf: "PPPoE",
-        WanIfList: ["IPoE", "PPPoE", "Default"]
+        WanIf: "PPPoE"
       }
-    ]
+    ],
+    WanIfList: ["IPoE", "PPPoE"]
   }
 };

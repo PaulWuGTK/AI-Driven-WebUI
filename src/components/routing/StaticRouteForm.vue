@@ -6,6 +6,7 @@ import { useQA } from '../../utils/qa';
 
 interface Props {
   editingItem?: { type: 'IPv4' | 'IPv6'; index: number; data: StaticRouteIPv4 | StaticRouteIPv6 } | null;
+  wanIfList: string[];
 }
 
 const props = defineProps<Props>();
@@ -26,7 +27,6 @@ const formData = ref<{
   GatewayIp: string;
   UsedGWIp: boolean;
   WanIf: string;
-  WanIfList: string[];
 }>({
   Enable: true,
   Alias: '',
@@ -35,8 +35,7 @@ const formData = ref<{
   DestMask: '',
   GatewayIp: '',
   UsedGWIp: true,
-  WanIf: 'Default',
-  WanIfList: ['Default', 'IPoE', 'PPPoE']
+  WanIf: props.wanIfList.length > 0 ? props.wanIfList[0] : ''
 });
 
 const formErrors = ref({
@@ -61,8 +60,7 @@ if (props.editingItem) {
     DestMask: data.DestMask,
     GatewayIp: data.GatewayIp,
     UsedGWIp: data.UsedGWIp,
-    WanIf: data.WanIf,
-    WanIfList: data.WanIfList || ['Default', 'IPoE', 'PPPoE']
+    WanIf: data.WanIf
   };
 }
 
@@ -296,7 +294,7 @@ const handleClose = () => {
               v-model="formData.WanIf"
               :data-testid="qa('static-route-form-wan-if')"
             >
-              <option v-for="iface in formData.WanIfList" :key="iface" :value="iface">
+              <option v-for="iface in wanIfList" :key="iface" :value="iface">
                 {{ iface }}
               </option>
             </select>

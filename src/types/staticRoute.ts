@@ -6,7 +6,6 @@ export interface StaticRouteIPv4 {
   GatewayIp: string;
   UsedGWIp: boolean;
   WanIf: string;
-  WanIfList?: string[];
 }
 
 export interface StaticRouteIPv6 {
@@ -17,12 +16,12 @@ export interface StaticRouteIPv6 {
   GatewayIp: string;
   UsedGWIp: boolean;
   WanIf: string;
-  WanIfList?: string[];
 }
 
 export interface StaticRouteData {
   IPv4: StaticRouteIPv4[];
   IPv6: StaticRouteIPv6[];
+  WanIfList: string[];
 }
 
 export interface StaticRouteResponse {

@@ -13,6 +13,7 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const ipv4Routes = ref<StaticRouteIPv4[]>([]);
 const ipv6Routes = ref<StaticRouteIPv6[]>([]);
+const wanIfList = ref<string[]>([]);
 const showModal = ref(false);
 const editingItem = ref<{ type: 'IPv4' | 'IPv6'; index: number; data: StaticRouteIPv4 | StaticRouteIPv6 } | null>(null);
 const showSuccess = ref(false);
@@ -24,6 +25,7 @@ const fetchRoutes = async (silent = false) => {
     const response = await getStaticRoute();
     ipv4Routes.value = response.StaticRoute.IPv4 || [];
     ipv6Routes.value = response.StaticRoute.IPv6 || [];
+    wanIfList.value = response.StaticRoute.WanIfList || [];
   } catch (err) {
     console.error('Error fetching static routes:', err);
     error.value = 'Failed to fetch static routes';
@@ -70,8 +72,9 @@ const handleSave = async (data: StaticRouteIPv4 | StaticRouteIPv6, ipType: 'IPv4
 
     const payload = {
       StaticRoute: {
-        IPv4: updatedIPv4.map(({ WanIfList, ...route }) => route),
-        IPv6: updatedIPv6.map(({ WanIfList, ...route }) => route)
+        IPv4: updatedIPv4,
+        IPv6: updatedIPv6,
+        WanIfList: wanIfList.value
       }
     };
 
@@ -103,8 +106,9 @@ const handleDelete = async (type: 'IPv4' | 'IPv6', index: number) => {
 
     const payload = {
       StaticRoute: {
-        IPv4: updatedIPv4.map(({ WanIfList, ...route }) => route),
-        IPv6: updatedIPv6.map(({ WanIfList, ...route }) => route)
+        IPv4: updatedIPv4,
+        IPv6: updatedIPv6,
+        WanIfList: wanIfList.value
       }
     };
 
@@ -350,6 +354,7 @@ onMounted(fetchRoutes);
     <StaticRouteForm
       v-if="showModal"
       :editing-item="editingItem"
+      :wan-if-list="wanIfList"
       @save="handleSave"
       @close="closeModal"
     />

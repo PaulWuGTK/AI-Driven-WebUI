@@ -77,14 +77,9 @@ export const updateMockOperationMode = (data: OperationModeUpdateRequest): Opera
 export const updateMockStaticRoute = (data: StaticRouteUpdateRequest): StaticRouteResponse => {
   return {
     StaticRoute: {
-      IPv4: data.StaticRoute.IPv4.map(route => ({
-        ...route,
-        WanIfList: ["IPoE", "PPPoE", "Default"]
-      })),
-      IPv6: data.StaticRoute.IPv6.map(route => ({
-        ...route,
-        WanIfList: ["IPoE", "PPPoE", "Default"]
-      }))
+      IPv4: data.StaticRoute.IPv4,
+      IPv6: data.StaticRoute.IPv6,
+      WanIfList: data.StaticRoute.WanIfList
     }
   };
 };
