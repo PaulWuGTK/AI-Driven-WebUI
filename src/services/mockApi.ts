@@ -78,8 +78,7 @@ export const updateMockStaticRoute = (data: StaticRouteUpdateRequest): StaticRou
   return {
     StaticRoute: {
       IPv4: data.StaticRoute.IPv4,
-      IPv6: data.StaticRoute.IPv6,
-      WanIfList: data.StaticRoute.WanIfList
+      IPv6: data.StaticRoute.IPv6
     }
   };
 };

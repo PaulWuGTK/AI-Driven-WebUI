@@ -73,8 +73,7 @@ const handleSave = async (data: StaticRouteIPv4 | StaticRouteIPv6, ipType: 'IPv4
     const payload = {
       StaticRoute: {
         IPv4: updatedIPv4,
-        IPv6: updatedIPv6,
-        WanIfList: wanIfList.value
+        IPv6: updatedIPv6
       }
     };
 
@@ -107,8 +106,7 @@ const handleDelete = async (type: 'IPv4' | 'IPv6', index: number) => {
     const payload = {
       StaticRoute: {
         IPv4: updatedIPv4,
-        IPv6: updatedIPv6,
-        WanIfList: wanIfList.value
+        IPv6: updatedIPv6
       }
     };
 

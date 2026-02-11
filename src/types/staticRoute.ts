@@ -21,8 +21,9 @@ export interface StaticRouteIPv6 {
 export interface StaticRouteData {
   IPv4: StaticRouteIPv4[];
   IPv6: StaticRouteIPv6[];
-  WanIfList: string[];
+  WanIfList?: string[];
 }
+
 
 export interface StaticRouteResponse {
   StaticRoute: StaticRouteData;
