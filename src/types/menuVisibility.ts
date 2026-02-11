@@ -46,7 +46,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   },
   'status.lan': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
-    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
+  },
+  'status.lanCht': {
+    netLayoutTypes: { prpl: false, genix: false, cht: true },
+    operationModes: { Init: false, Gateway: false, Bridge: true, Extender: true }
   },
   'status.wlan': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },

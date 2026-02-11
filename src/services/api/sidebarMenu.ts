@@ -45,7 +45,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
             duid: "00000000-0000-5000-b000-000000000001"
           }
         ],
-        mode: "Gateway",
+        mode: "Bridge",
         NetLayoutType: "cht",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],

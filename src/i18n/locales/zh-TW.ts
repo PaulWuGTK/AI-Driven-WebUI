@@ -174,6 +174,24 @@ export default {
     action: '操作',
     status: '狀態'
   },
+  lanCht: {
+    title: 'LAN 連線狀態',
+    connectionStatus: 'LAN 連線狀態',
+    interface: '介面',
+    lanInterface: 'LAN',
+    protocol: '協定',
+    ipAddress: 'IP 位址',
+    ipv4Address: 'IPv4 位址',
+    subnetMask: '子網路遮罩',
+    gateway: '閘道',
+    primaryDNS: '主要 DNS',
+    macAddress: 'MAC 位址',
+    ipv6Address: 'IPv6 位址',
+    ipv6Prefix: 'IPv6 前綴',
+    status: '狀態',
+    action: '操作',
+    enabled: '啟用'
+  },
   lan: {
     title: 'LAN 狀態',
     macAddress: 'MAC 位址',

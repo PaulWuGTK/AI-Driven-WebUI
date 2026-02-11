@@ -172,6 +172,24 @@ export default {
     action: '작업',
     status: '상태'
   },
+  lanCht: {
+    title: 'LAN 연결 상태',
+    connectionStatus: 'LAN 연결 상태',
+    interface: '인터페이스',
+    lanInterface: 'LAN',
+    protocol: '프로토콜',
+    ipAddress: 'IP 주소',
+    ipv4Address: 'IPv4 주소',
+    subnetMask: '서브넷 마스크',
+    gateway: '게이트웨이',
+    primaryDNS: '기본 DNS',
+    macAddress: 'MAC 주소',
+    ipv6Address: 'IPv6 주소',
+    ipv6Prefix: 'IPv6 프리픽스',
+    status: '상태',
+    action: '작업',
+    enabled: '활성화됨'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MAC 주소',

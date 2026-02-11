@@ -68,6 +68,7 @@ const baseMenuItems: MenuItem[] = [
       { name: 'WAN Cht', path: '/status/wan-cht', translationKey: 'menu.wan', menuKey: 'status.wanCht' },
       { name: 'WAN Failover', path: '/status/wan-failover', translationKey: 'menu.wanFailover', menuKey: 'status.wanFailover' },
       { name: 'LAN', path: '/status/lan', translationKey: 'menu.lan', menuKey: 'status.lan' },
+      { name: 'LAN Cht', path: '/status/lan-cht', translationKey: 'menu.lan', menuKey: 'status.lanCht' },
       { name: 'WLAN', path: '/status/wlan', translationKey: 'menu.wlan', menuKey: 'status.wlan' },
       { name: 'Statistics', path: '/status/statistics', translationKey: 'menu.statistics', menuKey: 'status.statistics' },
       { name: 'Throughput', path: '/status/system-stats', translationKey: 'menu.throughput', menuKey: 'status.throughput' },

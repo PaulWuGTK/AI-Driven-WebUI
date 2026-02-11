@@ -173,6 +173,24 @@ export default {
     action: '操作',
     status: '状態'
   },
+  lanCht: {
+    title: 'LAN接続状態',
+    connectionStatus: 'LAN接続状態',
+    interface: 'インターフェース',
+    lanInterface: 'LAN',
+    protocol: 'プロトコル',
+    ipAddress: 'IPアドレス',
+    ipv4Address: 'IPv4アドレス',
+    subnetMask: 'サブネットマスク',
+    gateway: 'ゲートウェイ',
+    primaryDNS: 'プライマリDNS',
+    macAddress: 'MACアドレス',
+    ipv6Address: 'IPv6アドレス',
+    ipv6Prefix: 'IPv6プレフィックス',
+    status: '状態',
+    action: '操作',
+    enabled: '有効'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MACアドレス',

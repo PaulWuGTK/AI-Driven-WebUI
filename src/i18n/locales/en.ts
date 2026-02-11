@@ -175,6 +175,24 @@ const translations = {
     action: 'Action',
     status: 'Status'
   },
+  lanCht: {
+    title: 'LAN Connection Status',
+    connectionStatus: 'LAN Connection Status',
+    interface: 'Interface',
+    lanInterface: 'LAN',
+    protocol: 'Protocol',
+    ipAddress: 'IP Address',
+    ipv4Address: 'IPv4 Address',
+    subnetMask: 'Subnet Mask',
+    gateway: 'Gateway',
+    primaryDNS: 'Primary DNS',
+    macAddress: 'MAC Address',
+    ipv6Address: 'IPv6 Address',
+    ipv6Prefix: 'IPv6 Prefix',
+    status: 'Status',
+    action: 'Action',
+    enabled: 'Enabled'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MAC Address',
