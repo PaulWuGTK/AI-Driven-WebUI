@@ -1528,6 +1528,8 @@ export default {
     invalidPrefixLength: '無効なプレフィックス長です（0〜128 の範囲で指定してください）',
     invalidGatewayIPv4: '無効なゲートウェイ IPv4 アドレスです',
     invalidGatewayIPv6: '無効なゲートウェイ IPv6 アドレスです',
+    prefixLengthRequired: 'プレフィックス長は必須です',
+    duplicateAlias: 'ルート名は既に存在します。別の名前を使用してください',
     comingSoon: '近日公開',
     featureInDevelopment: 'この機能は現在開発中です',
   }

@@ -1532,6 +1532,8 @@ const translations = {
     invalidPrefixLength: 'Invalid prefix length (must be between 0 and 128)',
     invalidGatewayIPv4: 'Invalid gateway IPv4 address',
     invalidGatewayIPv6: 'Invalid gateway IPv6 address',
+    prefixLengthRequired: 'Prefix length is required',
+    duplicateAlias: 'Route name already exists. Please use a different name',
     comingSoon: 'Coming Soon',
     featureInDevelopment: 'This feature is currently under development'
   }

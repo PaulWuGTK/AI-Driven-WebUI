@@ -1529,6 +1529,8 @@ export default {
     invalidPrefixLength: '無效的前綴長度（必須介於 0 到 128 之間）',
     invalidGatewayIPv4: '無效的閘道 IPv4 位址',
     invalidGatewayIPv6: '無效的閘道 IPv6 位址',
+    prefixLengthRequired: '必須輸入前綴長度',
+    duplicateAlias: '路由名稱已存在，請使用其他名稱',
     comingSoon: '即將推出',
     featureInDevelopment: '此功能目前正在開發中',
   }

@@ -1528,6 +1528,8 @@ export default {
     invalidPrefixLength: '无效的前缀长度（必须在 0 到 128 之间）',
     invalidGatewayIPv4: '无效的网关 IPv4 地址',
     invalidGatewayIPv6: '无效的网关 IPv6 地址',
+    prefixLengthRequired: '前缀长度为必填项',
+    duplicateAlias: '路由名称已存在，请使用其他名称',
     comingSoon: '即将推出',
     featureInDevelopment: '该功能目前正在开发中',
   }

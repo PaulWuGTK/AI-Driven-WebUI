@@ -12,7 +12,7 @@ export interface StaticRouteIPv6 {
   Enable: boolean;
   Alias: string;
   DestIp: string;
-  DestMask: string;
+  PrefixLen: number;
   GatewayIp: string;
   UsedGWIp: boolean;
   WanIf: string;

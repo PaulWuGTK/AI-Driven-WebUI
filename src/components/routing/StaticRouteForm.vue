@@ -7,6 +7,8 @@ import { useQA } from '../../utils/qa';
 interface Props {
   editingItem?: { type: 'IPv4' | 'IPv6'; index: number; data: StaticRouteIPv4 | StaticRouteIPv6 } | null;
   wanIfList: string[];
+  ipv4Routes: StaticRouteIPv4[];
+  ipv6Routes: StaticRouteIPv6[];
 }
 
 const props = defineProps<Props>();
@@ -24,6 +26,7 @@ const formData = ref<{
   IpType: 'IPv4' | 'IPv6';
   DestIp: string;
   DestMask: string;
+  PrefixLen: number | null;
   GatewayIp: string;
   UsedGWIp: boolean;
   WanIf: string;
@@ -33,6 +36,7 @@ const formData = ref<{
   IpType: 'IPv4',
   DestIp: '',
   DestMask: '',
+  PrefixLen: null,
   GatewayIp: '',
   UsedGWIp: true,
   WanIf: props.wanIfList.length > 0 ? props.wanIfList[0] : ''
@@ -57,7 +61,8 @@ if (props.editingItem) {
     Alias: data.Alias,
     IpType: props.editingItem.type,
     DestIp: data.DestIp,
-    DestMask: data.DestMask,
+    DestMask: props.editingItem.type === 'IPv4' ? (data as StaticRouteIPv4).DestMask : '',
+    PrefixLen: props.editingItem.type === 'IPv6' ? (data as StaticRouteIPv6).PrefixLen : null,
     GatewayIp: data.GatewayIp,
     UsedGWIp: data.UsedGWIp,
     WanIf: data.WanIf
@@ -93,6 +98,29 @@ const validateForm = (): boolean => {
   if (!formData.value.Alias.trim()) {
     formErrors.value.Alias = t('routing.routeNameRequired');
     isValid = false;
+  } else {
+    const alias = formData.value.Alias.trim();
+    const allRoutes = [...props.ipv4Routes, ...props.ipv6Routes];
+
+    const isDuplicate = allRoutes.some((route, index) => {
+      if (props.editingItem) {
+        const editingIndex = props.editingItem.index;
+        const editingType = props.editingItem.type;
+        const currentIndex = index < props.ipv4Routes.length ? index : index - props.ipv4Routes.length;
+        const currentType = index < props.ipv4Routes.length ? 'IPv4' : 'IPv6';
+
+        if (editingType === currentType && editingIndex === currentIndex) {
+          return false;
+        }
+      }
+
+      return route.Alias === alias;
+    });
+
+    if (isDuplicate) {
+      formErrors.value.Alias = t('routing.duplicateAlias');
+      isValid = false;
+    }
   }
 
   if (!formData.value.DestIp.trim()) {
@@ -112,21 +140,21 @@ const validateForm = (): boolean => {
     }
   }
 
-  if (!formData.value.DestMask.trim()) {
-    formErrors.value.DestMask = t('routing.subnetMaskRequired');
-    isValid = false;
+  if (formData.value.IpType === 'IPv4') {
+    if (!formData.value.DestMask.trim()) {
+      formErrors.value.DestMask = t('routing.subnetMaskRequired');
+      isValid = false;
+    } else if (!validateIPv4(formData.value.DestMask)) {
+      formErrors.value.DestMask = t('routing.invalidSubnetMask');
+      isValid = false;
+    }
   } else {
-    if (formData.value.IpType === 'IPv4') {
-      if (!validateIPv4(formData.value.DestMask)) {
-        formErrors.value.DestMask = t('routing.invalidSubnetMask');
-        isValid = false;
-      }
-    } else {
-      const prefix = parseInt(formData.value.DestMask);
-      if (isNaN(prefix) || prefix < 0 || prefix > 128) {
-        formErrors.value.DestMask = t('routing.invalidPrefixLength');
-        isValid = false;
-      }
+    if (formData.value.PrefixLen === null || formData.value.PrefixLen === undefined) {
+      formErrors.value.DestMask = t('routing.prefixLengthRequired');
+      isValid = false;
+    } else if (formData.value.PrefixLen < 0 || formData.value.PrefixLen > 128) {
+      formErrors.value.DestMask = t('routing.invalidPrefixLength');
+      isValid = false;
     }
   }
 
@@ -152,15 +180,29 @@ const handleSave = () => {
     return;
   }
 
-  const data = {
-    Enable: formData.value.Enable,
-    Alias: formData.value.Alias,
-    DestIp: formData.value.DestIp,
-    DestMask: formData.value.DestMask,
-    GatewayIp: formData.value.GatewayIp,
-    UsedGWIp: formData.value.UsedGWIp,
-    WanIf: formData.value.WanIf
-  };
+  let data: StaticRouteIPv4 | StaticRouteIPv6;
+
+  if (formData.value.IpType === 'IPv4') {
+    data = {
+      Enable: formData.value.Enable,
+      Alias: formData.value.Alias,
+      DestIp: formData.value.DestIp,
+      DestMask: formData.value.DestMask,
+      GatewayIp: formData.value.GatewayIp,
+      UsedGWIp: formData.value.UsedGWIp,
+      WanIf: formData.value.WanIf
+    } as StaticRouteIPv4;
+  } else {
+    data = {
+      Enable: formData.value.Enable,
+      Alias: formData.value.Alias,
+      DestIp: formData.value.DestIp,
+      PrefixLen: formData.value.PrefixLen!,
+      GatewayIp: formData.value.GatewayIp,
+      UsedGWIp: formData.value.UsedGWIp,
+      WanIf: formData.value.WanIf
+    } as StaticRouteIPv6;
+  }
 
   emit('save', data, formData.value.IpType);
 };
@@ -243,17 +285,34 @@ const handleClose = () => {
             <span v-if="formErrors.DestIp" class="error-message">{{ formErrors.DestIp }}</span>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" v-if="formData.IpType === 'IPv4'">
             <label>
-              {{ formData.IpType === 'IPv4' ? t('routing.subnetMask') : t('routing.prefixLength') }}
+              {{ t('routing.subnetMask') }}
               <span class="required">*</span>
             </label>
             <input
               type="text"
               v-model="formData.DestMask"
-              :placeholder="formData.IpType === 'IPv4' ? '255.255.255.0' : '64'"
+              placeholder="255.255.255.0"
               :class="{ error: formErrors.DestMask }"
               :data-testid="qa('static-route-form-dest-mask')"
+            />
+            <span v-if="formErrors.DestMask" class="error-message">{{ formErrors.DestMask }}</span>
+          </div>
+
+          <div class="form-group" v-else>
+            <label>
+              {{ t('routing.prefixLength') }}
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              v-model.number="formData.PrefixLen"
+              placeholder="64"
+              min="0"
+              max="128"
+              :class="{ error: formErrors.DestMask }"
+              :data-testid="qa('static-route-form-prefix-len')"
             />
             <span v-if="formErrors.DestMask" class="error-message">{{ formErrors.DestMask }}</span>
           </div>
@@ -441,6 +500,7 @@ const handleClose = () => {
 }
 
 .form-group input[type='text'],
+.form-group input[type='number'],
 .form-group select {
   width: 100%;
   padding: 0.75rem;

@@ -224,7 +224,7 @@ onMounted(fetchRoutes);
                   </td>
                   <td :data-testid="qa(`static-route-ipv6-name-${index}`)">{{ route.Alias }}</td>
                   <td :data-testid="qa(`static-route-ipv6-destination-ip-${index}`)">{{ route.DestIp }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-subnet-mask-${index}`)">{{ route.DestMask }}</td>
+                  <td :data-testid="qa(`static-route-ipv6-subnet-mask-${index}`)">{{ route.PrefixLen }}</td>
                   <td :data-testid="qa(`static-route-ipv6-gateway-${index}`)">{{ route.GatewayIp || '-' }}</td>
                   <td :data-testid="qa(`static-route-ipv6-interface-${index}`)">{{ route.WanIf }}</td>
                   <td>
@@ -325,7 +325,7 @@ onMounted(fetchRoutes);
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('routing.subnetMaskPrefixLength') }}</span>
-                <span class="card-value">{{ route.DestMask }}</span>
+                <span class="card-value">{{ route.PrefixLen }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('routing.gateway') }}</span>
@@ -353,6 +353,8 @@ onMounted(fetchRoutes);
       v-if="showModal"
       :editing-item="editingItem"
       :wan-if-list="wanIfList"
+      :ipv4-routes="ipv4Routes"
+      :ipv6-routes="ipv6Routes"
       @save="handleSave"
       @close="closeModal"
     />

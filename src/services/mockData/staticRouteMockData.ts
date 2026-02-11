@@ -27,7 +27,7 @@ export const staticRouteMockData: StaticRouteResponse = {
         Enable: true,
         Alias: "RULE6_1",
         DestIp: "2001:db8:100::",
-        DestMask: "64",
+        PrefixLen: 64,
         GatewayIp: "fe80::1",
         UsedGWIp: true,
         WanIf: "PPPoE"

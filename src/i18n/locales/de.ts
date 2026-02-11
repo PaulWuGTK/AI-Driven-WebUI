@@ -1528,6 +1528,8 @@ export default {
     invalidPrefixLength: 'Ungültige Präfixlänge (muss zwischen 0 und 128 liegen)',
     invalidGatewayIPv4: 'Ungültige Gateway-IPv4-Adresse',
     invalidGatewayIPv6: 'Ungültige Gateway-IPv6-Adresse',
+    prefixLengthRequired: 'Präfixlänge ist erforderlich',
+    duplicateAlias: 'Routenname existiert bereits. Bitte verwenden Sie einen anderen Namen',
     comingSoon: 'Demnächst verfügbar',
     featureInDevelopment: 'Diese Funktion befindet sich derzeit in Entwicklung',
   }

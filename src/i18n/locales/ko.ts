@@ -1527,6 +1527,8 @@ export default {
     invalidPrefixLength: '잘못된 프리픽스 길이입니다 (0~128 사이여야 합니다)',
     invalidGatewayIPv4: '잘못된 게이트웨이 IPv4 주소입니다',
     invalidGatewayIPv6: '잘못된 게이트웨이 IPv6 주소입니다',
+    prefixLengthRequired: '프리픽스 길이는 필수 항목입니다',
+    duplicateAlias: '경로 이름이 이미 존재합니다. 다른 이름을 사용해 주세요',
     comingSoon: '곧 제공 예정',
     featureInDevelopment: '이 기능은 현재 개발 중입니다',
   }
