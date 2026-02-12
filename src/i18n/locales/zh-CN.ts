@@ -187,6 +187,8 @@ export default {
     macAddress: 'MAC 地址',
     ipv6Address: 'IPv6 地址',
     ipv6Prefix: 'IPv6 前缀',
+    ipv4Status: 'IPv4 状态',
+    ipv6Status: 'IPv6 状态',
     status: '状态',
     action: '操作',
     enabled: '已启用'

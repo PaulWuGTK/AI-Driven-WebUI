@@ -86,6 +86,12 @@ onMounted(() => {
             </div>
             <div class="detail-row">
               <div class="detail-item">
+                <span class="detail-label" :data-testid="qa('lan-cht-detail-ipv4-status-label')">{{ t('lanCht.ipv4Status') }}</span>
+                <span class="detail-value" :data-testid="qa('lan-cht-detail-ipv4-status-value')">{{ getDisplayValue(lanData.StatusLanCht.IPv4Status) }}</span>
+              </div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-item">
                 <span class="detail-label" :data-testid="qa('lan-cht-detail-mac-address-label')">{{ t('lanCht.macAddress') }}</span>
                 <span class="detail-value" :data-testid="qa('lan-cht-detail-mac-address-value')">{{ getDisplayValue(lanData.StatusLanCht.MACAddress) }}</span>
               </div>
@@ -100,6 +106,12 @@ onMounted(() => {
               <div class="detail-item">
                 <span class="detail-label" :data-testid="qa('lan-cht-detail-ipv6-prefix-label')">{{ t('lanCht.ipv6Prefix') }}</span>
                 <span class="detail-value" :data-testid="qa('lan-cht-detail-ipv6-prefix-value')">{{ getDisplayValue(lanData.StatusLanCht.IPv6Prefix) }}</span>
+              </div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-item">
+                <span class="detail-label" :data-testid="qa('lan-cht-detail-ipv6-status-label')">{{ t('lanCht.ipv6Status') }}</span>
+                <span class="detail-value" :data-testid="qa('lan-cht-detail-ipv6-status-value')">{{ getDisplayValue(lanData.StatusLanCht.IPv6Status) }}</span>
               </div>
             </div>
           </div>
@@ -120,11 +132,10 @@ onMounted(() => {
                 <tr>
                   <th :data-testid="qa('lan-cht-table-interface-header')">{{ t('lanCht.interface') }}</th>
                   <th :data-testid="qa('lan-cht-table-protocol-header')">{{ t('lanCht.protocol') }}</th>
-                  <th :data-testid="qa('lan-cht-table-ip-address-header')">{{ t('lanCht.ipAddress') }}</th>
+                  <th :data-testid="qa('lan-cht-table-ipv4-address-header')">{{ t('lanCht.ipv4Address') }}</th>
                   <th :data-testid="qa('lan-cht-table-subnet-mask-header')">{{ t('lanCht.subnetMask') }}</th>
-                  <th :data-testid="qa('lan-cht-table-gateway-header')">{{ t('lanCht.gateway') }}</th>
-                  <th :data-testid="qa('lan-cht-table-primary-dns-header')">{{ t('lanCht.primaryDNS') }}</th>
-                  <th :data-testid="qa('lan-cht-table-status-header')">{{ t('lanCht.status') }}</th>
+                  <th :data-testid="qa('lan-cht-table-ipv6-address-header')">{{ t('lanCht.ipv6Address') }}</th>
+                  <th :data-testid="qa('lan-cht-table-ipv6-prefix-header')">{{ t('lanCht.ipv6Prefix') }}</th>
                   <th :data-testid="qa('lan-cht-table-actions-header')">{{ t('lanCht.action') }}</th>
                 </tr>
               </thead>
@@ -132,11 +143,10 @@ onMounted(() => {
                 <tr :data-testid="qa('lan-cht-table-lan-row')">
                   <td :data-testid="qa('lan-cht-table-interface')">{{ t('lanCht.lanInterface') }}</td>
                   <td :data-testid="qa('lan-cht-table-protocol')">{{ lanData.StatusLanCht.Protocol }}</td>
-                  <td :data-testid="qa('lan-cht-table-ip')">{{ getDisplayValue(lanData.StatusLanCht.IPv4Address) }}</td>
-                  <td :data-testid="qa('lan-cht-table-mask')">{{ getDisplayValue(lanData.StatusLanCht.SubnetMask) }}</td>
-                  <td :data-testid="qa('lan-cht-table-gateway')">-</td>
-                  <td :data-testid="qa('lan-cht-table-dns')">-</td>
-                  <td :data-testid="qa('lan-cht-table-status')">{{ t('lanCht.enabled') }}</td>
+                  <td :data-testid="qa('lan-cht-table-ipv4-address')">{{ getDisplayValue(lanData.StatusLanCht.IPv4Address) }}</td>
+                  <td :data-testid="qa('lan-cht-table-subnet-mask')">{{ getDisplayValue(lanData.StatusLanCht.SubnetMask) }}</td>
+                  <td :data-testid="qa('lan-cht-table-ipv6-address')">{{ getDisplayValue(lanData.StatusLanCht.IPv6Address) }}</td>
+                  <td :data-testid="qa('lan-cht-table-ipv6-prefix')">{{ getDisplayValue(lanData.StatusLanCht.IPv6Prefix) }}</td>
                   <td :data-testid="qa('lan-cht-table-actions')">
                     <button class="btn-action" @click="openDetails" :data-testid="qa('lan-cht-table-details')" title="Details">
                       <span class="material-icons">info</span>
@@ -158,7 +168,7 @@ onMounted(() => {
                 <span class="card-value">{{ lanData.StatusLanCht.Protocol }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('lanCht.ipAddress') }}</span>
+                <span class="card-label">{{ t('lanCht.ipv4Address') }}</span>
                 <span class="card-value">{{ getDisplayValue(lanData.StatusLanCht.IPv4Address) }}</span>
               </div>
               <div class="card-row">
@@ -166,16 +176,12 @@ onMounted(() => {
                 <span class="card-value">{{ getDisplayValue(lanData.StatusLanCht.SubnetMask) }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('lanCht.gateway') }}</span>
-                <span class="card-value">-</span>
+                <span class="card-label">{{ t('lanCht.ipv6Address') }}</span>
+                <span class="card-value">{{ getDisplayValue(lanData.StatusLanCht.IPv6Address) }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('lanCht.primaryDNS') }}</span>
-                <span class="card-value">-</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('lanCht.status') }}</span>
-                <span class="card-value">{{ t('lanCht.enabled') }}</span>
+                <span class="card-label">{{ t('lanCht.ipv6Prefix') }}</span>
+                <span class="card-value">{{ getDisplayValue(lanData.StatusLanCht.IPv6Prefix) }}</span>
               </div>
               <div class="card-actions">
                 <button class="btn-action" @click="openDetails" :data-testid="qa('lan-cht-mobile-card-details')" title="Details">
@@ -226,7 +232,7 @@ onMounted(() => {
 
 .detail-row {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
 
@@ -252,7 +258,7 @@ onMounted(() => {
   flex: 1 1 auto;
   min-width: 0;
   text-align: right;
-  overflow-wrap: anywhere;
+  overflow-wrap: anywhere; /* IPv6 這種長字串避免撐爆 */
 }
 
 .table-container {

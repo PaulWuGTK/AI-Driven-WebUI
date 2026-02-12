@@ -189,6 +189,8 @@ const translations = {
     macAddress: 'MAC Address',
     ipv6Address: 'IPv6 Address',
     ipv6Prefix: 'IPv6 Prefix',
+    ipv4Status: 'IPv4 Status',
+    ipv6Status: 'IPv6 Status',
     status: 'Status',
     action: 'Action',
     enabled: 'Enabled'
