@@ -179,6 +179,8 @@ export default {
     interface: '接口',
     lanInterface: 'LAN',
     protocol: '协议',
+    ipv4protocol: 'IPv4 协议',
+    ipv6protocol: 'IPv6 协议',
     ipAddress: 'IP 地址',
     ipv4Address: 'IPv4 地址',
     subnetMask: '子网掩码',

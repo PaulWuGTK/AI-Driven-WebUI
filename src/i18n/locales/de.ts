@@ -179,6 +179,8 @@ export default {
     interface: 'Schnittstelle',
     lanInterface: 'LAN',
     protocol: 'Protokoll',
+    ipv4protocol: 'IPv4-Protokoll',
+    ipv6protocol: 'IPv6-Protokoll',
     ipAddress: 'IP-Adresse',
     ipv4Address: 'IPv4-Adresse',
     subnetMask: 'Subnetzmaske',

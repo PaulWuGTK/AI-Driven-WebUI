@@ -178,6 +178,8 @@ export default {
     interface: '인터페이스',
     lanInterface: 'LAN',
     protocol: '프로토콜',
+    ipv4protocol: 'IPv4 프로토콜',
+    ipv6protocol: 'IPv6 프로토콜',
     ipAddress: 'IP 주소',
     ipv4Address: 'IPv4 주소',
     subnetMask: '서브넷 마스크',

@@ -179,6 +179,8 @@ export default {
     interface: 'インターフェース',
     lanInterface: 'LAN',
     protocol: 'プロトコル',
+    ipv4protocol: 'IPv4プロトコル',
+    ipv6protocol: 'IPv6プロトコル',
     ipAddress: 'IPアドレス',
     ipv4Address: 'IPv4アドレス',
     subnetMask: 'サブネットマスク',

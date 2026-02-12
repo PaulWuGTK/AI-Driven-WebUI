@@ -180,6 +180,8 @@ export default {
     interface: '介面',
     lanInterface: 'LAN',
     protocol: '協定',
+    ipv4protocol: 'IPv4 協定',
+    ipv6protocol: 'IPv6 協定',
     ipAddress: 'IP 位址',
     ipv4Address: 'IPv4 位址',
     subnetMask: '子網路遮罩',

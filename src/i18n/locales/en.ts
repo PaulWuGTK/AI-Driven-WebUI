@@ -181,6 +181,8 @@ const translations = {
     interface: 'Interface',
     lanInterface: 'LAN',
     protocol: 'Protocol',
+    ipv4protocol: 'IPv4 Protocol',
+    ipv6protocol: 'IPv6 Protocol',
     ipAddress: 'IP Address',
     ipv4Address: 'IPv4 Address',
     subnetMask: 'Subnet Mask',
