@@ -100,6 +100,7 @@ const baseMenuItems: MenuItem[] = [
           { name: 'Device Connected', path: '/basic/lan/devices', translationKey: 'menu.deviceConnected', menuKey: 'basicSetup.lan.deviceConnected' }
         ]
       },
+      { name: 'LAN (CHT)', path: '/basic/lan-cht', translationKey: 'menu.lan', menuKey: 'basicSetup.lanCht' },
       {
         name: 'WLAN',
         path: '/basic/wlan',

@@ -1,7 +1,7 @@
-import type { StatusLanChtResponse } from '../../types/statusLanCht';
+import type { StatusBridgeLanResponse } from '../../types/statusBridgeLan';
 
-export const statusLanChtMockData: StatusLanChtResponse = {
-  StatusLanCht: {
+export const statusBridgeLanMockData: StatusBridgeLanResponse = {
+  StatusBridgeLan: {
     IPv4Protocol: 'DHCP',
     IPv4Address: '192.168.1.1',
     SubnetMask: '255.255.255.0',

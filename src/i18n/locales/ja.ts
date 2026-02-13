@@ -195,6 +195,19 @@ export default {
     action: '操作',
     enabled: '有効'
   },
+  basicBridgeLan: {
+    title: 'LAN設定',
+    ipv4Section: 'IPv4設定',
+    ipv6Section: 'IPv6設定',
+    ipv4Enable: 'IPv4を有効化',
+    ipv4Protocol: 'IPv4プロトコル',
+    ipv4Address: 'IPv4アドレス',
+    subnetMask: 'サブネットマスク',
+    ipv6Enable: 'IPv6を有効化',
+    ipv6Protocol: 'IPv6プロトコル',
+    ipv6Address: 'IPv6アドレス',
+    ipv6Prefix: 'IPv6プレフィックス'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MACアドレス',

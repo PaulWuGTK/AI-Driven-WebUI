@@ -148,6 +148,12 @@ const router = createRouter({
       redirect: '/network/lan'
     },
     {
+      path: '/basic/lan-cht',
+      name: 'BasicBridgeLan',
+      component: () => import('../views/network/lan/LanConfigCht.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/network/lan/ipv4',
       name: 'NetworkLanIPv4',
       component: () => import('../views/network/lan/IPv4Config.vue'),

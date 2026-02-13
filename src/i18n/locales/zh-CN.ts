@@ -195,6 +195,19 @@ export default {
     action: '操作',
     enabled: '已启用'
   },
+  basicBridgeLan: {
+    title: 'LAN 设置',
+    ipv4Section: 'IPv4 配置',
+    ipv6Section: 'IPv6 配置',
+    ipv4Enable: '启用 IPv4',
+    ipv4Protocol: 'IPv4 协议',
+    ipv4Address: 'IPv4 地址',
+    subnetMask: '子网掩码',
+    ipv6Enable: '启用 IPv6',
+    ipv6Protocol: 'IPv6 协议',
+    ipv6Address: 'IPv6 地址',
+    ipv6Prefix: 'IPv6 前缀'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MAC 地址',

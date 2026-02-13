@@ -8,7 +8,7 @@ import type { QosBandwidthResponse, QosRuleResponse } from '../types/qos';
 import type { BackupWANResponse, BackupWANRequest } from '../types/backupWan';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../types/operationMode';
 import type { StaticRouteResponse, StaticRouteUpdateRequest } from '../types/staticRoute';
-import type { StatusLanChtResponse } from '../types/statusLanCht';
+import type { StatusBridgeLanResponse } from '../types/statusBridgeLan';
 
 import { wanMockData } from './mockData/wanMockData';
 import { lanMockData } from './mockData/lanMockData';
@@ -21,7 +21,7 @@ import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { mockBackupWANData } from './mockData/backupWanMockData';
 import { operationModeMockData } from './mockData/operationModeMockData';
 import { staticRouteMockData } from './mockData/staticRouteMockData';
-import { statusLanChtMockData } from './mockData/statusLanChtMockData';
+import { statusBridgeLanMockData } from './mockData/statusBridgeLanMockData';
 
 export const getMockWanStatus = (): WanStatusResponse => wanMockData;
 export const getMockLanStatus = (): LanStatusResponse => lanMockData;
@@ -35,7 +35,7 @@ export const getMockQosRule = (): QosRuleResponse => qosRuleMockData;
 export const getMockBackupWAN = (): BackupWANResponse => mockBackupWANData;
 export const getMockOperationMode = (): OperationModeResponse => operationModeMockData;
 export const getMockStaticRoute = (): StaticRouteResponse => staticRouteMockData;
-export const getMockStatusLanCht = (): StatusLanChtResponse => statusLanChtMockData;
+export const getMockStatusBridgeLan = (): StatusBridgeLanResponse => statusBridgeLanMockData;
 
 export const updateMockNtp = (data: NtpUpdateRequest): NtpResponse => {
   const servers = data.Ntp.NtpServers.split(',').map(s => s.trim());

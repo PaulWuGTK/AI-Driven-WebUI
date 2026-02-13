@@ -49,7 +49,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'status.lanCht': {
-    netLayoutTypes: { prpl: false, genix: false, cht: true },
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: false, Bridge: true, Extender: true }
   },
   'status.wlan': {
@@ -106,7 +106,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   },
   'basicSetup.lan': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
-    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
+  },
+  'basicSetup.lanCht': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: false, Bridge: true, Extender: true }
   },
   'basicSetup.lan.ipv4': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },

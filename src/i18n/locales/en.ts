@@ -197,6 +197,19 @@ const translations = {
     action: 'Action',
     enabled: 'Enabled'
   },
+  basicBridgeLan: {
+    title: 'LAN Settings',
+    ipv4Section: 'IPv4 Configuration',
+    ipv6Section: 'IPv6 Configuration',
+    ipv4Enable: 'IPv4 Enable',
+    ipv4Protocol: 'IPv4 Protocol',
+    ipv4Address: 'IPv4 Address',
+    subnetMask: 'Subnet Mask',
+    ipv6Enable: 'IPv6 Enable',
+    ipv6Protocol: 'IPv6 Protocol',
+    ipv6Address: 'IPv6 Address',
+    ipv6Prefix: 'IPv6 Prefix'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MAC Address',

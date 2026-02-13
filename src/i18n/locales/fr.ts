@@ -195,6 +195,19 @@ export default {
     action: 'Action',
     enabled: 'Activé'
   },
+  basicBridgeLan: {
+    title: 'Paramètres LAN',
+    ipv4Section: 'Configuration IPv4',
+    ipv6Section: 'Configuration IPv6',
+    ipv4Enable: 'Activer IPv4',
+    ipv4Protocol: 'Protocole IPv4',
+    ipv4Address: 'Adresse IPv4',
+    subnetMask: 'Masque de sous-réseau',
+    ipv6Enable: 'Activer IPv6',
+    ipv6Protocol: 'Protocole IPv6',
+    ipv6Address: 'Adresse IPv6',
+    ipv6Prefix: 'Préfixe IPv6'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'Adresse MAC',

@@ -1,4 +1,4 @@
-export interface StatusLanCht {
+export interface StatusBridgeLan {
   IPv4Protocol: string;
   IPv4Address: string;
   SubnetMask: string;
@@ -10,6 +10,6 @@ export interface StatusLanCht {
   IPv6Status: string;
 }
 
-export interface StatusLanChtResponse {
-  StatusLanCht: StatusLanCht;
+export interface StatusBridgeLanResponse {
+  StatusBridgeLan: StatusBridgeLan;
 }

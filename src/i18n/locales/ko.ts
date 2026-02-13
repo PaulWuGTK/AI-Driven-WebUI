@@ -194,6 +194,19 @@ export default {
     action: '작업',
     enabled: '활성화됨'
   },
+  basicBridgeLan: {
+    title: 'LAN 설정',
+    ipv4Section: 'IPv4 구성',
+    ipv6Section: 'IPv6 구성',
+    ipv4Enable: 'IPv4 활성화',
+    ipv4Protocol: 'IPv4 프로토콜',
+    ipv4Address: 'IPv4 주소',
+    subnetMask: '서브넷 마스크',
+    ipv6Enable: 'IPv6 활성화',
+    ipv6Protocol: 'IPv6 프로토콜',
+    ipv6Address: 'IPv6 주소',
+    ipv6Prefix: 'IPv6 프리픽스'
+  },
   lan: {
     title: 'LAN',
     macAddress: 'MAC 주소',
