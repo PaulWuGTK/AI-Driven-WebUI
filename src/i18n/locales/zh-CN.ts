@@ -1086,7 +1086,14 @@ export default {
     networkError: '网络错误，请检查连接后重试。',
     captchaLoadFailed: '验证码加载失败，请刷新页面。',
     unknownError: '发生未知错误，请稍后再试。',
-    sessionExpired: '由于长时间未操作，会话已过期，请重新登录。'
+    sessionExpired: '由于长时间未操作，会话已过期，请重新登录。',
+    usernamePlaceholder: '请输入用户名',
+    passwordPlaceholder: '请输入密码',
+    captchaPlaceholder: '请输入验证码',
+    captchaAlt: '验证码图片',
+    refreshCaptcha: '刷新验证码',
+    loggingIn: '登录中...',
+    lockedWithSeconds: '已锁定（{seconds} 秒）'
   },
   wizard: {
     completeTitle: '完成！',

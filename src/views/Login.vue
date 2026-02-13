@@ -193,6 +193,12 @@ const handleLogin = async () => {
   }
 };
 
+const submitButtonText = computed(() => {
+  if (loading.value) return t('login.loggingIn');
+  if (isLocked.value) return t('login.lockedWithSeconds', { seconds: lockRetryAfter.value });
+  return t('login.submit');
+});
+
 onMounted(() => {
   // Check if user was logged out due to inactivity
   if (route.query.reason === 'timeout') {
@@ -220,41 +226,41 @@ onUnmounted(() => {
       <div class="logo" :data-testid="qa('login-logo')">Gemtek</div>
       <form @submit.prevent="handleLogin" class="login-form" :data-testid="qa('login-form')">
         <div class="form-group">
-          <label for="username" :data-testid="qa('login-username-label')">Username</label>
+          <label for="username" :data-testid="qa('login-username-label')">{{ t('login.username') }}</label>
           <input
             id="username"
             :data-testid="qa('login-username-input')"
             v-model="username"
             type="text"
             required
-            placeholder="Enter username"
+            :placeholder="t('login.usernamePlaceholder')"
             :disabled="loading"
           />
         </div>
         <div class="form-group">
-          <label for="password" :data-testid="qa('login-password-label')">Password</label>
+          <label for="password" :data-testid="qa('login-password-label')">{{ t('login.password') }}</label>
           <input
             id="password"
             :data-testid="qa('login-password-input')"
             v-model="password"
             type="password"
             required
-            placeholder="Enter password"
+            :placeholder="t('login.passwordPlaceholder')"
             :disabled="loading"
           />
         </div>
         <div class="form-group">
-          <label for="captcha" :data-testid="qa('login-captcha-label')">Verification Code</label>
+          <label for="captcha" :data-testid="qa('login-captcha-label')">{{ t('login.captcha') }}</label>
           <div class="captcha-container">
             <div class="captcha-image-wrapper">
               <img
                 v-if="captchaImage"
                 :src="captchaImage"
-                alt="Captcha"
+                :alt="t('login.captchaAlt')"
                 class="captcha-image"
                 :data-testid="qa('login-captcha-image')"
               />
-              <div v-else class="captcha-loading">Loading...</div>
+              <div v-else class="captcha-loading">{{ t('common.loading') }}</div>
             </div>
             <button
               type="button"
@@ -262,7 +268,7 @@ onUnmounted(() => {
               :disabled="captchaLoading || loading"
               class="captcha-refresh-button"
               :data-testid="qa('login-captcha-refresh')"
-              title="Refresh captcha"
+              :title="t('login.refreshCaptcha')"
             >
               ↻
             </button>
@@ -273,7 +279,7 @@ onUnmounted(() => {
             v-model="captcha"
             type="text"
             required
-            placeholder="Enter verification code"
+            :placeholder="t('login.captchaPlaceholder')"
             :disabled="loading || captchaLoading"
             maxlength="6"
           />
@@ -285,7 +291,7 @@ onUnmounted(() => {
           {{ isLocked ? lockMessage : error }}
         </div>
         <button type="submit" class="login-button" :disabled="loading || captchaLoading || isLocked" :data-testid="qa('login-submit-button')">
-          {{ loading ? 'Logging in...' : isLocked ? `Locked (${lockRetryAfter}s)` : 'Login' }}
+          {{ submitButtonText }}
         </button>
       </form>
     </div>

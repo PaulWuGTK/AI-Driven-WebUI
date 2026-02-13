@@ -1086,7 +1086,14 @@ export default {
     networkError: 'ネットワークエラーが発生しました。接続を確認してから、再度お試しください。',
     captchaLoadFailed: '認証コードの読み込みに失敗しました。ページを再読み込みしてください。',
     unknownError: '予期しないエラーが発生しました。もう一度お試しください。',
-    sessionExpired: '一定時間操作がなかったため、セッションの有効期限が切れました。もう一度ログインしてください。'
+    sessionExpired: '一定時間操作がなかったため、セッションの有効期限が切れました。もう一度ログインしてください。',
+    usernamePlaceholder: 'ユーザー名を入力してください',
+    passwordPlaceholder: 'パスワードを入力してください',
+    captchaPlaceholder: '認証コードを入力してください',
+    captchaAlt: '認証コード画像',
+    refreshCaptcha: '認証コードを更新',
+    loggingIn: 'ログイン中...',
+    lockedWithSeconds: 'ロック中（{seconds}秒）'
   },
   wizard: {
     completeTitle: '完了！',

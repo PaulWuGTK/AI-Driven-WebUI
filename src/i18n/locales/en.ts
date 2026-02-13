@@ -1121,7 +1121,14 @@ const translations = {
     networkError: 'Network error. Please check your connection and try again.',
     captchaLoadFailed: 'Failed to load verification code. Please refresh the page.',
     unknownError: 'An unexpected error occurred. Please try again.',
-    sessionExpired: 'Your session has expired due to inactivity. Please log in again.'
+    sessionExpired: 'Your session has expired due to inactivity. Please log in again.',
+    usernamePlaceholder: 'Enter username',
+    passwordPlaceholder: 'Enter password',
+    captchaPlaceholder: 'Enter verification code',
+    captchaAlt: 'Verification code image',
+    refreshCaptcha: 'Refresh verification code',
+    loggingIn: 'Logging in...',
+    lockedWithSeconds: 'Locked ({seconds}s)'
   },
   wizard: {
     completeTitle: 'Finish!',

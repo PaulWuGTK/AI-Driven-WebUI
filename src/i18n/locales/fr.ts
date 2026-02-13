@@ -1086,7 +1086,14 @@ export default {
     networkError: 'Erreur réseau. Vérifiez votre connexion puis réessayez.',
     captchaLoadFailed: 'Impossible de charger le code de vérification. Veuillez actualiser la page.',
     unknownError: 'Une erreur inattendue est survenue. Veuillez réessayer.',
-    sessionExpired: 'Votre session a expiré en raison d’une inactivité. Veuillez vous reconnecter.'
+    sessionExpired: 'Votre session a expiré en raison d’une inactivité. Veuillez vous reconnecter.',
+    usernamePlaceholder: "Saisissez le nom d'utilisateur",
+    passwordPlaceholder: 'Saisissez le mot de passe',
+    captchaPlaceholder: 'Saisissez le code de vérification',
+    captchaAlt: 'Image du code de vérification',
+    refreshCaptcha: 'Actualiser le code de vérification',
+    loggingIn: 'Connexion en cours...',
+    lockedWithSeconds: 'Verrouillé ({seconds} s)'
   },
   wizard: {
     completeTitle: 'Terminé !',

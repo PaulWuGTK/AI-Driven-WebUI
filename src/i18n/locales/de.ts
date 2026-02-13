@@ -1086,7 +1086,14 @@ export default {
     networkError: 'Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
     captchaLoadFailed: 'Der Bestätigungscode konnte nicht geladen werden. Bitte laden Sie die Seite neu.',
     unknownError: 'Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.',
-    sessionExpired: 'Ihre Sitzung ist aufgrund von Inaktivität abgelaufen. Bitte melden Sie sich erneut an.'
+    sessionExpired: 'Ihre Sitzung ist aufgrund von Inaktivität abgelaufen. Bitte melden Sie sich erneut an.',
+    usernamePlaceholder: 'Benutzernamen eingeben',
+    passwordPlaceholder: 'Passwort eingeben',
+    captchaPlaceholder: 'Bestätigungscode eingeben',
+    captchaAlt: 'Bild des Bestätigungscodes',
+    refreshCaptcha: 'Bestätigungscode aktualisieren',
+    loggingIn: 'Anmeldung läuft...',
+    lockedWithSeconds: 'Gesperrt ({seconds} Sek.)'
   },
   wizard: {
     completeTitle: 'Abgeschlossen!',

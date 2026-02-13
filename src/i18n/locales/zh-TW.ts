@@ -1088,6 +1088,13 @@ export default {
     captchaLoadFailed: '驗證碼載入失敗，請重新整理頁面。',
     unknownError: '發生未預期的錯誤，請再試一次。',
     sessionExpired: '因為閒置時間過長，您的登入工作階段已過期，請重新登入。',
+    usernamePlaceholder: '請輸入使用者名稱',
+    passwordPlaceholder: '請輸入密碼',
+    captchaPlaceholder: '請輸入驗證碼',
+    captchaAlt: '驗證碼圖片',
+    refreshCaptcha: '重新整理驗證碼',
+    loggingIn: '登入中...',
+    lockedWithSeconds: '已鎖定（{seconds} 秒）'
   },
   wizard: {
     completeTitle: '完成！',

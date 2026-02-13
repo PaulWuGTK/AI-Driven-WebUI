@@ -1085,7 +1085,14 @@ export default {
     networkError: '네트워크 오류입니다. 연결을 확인한 후 다시 시도해 주세요.',
     captchaLoadFailed: '인증 코드를 불러오지 못했습니다. 페이지를 새로 고침해 주세요.',
     unknownError: '예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.',
-    sessionExpired: '오랫동안 사용하지 않아 세션이 만료되었습니다. 다시 로그인해 주세요.'
+    sessionExpired: '오랫동안 사용하지 않아 세션이 만료되었습니다. 다시 로그인해 주세요.',
+    usernamePlaceholder: '사용자 이름을 입력하세요',
+    passwordPlaceholder: '비밀번호를 입력하세요',
+    captchaPlaceholder: '인증 코드를 입력하세요',
+    captchaAlt: '인증 코드 이미지',
+    refreshCaptcha: '인증 코드 새로고침',
+    loggingIn: '로그인 중...',
+    lockedWithSeconds: '잠금됨 ({seconds}초)'
   },
   wizard: {
     completeTitle: '완료되었습니다!',
