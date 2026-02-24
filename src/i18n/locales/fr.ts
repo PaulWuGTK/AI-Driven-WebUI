@@ -1,5 +1,5 @@
-// French translations
-export default {
+// fr translations
+const translations = {
   menu: {
     home: 'Dashboard',
     status: 'Statut',
@@ -264,7 +264,7 @@ export default {
     packetsReceived: 'Paquets reçus',
     packetsSent: 'Paquets envoyés',
     bytesReceived: 'Octets reçus',
-    bytesSent: 'Octets envoyés',
+    bytesSent: 'Octets envoyés'
   },
   wlan: {
     title: 'État du WLAN',
@@ -477,7 +477,7 @@ export default {
     mloMeshDisabled: 'Le MLO est activé sur un ou plusieurs points d’accès (Standard ou Invité) – les paramètres Mesh ne peuvent pas être modifiés.',
     meshMloDisabled: 'Le Mesh est activé – les paramètres MLO ne peuvent pas être modifiés.',
     commonSsidDisabled: 'Le SSID commun est désactivé – les paramètres MLO ne peuvent pas être modifiés.',
-    mloMeshWarning: "Le MLO est actuellement activé sur un ou plusieurs points d'accès (principal ou invité). Il sera automatiquement désactivé lors de l'application des paramètres Mesh.",
+    mloMeshWarning: 'Le MLO est actuellement activé sur un ou plusieurs points d\'accès (principal ou invité). Il sera automatiquement désactivé lors de l\'application des paramètres Mesh.',
     ssidGroupName: 'Nom du groupe SSID',
     noSsidGroups: 'Aucun groupe SSID disponible',
     groupDefaultName: 'Home',
@@ -629,7 +629,7 @@ export default {
     dnsDetection: 'Détection DNS',
     ipAddress: 'Adresse IP',
     dnsServer: 'Serveur DNS',
-    enableHint: 'Lorsque cette option est activée, la configuration de la vérification de l’état du WAN est affichée ; lorsqu’elle est désactivée, elle est masquée.',
+    enableHint: 'Lorsque cette option est activée, la configuration de la vérification de l’état du WAN est affichée ; lorsqu’elle est désactivée, elle est masquée.'
   },
   lanBasic: {
     title: 'Paramètres LAN',
@@ -761,7 +761,7 @@ export default {
     clientPort: 'Port client',
     serverId: 'ID serveur',
     serverPort: 'Port serveur',
-    algorithm : 'Algorithme'
+    algorithm: 'Algorithme'
   },
   device: {
     title: 'Gestion des appareils',
@@ -858,7 +858,7 @@ export default {
     results_state_complete: 'Terminé',
     results_state_error: 'Erreur',
     message_loadConfigFailed: 'Échec du chargement de la configuration TR-471',
-    message_testFailed: 'Échec du test TR-471',
+    message_testFailed: 'Échec du test TR-471'
   },
   diagnostics: {
     title: 'Outils de diagnostic',
@@ -949,8 +949,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
-    tagline: "SpeedTest XGiga de qualité opérateur",
-    poweredBy: "Propulsé par Streambow",
+    tagline: 'SpeedTest XGiga de qualité opérateur',
+    poweredBy: 'Propulsé par Streambow',
     description: 'Cliquez sur le bouton ci-dessous pour lancer un test de vitesse.',
     startTest: 'Démarrer le test de vitesse',
     downloadSpeed: 'Vitesse de téléchargement',
@@ -1065,7 +1065,7 @@ export default {
   },
   matter: {
     title: 'Matter',
-    description: "Matter est une nouvelle norme pour la maison intelligente visant à simplifier le développement et améliorer la compatibilité.",
+    description: 'Matter est une nouvelle norme pour la maison intelligente visant à simplifier le développement et améliorer la compatibilité.',
     openDashboard: 'Ouvrir le tableau de bord Matter',
     dashboardDescription: 'Cliquez sur le bouton ci-dessous pour ouvrir le tableau de bord Matter dans une nouvelle fenêtre.',
     dashboardPort: 'Le tableau de bord Matter est disponible sur le port 8889.'
@@ -1087,7 +1087,7 @@ export default {
     captchaLoadFailed: 'Impossible de charger le code de vérification. Veuillez actualiser la page.',
     unknownError: 'Une erreur inattendue est survenue. Veuillez réessayer.',
     sessionExpired: 'Votre session a expiré en raison d’une inactivité. Veuillez vous reconnecter.',
-    usernamePlaceholder: "Saisissez le nom d'utilisateur",
+    usernamePlaceholder: 'Saisissez le nom d\'utilisateur',
     passwordPlaceholder: 'Saisissez le mot de passe',
     captchaPlaceholder: 'Saisissez le code de vérification',
     captchaAlt: 'Image du code de vérification',
@@ -1322,15 +1322,15 @@ export default {
     newPassword: 'Nouveau mot de passe',
     confirmPassword: 'Confirmer le mot de passe',
     passwordPlaceholder: 'Veuillez saisir la valeur',
-    infoMessage: 'Utilisez les champs ci-dessous pour saisir jusqu\'\u00e0 {maxLength} caract\u00e8res et cliquez sur "Appliquer" pour modifier ou cr\u00e9er le mot de passe.',
+    infoMessage: 'Utilisez les champs ci-dessous pour saisir jusqu\'à {maxLength} caractères et cliquez sur "Appliquer" pour modifier ou créer le mot de passe.',
     noteMessage: 'Remarque : Le mot de passe ne peut pas contenir d\'espace.',
-    errorFetchSettings: 'Échec de la récupération des param\u00e8tres du compte',
+    errorFetchSettings: 'Échec de la récupération des paramètres du compte',
     errorAllFieldsRequired: 'Tous les champs sont obligatoires',
     errorPasswordSpace: 'Le mot de passe ne peut pas contenir d\'espace',
-    errorPasswordLength: 'Le mot de passe ne peut pas d\u00e9passer {maxLength} caract\u00e8res',
+    errorPasswordLength: 'Le mot de passe ne peut pas dépasser {maxLength} caractères',
     errorPasswordMismatch: 'Le nouveau mot de passe et la confirmation ne correspondent pas',
-    errorUpdateFailed: 'Échec de la mise \u00e0 jour du mot de passe',
-    successUpdate: 'Mot de passe mis \u00e0 jour avec succ\u00e8s'
+    errorUpdateFailed: 'Échec de la mise à jour du mot de passe',
+    successUpdate: 'Mot de passe mis à jour avec succès'
   },
   dualImage: {
     title: 'Image Duale',
@@ -1397,7 +1397,7 @@ export default {
     portRequired: 'Le port est obligatoire',
     protocolRequired: 'Le protocole est obligatoire',
     deviceRequired: 'L’appareil est obligatoire',
-    confirmDelete: 'Voulez-vous vraiment supprimer cette règle ?',
+    confirmDelete: 'Voulez-vous vraiment supprimer cette règle ?'
   },
   nat: {
     title: 'Paramètres NAT',
@@ -1428,7 +1428,7 @@ export default {
     localPort: 'Port local',
     localPortStart: 'Plage de ports locaux (début)',
     localPortEnd: 'Plage de ports locaux (fin)',
-    comment: 'Commentaire',
+    comment: 'Commentaire'
   },
   ipFiltering: {
     enableIpFiltering: 'Activer le filtrage IP',
@@ -1452,7 +1452,7 @@ export default {
     currentWhitelistFilterTable: 'Table de filtrage de la liste blanche actuelle',
     number: 'Numéro',
     active: 'Actif',
-    noEntries: 'Aucune entrée',
+    noEntries: 'Aucune entrée'
   },
   generalMacFiltering: {
     enableMacFiltering: 'Activer le filtrage MAC',
@@ -1471,7 +1471,7 @@ export default {
     noEntries: 'Aucune entrée',
     emptyMacError: 'L’adresse MAC ne peut pas être vide',
     invalidMacFormat: 'Format d’adresse MAC invalide',
-    duplicateMacError: 'Cette adresse MAC existe déjà',
+    duplicateMacError: 'Cette adresse MAC existe déjà'
   },
   basicWanCht: {
     title: 'Paramètres WAN',
@@ -1504,7 +1504,7 @@ export default {
     pppoePassThrough: 'Pass-through PPPoE',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'Adresse IP du DNS',
+    dnsIpAddress: 'Mode DNS',
     autoObtainFromISP: 'Auto – obtenu auprès du FAI',
     manual: 'Manuel',
     primaryDNS: 'DNS primaire',
@@ -1517,18 +1517,22 @@ export default {
     vlanId: 'ID VLAN',
     vlanModifiable: 'Ce champ est modifiable uniquement lorsque l’option VLAN est cochée.',
     lanInterface: 'Interface LAN',
-    dhcpOption60: 'Option DHCP 60',
-    vendorId: 'ID fournisseur',
+    dhcpOption60: 'Option DHCPv4 60',
+    vendorId: 'Valeur de l\'option DHCPv4 60',
     dhcpOption60Modifiable: 'Ce champ est modifiable uniquement lorsque l’option DHCP 60 est cochée.',
-    dhcpOption61: 'Option DHCP 61',
+    dhcpOption61: 'Option DHCPv4 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'Type DUID',
+    enterpriseNumber: 'Numéro d\'entreprise',
+    identifier: 'Identifiant',
     ipAddress: 'Adresse IP',
     subnetMask: 'Masque de sous-réseau',
     gatewayIpAddress: 'Adresse IP de la passerelle',
     staticFieldRequired: 'Lorsque le protocole est « Static », ce champ est obligatoire et ne peut pas être vide.',
     loadError: 'Échec du chargement de la configuration WAN.',
     saveSuccess: 'Configuration WAN enregistrée avec succès.',
-    saveError: 'Échec de l’enregistrement de la configuration WAN.',
+    saveError: 'Échec de l’enregistrement de la configuration WAN.'
   },
   routing: {
     title: 'Routage',
@@ -1573,6 +1577,8 @@ export default {
     prefixLengthRequired: 'La longueur du préfixe est requise',
     duplicateAlias: 'Le nom de route existe déjà. Veuillez utiliser un nom différent',
     comingSoon: 'Bientôt disponible',
-    featureInDevelopment: 'Cette fonctionnalité est actuellement en cours de développement',
+    featureInDevelopment: 'Cette fonctionnalité est actuellement en cours de développement'
   }
 };
+
+export default translations;

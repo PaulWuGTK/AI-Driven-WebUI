@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DmzResponse } from '../../../types/dmz';
 import { getDmz, updateDmz } from '../../../services/api/dmz';
+import { BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -92,14 +93,11 @@ onMounted(fetchDmz);
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('dmz-enable-label')">{{ t('dmz.enable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                v-model="dmzData.AdvancedDmz.Enable"
-                :data-testid="qa('dmz-enable-checkbox')"
-              >
-              <span class="slider" :data-testid="qa('dmz-enable-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="dmzData.AdvancedDmz.Enable"
+              :data-testid="qa('dmz-enable-checkbox')"
+              :slider-data-testid="qa('dmz-enable-slider')"
+            />
           </div>
         </div>
 
@@ -164,18 +162,18 @@ input {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

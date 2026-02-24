@@ -7,7 +7,7 @@ This directory contains reusable Vue 3 components built with TypeScript and Comp
 Import components from the common module:
 
 ```typescript
-import { BaseButton, BaseInput, BaseCard } from '@/components/common';
+import { BaseButton, BaseInput, BaseCard, BaseSwitch, ActionButtons } from '@/components/common';
 ```
 
 ## Components
@@ -233,6 +233,99 @@ const agreed = ref(false);
   <BaseCheckbox v-model="agreed">
     I agree to <a href="/terms">terms and conditions</a>
   </BaseCheckbox>
+</template>
+```
+
+---
+
+### BaseSwitch
+
+A reusable switch/toggle component using the global `.switch/.slider` styles.
+
+**Props:**
+- `modelValue`: string | number | boolean (required)
+- `trueValue`: string | number | boolean (default: true)
+- `falseValue`: string | number | boolean (default: false)
+- `label`: string
+- `disabled`: boolean (default: false)
+- `required`: boolean (default: false)
+- `id`: string
+- `name`: string
+- `dataTestid`: string - test id for input
+- `sliderDataTestid`: string - test id for slider
+- `labelDataTestid`: string - test id for label text
+
+**Events:**
+- `@update:modelValue`: Emitted when switch state changes
+- `@change`: Emitted when switch state changes
+
+**Example:**
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { BaseSwitch } from '@/components/common';
+
+const enabled = ref<number>(1);
+</script>
+
+<template>
+  <BaseSwitch
+    v-model="enabled"
+    :true-value="1"
+    :false-value="0"
+    label="Enable service"
+  />
+</template>
+```
+
+---
+
+### ActionButtons
+
+A standard Cancel + Apply/Save action row built with `BaseButton`.
+
+**Props:**
+- `showCancel`: boolean (default: true)
+- `showApply`: boolean (default: true)
+- `cancelText`: string (default: `t('common.cancel')`)
+- `applyText`: string (default: `t('common.apply')`)
+- `cancelType`: 'button' | 'submit' | 'reset' (default: 'button')
+- `applyType`: 'button' | 'submit' | 'reset' (default: 'button')
+- `cancelVariant`: BaseButton variant (default: 'secondary')
+- `applyVariant`: BaseButton variant (default: 'primary')
+- `cancelDisabled`: boolean (default: false)
+- `applyDisabled`: boolean (default: false)
+- `applyLoading`: boolean (default: false)
+- `dataTestid`: string
+- `cancelDataTestid`: string
+- `applyDataTestid`: string
+
+**Events:**
+- `@cancel`: Emitted when cancel button is clicked
+- `@apply`: Emitted when apply button is clicked
+
+**Example:**
+```vue
+<script setup lang="ts">
+import { ActionButtons } from '@/components/common';
+
+const onCancel = () => {
+  // cancel logic
+};
+
+const onApply = () => {
+  // apply logic
+};
+</script>
+
+<template>
+  <ActionButtons
+    :apply-loading="false"
+    cancel-data-testid="settings-cancel-button"
+    apply-data-testid="settings-apply-button"
+    @cancel="onCancel"
+    @apply="onApply"
+  />
 </template>
 ```
 

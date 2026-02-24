@@ -26,13 +26,18 @@ export interface BasicWanChtPPPoE {
 export interface BasicWanChtIPoE {
   Enable: boolean;
   Protocol: string;
+  Status?: string;
   MTU: number;
+  DefaultGateway: boolean;
   IPv4Enable: boolean;
   IPv6Enable: boolean;
-  Option60Enable: boolean;
-  Option60Value: string;
-  Option61Enable: boolean;
-  Option61Value: string;
+  DHCPv4Option60Enable: boolean;
+  DHCPv4Option60Value: string;
+  DHCPv4Option61Enable: boolean;
+  IAID: string;
+  DUIDType: string;
+  EnterpriseNumber: string;
+  Identifier: string;
   DNSMode: string;
   PrimaryDNS: string;
   SecondaryDNS: string;

@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanBasicConfig } from '../../../../types/wireless';
+import { BaseSwitch } from '../../../../components/common';
 import { useQA } from '../../../../utils/qa';
 import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../../utils/ssidValidation';
 const { isQAMode, qa, slug } = useQA();
@@ -77,15 +78,14 @@ watch(() => props.modelValue.SSID, (newSsid) => {
       <div class="form-group" v-if="title !== 'MLO'">
         <div class="switch-label">
           <span :data-testid="qa(`wireless-band-config-enable-label-${slug(title)}`)">{{ t('common.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa(`wireless-band-config-enable-toggle-${slug(title)}`)"
-              :checked="modelValue.Enable === 1"
-              @change="updateConfig('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-            >
-            <span class="slider" :data-testid="qa(`wireless-band-config-enable-toggle-slider-${slug(title)}`)"></span>
-          </label>
+          <BaseSwitch
+            :model-value="modelValue.Enable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa(`wireless-band-config-enable-toggle-${slug(title)}`)"
+            :slider-data-testid="qa(`wireless-band-config-enable-toggle-slider-${slug(title)}`)"
+            @update:model-value="(value) => updateConfig('Enable', Number(value))"
+          />
         </div>
       </div>
 
@@ -260,18 +260,18 @@ input.is-invalid:focus {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

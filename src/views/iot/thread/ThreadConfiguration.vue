@@ -8,6 +8,9 @@ import type {
   ThreadSecurityPolicy
 } from '../../../types/thread';
 import { getThreadConfiguration, updateThreadConfiguration } from '../../../services/api/thread';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -15,8 +18,10 @@ const { t } = useI18n();
 const threadConfig = ref<ThreadConfigurationResponse | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const showSuccess = ref(false);
 const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 // UI state
 const threadEnabled = ref(false);
@@ -68,6 +73,15 @@ const fetchThreadConfiguration = async () => {
   error.value = null;
   try {
     const response = await getThreadConfiguration();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      threadConfig.value = null;
+      activeDataset.value = null;
+      pendingDataset.value = null;
+      return;
+    }
+
     threadConfig.value = response;
     threadEnabled.value = response.ThreadConfiguration.Enable;
     tempThreadEnabled.value = response.ThreadConfiguration.Enable; // Initialize temp state
@@ -107,12 +121,17 @@ const generateDataset = async (type: 'Active' | 'Pending') => {
       }
     };
     
-    await updateThreadConfiguration(request);
+    const response = await updateThreadConfiguration(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchThreadConfiguration();
     showSuccessNotification(`${type} dataset generated successfully`);
   } catch (err) {
     console.error(`Error generating ${type} dataset:`, err);
-    error.value = `Failed to generate ${type} dataset`;
+    showErrorNotification(`Failed to generate ${type} dataset`);
   } finally {
     loading.value = false;
   }
@@ -134,12 +153,17 @@ const updateActiveDataset = async () => {
       }
     };
     
-    await updateThreadConfiguration(request);
+    const response = await updateThreadConfiguration(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchThreadConfiguration();
     showSuccessNotification('Active dataset updated successfully');
   } catch (err) {
     console.error('Error updating active dataset:', err);
-    error.value = 'Failed to update active dataset';
+    showErrorNotification('Failed to update active dataset');
   } finally {
     loading.value = false;
   }
@@ -161,12 +185,17 @@ const updatePendingDataset = async () => {
       }
     };
     
-    await updateThreadConfiguration(request);
+    const response = await updateThreadConfiguration(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchThreadConfiguration();
     showSuccessNotification('Pending dataset updated successfully');
   } catch (err) {
     console.error('Error updating pending dataset:', err);
-    error.value = 'Failed to update pending dataset';
+    showErrorNotification('Failed to update pending dataset');
   } finally {
     loading.value = false;
   }
@@ -183,12 +212,17 @@ const updateThreadEnabled = async () => {
       }
     };
     
-    await updateThreadConfiguration(request);
+    const response = await updateThreadConfiguration(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchThreadConfiguration();
     showSuccessNotification(`Thread ${tempThreadEnabled.value ? 'enabled' : 'disabled'} successfully`);
   } catch (err) {
     console.error('Error updating Thread enabled state:', err);
-    error.value = 'Failed to update Thread enabled state';
+    showErrorNotification('Failed to update Thread enabled state');
   } finally {
     loading.value = false;
   }
@@ -202,10 +236,12 @@ const cancelEnableChanges = () => {
 // Show success notification
 const showSuccessNotification = (message: string) => {
   successMessage.value = message;
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+  triggerSuccessToast();
+};
+
+const showErrorNotification = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 // Format security policy for display
@@ -249,24 +285,23 @@ onMounted(() => {
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('thread-config-enable-label')">{{ t('common.enable') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('thread-config-enable-toggle')"
-                  v-model="tempThreadEnabled"
-                >
-                <span class="slider" :data-testid="qa('thread-config-enable-toggle-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="tempThreadEnabled"
+                :data-testid="qa('thread-config-enable-toggle')"
+                :slider-data-testid="qa('thread-config-enable-toggle-slider')"
+              />
             </div>
           </div>
           
           <div class="button-group">
-            <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-enable-cancel')" @click="cancelEnableChanges">
-              {{ t('common.cancel') }}
-            </button>
-            <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-enable-apply')" @click="updateThreadEnabled">
-              {{ t('common.apply') }}
-            </button>
+            <ActionButtons
+              :cancel-data-testid="qa('thread-config-enable-cancel')"
+              :apply-data-testid="qa('thread-config-enable-apply')"
+              :cancel-disabled="loading"
+              :apply-disabled="loading"
+              @cancel="cancelEnableChanges"
+              @apply="updateThreadEnabled"
+            />
           </div>
         </div>
       </div>
@@ -528,12 +563,15 @@ onMounted(() => {
             </div>
 
             <div class="button-group">
-              <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-active-cancel')" @click="fetchThreadConfiguration">
-                {{ t('common.cancel') }}
-              </button>
-              <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-active-update')" @click="updateActiveDataset">
-                {{ t('thread.update') }}
-              </button>
+              <ActionButtons
+                :cancel-data-testid="qa('thread-config-active-cancel')"
+                :apply-data-testid="qa('thread-config-active-update')"
+                :apply-text="t('thread.update')"
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                @cancel="fetchThreadConfiguration"
+                @apply="updateActiveDataset"
+              />
             </div>
           </div>
         </div>
@@ -814,22 +852,33 @@ onMounted(() => {
             </div>
 
             <div class="button-group">
-              <button type="button" class="btn btn-secondary" :data-testid="qa('thread-config-pending-cancel')" @click="fetchThreadConfiguration">
-                {{ t('common.cancel') }}
-              </button>
-              <button type="button" class="btn btn-primary" :data-testid="qa('thread-config-pending-update')" @click="updatePendingDataset">
-                {{ t('thread.update') }}
-              </button>
+              <ActionButtons
+                :cancel-data-testid="qa('thread-config-pending-cancel')"
+                :apply-data-testid="qa('thread-config-pending-update')"
+                :apply-text="t('thread.update')"
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                @cancel="fetchThreadConfiguration"
+                @apply="updatePendingDataset"
+              />
             </div>
           </div>
         </div>
       </template>
     </template>
 
-    <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-config-success-message')">
-      {{ successMessage }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('thread-config-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('thread-config-error-toast')"
+    />
   </div>
 </template>
 
@@ -861,18 +910,18 @@ onMounted(() => {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -950,18 +999,6 @@ input:checked + .slider:before {
   color: var(--text-primary);
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
 .loading-state {
   display: flex;
   align-items: center;
@@ -982,13 +1019,6 @@ input:checked + .slider:before {
   box-shadow: var(--shadow-sm);
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .thread-content {
     padding: 1rem;
@@ -1006,7 +1036,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

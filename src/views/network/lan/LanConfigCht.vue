@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BasicBridgeLanResponse, BasicBridgeLanUpdateRequest } from '../../../types/basicBridgeLan';
 import { getBasicBridgeLan, updateBasicBridgeLan } from '../../../services/api/basicBridgeLan';
+import { BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -126,14 +127,11 @@ onMounted(fetchLanChtSettings);
             <div class="form-group">
               <div class="switch-label">
                 <span :data-testid="qa('lan-cht-ipv4-enable-label')">{{ t('basicBridgeLan.ipv4Enable') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('lan-cht-ipv4-enable-toggle')"
-                    v-model="formData.IPv4Enable"
-                  >
-                  <span class="slider" :data-testid="qa('lan-cht-ipv4-enable-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.IPv4Enable"
+                  :data-testid="qa('lan-cht-ipv4-enable-toggle')"
+                  :slider-data-testid="qa('lan-cht-ipv4-enable-slider')"
+                />
               </div>
             </div>
 
@@ -187,14 +185,11 @@ onMounted(fetchLanChtSettings);
             <div class="form-group">
               <div class="switch-label">
                 <span :data-testid="qa('lan-cht-ipv6-enable-label')">{{ t('basicBridgeLan.ipv6Enable') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('lan-cht-ipv6-enable-toggle')"
-                    v-model="formData.IPv6Enable"
-                  >
-                  <span class="slider" :data-testid="qa('lan-cht-ipv6-enable-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.IPv6Enable"
+                  :data-testid="qa('lan-cht-ipv6-enable-toggle')"
+                  :slider-data-testid="qa('lan-cht-ipv6-enable-slider')"
+                />
               </div>
             </div>
 
@@ -320,19 +315,19 @@ input,
   margin-top: 1rem;
 }
 
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   margin-left: 1rem;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

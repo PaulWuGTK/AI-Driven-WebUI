@@ -3,10 +3,12 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { 
   ThreadCommissionerResponse, 
-  ThreadCommissionerUpdateRequest,
-  ThreadJoiner
+  ThreadCommissionerUpdateRequest
 } from '../../../types/thread';
 import { getThreadCommissioner, updateThreadCommissioner } from '../../../services/api/thread';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -14,8 +16,10 @@ const { t } = useI18n();
 const commissionerData = ref<ThreadCommissionerResponse | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const showSuccess = ref(false);
 const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const showAddJoinerModal = ref(false);
 
 // Commissioner enabled state
@@ -38,6 +42,12 @@ const fetchCommissionerData = async () => {
   error.value = null;
   try {
     const response = await getThreadCommissioner();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      commissionerData.value = null;
+      return;
+    }
     commissionerData.value = response;
     commissionerEnabled.value = response.ThreadCommissioner.Enable;
   } catch (err) {
@@ -49,9 +59,11 @@ const fetchCommissionerData = async () => {
 };
 
 // Update commissioner enabled state
-const updateCommissionerEnabled = async () => {
+const updateCommissionerEnabled = async (value?: string | number | boolean) => {
+  if (value !== undefined) {
+    commissionerEnabled.value = value === true || value === 1 || value === '1';
+  }
   loading.value = true;
-  error.value = null;
   try {
     const request: ThreadCommissionerUpdateRequest = {
       ThreadCommissioner: {
@@ -63,12 +75,17 @@ const updateCommissionerEnabled = async () => {
       }
     };
     
-    await updateThreadCommissioner(request);
+    const response = await updateThreadCommissioner(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchCommissionerData();
     showSuccessNotification(`Commissioner ${commissionerEnabled.value ? 'enabled' : 'disabled'} successfully`);
   } catch (err) {
     console.error('Error updating commissioner enabled state:', err);
-    error.value = 'Failed to update commissioner enabled state';
+    showErrorNotification('Failed to update commissioner enabled state');
   } finally {
     loading.value = false;
   }
@@ -77,12 +94,11 @@ const updateCommissionerEnabled = async () => {
 // Add joiner
 const addJoiner = async () => {
   if (!newJoiner.value.pskd) {
-    error.value = 'PSKd is required';
+    showErrorNotification('PSKd is required');
     return;
   }
   
   loading.value = true;
-  error.value = null;
   try {
     const request: ThreadCommissionerUpdateRequest = {
       ThreadCommissioner: {
@@ -94,14 +110,19 @@ const addJoiner = async () => {
       }
     };
     
-    await updateThreadCommissioner(request);
+    const response = await updateThreadCommissioner(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchCommissionerData();
     showSuccessNotification('Joiner added successfully');
     showAddJoinerModal.value = false;
     resetNewJoiner();
   } catch (err) {
     console.error('Error adding joiner:', err);
-    error.value = 'Failed to add joiner';
+    showErrorNotification('Failed to add joiner');
   } finally {
     loading.value = false;
   }
@@ -110,7 +131,6 @@ const addJoiner = async () => {
 // Delete joiner
 const deleteJoiner = async (joinerId: string) => {
   loading.value = true;
-  error.value = null;
   try {
     const request: ThreadCommissionerUpdateRequest = {
       ThreadCommissioner: {
@@ -122,12 +142,17 @@ const deleteJoiner = async (joinerId: string) => {
       }
     };
     
-    await updateThreadCommissioner(request);
+    const response = await updateThreadCommissioner(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     await fetchCommissionerData();
     showSuccessNotification('Joiner deleted successfully');
   } catch (err) {
     console.error('Error deleting joiner:', err);
-    error.value = 'Failed to delete joiner';
+    showErrorNotification('Failed to delete joiner');
   } finally {
     loading.value = false;
   }
@@ -145,10 +170,12 @@ const resetNewJoiner = () => {
 // Show success notification
 const showSuccessNotification = (message: string) => {
   successMessage.value = message;
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+  triggerSuccessToast();
+};
+
+const showErrorNotification = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 // Open add joiner modal
@@ -186,15 +213,12 @@ onMounted(() => {
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('thread-commissioner-enable-label')">{{ t('thread.commissionerEnable') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('thread-commissioner-enable-toggle')"
-                  v-model="commissionerEnabled"
-                  @change="updateCommissionerEnabled"
-                >
-                <span class="slider" :data-testid="qa('thread-commissioner-enable-toggle-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="commissionerEnabled"
+                :data-testid="qa('thread-commissioner-enable-toggle')"
+                :slider-data-testid="qa('thread-commissioner-enable-toggle-slider')"
+                @update:model-value="updateCommissionerEnabled"
+              />
             </div>
           </div>
 
@@ -202,14 +226,16 @@ onMounted(() => {
             <div class="header-row">
               <div class="section-title-sp" :data-testid="qa('thread-commissioner-joiners-title')">{{ t('thread.availableJoiner') }}</div>
               <div class="action-buttons" :data-testid="qa('thread-commissioner-action-buttons')">
-                <button class="btn btn-primary" :data-testid="qa('thread-commissioner-add-joiner-button')" @click="openAddJoinerModal">
-                  <span class="material-icons">add</span>
-                  {{ t('thread.add') }}
-                </button>
-                <button class="btn btn-secondary" :data-testid="qa('thread-commissioner-refresh-button')" @click="fetchCommissionerData">
-                  <span class="material-icons">refresh</span>
-                  {{ t('thread.refresh') }}
-                </button>
+                <ActionButtons
+                  :cancel-text="t('thread.add')"
+                  cancel-variant="primary"
+                  :apply-text="t('thread.refresh')"
+                  apply-variant="secondary"
+                  :cancel-data-testid="qa('thread-commissioner-add-joiner-button')"
+                  :apply-data-testid="qa('thread-commissioner-refresh-button')"
+                  @cancel="openAddJoinerModal"
+                  @apply="fetchCommissionerData"
+                />
               </div>
             </div>
 
@@ -338,25 +364,30 @@ onMounted(() => {
         </div>
         
         <div class="modal-footer">
-          <button class="btn btn-secondary" :data-testid="qa('thread-commissioner-add-joiner-cancel')" @click="closeAddJoinerModal">
-            {{ t('common.cancel') }}
-          </button>
-          <button 
-            class="btn btn-primary" 
-            :data-testid="qa('thread-commissioner-add-joiner-save')"
-            @click="addJoiner"
-            :disabled="!newJoiner.pskd"
-          >
-            {{ t('thread.add') }}
-          </button>
+          <ActionButtons
+            :apply-text="t('thread.add')"
+            :cancel-data-testid="qa('thread-commissioner-add-joiner-cancel')"
+            :apply-data-testid="qa('thread-commissioner-add-joiner-save')"
+            :apply-disabled="!newJoiner.pskd"
+            @cancel="closeAddJoinerModal"
+            @apply="addJoiner"
+          />
         </div>
       </div>
     </div>
 
-    <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-commissioner-success-message')">
-      {{ successMessage }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('thread-commissioner-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('thread-commissioner-error-toast')"
+    />
   </div>
 </template>
 
@@ -394,18 +425,18 @@ onMounted(() => {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -521,18 +552,6 @@ input:checked + .slider:before {
   margin-bottom: 1rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
 .loading-state {
   display: flex;
   align-items: center;
@@ -551,13 +570,6 @@ input:checked + .slider:before {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {
@@ -579,7 +591,7 @@ input:checked + .slider:before {
     width: 100%;
   }
 
-  .action-buttons .btn {
+  .action-buttons :deep(.btn) {
     flex: 1;
     justify-content: center;
   }
@@ -602,7 +614,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .modal-footer .btn {
+  .modal-footer :deep(.btn) {
     width: 100%;
   }
 }

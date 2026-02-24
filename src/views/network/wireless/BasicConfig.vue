@@ -8,6 +8,7 @@ import BaseCard from '../../../components/common/BaseCard.vue';
 
 import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
+import { BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
 import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
@@ -506,31 +507,30 @@ onMounted(fetchConfig);
             <div class="field">
               <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-ssid-enable')">
                 <span>{{ t('wireless.commonSsidEnable') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle')"
-                    :checked="Number(draft.CommonSSIDEnable) === 1"
-                    @change="(e) => { draft!.CommonSSIDEnable = (e.target as HTMLInputElement).checked ? 1 : 0; onCommonSsidToggle(); }"
-                  >
-                  <span class="slider" :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="draft.CommonSSIDEnable"
+                  :true-value="1"
+                  :false-value="0"
+                  :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle')"
+                  :slider-data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle-slider')"
+                  @change="onCommonSsidToggle"
+                />
               </div>
             </div>
 
             <div class="field">
               <div class="switch-label" :data-testid="qa('wlan-basic-multi-mlo-enable')">
                 <span>{{ t('wireless.mloEnable') }}</span>
-                <label class="switch" :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 }">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('wlan-basic-multi-mlo-enable-toggle')"
-                    :checked="Number(draft.MLOEnable) === 1"
-                    :disabled="Number(draft.CommonSSIDEnable) === 0"
-                    @change="(e) => { draft!.MLOEnable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
-                  >
-                  <span class="slider" :data-testid="qa('wlan-basic-multi-mlo-enable-toggle-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="draft.MLOEnable"
+                  class="switch-toggle"
+                  :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 }"
+                  :true-value="1"
+                  :false-value="0"
+                  :disabled="Number(draft.CommonSSIDEnable) === 0"
+                  :data-testid="qa('wlan-basic-multi-mlo-enable-toggle')"
+                  :slider-data-testid="qa('wlan-basic-multi-mlo-enable-toggle-slider')"
+                />
               </div>
 
               <div v-if="Number(draft.CommonSSIDEnable) === 0" class="hint">
@@ -557,15 +557,13 @@ onMounted(fetchConfig);
               <div class="row-title">{{ t('common.enable') }}</div>
               <div class="row-right">
                 <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-band-enable')">
-                  <label class="switch">
-                    <input
-                      type="checkbox"
-                      :data-testid="qa('wlan-basic-multi-common-band-enable-toggle')"
-                      :checked="Number(commonSsidConfig.Enable) === 1"
-                      @change="(e) => { commonSsidConfig!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
-                    >
-                    <span class="slider" :data-testid="qa('wlan-basic-multi-common-band-enable-toggle-slider')"></span>
-                  </label>
+                  <BaseSwitch
+                    v-model="commonSsidConfig.Enable"
+                    :true-value="1"
+                    :false-value="0"
+                    :data-testid="qa('wlan-basic-multi-common-band-enable-toggle')"
+                    :slider-data-testid="qa('wlan-basic-multi-common-band-enable-toggle-slider')"
+                  />
                 </div>
               </div>
             </div>
@@ -620,16 +618,16 @@ onMounted(fetchConfig);
               <div class="field">
                 <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-hide-ssid')">
                   <span>{{ t('wireless.hideSsid') }}</span>
-                  <label class="switch" :class="{ 'is-disabled': Number(commonSsidConfig.Enable) === 0 }">
-                    <input
-                      type="checkbox"
-                      :data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle')"
-                      :checked="Number(commonSsidConfig.SSIDAdvertisementEnabled) === 0"
-                      :disabled="Number(commonSsidConfig.Enable) === 0"
-                      @change="(e) => { commonSsidConfig!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
-                    >
-                    <span class="slider" :data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle-slider')"></span>
-                  </label>
+                  <BaseSwitch
+                    v-model="commonSsidConfig.SSIDAdvertisementEnabled"
+                    class="switch-toggle"
+                    :class="{ 'is-disabled': Number(commonSsidConfig.Enable) === 0 }"
+                    :true-value="0"
+                    :false-value="1"
+                    :disabled="Number(commonSsidConfig.Enable) === 0"
+                    :data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle')"
+                    :slider-data-testid="qa('wlan-basic-multi-common-hide-ssid-toggle-slider')"
+                  />
                 </div>
               </div>
             </div>
@@ -651,15 +649,14 @@ onMounted(fetchConfig);
                 <div class="row-right">
                   <div class="switch-label" :data-testid="qa(`wlan-basic-multi-iface-enable-${slug(b)}`)">
                     <span class="sr-only">{{ t('common.enable') }}</span>
-                    <label class="switch">
-                      <input
-                        type="checkbox"
-                        :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-${slug(b)}`)"
-                        :checked="Number(getInterfaceByBand(b)!.Enable) === 1"
-                        @change="(e) => { getInterfaceByBand(b)!.Enable = (e.target as HTMLInputElement).checked ? 1 : 0; }"
-                      >
-                      <span class="slider" :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-slider-${slug(b)}`)"></span>
-                    </label>
+                    <BaseSwitch
+                      :model-value="Number(getInterfaceByBand(b)!.Enable)"
+                      :true-value="1"
+                      :false-value="0"
+                      :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-${slug(b)}`)"
+                      :slider-data-testid="qa(`wlan-basic-multi-iface-enable-toggle-slider-${slug(b)}`)"
+                      @update:model-value="(value) => { getInterfaceByBand(b)!.Enable = value === 1 || value === '1' || value === true ? 1 : 0; }"
+                    />
                   </div>
                 </div>
               </div>
@@ -716,16 +713,17 @@ onMounted(fetchConfig);
                 <div class="field">
                   <div class="switch-label" :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-${slug(b)}`)">
                     <span>{{ t('wireless.hideSsid') }}</span>
-                    <label class="switch" :class="{ 'is-disabled': Number(getInterfaceByBand(b)!.Enable) === 0 }">
-                      <input
-                        type="checkbox"
-                        :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-${slug(b)}`)"
-                        :checked="Number(getInterfaceByBand(b)!.SSIDAdvertisementEnabled ?? 1) === 0"
-                        :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
-                        @change="(e) => { getInterfaceByBand(b)!.SSIDAdvertisementEnabled = (e.target as HTMLInputElement).checked ? 0 : 1; }"
-                      >
-                      <span class="slider" :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-slider-${slug(b)}`)"></span>
-                    </label>
+                    <BaseSwitch
+                      :model-value="Number(getInterfaceByBand(b)!.SSIDAdvertisementEnabled ?? 1)"
+                      class="switch-toggle"
+                      :class="{ 'is-disabled': Number(getInterfaceByBand(b)!.Enable) === 0 }"
+                      :true-value="0"
+                      :false-value="1"
+                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
+                      :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-${slug(b)}`)"
+                      :slider-data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-slider-${slug(b)}`)"
+                      @update:model-value="(value) => { getInterfaceByBand(b)!.SSIDAdvertisementEnabled = value === 1 || value === '1' || value === true ? 1 : 0; }"
+                    />
                   </div>
                 </div>
               </div>
@@ -944,7 +942,7 @@ onMounted(fetchConfig);
   width: auto;
 }
 
-.switch {
+:deep(.switch) {
   position: relative;
   display: inline-block;
   width: 48px;
@@ -952,13 +950,13 @@ onMounted(fetchConfig);
   flex-shrink: 0;
 }
 
-.switch input {
+:deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+:deep(.slider) {
   position: absolute;
   cursor: pointer;
   inset: 0;
@@ -967,7 +965,7 @@ onMounted(fetchConfig);
   border-radius: 999px;
 }
 
-.slider:before {
+:deep(.slider:before) {
   position: absolute;
   content: "";
   height: 20px;
@@ -980,24 +978,24 @@ onMounted(fetchConfig);
   border-radius: 50%;
 }
 
-.switch input:checked + .slider {
+:deep(.switch input:checked + .slider) {
   background-color: #0070BB;
 }
 
-.switch input:checked + .slider:before {
+:deep(.switch input:checked + .slider:before) {
   transform: translateX(22px);
 }
 
-.switch input:focus + .slider {
+:deep(.switch input:focus + .slider) {
   box-shadow: 0 0 0 2px rgba(0, 112, 187, 0.25);
 }
 
-.switch input:disabled + .slider {
+:deep(.switch input:disabled + .slider) {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-.switch.is-disabled {
+.switch-toggle.is-disabled {
   opacity: 0.8;
 }
 

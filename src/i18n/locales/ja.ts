@@ -1,5 +1,5 @@
-// Japanese translations
-export default {
+// ja translations
+const translations = {
   menu: {
     home: 'ダッシュボード',
     status: '状態',
@@ -264,7 +264,7 @@ export default {
     packetsReceived: '受信パケット数',
     packetsSent: '送信パケット数',
     bytesReceived: '受信バイト数',
-    bytesSent: '送信バイト数',
+    bytesSent: '送信バイト数'
   },
   wlan: {
     title: 'WLAN状態',
@@ -477,7 +477,7 @@ export default {
     mloMeshDisabled: '1つ以上の AP（基本またはゲスト）で MLO が有効です – メッシュ設定は変更できません。',
     meshMloDisabled: 'メッシュが有効です – MLO 設定は変更できません。',
     commonSsidDisabled: '共通 SSID が無効です – MLO 設定は変更できません。',
-    mloMeshWarning: "MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。",
+    mloMeshWarning: 'MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。',
     ssidGroupName: 'SSID グループ名',
     noSsidGroups: '利用可能な SSID グループはありません',
     groupDefaultName: 'Home',
@@ -629,7 +629,7 @@ export default {
     dnsDetection: 'DNS 検出',
     ipAddress: 'IP アドレス',
     dnsServer: 'DNS サーバー',
-    enableHint: '有効にすると WAN ヘルスチェックの設定が表示され、無効にすると非表示になります。',
+    enableHint: '有効にすると WAN ヘルスチェックの設定が表示され、無効にすると非表示になります。'
   },
   lanBasic: {
     title: 'LAN 設定',
@@ -761,7 +761,7 @@ export default {
     clientPort: 'クライアントポート',
     serverId: 'サーバーID',
     serverPort: 'サーバーポート',
-    algorithm : 'アルゴリズム'
+    algorithm: 'アルゴリズム'
   },
   device: {
     title: 'デバイス管理',
@@ -858,7 +858,7 @@ export default {
     results_state_complete: '完了',
     results_state_error: 'エラー',
     message_loadConfigFailed: 'TR-471 設定の読み込みに失敗しました',
-    message_testFailed: 'TR-471 テストに失敗しました',
+    message_testFailed: 'TR-471 テストに失敗しました'
   },
   diagnostics: {
     title: '診断ツール',
@@ -949,8 +949,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
-    tagline: "XGiga キャリアグレード スピードテスト",
-    poweredBy: "提供：Streambow",
+    tagline: 'XGiga キャリアグレード スピードテスト',
+    poweredBy: '提供：Streambow',
     description: '以下のボタンをクリックして速度テストを開始します。',
     startTest: '速度テスト開始',
     downloadSpeed: 'ダウンロード速度',
@@ -1397,7 +1397,7 @@ export default {
     portRequired: 'ポートを入力してください',
     protocolRequired: 'プロトコルを選択してください',
     deviceRequired: 'デバイスを選択してください',
-    confirmDelete: 'このルールを削除してもよろしいですか？',
+    confirmDelete: 'このルールを削除してもよろしいですか？'
   },
   nat: {
     title: 'NAT設定',
@@ -1428,7 +1428,7 @@ export default {
     localPort: 'ローカルポート',
     localPortStart: 'ローカルポート範囲（開始）',
     localPortEnd: 'ローカルポート範囲（終了）',
-    comment: 'コメント',
+    comment: 'コメント'
   },
   ipFiltering: {
     enableIpFiltering: 'IP フィルタリングを有効にする',
@@ -1452,7 +1452,7 @@ export default {
     currentWhitelistFilterTable: '現在のホワイトリストフィルターテーブル',
     number: '番号',
     active: '有効',
-    noEntries: 'エントリがありません',
+    noEntries: 'エントリがありません'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC フィルタリングを有効にする',
@@ -1471,7 +1471,7 @@ export default {
     noEntries: 'エントリはありません',
     emptyMacError: 'MAC アドレスを入力してください',
     invalidMacFormat: 'MAC アドレスの形式が正しくありません',
-    duplicateMacError: 'この MAC アドレスは既に存在します',
+    duplicateMacError: 'この MAC アドレスは既に存在します'
   },
   basicWanCht: {
     title: 'WAN 設定',
@@ -1504,7 +1504,7 @@ export default {
     pppoePassThrough: 'PPPoE パススルー',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS IP アドレス',
+    dnsIpAddress: 'DNSモード',
     autoObtainFromISP: '自動 — ISP から取得',
     manual: '手動',
     primaryDNS: 'プライマリ DNS',
@@ -1517,18 +1517,22 @@ export default {
     vlanId: 'VLAN ID',
     vlanModifiable: 'VLAN にチェックを入れた場合のみ変更できます。',
     lanInterface: 'LAN インターフェース',
-    dhcpOption60: 'DHCP オプション 60',
-    vendorId: 'ベンダー ID',
+    dhcpOption60: 'DHCPv4 オプション 60',
+    vendorId: 'DHCPv4 オプション 60 値',
     dhcpOption60Modifiable: 'DHCP オプション 60 にチェックを入れた場合のみ変更できます。',
-    dhcpOption61: 'DHCP オプション 61',
+    dhcpOption61: 'DHCPv4 オプション 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID タイプ',
+    enterpriseNumber: '企業番号',
+    identifier: '識別子',
     ipAddress: 'IP アドレス',
     subnetMask: 'サブネットマスク',
     gatewayIpAddress: 'ゲートウェイ IP アドレス',
     staticFieldRequired: 'プロトコルが Static の場合、この項目は必須で空欄にはできません。',
     loadError: 'WAN 設定の読み込みに失敗しました。',
     saveSuccess: 'WAN 設定を正常に保存しました。',
-    saveError: 'WAN 設定の保存に失敗しました。',
+    saveError: 'WAN 設定の保存に失敗しました。'
   },
   routing: {
     title: 'ルーティング',
@@ -1573,6 +1577,8 @@ export default {
     prefixLengthRequired: 'プレフィックス長は必須です',
     duplicateAlias: 'ルート名は既に存在します。別の名前を使用してください',
     comingSoon: '近日公開',
-    featureInDevelopment: 'この機能は現在開発中です',
+    featureInDevelopment: 'この機能は現在開発中です'
   }
 };
+
+export default translations;

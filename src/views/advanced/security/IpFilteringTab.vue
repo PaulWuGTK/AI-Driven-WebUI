@@ -1,20 +1,13 @@
 <template>
   <div class="ip-filtering-tab" :data-testid="qa('ip-filtering-tab')">
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('ip-filtering-success')">
-      {{ $t('common.saveSuccess') }}
-    </div>
-
     <div class="form-group toggle-group">
       <label :data-testid="qa('ip-filtering-enable-label')">{{ $t('ipFiltering.enableIpFiltering') }}</label>
-      <label class="switch">
-        <input
-          type="checkbox"
-          v-model="config.Enable"
-          :data-testid="qa('ip-filtering-enable-toggle')"
-          @change="onEnableChange"
-        >
-        <span class="slider" :data-testid="qa('ip-filtering-enable-slider')"></span>
-      </label>
+      <BaseSwitch
+        v-model="config.Enable"
+        :data-testid="qa('ip-filtering-enable-toggle')"
+        :slider-data-testid="qa('ip-filtering-enable-slider')"
+        @update:model-value="onEnableChange"
+      />
     </div>
 
     <template v-if="config.Enable">
@@ -164,16 +157,34 @@
         {{ $t('common.apply') }}
       </button>
     </div>
+
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('ip-filtering-success')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('ip-filtering-error-toast')"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ipFilteringApi } from '../../../services/api/ipFiltering';
 import type { IpFilteringConfig, IpFilterEntry, IpFilterMode, IpVersion } from '../../../types/ipFiltering';
+import { BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
+const { t } = useI18n();
 
 const config = ref<IpFilteringConfig>({
   Enable: false,
@@ -194,26 +205,38 @@ const newEntry = ref<Omit<IpFilterEntry, 'No'>>({
 
 const errorMessage = ref<string>('');
 const originalConfig = ref<IpFilteringConfig | null>(null);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const currentList = computed(() => {
   return filterMode.value === 'Blacklist' ? config.value.BlackList : config.value.WhiteList;
 });
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = t('common.saveSuccess')) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const loadConfig = async () => {
   try {
     const response = await ipFilteringApi.getConfig();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     config.value = response.IPFiltering;
     originalConfig.value = JSON.parse(JSON.stringify(response.IPFiltering));
   } catch (error) {
     console.error('Failed to load IP filtering config:', error);
+    showErrorMessage('Failed to load IP filtering config');
   }
 };
 
@@ -227,7 +250,10 @@ const isValidIPv6 = (ip: string): boolean => {
   return ipv6Regex.test(ip);
 };
 
-const onEnableChange = () => {
+const onEnableChange = (value?: string | number | boolean) => {
+  if (value !== undefined) {
+    config.value.Enable = value === true || value === 1 || value === '1';
+  }
   if (!config.value.Enable) {
     filterMode.value = 'Blacklist';
     ipVersion.value = 'IPv4';
@@ -291,17 +317,23 @@ const deleteEntry = (no: number) => {
 
 const apply = async () => {
   try {
-    await ipFilteringApi.updateConfig({
+    const response = await ipFilteringApi.updateConfig({
       IPFiltering: {
         Enable: config.value.Enable,
         BlackList: config.value.BlackList,
         WhiteList: config.value.WhiteList
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     originalConfig.value = JSON.parse(JSON.stringify(config.value));
     showSuccessMessage();
   } catch (error) {
     console.error('Failed to update IP filtering config:', error);
+    showErrorMessage('Failed to update IP filtering config');
   }
 };
 
@@ -521,22 +553,4 @@ onMounted(() => {
   border-color: var(--color-error) !important;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
 </style>

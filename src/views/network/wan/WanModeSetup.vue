@@ -3,20 +3,33 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeSetupResponse } from '../../../types/wanSetup';
 import { getWanModeSetup, updateWanModeSetup } from '../../../services/api/wanSetup';
+import { ActionButtons, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const setupData = ref<WanModeSetupResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const fetchSetupData = async () => {
   loading.value = true;
   error.value = null;
   try {
-    setupData.value = await getWanModeSetup();
+    const response = await getWanModeSetup();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      setupData.value = null;
+      return;
+    }
+    setupData.value = response;
   } catch (err) {
     console.error('Error fetching WAN mode setup:', err);
     error.value = 'Failed to fetch WAN mode setup';
@@ -25,30 +38,37 @@ const fetchSetupData = async () => {
   }
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleSubmit = async () => {
   if (!setupData.value) return;
   
   loading.value = true;
-  error.value = null;
   try {
-    await updateWanModeSetup({
+    const response = await updateWanModeSetup({
       WanModeSetup: {
         OperationMode: setupData.value.WanModeSetup.OperationMode,
         WANMode: setupData.value.WanModeSetup.WANMode
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
     await fetchSetupData();
   } catch (err) {
     console.error('Error updating WAN mode setup:', err);
-    error.value = 'Failed to update WAN mode setup';
+    showErrorMessage('Failed to update WAN mode setup');
   } finally {
     loading.value = false;
   }
@@ -96,18 +116,29 @@ onMounted(fetchSetupData);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('wan-mode-setup-cancel-button')" @click="fetchSetupData" :disabled="loading">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('wan-mode-setup-apply-button')" :disabled="loading">
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('wan-mode-setup-cancel-button')"
+          :apply-data-testid="qa('wan-mode-setup-apply-button')"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          apply-type="submit"
+          @cancel="fetchSetupData"
+        />
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('wan-mode-setup-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('wan-mode-setup-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wan-mode-setup-error-message')"
+    />
   </div>
 </template>
 
@@ -161,25 +192,6 @@ select:disabled {
   color: #dc3545;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .wan-mode-setup {
     padding: 1rem;
@@ -189,7 +201,7 @@ select:disabled {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

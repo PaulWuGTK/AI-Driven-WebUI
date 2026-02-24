@@ -6,16 +6,13 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('bridge-enable-label')">{{ $t('basicWanCht.enable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.Enable"
-                :data-testid="qa('bridge-enable-toggle')"
-              >
-              <span class="slider" :data-testid="qa('bridge-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.Enable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('bridge-enable-toggle')"
+              :slider-data-testid="qa('bridge-enable-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -34,17 +31,12 @@
           <div class="interface-list">
             <div v-for="iface in (localData.ListSupportedLANInterfaces || [])" :key="iface" class="switch-label">
               <span :data-testid="qa(`bridge-lan-interface-${slug(iface)}`)">{{ iface }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :true-value="1"
-                  :false-value="0"
-                  :checked="localData.ListLANInterfaces.includes(iface)"
-                  :data-testid="qa(`bridge-lan-interface-toggle-${slug(iface)}`)"
-                  @change="(e) => toggleInterface(iface, (e.target as HTMLInputElement).checked)"
-                >
-                <span class="slider" :data-testid="qa(`bridge-lan-interface-toggle-slider-${slug(iface)}`)"></span>
-              </label>
+              <BaseSwitch
+                :model-value="localData.ListLANInterfaces.includes(iface)"
+                :data-testid="qa(`bridge-lan-interface-toggle-${slug(iface)}`)"
+                :slider-data-testid="qa(`bridge-lan-interface-toggle-slider-${slug(iface)}`)"
+                @update:model-value="(value) => toggleInterface(iface, Boolean(value))"
+              />
             </div>
           </div>
         </div>
@@ -52,16 +44,13 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('bridge-vlan-enable-label')">{{ $t('basicWanCht.vlan') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.VLANEnable"
-                :data-testid="qa('bridge-vlan-enable-toggle')"
-              >
-              <span class="slider" :data-testid="qa('bridge-vlan-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.VLANEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('bridge-vlan-enable-toggle')"
+              :slider-data-testid="qa('bridge-vlan-enable-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -92,7 +81,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import type { BasicWanChtBridge } from '../../types/basicWanCht';
-import { BaseInput } from '../common';
+import { BaseInput, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 const { qa, slug } = useQA();
@@ -179,7 +168,7 @@ input, select {
   gap: 1rem;
 }
 
-.switch {
+:deep(.switch) {
   position: relative;
   display: inline-block;
   width: 60px;
@@ -187,13 +176,13 @@ input, select {
   flex-shrink: 0;
 }
 
-.switch input {
+:deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+:deep(.switch .slider) {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -205,7 +194,7 @@ input, select {
   border-radius: 34px;
 }
 
-.slider:before {
+:deep(.switch .slider:before) {
   position: absolute;
   content: "";
   height: 26px;
@@ -217,11 +206,11 @@ input, select {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+:deep(.switch input:checked + .slider) {
   background-color: var(--color-primary);
 }
 
-input:checked + .slider:before {
+:deep(.switch input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

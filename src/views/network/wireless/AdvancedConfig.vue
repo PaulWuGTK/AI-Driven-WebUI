@@ -6,6 +6,7 @@ import { getWlanAdvanced, updateWlanAdvanced } from '../../../services/api/wirel
 import type { WlanAdvancedResponse } from '../../../types/wireless';
 import WirelessAdvancedBandConfig from './advanced/WirelessAdvancedBandConfig.vue';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -129,12 +130,14 @@ onMounted(fetchAdvancedConfig);
       </div>
 
       <div class="button-group" :data-testid="qa('wireless-advanced-config-button-group')">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('wireless-advanced-config-cancel-button')" @click="fetchAdvancedConfig" :disabled="loading">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('wireless-advanced-config-apply-button')" :disabled="loading">
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('wireless-advanced-config-cancel-button')"
+          :apply-data-testid="qa('wireless-advanced-config-apply-button')"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          apply-type="submit"
+          @cancel="fetchAdvancedConfig"
+        />
       </div>
     </form>
 
@@ -237,7 +240,7 @@ onMounted(fetchAdvancedConfig);
   border-top: 1px solid #e0e0e0;
 }
 
-.btn {
+.button-group :deep(.btn) {
   padding: 0.5rem 1.5rem;
   border-radius: 4px;
   border: none;
@@ -246,22 +249,22 @@ onMounted(fetchAdvancedConfig);
   transition: opacity 0.2s;
 }
 
-.btn:disabled {
+.button-group :deep(.btn:disabled) {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.btn-primary {
+.button-group :deep(.btn-primary) {
   background-color: #0070BB;
   color: white;
 }
 
-.btn-secondary {
+.button-group :deep(.btn-secondary) {
   background-color: #f0f0f0;
   color: #666;
 }
 
-.btn:not(:disabled):hover {
+.button-group :deep(.btn:not(:disabled):hover) {
   opacity: 0.9;
 }
 </style>

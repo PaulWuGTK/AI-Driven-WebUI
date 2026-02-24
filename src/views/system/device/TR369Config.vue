@@ -5,6 +5,9 @@ import type { TR369Controller } from '../../../types/tr369';
 import { getTR369Config, updateTR369Config } from '../../../services/api/tr369';
 import TR369ControllerEdit from './TR369ControllerEdit.vue';
 import TR369ControllerDetail from './TR369ControllerDetail.vue';
+import { ActionButtons, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -17,7 +20,10 @@ const error = ref<string | null>(null);
 const isEditing = ref(false);
 const editingController = ref<TR369Controller | null>(null);
 const viewingController = ref<TR369Controller | null>(null);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const canAddController = computed(() => tempControllers.value.length < 5);
 
@@ -26,6 +32,13 @@ const fetchConfig = async () => {
   error.value = null;
   try {
     const response = await getTR369Config();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      controllers.value = [];
+      tempControllers.value = [];
+      return;
+    }
     agentEndpointID.value = response.TR369.AgentEndpointID;
     controllers.value = response.TR369.Controller;
     tempControllers.value = [...response.TR369.Controller];
@@ -107,11 +120,14 @@ const handleDelete = async (alias: string) => {
   tempControllers.value = tempControllers.value.filter(c => c.Alias !== alias);
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleApply = async () => {
@@ -126,18 +142,23 @@ const handleApply = async () => {
       ClientID: c.ClientID ?? "", // 防止 undefined
     }));
 
-    await updateTR369Config({
+    const response = await updateTR369Config({
       TR369: {
         AgentEndpointID: agentEndpointID.value,
         Controller: sanitizedControllers
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
 //    controllers.value = [...sanitizedControllers];
     await fetchConfig();
     showSuccessMessage();
   } catch (err) {
     console.error('Error updating TR-369 config:', err);
-    error.value = 'Failed to update TR-369 configuration';
+    showErrorMessage('Failed to update TR-369 configuration');
   } finally {
     loading.value = false;
   }
@@ -252,12 +273,12 @@ onMounted(fetchConfig);
           </div>
 
           <div class="button-group">
-            <button class="btn btn-secondary" :data-testid="qa('tr369-config-controllers-cancel-button')" @click="handleCancel">
-              {{ t('common.cancel') }}
-            </button>
-            <button class="btn btn-primary" :data-testid="qa('tr369-config-controllers-apply-button')" @click="handleApply">
-              {{ t('common.apply') }}
-            </button>
+            <ActionButtons
+              :cancel-data-testid="qa('tr369-config-controllers-cancel-button')"
+              :apply-data-testid="qa('tr369-config-controllers-apply-button')"
+              @cancel="handleCancel"
+              @apply="handleApply"
+            />
           </div>
         </div>
       </div>
@@ -279,9 +300,18 @@ onMounted(fetchConfig);
       />
     </template>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('tr369-config-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('tr369-config-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('tr369-config-error-toast')"
+    />
   </div>
 </template>
 
@@ -372,25 +402,6 @@ onMounted(fetchConfig);
   margin-top: 2rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .tr369-config {
     padding: 1rem;
@@ -425,7 +436,7 @@ onMounted(fetchConfig);
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

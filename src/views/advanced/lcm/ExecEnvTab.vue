@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExecEnvItem } from '../../../types/lcmExecEnv';
 import { getLcmExecEnvConfig, updateLcmExecEnv } from '../../../services/api/lcmExecEnv';
+import { BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -277,16 +278,13 @@ onMounted(fetchConfig);
                   <td :data-testid="qa(`lcm-execenv-name-${index}`)">{{ item.Name }}</td>
                   <td :data-testid="qa(`lcm-execenv-status-${index}`)">{{ item.Status }}</td>
                   <td :data-testid="qa(`lcm-execenv-enabled-${index}`)">
-                    <label class="switch">
-                      <input
-                        type="checkbox"
-                        :checked="item.Enable"
-                        :disabled="togglingName === item.Name"
-                        :data-testid="qa(`lcm-execenv-enable-toggle-table-${index}`)"
-                        @change="handleToggleEnable(item)"
-                      >
-                      <span class="slider" :data-testid="qa(`lcm-execenv-enable-toggle-slider-table-${index}`)"></span>
-                    </label>
+                    <BaseSwitch
+                      :model-value="item.Enable"
+                      :disabled="togglingName === item.Name"
+                      :data-testid="qa(`lcm-execenv-enable-toggle-table-${index}`)"
+                      :slider-data-testid="qa(`lcm-execenv-enable-toggle-slider-table-${index}`)"
+                      @update:model-value="() => handleToggleEnable(item)"
+                    />
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -330,15 +328,13 @@ onMounted(fetchConfig);
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('lcm.enabled') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :checked="item.Enable"
-                    :data-testid="qa(`lcm-execenv-enable-toggle-card-${index}`)"
-                    @change="handleToggleEnable(item)"
-                  >
-                  <span class="slider" :data-testid="qa(`lcm-execenv-enable-toggle-slider-card-${index}`)"></span>
-                </label>
+                <BaseSwitch
+                  :model-value="item.Enable"
+                  :disabled="togglingName === item.Name"
+                  :data-testid="qa(`lcm-execenv-enable-toggle-card-${index}`)"
+                  :slider-data-testid="qa(`lcm-execenv-enable-toggle-slider-card-${index}`)"
+                  @update:model-value="() => handleToggleEnable(item)"
+                />
               </div>
               <div class="card-actions">
                 <button class="btn-action" @click="openEditModal(item)" title="Edit">

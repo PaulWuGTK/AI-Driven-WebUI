@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -62,8 +63,8 @@ const fetchExtenderStatus = async () => {
 };
 
 // Handle toggle extender enabled state (just updates the temp value)
-const handleExtenderEnabledChange = (event: Event) => {
-  tempExtenderEnabled.value = (event.target as HTMLInputElement).checked ? 1 : 0;
+const handleExtenderEnabledChange = (value: string | number | boolean) => {
+  tempExtenderEnabled.value = value === true || value === 1 || value === '1' ? 1 : 0;
 };
 
 // Handle role change (just updates the temp value)
@@ -256,15 +257,14 @@ onMounted(() => {
             <div class="form-group">
               <div class="switch-label">
                 <span :data-testid="qa('wireless-extender-enabled-label')">{{ t('wirelessExtender.enabled') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('wireless-extender-enabled-toggle')"
-                    :checked="tempExtenderEnabled === 1"
-                    @change="handleExtenderEnabledChange"
-                  >
-                  <span class="slider" :data-testid="qa('wireless-extender-enabled-toggle-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="tempExtenderEnabled"
+                  :true-value="1"
+                  :false-value="0"
+                  :data-testid="qa('wireless-extender-enabled-toggle')"
+                  :slider-data-testid="qa('wireless-extender-enabled-toggle-slider')"
+                  @update:model-value="handleExtenderEnabledChange"
+                />
               </div>
             </div>
 
@@ -282,24 +282,14 @@ onMounted(() => {
             </div>
 
             <div class="button-group">
-              <button 
-                type="button" 
-                class="btn btn-secondary" 
-                :data-testid="qa('wireless-extender-config-cancel-button')"
-                @click="cancelConfigChanges"
-                :disabled="loading"
-              >
-                {{ t('common.cancel') }}
-              </button>
-              <button 
-                type="button"
-                class="btn btn-primary"
-                :data-testid="qa('wireless-extender-config-apply-button')"
-                @click="applyConfigChanges"
-                :disabled="loading"
-              >
-                {{ t('common.apply') }}
-              </button>
+              <ActionButtons
+                :cancel-data-testid="qa('wireless-extender-config-cancel-button')"
+                :apply-data-testid="qa('wireless-extender-config-apply-button')"
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                @cancel="cancelConfigChanges"
+                @apply="applyConfigChanges"
+              />
             </div>
           </div>
         </div>
@@ -579,17 +569,14 @@ onMounted(() => {
               </div>
               
               <div class="modal-footer">
-                <button class="btn btn-secondary" :data-testid="qa('wireless-extender-connect-cancel-button')" @click="closeConnectModal">
-                  {{ t('common.cancel') }}
-                </button>
-                <button 
-                  class="btn btn-primary" 
-                  :data-testid="qa('wireless-extender-connect-submit-button')"
-                  @click="handleConnect"
-                  :disabled="!password || loading"
-                >
-                  {{ t('wirelessExtender.connect') }}
-                </button>
+                <ActionButtons
+                  :cancel-data-testid="qa('wireless-extender-connect-cancel-button')"
+                  :apply-data-testid="qa('wireless-extender-connect-submit-button')"
+                  :apply-text="t('wirelessExtender.connect')"
+                  :apply-disabled="!password || loading"
+                  @cancel="closeConnectModal"
+                  @apply="handleConnect"
+                />
               </div>
             </div>
           </div>
@@ -620,18 +607,18 @@ onMounted(() => {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -862,7 +849,7 @@ input {
     flex-direction: column;
   }
 
-  .modal-footer .btn {
+  .modal-footer :deep(.btn) {
     width: 100%;
   }
   
@@ -870,7 +857,7 @@ input {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

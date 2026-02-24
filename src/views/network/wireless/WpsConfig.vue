@@ -6,6 +6,9 @@ import type { WlanWpsResponse } from '../../../types/wireless';
 import WpsVapInfo from './wps/WpsVapInfo.vue';
 import WpsActions from './wps/WpsActions.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -17,12 +20,31 @@ const pairingInProgress = ref(false);
 const pairingResult = ref<"Success" | "NotSuccess" | null>(null);
 const pollingInterval = ref<number | null>(null);
 const showConfirmDialog = ref(false);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const fetchWpsConfig = async () => {
   loading.value = true;
   try {
     const data = await getWlanWps();
+    const nokMessage = extractNokMessage(data);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      wpsData.value = null;
+      return;
+    }
     wpsData.value = data;
     tempWpsEnabled.value = data.WlanWps.Enable;
     
@@ -39,6 +61,7 @@ const fetchWpsConfig = async () => {
     }
   } catch (error) {
     console.error('Error fetching WPS config:', error);
+    showErrorMessage('Failed to fetch WPS configuration');
   } finally {
     loading.value = false;
   }
@@ -54,6 +77,11 @@ const startPolling = () => {
   pollingInterval.value = window.setInterval(async () => {
     try {
       const data = await getWlanWps();
+      const nokMessage = extractNokMessage(data);
+      if (nokMessage) {
+        showErrorMessage(nokMessage);
+        throw new Error(nokMessage);
+      }
       wpsData.value = data;
       
       if (data.WlanWps.PairingResult !== "PairingInprogress") {
@@ -83,8 +111,8 @@ const startPolling = () => {
   }, 3000);
 };
 
-const handleEnableToggle = (enabled: boolean) => {
-  tempWpsEnabled.value = enabled ? 1 : 0;
+const handleEnableToggle = (value: string | number | boolean) => {
+  tempWpsEnabled.value = value === true || value === 1 || value === '1' ? 1 : 0;
 };
 
 const handleApply = () => {
@@ -99,15 +127,21 @@ const handleApply = () => {
 const applyWpsConfig = async () => {
   loading.value = true;
   try {
-    await updateWlanWps({
+    const response = await updateWlanWps({
       WlanWps: {
         Enable: tempWpsEnabled.value
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     await fetchWpsConfig();
     showSuccessMessage();
   } catch (error) {
     console.error('Error updating WPS enable state:', error);
+    showErrorMessage('Failed to update WPS enable state');
   } finally {
     loading.value = false;
     showConfirmDialog.value = false;
@@ -122,13 +156,6 @@ const handleCancel = () => {
 
 const handlePairingComplete = () => {
   pairingResult.value = null;
-};
-
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
 };
 
 // Clean up interval when component is unmounted
@@ -147,25 +174,25 @@ onMounted(fetchWpsConfig);
     <div class="wps-enable" :data-testid="qa('wireless-wps-config-enable-section')">
       <div class="switch-label">
         <span :data-testid="qa('wireless-wps-config-enable-label')">{{ t('wireless.wpsConfiguration') }}</span>
-        <label class="switch">
-          <input
-            type="checkbox"
-            :data-testid="qa('wireless-wps-config-enable-toggle')"
-            :checked="tempWpsEnabled === 1"
-            @change="handleEnableToggle(($event.target as HTMLInputElement).checked)"
-          >
-          <span class="slider" :data-testid="qa('wireless-wps-config-enable-toggle-slider')"></span>
-        </label>
+        <BaseSwitch
+          :model-value="tempWpsEnabled"
+          :true-value="1"
+          :false-value="0"
+          :data-testid="qa('wireless-wps-config-enable-toggle')"
+          :slider-data-testid="qa('wireless-wps-config-enable-toggle-slider')"
+          @update:model-value="handleEnableToggle"
+        />
       </div>
     </div>
 
     <div class="button-group" :data-testid="qa('wireless-wps-config-button-group')">
-      <button type="button" class="btn btn-secondary" :data-testid="qa('wireless-wps-config-cancel-button')" @click="handleCancel">
-        {{ t('common.cancel') }}
-      </button>
-      <button type="button" class="btn btn-primary" :data-testid="qa('wireless-wps-config-apply-button')" @click="handleApply" :disabled="loading">
-        {{ t('common.apply') }}
-      </button>
+      <ActionButtons
+        :cancel-data-testid="qa('wireless-wps-config-cancel-button')"
+        :apply-data-testid="qa('wireless-wps-config-apply-button')"
+        :apply-disabled="loading"
+        @cancel="handleCancel"
+        @apply="handleApply"
+      />
     </div>
 
     <template v-if="wpsData?.WlanWps.Enable === 1">
@@ -208,10 +235,18 @@ onMounted(fetchWpsConfig);
       </div>
     </div>
 
-    <!-- Success Message -->
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-wps-config-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('wireless-wps-config-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wireless-wps-config-error-message')"
+    />
 
     <!-- Confirmation Dialog -->
     <ConfirmationDialog
@@ -243,18 +278,18 @@ onMounted(fetchWpsConfig);
 }
 
 /* Custom switch size (60px × 34px) for larger prominence in WPS configuration */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -314,25 +349,6 @@ input:checked + .slider:before {
   font-size: 3rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -347,7 +363,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

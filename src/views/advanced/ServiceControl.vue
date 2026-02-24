@@ -5,6 +5,9 @@ import type { ServiceControlRule, ServiceControlResponse } from '../../types/ser
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
 import ServiceControlModal from './service-control/ServiceControlModal.vue';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
+import { BaseToast } from '../../components/common';
+import { useAutoDismiss } from '../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -15,9 +18,22 @@ const error = ref<string | null>(null);
 const showModal = ref(false);
 const editingRule = ref<ServiceControlRule | null>(null);
 const originalServiceName = ref<string | null>(null);
-const showSuccess = ref(false);
 const showConfirmDialog = ref(false);
 const ruleToDelete = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showSuccessMessage = (message = t('common.saveSuccess')) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 // Computed properties for display
 const protocolMap = computed(() => {
@@ -56,7 +72,14 @@ const fetchServiceControl = async () => {
   loading.value = true;
   error.value = null;
   try {
-    serviceControlData.value = await getServiceControl();
+    const response = await getServiceControl();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      serviceControlData.value = null;
+      return;
+    }
+    serviceControlData.value = response;
     // 保險：補上 InterfaceOriginal（舊資料或舊後端時）
     const rules = serviceControlData.value.AdvancedServiceControl.Rules || [];
     serviceControlData.value.AdvancedServiceControl.Rules = rules.map(r => ({
@@ -116,17 +139,22 @@ const confirmDeleteRule = async () => {
       rule => rule.Service !== ruleToDelete.value
     );
     
-    await updateServiceControl({
+    const response = await updateServiceControl({
       AdvancedServiceControl: {
         Rules: updatedRules
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     
     await fetchServiceControl();
     showSuccessMessage();
   } catch (err) {
     console.error('Error deleting rule:', err);
-    error.value = 'Failed to delete rule';
+    showErrorMessage('Failed to delete rule');
   } finally {
     showConfirmDialog.value = false;
     ruleToDelete.value = null;
@@ -153,11 +181,16 @@ const handleSaveRule = async (rule: ServiceControlRule) => {
   }
   
   try {
-    await updateServiceControl({
+    const response = await updateServiceControl({
       AdvancedServiceControl: {
         Rules: updatedRules
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     
     await fetchServiceControl();
     showModal.value = false;
@@ -166,16 +199,8 @@ const handleSaveRule = async (rule: ServiceControlRule) => {
     showSuccessMessage();
   } catch (err) {
     console.error('Error saving rule:', err);
-    error.value = 'Failed to save rule';
+    showErrorMessage('Failed to save rule');
   }
-};
-
-// Show success message
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
 };
 
 // Format IP version for display
@@ -313,10 +338,18 @@ onMounted(fetchServiceControl);
         </div>
       </div>
 
-      <!-- Success message -->
-      <div v-if="showSuccess" class="success-message" :data-testid="qa('service-control-success-message')">
-        Operation successful
-      </div>
+      <BaseToast
+        v-model="showSuccessToast"
+        :message="successMessage"
+        type="success"
+        :data-testid="qa('service-control-success-message')"
+      />
+      <BaseToast
+        v-model="showErrorToast"
+        :message="errorToastMessage"
+        type="error"
+        :data-testid="qa('service-control-error-message')"
+      />
 
       <!-- Edit/Add Modal -->
       <ServiceControlModal
@@ -395,18 +428,6 @@ onMounted(fetchServiceControl);
   border-radius: 4px;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
 .add-rule-btn {
   display: flex;
   align-items: center;
@@ -416,13 +437,6 @@ onMounted(fetchServiceControl);
 .add-rule-btn .material-icons {
   font-size: 20px;
   line-height: 1;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {

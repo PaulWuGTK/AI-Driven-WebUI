@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -17,11 +20,23 @@ const error = ref<string | null>(null);
 const showConnectModal = ref(false);
 const selectedAP = ref<ExtenderNeighbor | null>(null);
 const password = ref('');
-const showSuccess = ref(false);
 const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const redirectCountdown = ref<number | null>(null);
 const redirectTimer = ref<number | null>(null);
 const redirectUrl = ref<string | null>(null);
+
+const showSuccessMessage = (message = t('common.saveSuccess')) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 // Computed properties
 const isExtenderEnabled = computed(() =>
@@ -48,7 +63,14 @@ const fetchExtenderStatus = async () => {
   loading.value = true;
   error.value = null;
   try {
-    extenderData.value = await getExtenderStatus();
+    const response = await getExtenderStatus();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      extenderData.value = null;
+      return;
+    }
+    extenderData.value = response;
     tempExtenderEnabled.value = extenderData.value.Extender.ExtenderEnabled.Enabled;
     tempExtenderRole.value = extenderData.value.Extender.ExtenderRole.Role;
   } catch (err) {
@@ -62,24 +84,24 @@ const fetchExtenderStatus = async () => {
 // Update extender settings
 const handleSaveSettings = async () => {
   loading.value = true;
-  error.value = null;
   try {
-    await updateExtenderSettings({
+    const response = await updateExtenderSettings({
       Extender: {
         Action: "ExtenderEnable",
         Enabled: tempExtenderEnabled.value,
         Role: tempExtenderRole.value
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     await fetchExtenderStatus();
-    showSuccess.value = true;
-    successMessage.value = t('common.saveSuccess');
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 3000);
+    showSuccessMessage();
   } catch (err) {
     console.error('Error updating extender settings:', err);
-    error.value = err instanceof Error ? err.message : 'Failed to update settings';
+    showErrorMessage(err instanceof Error ? err.message : 'Failed to update settings');
   } finally {
     loading.value = false;
   }
@@ -88,13 +110,19 @@ const handleSaveSettings = async () => {
 // Scan for neighbor APs
 const handleScan = async () => {
   scanning.value = true;
-  error.value = null;
   try {
     const response = await scanNeighborAPs();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      scanResults.value = [];
+      showErrorMessage(nokMessage);
+      return;
+    }
     scanResults.value = response.ExtenderScan || [];
   } catch (err) {
     console.error('Error scanning APs:', err);
-    error.value = err instanceof Error ? err.message : 'Failed to scan APs';
+    scanResults.value = [];
+    showErrorMessage(err instanceof Error ? err.message : 'Failed to scan APs');
   } finally {
     scanning.value = false;
   }
@@ -112,7 +140,6 @@ const handleConnect = async () => {
   if (!selectedAP.value) return;
 
   loading.value = true;
-  error.value = null;
 
   try {
     const connectRequest: ExtenderConnectRequest = {
@@ -126,6 +153,11 @@ const handleConnect = async () => {
     };
 
     const response = await connectToAP(connectRequest);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
 
     if (response.Extender.ip_address) {
       redirectUrl.value = `http://${response.Extender.ip_address}`;
@@ -134,16 +166,11 @@ const handleConnect = async () => {
     }
 
     showConnectModal.value = false;
-    showSuccess.value = true;
-    successMessage.value = t('wirelessExtender.connectSuccess');
-
-    setTimeout(() => {
-      showSuccess.value = false;
-      fetchExtenderStatus();
-    }, 3000);
+    showSuccessMessage(t('wirelessExtender.connectSuccess'));
+    await fetchExtenderStatus();
   } catch (err) {
     console.error('Error connecting to AP:', err);
-    error.value = err instanceof Error ? err.message : 'Failed to connect to AP';
+    showErrorMessage(err instanceof Error ? err.message : 'Failed to connect to AP');
   } finally {
     loading.value = false;
   }
@@ -152,10 +179,14 @@ const handleConnect = async () => {
 // WPS functionality
 const handleWPS = async () => {
   loading.value = true;
-  error.value = null;
 
   try {
     const response = await triggerWPS();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
 
     if (response.Extender.ip_address) {
       redirectUrl.value = `http://${response.Extender.ip_address}`;
@@ -163,15 +194,10 @@ const handleWPS = async () => {
       startRedirectCountdown();
     }
 
-    showSuccess.value = true;
-    successMessage.value = t('wirelessExtender.wpsTriggered');
-
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 3000);
+    showSuccessMessage(t('wirelessExtender.wpsTriggered'));
   } catch (err) {
     console.error('Error triggering WPS:', err);
-    error.value = err instanceof Error ? err.message : 'Failed to trigger WPS';
+    showErrorMessage(err instanceof Error ? err.message : 'Failed to trigger WPS');
   } finally {
     loading.value = false;
   }
@@ -224,15 +250,13 @@ onMounted(() => {
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('wireless-extender-enable-label')">{{ t('wirelessExtender.enabled') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :checked="tempExtenderEnabled === 1"
-                  @change="tempExtenderEnabled = ($event.target as HTMLInputElement).checked ? 1 : 0"
-                  :data-testid="qa('wireless-extender-enable-toggle')"
-                >
-                <span class="slider" :data-testid="qa('wireless-extender-enable-toggle-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="tempExtenderEnabled"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('wireless-extender-enable-toggle')"
+                :slider-data-testid="qa('wireless-extender-enable-toggle-slider')"
+              />
             </div>
           </div>
 
@@ -250,24 +274,14 @@ onMounted(() => {
           </div>
 
           <div class="button-group">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="fetchExtenderStatus"
-              :disabled="loading"
-              :data-testid="qa('wireless-extender-cancel-button')"
-            >
-              {{ t('common.cancel') }}
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="handleSaveSettings"
-              :disabled="loading"
-              :data-testid="qa('wireless-extender-apply-button')"
-            >
-              {{ t('common.apply') }}
-            </button>
+            <ActionButtons
+              :cancel-data-testid="qa('wireless-extender-cancel-button')"
+              :apply-data-testid="qa('wireless-extender-apply-button')"
+              :cancel-disabled="loading"
+              :apply-disabled="loading"
+              @cancel="fetchExtenderStatus"
+              @apply="handleSaveSettings"
+            />
           </div>
         </div>
       </div>
@@ -396,22 +410,15 @@ onMounted(() => {
         </div>
 
         <div class="modal-actions">
-          <button
-            @click="showConnectModal = false"
-            class="btn btn-secondary"
-            :data-testid="qa('wireless-extender-connect-cancel-button')"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            @click="handleConnect"
-            class="btn btn-primary"
-            :disabled="loading"
-            :data-testid="qa('wireless-extender-connect-confirm-button')"
-          >
-            <span class="material-icons" v-if="loading">sync</span>
-            {{ t('wirelessExtender.connect') }}
-          </button>
+          <ActionButtons
+            :cancel-data-testid="qa('wireless-extender-connect-cancel-button')"
+            :apply-data-testid="qa('wireless-extender-connect-confirm-button')"
+            :apply-text="t('wirelessExtender.connect')"
+            :apply-disabled="loading"
+            :apply-loading="loading"
+            @cancel="showConnectModal = false"
+            @apply="handleConnect"
+          />
         </div>
       </div>
     </div>
@@ -427,10 +434,18 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Success Message -->
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-extender-success-message')">
-      {{ successMessage }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('wireless-extender-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wireless-extender-error-message')"
+    />
   </div>
 </template>
 
@@ -454,18 +469,18 @@ select {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -545,25 +560,6 @@ input:checked + .slider:before {
   margin-top: 1.5rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 .btn-sm {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -585,7 +581,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 
@@ -593,7 +589,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .modal-actions .btn {
+  .modal-actions :deep(.btn) {
     width: 100%;
   }
 }

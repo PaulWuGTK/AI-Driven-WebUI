@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import type { ServiceControlRule, ServiceControlOptions, ServiceOption } from '../../../types/serviceControl';
+import { BaseSwitch } from '../../../components/common';
 
 import { useQA } from '../../../utils/qa';
 
@@ -111,8 +112,8 @@ const handleSubmit = () => {
 };
 
 // Toggle source IP range visibility
-const toggleSourceIPRange = () => {
-  showSourceIPRange.value = !showSourceIPRange.value;
+const toggleSourceIPRange = (value?: boolean) => {
+  showSourceIPRange.value = typeof value === 'boolean' ? value : !showSourceIPRange.value;
   if (!showSourceIPRange.value) {
     editingRule.value.SourceIPStart = undefined;
     editingRule.value.SourceIPEnd = undefined;
@@ -148,14 +149,11 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('service-control-enable-label')">{{ t('common.enable') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  v-model="editingRule.Enable"
-                  :data-testid="qa('service-control-enable-toggle')"
-                >
-                <span class="slider" :data-testid="qa('service-control-enable-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="editingRule.Enable"
+                :data-testid="qa('service-control-enable-toggle')"
+                :slider-data-testid="qa('service-control-enable-slider')"
+              />
             </div>
           </div>
 
@@ -226,15 +224,12 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('service-control-source-ip-range-label')">Specify Source IP Range</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :checked="showSourceIPRange"
-                  :data-testid="qa('service-control-source-ip-range-toggle')"
-                  @change="toggleSourceIPRange"
-                >
-                <span class="slider" :data-testid="qa('service-control-source-ip-range-slider')"></span>
-              </label>
+              <BaseSwitch
+                :model-value="showSourceIPRange"
+                :data-testid="qa('service-control-source-ip-range-toggle')"
+                :slider-data-testid="qa('service-control-source-ip-range-slider')"
+                @update:model-value="(value) => toggleSourceIPRange(Boolean(value))"
+              />
             </div>
           </div>
 
@@ -355,18 +350,18 @@ input:disabled, select:disabled {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence in modal */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

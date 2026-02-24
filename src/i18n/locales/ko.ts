@@ -1,5 +1,5 @@
-// Korean translations
-export default {
+// ko translations
+const translations = {
   menu: {
     home: '대시보드',
     status: '상태',
@@ -263,7 +263,7 @@ export default {
     packetsReceived: '수신 패킷 수',
     packetsSent: '전송 패킷 수',
     bytesReceived: '수신 바이트 수',
-    bytesSent: '전송 바이트 수',
+    bytesSent: '전송 바이트 수'
   },
   wlan: {
     title: 'WLAN 상태',
@@ -476,7 +476,7 @@ export default {
     mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
     meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
     commonSsidDisabled: '공통 SSID가 비활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
-    mloMeshWarning: "하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다.",
+    mloMeshWarning: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다.',
     ssidGroupName: 'SSID 그룹 이름',
     noSsidGroups: '사용 가능한 SSID 그룹이 없습니다',
     groupDefaultName: 'Home',
@@ -628,7 +628,7 @@ export default {
     dnsDetection: 'DNS 감지',
     ipAddress: 'IP 주소',
     dnsServer: 'DNS 서버',
-    enableHint: '사용으로 설정하면 WAN 상태 점검 설정이 표시되고, 사용 안 함으로 설정하면 해당 설정이 숨겨집니다.',
+    enableHint: '사용으로 설정하면 WAN 상태 점검 설정이 표시되고, 사용 안 함으로 설정하면 해당 설정이 숨겨집니다.'
   },
   lanBasic: {
     title: 'LAN 설정',
@@ -760,7 +760,7 @@ export default {
     clientPort: '클라이언트 포트',
     serverId: '서버 ID',
     serverPort: '서버 포트',
-    algorithm : '알고리즘'
+    algorithm: '알고리즘'
   },
   device: {
     title: '장치 관리',
@@ -857,7 +857,7 @@ export default {
     results_state_complete: '완료',
     results_state_error: '오류',
     message_loadConfigFailed: 'TR-471 설정을 불러오지 못했습니다',
-    message_testFailed: 'TR-471 테스트 실패',
+    message_testFailed: 'TR-471 테스트 실패'
   },
   diagnostics: {
     title: '진단 도구',
@@ -948,8 +948,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
-    tagline: "XGiga 통신사급 속도 테스트",
-    poweredBy: "Streambow 제공",
+    tagline: 'XGiga 통신사급 속도 테스트',
+    poweredBy: 'Streambow 제공',
     description: '아래 버튼을 클릭하여 속도 테스트를 시작하세요.',
     startTest: '속도 테스트 시작',
     downloadSpeed: '다운로드 속도',
@@ -1238,7 +1238,7 @@ export default {
     enabled: '활성화됨',
     disabled: '비활성화',
     loading: '로딩 중...',
-    yes: '예', 
+    yes: '예',
     no: '아니요',
     confirm: '확인',
     generate: '생성',
@@ -1396,7 +1396,7 @@ export default {
     portRequired: '포트를 입력해야 합니다',
     protocolRequired: '프로토콜을 선택해야 합니다',
     deviceRequired: '장치를 선택해야 합니다',
-    confirmDelete: '이 규칙을 삭제하시겠습니까?',
+    confirmDelete: '이 규칙을 삭제하시겠습니까?'
   },
   nat: {
     title: 'NAT 설정',
@@ -1427,7 +1427,7 @@ export default {
     localPort: '로컬 포트',
     localPortStart: '로컬 포트 범위(시작)',
     localPortEnd: '로컬 포트 범위(끝)',
-    comment: '메모',
+    comment: '메모'
   },
   ipFiltering: {
     enableIpFiltering: 'IP 필터링 사용',
@@ -1451,7 +1451,7 @@ export default {
     currentWhitelistFilterTable: '현재 화이트리스트 필터 테이블',
     number: '번호',
     active: '동작 중',
-    noEntries: '등록된 항목이 없습니다',
+    noEntries: '등록된 항목이 없습니다'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC 필터링 사용',
@@ -1470,7 +1470,7 @@ export default {
     noEntries: '등록된 항목이 없습니다',
     emptyMacError: 'MAC 주소는 비워 둘 수 없습니다',
     invalidMacFormat: 'MAC 주소 형식이 올바르지 않습니다',
-    duplicateMacError: '이 MAC 주소는 이미 존재합니다',
+    duplicateMacError: '이 MAC 주소는 이미 존재합니다'
   },
   basicWanCht: {
     title: 'WAN 설정',
@@ -1503,7 +1503,7 @@ export default {
     pppoePassThrough: 'PPPoE 패스스루',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS IP 주소',
+    dnsIpAddress: 'DNS 모드',
     autoObtainFromISP: '자동 - ISP에서 가져오기',
     manual: '수동',
     primaryDNS: '기본 DNS',
@@ -1516,18 +1516,22 @@ export default {
     vlanId: 'VLAN ID',
     vlanModifiable: 'VLAN을 체크한 경우에만 수정할 수 있습니다.',
     lanInterface: 'LAN 인터페이스',
-    dhcpOption60: 'DHCP 옵션 60',
-    vendorId: '벤더 ID',
+    dhcpOption60: 'DHCPv4 옵션 60',
+    vendorId: 'DHCPv4 옵션 60 값',
     dhcpOption60Modifiable: 'DHCP 옵션 60을 체크한 경우에만 수정할 수 있습니다.',
-    dhcpOption61: 'DHCP 옵션 61',
+    dhcpOption61: 'DHCPv4 옵션 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID 유형',
+    enterpriseNumber: '기업 번호',
+    identifier: '식별자',
     ipAddress: 'IP 주소',
     subnetMask: '서브넷 마스크',
     gatewayIpAddress: '게이트웨이 IP 주소',
     staticFieldRequired: '프로토콜이 Static인 경우, 이 필드는 필수이며 비워 둘 수 없습니다.',
     loadError: 'WAN 구성을 불러오지 못했습니다.',
     saveSuccess: 'WAN 구성이 성공적으로 저장되었습니다.',
-    saveError: 'WAN 구성을 저장하지 못했습니다.',
+    saveError: 'WAN 구성을 저장하지 못했습니다.'
   },
   routing: {
     title: '라우팅',
@@ -1572,6 +1576,8 @@ export default {
     prefixLengthRequired: '프리픽스 길이는 필수 항목입니다',
     duplicateAlias: '경로 이름이 이미 존재합니다. 다른 이름을 사용해 주세요',
     comingSoon: '곧 제공 예정',
-    featureInDevelopment: '이 기능은 현재 개발 중입니다',
+    featureInDevelopment: '이 기능은 현재 개발 중입니다'
   }
 };
+
+export default translations;

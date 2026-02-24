@@ -5,6 +5,9 @@ import type { MACFilteringResponse, MACFilteringEntry } from '../../../types/mac
 import { getMACFiltering, updateMACFiltering } from '../../../services/api/macFiltering';
 import MacFilterBand from './macfilter/MacFilterBand.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,9 +15,22 @@ const { t } = useI18n();
 const activeTab = ref('2.4G');
 const macFilteringData = ref<MACFilteringResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showConfirmDialog = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showSuccessMessage = (message = t('common.saveSuccess')) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 // Computed properties for each band's entries
 const wifi2gEntries = computed(() => 
@@ -40,6 +56,12 @@ const fetchMACFiltering = async () => {
   error.value = null;
   try {
     const response = await getMACFiltering();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      macFilteringData.value = null;
+      return;
+    }
     macFilteringData.value = response;
     
     // Store original entries for comparison
@@ -70,14 +92,6 @@ const update5GEntries = (entries: MACFilteringEntry[]) => {
 const update6GEntries = (entries: MACFilteringEntry[]) => {
   if (!macFilteringData.value) return;
   macFilteringData.value.MACFiltering.wifi6g = entries;
-};
-
-// Show success message
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
 };
 
 // Apply changes
@@ -120,17 +134,21 @@ const confirmApply = async () => {
   if (!macFilteringData.value) return;
   
   loading.value = true;
-  error.value = null;
   try {
-    await updateMACFiltering({
+    const response = await updateMACFiltering({
       MACFiltering: macFilteringData.value.MACFiltering
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
     // 重新獲取最新資料並更新原始資料基準
     await fetchMACFiltering();
   } catch (err) {
     console.error('Error updating MAC filtering:', err);
-    error.value = 'Failed to update MAC filtering';
+    showErrorMessage('Failed to update MAC filtering');
   } finally {
     loading.value = false;
     showConfirmDialog.value = false;
@@ -235,9 +253,18 @@ onMounted(fetchMACFiltering);
         </div>
       </template>
 
-      <div v-if="showSuccess" class="success-message" :data-testid="qa('mac-filter-success-message')">
-        {{ t('common.apply') }} successful
-      </div>
+      <BaseToast
+        v-model="showSuccessToast"
+        :message="successMessage"
+        type="success"
+        :data-testid="qa('mac-filter-success-message')"
+      />
+      <BaseToast
+        v-model="showErrorToast"
+        :message="errorToastMessage"
+        type="error"
+        :data-testid="qa('mac-filter-error-message')"
+      />
 
       <!-- Confirmation Dialog -->
       <ConfirmationDialog
@@ -279,25 +306,6 @@ onMounted(fetchMACFiltering);
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {

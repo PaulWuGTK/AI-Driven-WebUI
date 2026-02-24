@@ -3,6 +3,9 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DdnsService, DdnsResponse } from '../../types/ddns';
 import { getDdns, updateDdns } from '../../services/api';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../components/common';
+import { useAutoDismiss } from '../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,13 +15,23 @@ const isEditing = ref(false);
 const editingService = ref<DdnsService | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const fetchDdns = async () => {
   loading.value = true;
   error.value = null;
   try {
-    ddnsData.value = await getDdns();
+    const response = await getDdns();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      ddnsData.value = null;
+      return;
+    }
+    ddnsData.value = response;
   } catch (err) {
     console.error('Error fetching DDNS settings:', err);
     error.value = 'Failed to fetch DDNS settings';
@@ -39,14 +52,20 @@ const handleDelete = async (serviceId: string) => {
 
   try {
     const updatedServices = ddnsData.value.Ddns.Service.filter(s => s.ID !== serviceId);
-    await updateDdns({
+    const response = await updateDdns({
       Ddns: {
         Service: updatedServices
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     await fetchDdns();
-  } catch (error) {
-    console.error('Error deleting DDNS service:', error);
+  } catch (err) {
+    console.error('Error deleting DDNS service:', err);
+    showErrorMessage('Failed to delete DDNS service');
   }
 };
 
@@ -66,11 +85,14 @@ const handleAdd = () => {
   isEditing.value = true;
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleSave = async (service: DdnsService) => {
@@ -87,18 +109,24 @@ const handleSave = async (service: DdnsService) => {
       updatedServices = [...ddnsData.value.Ddns.Service, service];
     }
 
-    await updateDdns({
+    const response = await updateDdns({
       Ddns: {
         Service: updatedServices
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     
     showSuccessMessage();
     isEditing.value = false;
     editingService.value = null;
     await fetchDdns();
-  } catch (error) {
-    console.error('Error saving DDNS service:', error);
+  } catch (err) {
+    console.error('Error saving DDNS service:', err);
+    showErrorMessage('Failed to save DDNS service');
   }
 };
 
@@ -130,12 +158,16 @@ onMounted(fetchDdns);
             <div class="header-row">
               <div class="section-title-sp" :data-testid="qa('ddns-management-title')">{{ t('ddns.management') }}</div>
               <div class="actions">
-                <button class="btn btn-primary" :data-testid="qa('ddns-add-service-button')" @click="handleAdd">
-                  {{ t('ddns.addService') }}
-                </button>
-                <button class="btn btn-secondary" :data-testid="qa('ddns-refresh-button')" @click="fetchDdns">
-                  {{ t('ddns.refresh') }}
-                </button>
+                <ActionButtons
+                  :cancel-text="t('ddns.addService')"
+                  cancel-variant="primary"
+                  :apply-text="t('ddns.refresh')"
+                  apply-variant="secondary"
+                  :cancel-data-testid="qa('ddns-add-service-button')"
+                  :apply-data-testid="qa('ddns-refresh-button')"
+                  @cancel="handleAdd"
+                  @apply="fetchDdns"
+                />
               </div>
             </div>
 
@@ -263,35 +295,43 @@ onMounted(fetchDdns);
               <div class="form-group">
                 <div class="switch-label">
                   <span :data-testid="qa('ddns-edit-enable-label')">{{ t('common.enable') }}</span>
-                  <label class="switch">
-                    <input
-                      type="checkbox"
-                      :data-testid="qa('ddns-edit-enable-toggle')"
-                      v-model="editingService.HostEnable"
-                      :true-value="1"
-                      :false-value="0"
-                    >
-                    <span class="slider" :data-testid="qa('ddns-edit-enable-slider')"></span>
-                  </label>
+                  <BaseSwitch
+                    v-model="editingService.HostEnable"
+                    :true-value="1"
+                    :false-value="0"
+                    :data-testid="qa('ddns-edit-enable-toggle')"
+                    :slider-data-testid="qa('ddns-edit-enable-slider')"
+                  />
                 </div>
               </div>
 
               <div class="button-group">
-                <button type="button" class="btn btn-secondary" :data-testid="qa('ddns-edit-cancel-button')" @click="handleCancel">
-                  {{ t('ddns.cancel') }}
-                </button>
-                <button type="submit" class="btn btn-primary" :data-testid="qa('ddns-edit-save-button')">
-                  {{ t('ddns.save') }}
-                </button>
+                <ActionButtons
+                  :cancel-text="t('ddns.cancel')"
+                  :apply-text="t('ddns.save')"
+                  apply-type="submit"
+                  :cancel-data-testid="qa('ddns-edit-cancel-button')"
+                  :apply-data-testid="qa('ddns-edit-save-button')"
+                  @cancel="handleCancel"
+                />
               </div>
             </form>
           </div>
         </div>
       </template>
 
-      <div v-if="showSuccess" class="success-message" :data-testid="qa('ddns-success-message')">
-        {{ t('common.apply') }} successful
-      </div>
+      <BaseToast
+        v-model="showSuccessToast"
+        :message="successMessage"
+        type="success"
+        :data-testid="qa('ddns-success-message')"
+      />
+      <BaseToast
+        v-model="showErrorToast"
+        :message="errorToastMessage"
+        type="error"
+        :data-testid="qa('ddns-error-toast')"
+      />
     </div>
   </div>
 </template>
@@ -354,19 +394,19 @@ input, select {
 }
 
 /* Custom switch size (60px × 34px) with left margin for layout */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   margin-left: 1rem;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -375,18 +415,6 @@ input:checked + .slider:before {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
 }
 
 .loading-state {
@@ -407,13 +435,6 @@ input:checked + .slider:before {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 .card-actions {
@@ -453,7 +474,7 @@ input:checked + .slider:before {
     width: 100%;
   }
 
-  .actions .btn {
+  .actions :deep(.btn) {
     width: 100%;
   }
 
@@ -465,7 +486,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 

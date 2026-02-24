@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR369Controller } from '../../../types/tr369';
+import { BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -84,16 +85,13 @@ const handleSubmit = () => {
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('tr369-controller-edit-enable-label')">{{ t('common.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('tr369-controller-edit-enable-toggle')"
-              v-model="editingController.Enable"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('tr369-controller-edit-enable-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="editingController.Enable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('tr369-controller-edit-enable-toggle')"
+            :slider-data-testid="qa('tr369-controller-edit-enable-toggle-slider')"
+          />
         </div>
       </div>
 
@@ -279,18 +277,18 @@ input, select {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

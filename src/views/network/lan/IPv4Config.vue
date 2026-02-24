@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import IPChangeRedirect from '../../../components/IPChangeRedirect.vue';
 const { isQAMode, qa, slug } = useQA();
@@ -322,16 +323,13 @@ onMounted(fetchLanBasic);
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipv4-configuration-lan-ip-enable-label')">{{ t('lanBasic.enable') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('ipv4-configuration-lan-ip-enable-toggle')"
-                  v-model="lanData.LanBasic.LANIPSetting.Enable"
-                  :true-value="1"
-                  :false-value="0"
-                >
-                <span class="slider" :data-testid="qa('ipv4-configuration-lan-ip-enable-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="lanData.LanBasic.LANIPSetting.Enable"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('ipv4-configuration-lan-ip-enable-toggle')"
+                :slider-data-testid="qa('ipv4-configuration-lan-ip-enable-slider')"
+              />
             </div>
           </div>
 
@@ -367,16 +365,13 @@ onMounted(fetchLanBasic);
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipv4-configuration-dhcp-enable-label')">{{ t('lanBasic.enableDhcpServer') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('ipv4-configuration-dhcp-enable-toggle')"
-                  v-model="lanData.LanBasic.DHCPv4Setting.Enable"
-                  :true-value="1"
-                  :false-value="0"
-                >
-                <span class="slider" :data-testid="qa('ipv4-configuration-dhcp-enable-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="lanData.LanBasic.DHCPv4Setting.Enable"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('ipv4-configuration-dhcp-enable-toggle')"
+                :slider-data-testid="qa('ipv4-configuration-dhcp-enable-slider')"
+              />
             </div>
           </div>
 
@@ -489,16 +484,13 @@ onMounted(fetchLanBasic);
                   </td>
                   <td>
                     <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-enable-container-${resIndex}`)">
-                      <label class="switch">
-                        <input
-                          type="checkbox"
-                          :data-testid="qa(`ipv4-configuration-reservation-enable-toggle-${resIndex}`)"
-                          v-model="reservation.Enable"
-                          :true-value="1"
-                          :false-value="0"
-                        >
-                        <span class="slider" :data-testid="qa(`ipv4-configuration-reservation-enable-slider-${resIndex}`)"></span>
-                      </label>
+                      <BaseSwitch
+                        v-model="reservation.Enable"
+                        :true-value="1"
+                        :false-value="0"
+                        :data-testid="qa(`ipv4-configuration-reservation-enable-toggle-${resIndex}`)"
+                        :slider-data-testid="qa(`ipv4-configuration-reservation-enable-slider-${resIndex}`)"
+                      />
                     </div>
                   </td>
                   <td>
@@ -562,16 +554,13 @@ onMounted(fetchLanBasic);
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-label-${resIndex}`)">{{ t('lanBasic.enable') }}</span>
                 <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-container-${resIndex}`)">
-                  <label class="switch">
-                    <input
-                      type="checkbox"
-                      :data-testid="qa(`ipv4-configuration-reservation-card-enable-toggle-${resIndex}`)"
-                      v-model="reservation.Enable"
-                      :true-value="1"
-                      :false-value="0"
-                    >
-                    <span class="slider" :data-testid="qa(`ipv4-configuration-reservation-card-enable-slider-${resIndex}`)"></span>
-                  </label>
+                  <BaseSwitch
+                    v-model="reservation.Enable"
+                    :true-value="1"
+                    :false-value="0"
+                    :data-testid="qa(`ipv4-configuration-reservation-card-enable-toggle-${resIndex}`)"
+                    :slider-data-testid="qa(`ipv4-configuration-reservation-card-enable-slider-${resIndex}`)"
+                  />
                 </div>
               </div>
               <div class="card-actions" :data-testid="qa(`ipv4-configuration-reservation-card-actions-${resIndex}`)">
@@ -598,20 +587,14 @@ onMounted(fetchLanBasic);
       </div>
 
       <div class="button-group">
-        <button 
-          class="btn btn-secondary" 
-          :data-testid="qa('ipv4-configuration-cancel-button')"
-          @click="fetchLanBasic"
-        >
-          {{ t('lanBasic.cancel') }}
-        </button>
-        <button 
-          class="btn btn-primary"
-          :data-testid="qa('ipv4-configuration-apply-button')"
-          @click="handleApply"
-        >
-          {{ t('lanBasic.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-text="t('lanBasic.cancel')"
+          :apply-text="t('lanBasic.apply')"
+          :cancel-data-testid="qa('ipv4-configuration-cancel-button')"
+          :apply-data-testid="qa('ipv4-configuration-apply-button')"
+          @cancel="fetchLanBasic"
+          @apply="handleApply"
+        />
       </div>
     </template>
 
@@ -696,18 +679,18 @@ input:disabled {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -814,7 +797,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 

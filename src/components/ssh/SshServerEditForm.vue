@@ -2,6 +2,7 @@
 import { defineProps, defineEmits, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../types/ssh';
+import { BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -130,15 +131,14 @@ const handleCustomKeepAliveChange = (event: Event) => {
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-enable-label')">{{ t('ssh.enable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-enable-toggle')"
-                :checked="server.Enable === 1"
-                @change="updateServer('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.Enable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-enable-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-enable-toggle-slider')"
+              @update:model-value="(value) => updateServer('Enable', Number(value))"
+            />
           </label>
         </div>
       </div>
@@ -213,15 +213,14 @@ const handleCustomKeepAliveChange = (event: Event) => {
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-allow-all-ipv4-label')">{{ t('ssh.allowAllIPv4') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle')"
-                :checked="server.AllowAllIPv4 === 1"
-                @change="updateServer('AllowAllIPv4', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.AllowAllIPv4"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-allow-all-ipv4-toggle-slider')"
+              @update:model-value="(value) => updateServer('AllowAllIPv4', Number(value))"
+            />
           </label>
         </div>
 
@@ -239,15 +238,14 @@ const handleCustomKeepAliveChange = (event: Event) => {
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-allow-all-ipv6-label')">{{ t('ssh.allowAllIPv6') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle')"
-                :checked="server.AllowAllIPv6 === 1"
-                @change="updateServer('AllowAllIPv6', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.AllowAllIPv6"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-allow-all-ipv6-toggle-slider')"
+              @update:model-value="(value) => updateServer('AllowAllIPv6', Number(value))"
+            />
           </label>
         </div>
 
@@ -268,45 +266,42 @@ const handleCustomKeepAliveChange = (event: Event) => {
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-allow-password-login-label')">{{ t('ssh.allowPasswordLogin') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-allow-password-login-toggle')"
-                :checked="server.AllowPasswordLogin === 1"
-                @change="updateServer('AllowPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-allow-password-login-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.AllowPasswordLogin"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-allow-password-login-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-allow-password-login-toggle-slider')"
+              @update:model-value="(value) => updateServer('AllowPasswordLogin', Number(value))"
+            />
           </label>
         </div>
 
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-allow-root-login-label')">{{ t('ssh.allowRootLogin') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-allow-root-login-toggle')"
-                :checked="server.AllowRootLogin === 1"
-                @change="updateServer('AllowRootLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-allow-root-login-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.AllowRootLogin"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-allow-root-login-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-allow-root-login-toggle-slider')"
+              @update:model-value="(value) => updateServer('AllowRootLogin', Number(value))"
+            />
           </label>
         </div>
 
         <div class="form-group">
           <label class="switch-label">
             <span :data-testid="qa('ssh-server-edit-root-password-login-label')">{{ t('ssh.rootLoginWithPassword') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-root-password-login-toggle')"
-                :checked="server.AllowRootPasswordLogin === 1"
-                @change="updateServer('AllowRootPasswordLogin', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider" :data-testid="qa('ssh-server-edit-root-password-login-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              :model-value="server.AllowRootPasswordLogin"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ssh-server-edit-root-password-login-toggle')"
+              :slider-data-testid="qa('ssh-server-edit-root-password-login-toggle-slider')"
+              @update:model-value="(value) => updateServer('AllowRootPasswordLogin', Number(value))"
+            />
           </label>
         </div>
 
@@ -374,20 +369,20 @@ input, select {
   align-items: center;
 }
 
-.switch {
+:deep(.switch) {
   position: relative;
   display: inline-block;
   width: 60px;
   height: 34px;
 }
 
-.switch input {
+:deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+:deep(.switch .slider) {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -399,7 +394,7 @@ input, select {
   border-radius: 34px;
 }
 
-.slider:before {
+:deep(.switch .slider:before) {
   position: absolute;
   content: "";
   height: 26px;
@@ -411,11 +406,11 @@ input, select {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+:deep(.switch input:checked + .slider) {
   background-color: #0070BB;
 }
 
-input:checked + .slider:before {
+:deep(.switch input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

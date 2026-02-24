@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR069Config } from '../../../types/device';
 import { getTR069Config, updateTR069Config, sendInformToACS } from '../../../services/api/device';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -83,16 +84,13 @@ onMounted(fetchConfig);
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('tr069-config-enable-cwmp-label')">{{ t('device.enableCWMP') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('tr069-config-enable-cwmp-toggle')"
-              v-model="config.EnableCWMP"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('tr069-config-enable-cwmp-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.EnableCWMP"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('tr069-config-enable-cwmp-toggle')"
+            :slider-data-testid="qa('tr069-config-enable-cwmp-slider')"
+          />
         </div>
       </div>
 
@@ -187,16 +185,13 @@ onMounted(fetchConfig);
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('tr069-config-periodic-inform-enable-label')">{{ t('device.enablePeriodicInform') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('tr069-config-periodic-inform-enable-toggle')"
-              v-model="config.PeriodicInformEnable"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('tr069-config-periodic-inform-enable-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.PeriodicInformEnable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('tr069-config-periodic-inform-enable-toggle')"
+            :slider-data-testid="qa('tr069-config-periodic-inform-enable-slider')"
+          />
         </div>
       </div>
 
@@ -212,12 +207,14 @@ onMounted(fetchConfig);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('tr069-config-cancel-button')" @click="fetchConfig">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('tr069-config-apply-button')" :disabled="loading">
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('tr069-config-cancel-button')"
+          :apply-data-testid="qa('tr069-config-apply-button')"
+          apply-type="submit"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          @cancel="fetchConfig"
+        />
         <button 
           type="button" 
           class="btn btn-primary"
@@ -261,18 +258,18 @@ onMounted(fetchConfig);
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -349,7 +346,7 @@ input:disabled {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

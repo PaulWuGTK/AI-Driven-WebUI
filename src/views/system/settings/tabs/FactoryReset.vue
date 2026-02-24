@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { factoryResetDevice } from '../../../../services/api/reset';
+import { BaseToast } from '../../../../components/common';
+import { useAutoDismiss } from '../../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../../utils/apiUtils';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,21 +15,38 @@ const loading = ref(false);
 const showCountdown = ref(false);
 const countdown = ref(100);
 const countdownTimer = ref<number | null>(null);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showSuccessMessage = (message: string) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const handleFactoryReset = async () => {
   if (!confirm(t('reset.factoryConfirm'))) return;
 
   loading.value = true;
   try {
-    await factoryResetDevice();
-    showSuccess.value = true;
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 3000);
+    const response = await factoryResetDevice();
+    const nokMessage = extractNokMessage(response);
+    const resetStatus = typeof response?.ManagementDeviceReset === 'string' ? response.ManagementDeviceReset : '';
+    if (nokMessage || (resetStatus && resetStatus.toUpperCase().includes('NOK'))) {
+      showErrorMessage(nokMessage || resetStatus);
+      return;
+    }
+    showSuccessMessage(t('reset.success'));
     startCountdown();
   } catch (error) {
     console.error('Error factory resetting device:', error);
+    showErrorMessage('Failed to factory reset device');
   } finally {
     loading.value = false;
   }
@@ -50,6 +70,12 @@ const startCountdown = () => {
     }
   }, 1000);
 };
+
+onUnmounted(() => {
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+  }
+});
 </script>
 
 <template>
@@ -82,9 +108,18 @@ const startCountdown = () => {
       </div>
     </div>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('factory-reset-success-message')">
-      {{ t('reset.success') }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('factory-reset-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('factory-reset-error-message')"
+    />
   </div>
 </template>
 
@@ -159,25 +194,6 @@ const startCountdown = () => {
   border-radius: 50%;
   margin: 0 auto 1rem;
   animation: spin 1s linear infinite;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @keyframes spin {

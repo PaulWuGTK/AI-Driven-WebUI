@@ -3,14 +3,19 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadJoinNetworkRequest } from '../../../types/thread';
 import { joinThreadNetwork } from '../../../services/api/thread';
+import { BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const loading = ref(false);
 const error = ref<string | null>(null);
-const showSuccess = ref(false);
 const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 // Form data
 const credentialType = ref<'NetworkKey' | 'PSKd'>('NetworkKey');
@@ -34,6 +39,11 @@ const handleJoin = async () => {
     };
     
     const response = await joinThreadNetwork(request);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorNotification(nokMessage);
+      return;
+    }
     
     if (response.ThreadJoinNetwork.Status === 'Join Success') {
       showSuccessNotification(t('thread.joinSuccess'));
@@ -43,7 +53,7 @@ const handleJoin = async () => {
     }
   } catch (err) {
     console.error('Error joining Thread network:', err);
-    error.value = 'Failed to join Thread network';
+    showErrorNotification('Failed to join Thread network');
   } finally {
     loading.value = false;
   }
@@ -52,10 +62,12 @@ const handleJoin = async () => {
 // Show success notification
 const showSuccessNotification = (message: string) => {
   successMessage.value = message;
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+  triggerSuccessToast();
+};
+
+const showErrorNotification = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 </script>
 
@@ -107,10 +119,18 @@ const showSuccessNotification = (message: string) => {
       </div>
     </div>
 
-    <!-- Success notification -->
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('thread-join-success-message')">
-      {{ successMessage }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('thread-join-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('thread-join-error-toast')"
+    />
   </div>
 </template>
 
@@ -175,25 +195,6 @@ const showSuccessNotification = (message: string) => {
   color: #dc3545;
   border-radius: 4px;
   text-align: center;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {

@@ -5,6 +5,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -13,9 +16,12 @@ const router = useRouter();
 const route = useRoute();
 const meshData = ref<WlanMeshResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showBlockingOverlay = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 watch(() => meshData.value?.WlanMesh.MeshEnable, (newValue) => {
   if (meshData.value && newValue !== undefined) {
@@ -27,7 +33,14 @@ const fetchMeshConfig = async () => {
   loading.value = true;
   error.value = null;
   try {
-    meshData.value = await getWlanMesh();
+    const response = await getWlanMesh();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      meshData.value = null;
+      return;
+    }
+    meshData.value = response;
   } catch (err) {
     console.error('Error fetching mesh config:', err);
     error.value = 'Failed to fetch mesh config';
@@ -36,11 +49,14 @@ const fetchMeshConfig = async () => {
   }
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleBlockingComplete = () => {
@@ -55,8 +71,9 @@ const handleSubmit = async () => {
   if (!meshData.value) return;
   showBlockingOverlay.value = true;
   loading.value = true;
+  error.value = null;
   try {
-    await updateWlanMesh({
+    const response = await updateWlanMesh({
       WlanMesh: {
         MeshEnable: Number(meshData.value.WlanMesh.MeshEnable),
         Enable: Number(meshData.value.WlanMesh.Enable),
@@ -67,10 +84,17 @@ const handleSubmit = async () => {
         CommonSSIDEnable: Number(meshData.value.WlanMesh.CommonSSIDEnable)
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showBlockingOverlay.value = false;
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
   } catch (err) {
     console.error('Error updating mesh config:', err);
-    error.value = 'Failed to update mesh config';
+    showBlockingOverlay.value = false;
+    showErrorMessage('Failed to update mesh config');
   } finally {
     loading.value = false;
   }
@@ -93,16 +117,13 @@ onMounted(fetchMeshConfig);
     <template v-else-if="meshData">
       <div class="switch-label">
         <span :data-testid="qa('wireless-mesh-config-enable-label')">{{ t('wireless.easyMesh') }}</span>
-        <label class="switch">
-          <input
-            type="checkbox"
-            :data-testid="qa('wireless-mesh-config-enable-toggle')"
-            v-model="meshData.WlanMesh.MeshEnable"
-            :true-value="1"
-            :false-value="0"
-          >
-          <span class="slider" :data-testid="qa('wireless-mesh-config-enable-toggle-slider')"></span>
-        </label>
+        <BaseSwitch
+          v-model="meshData.WlanMesh.MeshEnable"
+          :true-value="1"
+          :false-value="0"
+          :data-testid="qa('wireless-mesh-config-enable-toggle')"
+          :slider-data-testid="qa('wireless-mesh-config-enable-toggle-slider')"
+        />
       </div>
 
       <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-ssid-section')">
@@ -144,32 +165,40 @@ onMounted(fetchMeshConfig);
       <div class="mlo-section" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-mlo-section')">
         <div class="switch-label">
           <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO Enable</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('wireless-mesh-config-mlo-toggle')"
-              v-model="meshData.WlanMesh.MLOEnable"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('wireless-mesh-config-mlo-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="meshData.WlanMesh.MLOEnable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('wireless-mesh-config-mlo-toggle')"
+            :slider-data-testid="qa('wireless-mesh-config-mlo-toggle-slider')"
+          />
         </div>
       </div>
 
       <div class="button-group" :data-testid="qa('wireless-mesh-config-button-group')">
-        <button class="btn btn-secondary" :data-testid="qa('wireless-mesh-config-cancel-button')" @click="fetchMeshConfig" :disabled="loading">
-          {{ t('common.cancel') }}
-        </button>
-        <button class="btn btn-primary" :data-testid="qa('wireless-mesh-config-apply-button')" @click="handleSubmit" :disabled="loading">
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('wireless-mesh-config-cancel-button')"
+          :apply-data-testid="qa('wireless-mesh-config-apply-button')"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          @cancel="fetchMeshConfig"
+          @apply="handleSubmit"
+        />
       </div>
     </template>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-mesh-config-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('wireless-mesh-config-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wireless-mesh-config-error-message')"
+    />
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
@@ -212,22 +241,22 @@ onMounted(fetchMeshConfig);
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
-input:disabled + .slider {
+:deep(input:disabled + .slider) {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -290,18 +319,6 @@ input {
   margin-top: 2rem;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
 .loading-state {
   display: flex;
   align-items: center;
@@ -322,13 +339,6 @@ input {
   box-shadow: var(--shadow-sm);
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .mesh-config {
     padding: 1rem;
@@ -342,7 +352,7 @@ input {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

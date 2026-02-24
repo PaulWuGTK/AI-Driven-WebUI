@@ -2,17 +2,13 @@
   <div class="qos-bandwidth-tab" data-testid="qos-bandwidth-tab">
     <BaseCard data-testid="qos-bandwidth-card">
       <div class="form-group">
-         <label class="switch-label">
+         <div class="switch-label">
           <div class="form-label">{{ t('qos.enableQos') }}</div>
-          <label class="switch">
-            <input
-              type="checkbox"
-              v-model="formData.Enable"
-              data-testid="qos-enable-checkbox"
-            />
-            <span class="slider"></span>
-          </label>
-        </label>
+          <BaseSwitch
+            v-model="formData.Enable"
+            data-testid="qos-enable-checkbox"
+          />
+        </div>
 
         <template v-if="formData.Enable">
           <div class="bandwidth-inputs" data-testid="bandwidth-inputs">
@@ -235,6 +231,7 @@ import { useI18n } from 'vue-i18n';
 import BaseCard from '../../../components/common/BaseCard.vue';
 import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseButton from '../../../components/common/BaseButton.vue';
+import BaseSwitch from '../../../components/common/BaseSwitch.vue';
 import { qosApi } from '../../../services/api/qos';
 import type { QosBandwidthConfig } from '../../../types/qos';
 

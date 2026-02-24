@@ -3,6 +3,9 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { GeneralMacFilteringEntry } from '../../../types/generalMacFiltering';
 import { getGeneralMacFiltering, updateGeneralMacFiltering } from '../../../services/api/generalMacFiltering';
+import { BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -10,7 +13,10 @@ const { t } = useI18n();
 
 const loading = ref(false);
 const error = ref<string | null>(null);
-const showSuccess = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const macFilteringEnabled = ref(false);
 const filterMode = ref<'blacklist' | 'whitelist'>('blacklist');
@@ -18,6 +24,16 @@ const newMacAddress = ref('');
 const newComment = ref('');
 const whiteList = ref<GeneralMacFilteringEntry[]>([]);
 const blackList = ref<GeneralMacFilteringEntry[]>([]);
+
+const showSuccessMessage = (message = t('common.saveSuccess')) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const currentList = computed(() => {
   return filterMode.value === 'blacklist' ? blackList.value : whiteList.value;
@@ -39,6 +55,11 @@ const fetchMacFiltering = async () => {
   error.value = null;
   try {
     const response = await getGeneralMacFiltering();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      return;
+    }
     macFilteringEnabled.value = response.MACFiltering.Enable;
     whiteList.value = [...response.MACFiltering.WhiteList];
     blackList.value = [...response.MACFiltering.BlackList];
@@ -96,30 +117,27 @@ const removeMacAddress = (no: number) => {
   }
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
-};
-
 const handleApply = async () => {
   loading.value = true;
-  error.value = null;
 
   try {
-    await updateGeneralMacFiltering({
+    const response = await updateGeneralMacFiltering({
       MACFiltering: {
         Enable: macFilteringEnabled.value,
         WhiteList: whiteList.value,
         BlackList: blackList.value
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
     await fetchMacFiltering();
   } catch (err) {
     console.error('Error updating MAC filtering:', err);
-    error.value = 'Failed to update MAC filtering';
+    showErrorMessage('Failed to update MAC filtering');
   } finally {
     loading.value = false;
   }
@@ -149,14 +167,11 @@ onMounted(fetchMacFiltering);
     <template v-else>
       <div class="form-group toggle-group" :data-testid="qa('general-mac-enable')">
         <label>{{ t('generalMacFiltering.enableMacFiltering') }}</label>
-        <label class="switch">
-          <input
-            type="checkbox"
-            v-model="macFilteringEnabled"
-            :data-testid="qa('general-mac-enable-checkbox')"
-          />
-          <span class="slider" :data-testid="qa('general-mac-enable-slider')"></span>
-        </label>
+        <BaseSwitch
+          v-model="macFilteringEnabled"
+          :data-testid="qa('general-mac-enable-checkbox')"
+          :slider-data-testid="qa('general-mac-enable-slider')"
+        />
       </div>
 
       <template v-if="macFilteringEnabled">
@@ -284,9 +299,18 @@ onMounted(fetchMacFiltering);
       </div>
     </template>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('general-mac-success-message')">
-      {{ t('common.saveSuccess') }}
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('general-mac-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('general-mac-error-toast')"
+    />
   </div>
 </template>
 
@@ -484,22 +508,4 @@ onMounted(fetchMacFiltering);
   color: #dc3545;
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
 </style>

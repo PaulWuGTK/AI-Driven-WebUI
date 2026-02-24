@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { StaticRouteIPv4, StaticRouteIPv6 } from '../../types/staticRoute';
+import { BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 interface Props {
@@ -230,14 +231,11 @@ const handleClose = () => {
           <div class="form-group">
             <label class="toggle-label">
               {{ t('routing.enable') }}
-              <div class="switch">
-                <input
-                  type="checkbox"
-                  v-model="formData.Enable"
-                  :data-testid="qa('static-route-form-enable')"
-                />
-                <span class="slider" :data-testid="qa('static-route-form-enable-slider')"></span>
-              </div>
+              <BaseSwitch
+                v-model="formData.Enable"
+                :data-testid="qa('static-route-form-enable')"
+                :slider-data-testid="qa('static-route-form-enable-slider')"
+              />
             </label>
           </div>
 
@@ -320,14 +318,11 @@ const handleClose = () => {
           <div class="form-group">
             <label class="toggle-label">
               {{ t('routing.useGatewayIpAddress') }}
-              <div class="switch">
-                <input
-                  type="checkbox"
-                  v-model="formData.UsedGWIp"
-                  :data-testid="qa('static-route-form-use-gw-ip')"
-                />
-                <span class="slider" :data-testid="qa('static-route-form-use-gw-ip-slider')"></span>
-              </div>
+              <BaseSwitch
+                v-model="formData.UsedGWIp"
+                :data-testid="qa('static-route-form-use-gw-ip')"
+                :slider-data-testid="qa('static-route-form-use-gw-ip-slider')"
+              />
             </label>
           </div>
 

@@ -2,6 +2,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DdnsService } from '../../types/ddns';
+import { BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -86,15 +87,14 @@ defineEmits<{
       <div class="form-group">
         <label class="switch-label">
           <span :data-testid="qa('ddns-form-enable-label')">{{ t('common.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('ddns-form-enable-toggle')"
-              :checked="service.HostEnable === 1"
-              @change="$emit('update:service', { ...service, HostEnable: ($event.target as HTMLInputElement).checked ? 1 : 0 })"
-            >
-            <span class="slider" :data-testid="qa('ddns-form-enable-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            :model-value="service.HostEnable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('ddns-form-enable-toggle')"
+            :slider-data-testid="qa('ddns-form-enable-toggle-slider')"
+            @update:model-value="(value) => $emit('update:service', { ...service, HostEnable: Number(value) })"
+          />
         </label>
       </div>
 
@@ -134,12 +134,6 @@ input, select {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
-}
-
-/* Custom switch size (60px × 34px) for larger prominence in form */
-
-input:checked + .slider:before {
-  transform: translateX(26px);
 }
 
 .button-group {

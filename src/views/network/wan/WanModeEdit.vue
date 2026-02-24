@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeConfig, WanInterface } from '../../../types/wanManagement';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -146,16 +147,13 @@ const validateVLANPriority = (value: number) => {
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('wan-mode-edit-enable-sensing-label')">{{ t('wanManagement.enableSensing') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('wan-mode-edit-enable-sensing-toggle')"
-              v-model="editingMode.EnableSensing"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('wan-mode-edit-enable-sensing-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="editingMode.EnableSensing"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('wan-mode-edit-enable-sensing-toggle')"
+            :slider-data-testid="qa('wan-mode-edit-enable-sensing-toggle-slider')"
+          />
         </div>
       </div>
 
@@ -382,12 +380,13 @@ const validateVLANPriority = (value: number) => {
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('wan-mode-edit-cancel-button')" @click="$emit('cancel')">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('wan-mode-edit-save-button')">
-          {{ t('common.save') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('wan-mode-edit-cancel-button')"
+          :apply-data-testid="qa('wan-mode-edit-save-button')"
+          :apply-text="t('common.save')"
+          apply-type="submit"
+          @cancel="$emit('cancel')"
+        />
       </div>
     </form>
   </div>
@@ -468,18 +467,18 @@ input.readonly {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -505,7 +504,7 @@ input:checked + .slider:before {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

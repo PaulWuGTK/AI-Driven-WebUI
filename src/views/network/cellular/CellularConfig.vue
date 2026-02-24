@@ -8,6 +8,7 @@ import BaseButton from '../../../components/common/BaseButton.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
 import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseSpinner from '../../../components/common/BaseSpinner.vue';
+import { BaseSwitch } from '../../../components/common';
 
 const { qa } = useQA();
 const { t } = useI18n();
@@ -123,28 +124,22 @@ onMounted(() => {
             <div class="form-group">
               <div class="switch-label">
                 <span>{{ t('cellular.interfaceEnable') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    v-model="formData.interfaceEnable"
-                    :data-testid="qa('cellular-interface-enable')"
-                  >
-                  <span class="slider" :data-testid="qa('cellular-interface-enable-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.interfaceEnable"
+                  :data-testid="qa('cellular-interface-enable')"
+                  :slider-data-testid="qa('cellular-interface-enable-slider')"
+                />
               </div>
             </div>
 
             <div class="form-group">
               <div class="switch-label">
                 <span>{{ t('cellular.roamingEnabled') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    v-model="formData.roamingEnabled"
-                    :data-testid="qa('cellular-roaming-enabled')"
-                  >
-                  <span class="slider" :data-testid="qa('cellular-roaming-enabled-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.roamingEnabled"
+                  :data-testid="qa('cellular-roaming-enabled')"
+                  :slider-data-testid="qa('cellular-roaming-enabled-slider')"
+                />
               </div>
             </div>
 

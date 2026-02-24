@@ -6,15 +6,11 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('port-forward-enable-label')">{{ $t('portForwarding.enablePortForwarding') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :checked="formData.Enable"
-                :data-testid="qa('port-forward-enable-toggle')"
-                @change="formData.Enable = ($event.target as HTMLInputElement).checked"
-              />
-              <span class="slider" :data-testid="qa('port-forward-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="formData.Enable"
+              :data-testid="qa('port-forward-enable-toggle')"
+              :slider-data-testid="qa('port-forward-enable-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -116,6 +112,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import type { PortForwardRule } from '../../types/portForwarding';
+import { BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();

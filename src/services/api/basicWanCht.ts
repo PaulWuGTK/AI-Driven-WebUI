@@ -20,8 +20,12 @@ export const basicWanChtApi = {
     }
 
     const { ListConnectionTrigger, ListDNSMode, ...pppoeData } = config.PPPoE;
-    const { ListProtocol, ListDNSMode: ipoeListDNSMode, ...ipoeData } = config.IPoE;
+    const { ListProtocol, ListDNSMode: ipoeListDNSMode, ...ipoeBaseData } = config.IPoE;
     const { ListSupportedLANInterfaces, ...bridgeData } = config.Bridge;
+    const ipoeData = {
+      ...ipoeBaseData,
+      Status: config.IPoE.Status ?? (config.IPoE.Enable ? 'Enabled' : 'Disabled')
+    };
 
     const postData = {
       PPPoE: pppoeData,

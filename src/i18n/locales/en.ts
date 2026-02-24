@@ -1,4 +1,4 @@
-// English translations
+﻿// English translations
 const translations = {
   menu: {
     status: 'Status',
@@ -1508,7 +1508,7 @@ const translations = {
     pppoePassThrough: 'PPPoE Pass-Through',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS IP Address',
+    dnsIpAddress: 'DNS Mode',
     autoObtainFromISP: 'Auto - Obtain from ISP',
     manual: 'Manual',
     primaryDNS: 'Primary DNS',
@@ -1521,11 +1521,15 @@ const translations = {
     vlanId: 'VLAN ID',
     vlanModifiable: 'This field can be modified when VLAN is checked',
     lanInterface: 'LAN Interface',
-    dhcpOption60: 'DHCP Option 60',
-    vendorId: 'Vendor ID',
+    dhcpOption60: 'DHCPv4 Option 60',
+    vendorId: 'DHCPv4 Option 60 Value',
     dhcpOption60Modifiable: 'This field can be modified when DHCP Option 60 is checked',
-    dhcpOption61: 'DHCP Option 61',
+    dhcpOption61: 'DHCPv4 Option 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID Type',
+    enterpriseNumber: 'Enterprise Number',
+    identifier: 'Identifier',
     ipAddress: 'IP Address',
     subnetMask: 'Subnet Mask',
     gatewayIpAddress: 'Gateway IP Address',
@@ -1582,3 +1586,4 @@ const translations = {
 };
 
 export default translations;
+

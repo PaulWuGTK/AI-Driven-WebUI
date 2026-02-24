@@ -5,6 +5,9 @@ import type { WanModeConfig } from '../../../types/wanManagement';
 import { getWanModeManagement, updateWanModeManagement } from '../../../services/api/wanManagement';
 import WanModeEdit from './WanModeEdit.vue';
 import WanModeDetail from './WanModeDetail.vue';
+import { ActionButtons, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,8 +15,11 @@ const { t } = useI18n();
 const managementData = ref<WanModeConfig[]>([]);
 const tempManagementData = ref<WanModeConfig[]>([]);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const isEditing = ref(false);
 const editingMode = ref<WanModeConfig | null>(null);
 const viewingMode = ref<WanModeConfig | null>(null);
@@ -23,6 +29,13 @@ const fetchManagementData = async () => {
   error.value = null;
   try {
     const response = await getWanModeManagement();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      managementData.value = [];
+      tempManagementData.value = [];
+      return;
+    }
     managementData.value = response.WanModeManagement;
     tempManagementData.value = JSON.parse(JSON.stringify(response.WanModeManagement));
   } catch (err) {
@@ -80,7 +93,7 @@ const handleDelete = async (mode: WanModeConfig) => {
     tempManagementData.value = updatedModes;
   } catch (err) {
     console.error('Error deleting WAN mode:', err);
-    error.value = 'Failed to delete WAN mode';
+    showErrorMessage('Failed to delete WAN mode');
   }
 };
 
@@ -99,28 +112,36 @@ const handleSave = async (mode: WanModeConfig) => {
     editingMode.value = null;
   } catch (err) {
     console.error('Error saving WAN mode:', err);
-    error.value = 'Failed to save WAN mode';
+    showErrorMessage('Failed to save WAN mode');
   }
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleApply = async () => {
   loading.value = true;
   try {
-    await updateWanModeManagement({
+    const response = await updateWanModeManagement({
       WanModeManagement: tempManagementData.value
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     managementData.value = JSON.parse(JSON.stringify(tempManagementData.value));
     showSuccessMessage();
   } catch (err) {
     console.error('Error applying WAN mode changes:', err);
-    error.value = 'Failed to apply changes';
+    showErrorMessage('Failed to apply changes');
   } finally {
     loading.value = false;
   }
@@ -234,12 +255,12 @@ onMounted(fetchManagementData);
         </div>
 
         <div class="button-group">
-          <button class="btn btn-secondary" :data-testid="qa('wan-mode-management-cancel-button')" @click="handleCancel">
-            {{ t('common.cancel') }}
-          </button>
-          <button class="btn btn-primary" :data-testid="qa('wan-mode-management-apply-button')" @click="handleApply">
-            {{ t('common.apply') }}
-          </button>
+          <ActionButtons
+            :cancel-data-testid="qa('wan-mode-management-cancel-button')"
+            :apply-data-testid="qa('wan-mode-management-apply-button')"
+            @cancel="handleCancel"
+            @apply="handleApply"
+          />
         </div>
       </div>
 
@@ -259,9 +280,18 @@ onMounted(fetchManagementData);
       />
     </template>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('wan-mode-management-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('wan-mode-management-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wan-mode-management-error-toast')"
+    />
   </div>
 </template>
 
@@ -335,25 +365,6 @@ onMounted(fetchManagementData);
   border-top: 1px solid var(--border-color);
 }
 
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .header-row {
     flex-direction: column;
@@ -382,7 +393,7 @@ onMounted(fetchManagementData);
     padding: 1rem;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

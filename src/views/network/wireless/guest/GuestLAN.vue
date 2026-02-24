@@ -3,20 +3,42 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { GuestLANResponse } from '../../../../types/guest';
 import { getGuestLAN, updateGuestLAN } from '../../../../services/api/guestAccess';
+import { BaseSwitch, BaseToast } from '../../../../components/common';
+import { useAutoDismiss } from '../../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../../utils/apiUtils';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const guestLANData = ref<GuestLANResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+function showSuccessMessage(message = `${t('common.apply')} successful`) {
+  successMessage.value = message;
+  triggerSuccessToast();
+}
+
+function showErrorMessage(message: string) {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+}
 
 const fetchGuestLAN = async () => {
   loading.value = true;
   error.value = null;
   try {
     const response = await getGuestLAN();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      guestLANData.value = null;
+      return;
+    }
     guestLANData.value = response;
   } catch (err) {
     console.error('Error fetching Guest LAN settings:', err);
@@ -74,29 +96,29 @@ const validateLANSettings = (): boolean => {
 
   // Validate LAN IP
   if (!isValidIPv4(GUESTIPSetting.IPAddress)) {
-    error.value = 'Invalid LAN IP address format';
+    showErrorMessage('Invalid LAN IP address format');
     return false;
   }
 
   if (!isValidSubnetMask(GUESTIPSetting.SubnetMask)) {
-    error.value = 'Invalid subnet mask format';
+    showErrorMessage('Invalid subnet mask format');
     return false;
   }
 
   // Validate DHCP settings if enabled
   if (DHCPv4Setting.Enable) {
     if (!isValidIPv4(DHCPv4Setting.BeginAddress)) {
-      error.value = 'Invalid DHCP start address';
+      showErrorMessage('Invalid DHCP start address');
       return false;
     }
 
     if (!isValidIPv4(DHCPv4Setting.EndAddress)) {
-      error.value = 'Invalid DHCP end address';
+      showErrorMessage('Invalid DHCP end address');
       return false;
     }
 
     if (!isValidSubnetMask(DHCPv4Setting.SubnetMask)) {
-      error.value = 'Invalid DHCP subnet mask';
+      showErrorMessage('Invalid DHCP subnet mask');
       return false;
     }
 
@@ -119,35 +141,28 @@ const validateLANSettings = (): boolean => {
     const broadcastAddr = networkAddr | (~lanMask >>> 0);
 
     if (beginIp < networkAddr || beginIp > broadcastAddr) {
-      error.value = 'DHCP start address must be within LAN subnet';
+      showErrorMessage('DHCP start address must be within LAN subnet');
       return false;
     }
 
     if (endIp < networkAddr || endIp > broadcastAddr) {
-      error.value = 'DHCP end address must be within LAN subnet';
+      showErrorMessage('DHCP end address must be within LAN subnet');
       return false;
     }
 
     if (beginIp >= endIp) {
-      error.value = 'DHCP start address must be lower than end address';
+      showErrorMessage('DHCP start address must be lower than end address');
       return false;
     }
 
     // Validate DNS server if provided
     if (DHCPv4Setting.DNSServers && !DHCPv4Setting.DNSServers.split(',').every(ip => isValidIPv4(ip.trim()))) {
-      error.value = 'Invalid DNS server address';
+      showErrorMessage('Invalid DNS server address');
       return false;
     }
   }
 
   return true;
-};
-
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
 };
 
 const handleSubmit = async () => {
@@ -164,7 +179,7 @@ const handleSubmit = async () => {
       ? parseInt(guestLANData.value.GuestLAN.DHCPv4Setting.LeaseTime, 10) 
       : guestLANData.value.GuestLAN.DHCPv4Setting.LeaseTime;
 
-    await updateGuestLAN({
+    const response = await updateGuestLAN({
       GuestLAN: {
         GUESTIPSetting: guestLANData.value.GuestLAN.GUESTIPSetting,
         DHCPv4Setting: {
@@ -173,11 +188,16 @@ const handleSubmit = async () => {
         }
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
     await fetchGuestLAN();
   } catch (err) {
     console.error('Error updating Guest LAN settings:', err);
-    error.value = 'Failed to update Guest LAN settings';
+    showErrorMessage('Failed to update Guest LAN settings');
   } finally {
     loading.value = false;
   }
@@ -222,16 +242,13 @@ onMounted(fetchGuestLAN);
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('guest-lan-ip-enable-label')">{{ t('guest.enable') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('guest-lan-ip-enable-toggle')"
-                  v-model="guestLANData.GuestLAN.GUESTIPSetting.Enable"
-                  :true-value="1"
-                  :false-value="0"
-                >
-                <span class="slider" :data-testid="qa('guest-lan-ip-enable-toggle-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="guestLANData.GuestLAN.GUESTIPSetting.Enable"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('guest-lan-ip-enable-toggle')"
+                :slider-data-testid="qa('guest-lan-ip-enable-toggle-slider')"
+              />
             </div>
           </div>
 
@@ -267,16 +284,13 @@ onMounted(fetchGuestLAN);
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('guest-lan-dhcp-enable-label')">{{ t('guest.enableDhcpServer') }}</span>
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :data-testid="qa('guest-lan-dhcp-enable-toggle')"
-                  v-model="guestLANData.GuestLAN.DHCPv4Setting.Enable"
-                  :true-value="1"
-                  :false-value="0"
-                >
-                <span class="slider" :data-testid="qa('guest-lan-dhcp-enable-toggle-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="guestLANData.GuestLAN.DHCPv4Setting.Enable"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('guest-lan-dhcp-enable-toggle')"
+                :slider-data-testid="qa('guest-lan-dhcp-enable-toggle-slider')"
+              />
             </div>
           </div>
 
@@ -363,9 +377,18 @@ onMounted(fetchGuestLAN);
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('guest-lan-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('guest-lan-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('guest-lan-error-toast')"
+    />
   </div>
 </template>
 
@@ -431,18 +454,18 @@ input:disabled {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -451,18 +474,6 @@ input:checked + .slider:before {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
 }
 
 .loading-state {
@@ -483,13 +494,6 @@ input:checked + .slider:before {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 @media (max-width: 768px) {

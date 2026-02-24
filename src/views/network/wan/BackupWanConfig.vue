@@ -16,15 +16,12 @@
             <div class="form-group" :data-testid="qa('backup-wan-enable-group')">
               <div class="switch-label">
                 <span>{{ $t('backupWan.backupWan') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    v-model="formData.Enable"
-                    @change="handleBackupWanToggle"
-                    :data-testid="qa('backup-wan-enable-toggle')"
-                  />
-                  <span class="slider" :data-testid="qa('backup-wan-enable-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.Enable"
+                  :data-testid="qa('backup-wan-enable-toggle')"
+                  :slider-data-testid="qa('backup-wan-enable-slider')"
+                  @update:model-value="handleBackupWanToggle"
+                />
               </div>
             </div>
 
@@ -51,14 +48,11 @@
             <div v-if="0" class="form-group">
               <div class="switch-label">
                 <span>{{ $t('backupWan.wanHealthCheck') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    v-model="formData.WHCEnable"
-                    :data-testid="qa('backup-wan-health-check-toggle')"
-                  />
-                  <span class="slider" :data-testid="qa('backup-wan-health-check-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="formData.WHCEnable"
+                  :data-testid="qa('backup-wan-health-check-toggle')"
+                  :slider-data-testid="qa('backup-wan-health-check-slider')"
+                />
               </div>
             </div>
 
@@ -160,7 +154,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { backupWanApi } from '../../../services/api/backupWan';
 import type { BackupWANConfig, BackupWANRequest } from '../../../types/backupWan';
-import { BaseCard, BaseButton, BaseInput, BaseSelect, BaseSpinner } from '../../../components/common';
+import { BaseCard, BaseButton, BaseInput, BaseSelect, BaseSpinner, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const router = useRouter();
@@ -231,8 +225,9 @@ const interfaceOptions = computed(() => {
     }));
 });
 
-const handleBackupWanToggle = () => {
-  if (!formData.value.Enable) {
+const handleBackupWanToggle = (value: string | number | boolean) => {
+  const enabled = value === true || value === 1 || value === '1';
+  if (!enabled) {
     formData.value.WHCEnable = false;
   }
 };

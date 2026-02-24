@@ -96,12 +96,12 @@
 
 
           <div class="button-group" :data-testid="qa('basic-wan-cht-button-group')">
-            <button class="btn btn-secondary" :data-testid="qa('basic-wan-cht-cancel-button')" @click="handleCancel">
-              {{ $t('common.cancel') }}
-            </button>
-            <button class="btn btn-primary" :data-testid="qa('basic-wan-cht-apply-button')" @click="handleApply">
-              {{ $t('common.apply') }}
-            </button>
+            <ActionButtons
+              :cancel-data-testid="qa('basic-wan-cht-cancel-button')"
+              :apply-data-testid="qa('basic-wan-cht-apply-button')"
+              @cancel="handleCancel"
+              @apply="handleApply"
+            />
           </div>
         </div>
       </div>
@@ -125,12 +125,13 @@
       />
 
       <div class="button-group" :data-testid="qa('basic-wan-cht-edit-button-group')">
-        <button class="btn btn-secondary" :data-testid="qa('basic-wan-cht-edit-cancel-button')" @click="cancelEdit">
-          {{ $t('common.cancel') }}
-        </button>
-        <button class="btn btn-primary" :data-testid="qa('basic-wan-cht-edit-save-button')" @click="saveEdit">
-          {{ $t('common.save') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('basic-wan-cht-edit-cancel-button')"
+          :apply-data-testid="qa('basic-wan-cht-edit-save-button')"
+          :apply-text="$t('common.save')"
+          @cancel="cancelEdit"
+          @apply="saveEdit"
+        />
       </div>
     </div>
 
@@ -146,7 +147,7 @@ import type { BasicWanChtConfig, BasicWanChtTableRow } from '../../../types/basi
 import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
 import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
 import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
-import { BaseBadge } from '../../../components/common';
+import { BaseBadge, ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
@@ -181,7 +182,7 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
     type: 'IPoE',
     status: ipoe.Enable ? 'Up' : 'Down',
     description: 'IPoE',
-    defaultGateway: false,
+    defaultGateway: ipoe.DefaultGateway,
     vlanType: ipoe.VLANEnable ? 'VLAN' : 'Untagged',
     vlanId: ipoe.VLANEnable ? ipoe.VLANID : '-',
     protocol: ipoe.Protocol
@@ -402,7 +403,7 @@ onMounted(() => {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

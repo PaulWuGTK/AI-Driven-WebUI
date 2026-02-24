@@ -16,3 +16,6 @@ export { default as BaseTabs } from './BaseTabs.vue';
 export { default as BaseModal } from './BaseModal.vue';
 export { default as BaseSpinner } from './BaseSpinner.vue';
 export { default as BaseBadge } from './BaseBadge.vue';
+export { default as BaseSwitch } from './BaseSwitch.vue';
+export { default as BaseToast } from './BaseToast.vue';
+export { default as ActionButtons } from './ActionButtons.vue';

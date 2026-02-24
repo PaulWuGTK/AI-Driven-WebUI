@@ -1,5 +1,5 @@
-// German translations
-export default {
+// de translations
+const translations = {
   menu: {
     home: 'Dashboard',
     status: 'Status',
@@ -264,7 +264,7 @@ export default {
     packetsReceived: 'Empfangene Pakete',
     packetsSent: 'Gesendete Pakete',
     bytesReceived: 'Empfangene Bytes',
-    bytesSent: 'Gesendete Bytes',
+    bytesSent: 'Gesendete Bytes'
   },
   wlan: {
     title: 'WLAN-Status',
@@ -477,7 +477,7 @@ export default {
     mloMeshDisabled: 'MLO ist auf einem oder mehreren APs (Basis oder Gast) aktiviert – Mesh-Einstellungen können nicht geändert werden.',
     meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.',
     commonSsidDisabled: 'Gemeinsame SSID ist deaktiviert – MLO-Einstellungen können nicht geändert werden.',
-    mloMeshWarning: "MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert.",
+    mloMeshWarning: 'MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert.',
     ssidGroupName: 'SSID-Gruppenname',
     noSsidGroups: 'Keine SSID-Gruppen verfügbar',
     groupDefaultName: 'Home',
@@ -629,7 +629,7 @@ export default {
     dnsDetection: 'DNS-Erkennung',
     ipAddress: 'IP-Adresse',
     dnsServer: 'DNS-Server',
-    enableHint: 'Wenn aktiviert, werden die Einstellungen für die WAN-Gesundheitsprüfung angezeigt; wenn deaktiviert, werden sie ausgeblendet.',
+    enableHint: 'Wenn aktiviert, werden die Einstellungen für die WAN-Gesundheitsprüfung angezeigt; wenn deaktiviert, werden sie ausgeblendet.'
   },
   lanBasic: {
     title: 'LAN-Einstellungen',
@@ -761,7 +761,7 @@ export default {
     clientPort: 'Client-Port',
     serverId: 'Server-ID',
     serverPort: 'Server-Port',
-    algorithm : 'Algorithmus'
+    algorithm: 'Algorithmus'
   },
   device: {
     title: 'Geräteverwaltung',
@@ -858,7 +858,7 @@ export default {
     results_state_complete: 'Abgeschlossen',
     results_state_error: 'Fehler',
     message_loadConfigFailed: 'TR-471-Konfiguration konnte nicht geladen werden',
-    message_testFailed: 'TR-471-Test fehlgeschlagen',
+    message_testFailed: 'TR-471-Test fehlgeschlagen'
   },
   diagnostics: {
     title: 'Diagnose-Tools',
@@ -949,8 +949,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
-    tagline: "XGiga SpeedTest in Carrier-Qualität",
-    poweredBy: "Bereitgestellt von Streambow",
+    tagline: 'XGiga SpeedTest in Carrier-Qualität',
+    poweredBy: 'Bereitgestellt von Streambow',
     description: 'Klicken Sie auf die Schaltfläche unten, um einen Geschwindigkeitstest zu starten.',
     startTest: 'Geschwindigkeitstest starten',
     downloadSpeed: 'Download-Geschwindigkeit',
@@ -1397,7 +1397,7 @@ export default {
     portRequired: 'Port ist erforderlich',
     protocolRequired: 'Protokoll ist erforderlich',
     deviceRequired: 'Gerät ist erforderlich',
-    confirmDelete: 'Möchten Sie diese Regel wirklich löschen?',
+    confirmDelete: 'Möchten Sie diese Regel wirklich löschen?'
   },
   nat: {
     title: 'NAT-Einstellungen',
@@ -1428,7 +1428,7 @@ export default {
     localPort: 'Lokaler Port',
     localPortStart: 'Lokaler Portbereich (Start)',
     localPortEnd: 'Lokaler Portbereich (Ende)',
-    comment: 'Kommentar',
+    comment: 'Kommentar'
   },
   ipFiltering: {
     enableIpFiltering: 'IP-Filterung aktivieren',
@@ -1452,7 +1452,7 @@ export default {
     currentWhitelistFilterTable: 'Aktuelle Whitelist-Filtertabelle',
     number: 'Nummer',
     active: 'Aktiv',
-    noEntries: 'Keine Einträge',
+    noEntries: 'Keine Einträge'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC-Filterung aktivieren',
@@ -1471,7 +1471,7 @@ export default {
     noEntries: 'Keine Einträge',
     emptyMacError: 'MAC-Adresse darf nicht leer sein',
     invalidMacFormat: 'Ungültiges MAC-Adressformat',
-    duplicateMacError: 'Diese MAC-Adresse ist bereits vorhanden',
+    duplicateMacError: 'Diese MAC-Adresse ist bereits vorhanden'
   },
   basicWanCht: {
     title: 'WAN-Einstellungen',
@@ -1504,7 +1504,7 @@ export default {
     pppoePassThrough: 'PPPoE-Passthrough',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS-IP-Adresse',
+    dnsIpAddress: 'DNS-Modus',
     autoObtainFromISP: 'Auto – vom ISP beziehen',
     manual: 'Manuell',
     primaryDNS: 'Primärer DNS',
@@ -1517,18 +1517,22 @@ export default {
     vlanId: 'VLAN-ID',
     vlanModifiable: 'Dieses Feld kann nur geändert werden, wenn VLAN aktiviert ist.',
     lanInterface: 'LAN-Schnittstelle',
-    dhcpOption60: 'DHCP-Option 60',
-    vendorId: 'Vendor-ID',
+    dhcpOption60: 'DHCPv4-Option 60',
+    vendorId: 'Wert der DHCPv4-Option 60',
     dhcpOption60Modifiable: 'Dieses Feld kann nur geändert werden, wenn die DHCP-Option 60 aktiviert ist.',
-    dhcpOption61: 'DHCP-Option 61',
+    dhcpOption61: 'DHCPv4-Option 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID-Typ',
+    enterpriseNumber: 'Unternehmensnummer',
+    identifier: 'Bezeichner',
     ipAddress: 'IP-Adresse',
     subnetMask: 'Subnetzmaske',
     gatewayIpAddress: 'Gateway-IP-Adresse',
     staticFieldRequired: 'Wenn das Protokoll „Static“ ist, ist dieses Feld erforderlich und darf nicht leer sein.',
     loadError: 'WAN-Konfiguration konnte nicht geladen werden.',
     saveSuccess: 'WAN-Konfiguration wurde erfolgreich gespeichert.',
-    saveError: 'WAN-Konfiguration konnte nicht gespeichert werden.',
+    saveError: 'WAN-Konfiguration konnte nicht gespeichert werden.'
   },
   routing: {
     title: 'Routing',
@@ -1573,6 +1577,8 @@ export default {
     prefixLengthRequired: 'Präfixlänge ist erforderlich',
     duplicateAlias: 'Routenname existiert bereits. Bitte verwenden Sie einen anderen Namen',
     comingSoon: 'Demnächst verfügbar',
-    featureInDevelopment: 'Diese Funktion befindet sich derzeit in Entwicklung',
+    featureInDevelopment: 'Diese Funktion befindet sich derzeit in Entwicklung'
   }
 };
+
+export default translations;

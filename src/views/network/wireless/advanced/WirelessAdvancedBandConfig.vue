@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanAdvancedConfig } from '../../../../types/wireless';
+import { BaseSwitch } from '../../../../components/common';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -38,15 +39,14 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa(`wireless-advanced-band-config-enable-label-${slug(title)}`)">{{ t('common.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa(`wireless-advanced-band-config-enable-toggle-${slug(title)}`)"
-              :checked="modelValue.RadioEnable === 1"
-              @change="updateConfig('RadioEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-            >
-            <span class="slider" :data-testid="qa(`wireless-advanced-band-config-enable-toggle-slider-${slug(title)}`)"></span>
-          </label>
+          <BaseSwitch
+            :model-value="Number(modelValue.RadioEnable)"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa(`wireless-advanced-band-config-enable-toggle-${slug(title)}`)"
+            :slider-data-testid="qa(`wireless-advanced-band-config-enable-toggle-slider-${slug(title)}`)"
+            @update:model-value="(value) => updateConfig('RadioEnable', Number(value))"
+          />
         </div>
       </div>
 
@@ -83,16 +83,15 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
           <label :data-testid="qa(`wireless-advanced-band-config-channel-label-${slug(title)}`)">{{ t('wireless.channel') }}</label>
           <div class="auto-channel">
             <span :data-testid="qa(`wireless-advanced-band-config-auto-channel-label-${slug(title)}`)">{{ t('wireless.autoChannel') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-${slug(title)}`)"
-                :checked="modelValue.AutoChannelEnable === 1"
-                @change="updateConfig('AutoChannelEnable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-                :disabled="modelValue.RadioEnable === 0"
-              />
-              <span class="slider" :data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-slider-${slug(title)}`)"></span>
-            </label>
+            <BaseSwitch
+              :model-value="Number(modelValue.AutoChannelEnable)"
+              :true-value="1"
+              :false-value="0"
+              :disabled="modelValue.RadioEnable === 0"
+              :data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-${slug(title)}`)"
+              :slider-data-testid="qa(`wireless-advanced-band-config-auto-channel-toggle-slider-${slug(title)}`)"
+              @update:model-value="(value) => updateConfig('AutoChannelEnable', Number(value))"
+            />
           </div>
         </div>
         <select
@@ -110,16 +109,15 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa(`wireless-advanced-band-config-mu-mimo-label-${slug(title)}`)">{{ t('wireless.muMimo') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-${slug(title)}`)"
-              :checked="modelValue.MultiUserMIMOEnabled === 1"
-              @change="updateConfig('MultiUserMIMOEnabled', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              :disabled="modelValue.RadioEnable === 0"
-            />
-            <span class="slider" :data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-slider-${slug(title)}`)"></span>
-          </label>
+          <BaseSwitch
+            :model-value="Number(modelValue.MultiUserMIMOEnabled)"
+            :true-value="1"
+            :false-value="0"
+            :disabled="modelValue.RadioEnable === 0"
+            :data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-${slug(title)}`)"
+            :slider-data-testid="qa(`wireless-advanced-band-config-mu-mimo-toggle-slider-${slug(title)}`)"
+            @update:model-value="(value) => updateConfig('MultiUserMIMOEnabled', Number(value))"
+          />
         </div>
       </div>
     </div>
@@ -205,19 +203,19 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 }
 
 /* Custom switch size (60px × 34px) with left margin for layout */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
   margin-left:10px;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

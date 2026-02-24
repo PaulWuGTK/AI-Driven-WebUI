@@ -5,6 +5,9 @@ import type { NtpResponse, NtpUpdateRequest } from '../../../types/ntp';
 import type { TimezoneEntry } from '../../../types/timezone';
 import { getNtpSettings, updateNtpSettings } from '../../../services/api';
 import TimeZoneSelect from '../../../components/management/TimeZoneSelect.vue';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -16,14 +19,25 @@ const daylightSaving = ref(false);
 const ntpEnabled = ref(true);
 const ntpServers = ref<string[]>(['', '', '', '', '']);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const fetchNtpSettings = async () => {
   loading.value = true;
   error.value = null;
   try {
-    ntpData.value = await getNtpSettings();
+    const response = await getNtpSettings();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      ntpData.value = null;
+      return;
+    }
+
+    ntpData.value = response;
     if (ntpData.value) {
       timeZone.value = ntpData.value.Ntp.TimeZones;
       daylightSaving.value = ntpData.value.Ntp.DstEnable === 1;
@@ -42,16 +56,20 @@ const handleTimezoneChange = (timezone: TimezoneEntry) => {
   selectedTimezone.value = timezone;
 };
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleSubmit = async () => {
   if (!selectedTimezone.value) return;
   loading.value = true;
+  error.value = null;
   try {
     const tz: any = selectedTimezone.value;
 
@@ -75,16 +93,22 @@ const handleSubmit = async () => {
       }
     };
     if (!tzValue) {
-      error.value = 'SetTZ is empty (timezone data not ready).';
+      showErrorMessage('SetTZ is empty (timezone data not ready).');
       return;
     }
     const response = await updateNtpSettings(updateData);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
+
     ntpData.value = response;
     showSuccessMessage();
     await fetchNtpSettings(); // Refresh data after successful update
   } catch (err) {
     console.error('Error updating NTP settings:', err);
-    error.value = 'Failed to update NTP settings';
+    showErrorMessage('Failed to update NTP settings');
   } finally {
     loading.value = false;
   }
@@ -127,28 +151,22 @@ onMounted(fetchNtpSettings);
             <div class="form-group" v-if="selectedTimezone?.DstSupport !== 0">
               <div class="switch-label">
                 <span :data-testid="qa('ntp-daylight-saving-label')">{{ t('ntp.automaticDaylight') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('ntp-daylight-saving-toggle')"
-                    v-model="daylightSaving"
-                  >
-                  <span class="slider" :data-testid="qa('ntp-daylight-saving-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="daylightSaving"
+                  :data-testid="qa('ntp-daylight-saving-toggle')"
+                  :slider-data-testid="qa('ntp-daylight-saving-slider')"
+                />
               </div>
             </div>
 
             <div class="form-group">
               <div class="switch-label">
                 <span :data-testid="qa('ntp-enable-label')">{{ t('ntp.enableNtp') }}</span>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    :data-testid="qa('ntp-enable-toggle')"
-                    v-model="ntpEnabled"
-                  >
-                  <span class="slider" :data-testid="qa('ntp-enable-slider')"></span>
-                </label>
+                <BaseSwitch
+                  v-model="ntpEnabled"
+                  :data-testid="qa('ntp-enable-toggle')"
+                  :slider-data-testid="qa('ntp-enable-slider')"
+                />
               </div>
             </div>
 
@@ -163,20 +181,33 @@ onMounted(fetchNtpSettings);
             </div>
 
             <div class="button-group">
-              <button class="btn btn-secondary" :data-testid="qa('ntp-cancel-button')" @click="fetchNtpSettings" :disabled="loading">
-                {{ t('ntp.cancel') }}
-              </button>
-              <button class="btn btn-primary" :data-testid="qa('ntp-apply-button')" @click="handleSubmit" :disabled="loading">
-                {{ t('ntp.apply') }}
-              </button>
+              <ActionButtons
+                :cancel-data-testid="qa('ntp-cancel-button')"
+                :apply-data-testid="qa('ntp-apply-button')"
+                :cancel-text="t('ntp.cancel')"
+                :apply-text="t('ntp.apply')"
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                @cancel="fetchNtpSettings"
+                @apply="handleSubmit"
+              />
             </div>
           </div>
         </div>
       </template>
 
-      <div v-if="showSuccess" class="success-message" :data-testid="qa('ntp-success-message')">
-        {{ t('common.apply') }} successful
-      </div>
+      <BaseToast
+        v-model="showSuccessToast"
+        :message="successMessage"
+        type="success"
+        :data-testid="qa('ntp-success-message')"
+      />
+      <BaseToast
+        v-model="showErrorToast"
+        :message="errorToastMessage"
+        type="error"
+        :data-testid="qa('ntp-error-toast')"
+      />
     </div>
   </div>
 </template>
@@ -208,19 +239,19 @@ input {
 }
 
 /* Custom switch size (60px × 34px) with left margin for layout */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   margin-left: 1rem;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
@@ -229,18 +260,6 @@ input:checked + .slider:before {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
 }
 
 .loading-state {
@@ -263,19 +282,12 @@ input:checked + .slider:before {
   box-shadow: var(--shadow-sm);
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .button-group {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

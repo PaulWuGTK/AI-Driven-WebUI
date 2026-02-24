@@ -1,5 +1,5 @@
-// Traditional Chinese translations
-export default {
+// zh-TW translations
+const translations = {
   menu: {
     home: '首頁',
     status: '狀態',
@@ -75,7 +75,6 @@ export default {
     matterQuickSetup: '快速設定',
     matterManualPairing: '手動配對'
   },
-
   header: {
     account: '帳號',
     logout: '登出'
@@ -265,7 +264,7 @@ export default {
     packetsReceived: '已接收封包數',
     packetsSent: '已傳送封包數',
     bytesReceived: '已接收位元組數',
-    bytesSent: '已傳送位元組數',
+    bytesSent: '已傳送位元組數'
   },
   wlan: {
     title: 'Wi-Fi 狀態',
@@ -478,7 +477,7 @@ export default {
     mloMeshDisabled: '一或多個 AP（基本或訪客）已啟用 MLO – 無法變更 Mesh 設定。',
     meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。',
     commonSsidDisabled: '通用 SSID 已停用 – 無法變更 MLO 設定。',
-    mloMeshWarning: "一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。",
+    mloMeshWarning: '一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。',
     ssidGroupName: 'SSID 群組名稱',
     noSsidGroups: '目前沒有可用的 SSID 群組',
     groupDefaultName: 'Home',
@@ -630,7 +629,7 @@ export default {
     dnsDetection: 'DNS 偵測',
     ipAddress: 'IP 位址',
     dnsServer: 'DNS 伺服器',
-    enableHint: '啟用後會顯示 WAN 健康檢查相關設定，停用則隱藏該設定。',
+    enableHint: '啟用後會顯示 WAN 健康檢查相關設定，停用則隱藏該設定。'
   },
   lanBasic: {
     title: 'LAN 設定',
@@ -762,7 +761,7 @@ export default {
     clientPort: '用戶端連接埠',
     serverId: '伺服器ID',
     serverPort: '伺服器連接埠',
-    algorithm : '演算法'
+    algorithm: '演算法'
   },
   device: {
     title: '裝置管理',
@@ -859,7 +858,7 @@ export default {
     results_state_complete: '完成',
     results_state_error: '錯誤',
     message_loadConfigFailed: 'TR-471 設定載入失敗',
-    message_testFailed: 'TR-471 測試失敗',
+    message_testFailed: 'TR-471 測試失敗'
   },
   diagnostics: {
     title: '診斷工具',
@@ -950,8 +949,8 @@ export default {
   },
   xperienceControl: {
     title: 'XperienceControl',
-    tagline: "XGiga 電信等級速度測試",
-    poweredBy: "技術支援：Streambow",
+    tagline: 'XGiga 電信等級速度測試',
+    poweredBy: '技術支援：Streambow',
     description: '點擊下方按鈕開始速度測試。',
     startTest: '開始速度測試',
     downloadSpeed: '下載速度',
@@ -1240,7 +1239,7 @@ export default {
     enabled: '已啟用',
     disabled: '停用',
     loading: '載入中...',
-    yes: '是', 
+    yes: '是',
     no: '否',
     confirm: '確認',
     generate: '產生',
@@ -1398,7 +1397,7 @@ export default {
     portRequired: '請輸入連接埠',
     protocolRequired: '請選擇通訊協定',
     deviceRequired: '請選擇裝置',
-    confirmDelete: '確定要刪除此規則嗎？',
+    confirmDelete: '確定要刪除此規則嗎？'
   },
   nat: {
     title: 'NAT 設定',
@@ -1429,7 +1428,7 @@ export default {
     localPort: '本機連接埠',
     localPortStart: '本機連接埠範圍（起始）',
     localPortEnd: '本機連接埠範圍（結束）',
-    comment: '備註',
+    comment: '備註'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',
@@ -1453,7 +1452,7 @@ export default {
     currentWhitelistFilterTable: '目前白名單過濾表',
     number: '編號',
     active: '啟用中',
-    noEntries: '目前沒有任何項目',
+    noEntries: '目前沒有任何項目'
   },
   generalMacFiltering: {
     enableMacFiltering: '啟用 MAC 過濾',
@@ -1472,7 +1471,7 @@ export default {
     noEntries: '目前沒有任何項目',
     emptyMacError: 'MAC 位址不可為空白',
     invalidMacFormat: 'MAC 位址格式不正確',
-    duplicateMacError: '此 MAC 位址已存在',
+    duplicateMacError: '此 MAC 位址已存在'
   },
   basicWanCht: {
     title: 'WAN 設定',
@@ -1505,7 +1504,7 @@ export default {
     pppoePassThrough: 'PPPoE 透通',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS IP 位址',
+    dnsIpAddress: 'DNS 模式',
     autoObtainFromISP: '自動－由 ISP 取得',
     manual: '手動',
     primaryDNS: '主要 DNS',
@@ -1518,11 +1517,15 @@ export default {
     vlanId: 'VLAN ID',
     vlanModifiable: '勾選 VLAN 後，此欄位可修改。',
     lanInterface: 'LAN 介面',
-    dhcpOption60: 'DHCP Option 60',
-    vendorId: 'Vendor ID',
+    dhcpOption60: 'DHCPv4 選項 60',
+    vendorId: 'DHCPv4 選項 60 值',
     dhcpOption60Modifiable: '勾選 DHCP Option 60 後，此欄位可修改。',
-    dhcpOption61: 'DHCP Option 61',
+    dhcpOption61: 'DHCPv4 選項 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID 類型',
+    enterpriseNumber: '企業號碼',
+    identifier: '識別碼',
     ipAddress: 'IP 位址',
     subnetMask: '子網路遮罩',
     gatewayIpAddress: '閘道 IP 位址',
@@ -1574,6 +1577,8 @@ export default {
     prefixLengthRequired: '必須輸入前綴長度',
     duplicateAlias: '路由名稱已存在，請使用其他名稱',
     comingSoon: '即將推出',
-    featureInDevelopment: '此功能目前正在開發中',
+    featureInDevelopment: '此功能目前正在開發中'
   }
 };
+
+export default translations;

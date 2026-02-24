@@ -6,16 +6,13 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-enable-label')">{{ $t('basicWanCht.enable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                v-model="localData.Enable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('pppoe-enable-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.Enable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-enable-toggle')"
+              :slider-data-testid="qa('pppoe-enable-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -64,64 +61,52 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-default-gateway-label')">{{ $t('basicWanCht.defaultGateway') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                v-model="localData.DefaultGateway"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('pppoe-default-gateway-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-default-gateway-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.DefaultGateway"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-default-gateway-toggle')"
+              :slider-data-testid="qa('pppoe-default-gateway-toggle-slider')"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-passthrough-label')">{{ $t('basicWanCht.pppoePassThrough') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.PassthroughEnable"
-                :data-testid="qa('pppoe-passthrough-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-passthrough-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.PassthroughEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-passthrough-toggle')"
+              :slider-data-testid="qa('pppoe-passthrough-toggle-slider')"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-ipv4-label')">{{ $t('basicWanCht.ipv4') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.IPv4Enable"
-                :data-testid="qa('pppoe-ipv4-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-ipv4-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.IPv4Enable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-ipv4-toggle')"
+              :slider-data-testid="qa('pppoe-ipv4-toggle-slider')"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-ipv6-label')">{{ $t('basicWanCht.ipv6') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.IPv6Enable"
-                :data-testid="qa('pppoe-ipv6-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-ipv6-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.IPv6Enable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-ipv6-toggle')"
+              :slider-data-testid="qa('pppoe-ipv6-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -150,48 +135,39 @@
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.NATEnable"
-                :data-testid="qa('pppoe-nat-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-nat-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.NATEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-nat-toggle')"
+              :slider-data-testid="qa('pppoe-nat-toggle-slider')"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-igmp-label')">{{ $t('basicWanCht.igmpProxy') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.IGMPEnable"
-                :data-testid="qa('pppoe-igmp-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-igmp-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.IGMPEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-igmp-toggle')"
+              :slider-data-testid="qa('pppoe-igmp-toggle-slider')"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <div class="switch-label">
             <span :data-testid="qa('pppoe-vlan-label')">{{ $t('basicWanCht.vlan') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :true-value="1"
-                :false-value="0"
-                v-model="localData.VLANEnable"
-                :data-testid="qa('pppoe-vlan-toggle')"
-              >
-              <span class="slider" :data-testid="qa('pppoe-vlan-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="localData.VLANEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('pppoe-vlan-toggle')"
+              :slider-data-testid="qa('pppoe-vlan-toggle-slider')"
+            />
           </div>
         </div>
 
@@ -212,7 +188,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import type { BasicWanChtPPPoE } from '../../types/basicWanCht';
-import { BaseInput, BaseSelect } from '../common';
+import { BaseInput, BaseSelect, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();
@@ -292,7 +268,7 @@ input, select {
   gap: 1rem;
 }
 
-.switch {
+:deep(.switch) {
   position: relative;
   display: inline-block;
   width: 60px;
@@ -300,13 +276,13 @@ input, select {
   flex-shrink: 0;
 }
 
-.switch input {
+:deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+:deep(.switch .slider) {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -318,7 +294,7 @@ input, select {
   border-radius: 34px;
 }
 
-.slider:before {
+:deep(.switch .slider:before) {
   position: absolute;
   content: "";
   height: 26px;
@@ -330,11 +306,11 @@ input, select {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+:deep(.switch input:checked + .slider) {
   background-color: var(--color-primary);
 }
 
-input:checked + .slider:before {
+:deep(.switch input:checked + .slider:before) {
   transform: translateX(26px);
 }
 

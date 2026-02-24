@@ -5,6 +5,9 @@ import { useRouter } from 'vue-router';
 import type { GuestWiFiResponse } from '../../../../types/guest';
 import { getGuestWiFi, updateGuestWiFi } from '../../../../services/api/guestAccess';
 import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../../components/common';
+import { useAutoDismiss } from '../../../../composables/useAutoDismiss';
+import { extractNokMessage } from '../../../../utils/apiUtils';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,8 +15,11 @@ const { t } = useI18n();
 const router = useRouter();
 const guestWiFiData = ref<GuestWiFiResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const showPassword = ref(false);
 const showBlockingOverlay = ref(false);
 
@@ -27,6 +33,12 @@ const fetchGuestWiFi = async () => {
   error.value = null;
   try {
     const response = await getGuestWiFi();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      guestWiFiData.value = null;
+      return;
+    }
     guestWiFiData.value = response;
   } catch (err) {
     console.error('Error fetching Guest WiFi settings:', err);
@@ -41,11 +53,14 @@ const securityModes = computed(() => {
   return guestWiFiData.value.GuestWiFi.SecurityModeAvailable.split(',');
 });
 
-const showSuccessMessage = () => {
-  showSuccess.value = true;
-  setTimeout(() => {
-    showSuccess.value = false;
-  }, 3000);
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
 };
 
 const handleBlockingComplete = () => {
@@ -60,7 +75,7 @@ const handleSubmit = async () => {
   loading.value = true;
   error.value = null;
   try {
-    await updateGuestWiFi({
+    const response = await updateGuestWiFi({
       GuestWiFi: {
         Enable: guestWiFiData.value.GuestWiFi.Enable,
         MLOEnable: guestWiFiData.value.GuestWiFi.MLOEnable,
@@ -69,13 +84,18 @@ const handleSubmit = async () => {
         SSID: guestWiFiData.value.GuestWiFi.SSID
       }
     });
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return;
+    }
     showSuccessMessage();
     
     // Show blocking overlay instead of immediate refresh
     showBlockingOverlay.value = true;
   } catch (err) {
     console.error('Error updating Guest WiFi settings:', err);
-    error.value = 'Failed to update Guest WiFi settings';
+    showErrorMessage('Failed to update Guest WiFi settings');
   } finally {
     loading.value = false;
   }
@@ -107,33 +127,27 @@ onMounted(fetchGuestWiFi);
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('guest-wifi-enable-label')">{{ t('guest.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('guest-wifi-enable-toggle')"
-              v-model="guestWiFiData.GuestWiFi.Enable"
-              :true-value="1"
-              :false-value="0"
-            >
-            <span class="slider" :data-testid="qa('guest-wifi-enable-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="guestWiFiData.GuestWiFi.Enable"
+            :true-value="1"
+            :false-value="0"
+            :data-testid="qa('guest-wifi-enable-toggle')"
+            :slider-data-testid="qa('guest-wifi-enable-toggle-slider')"
+          />
         </div>
       </div>
 
       <div class="form-group">
         <div class="switch-label">
           <span :data-testid="qa('guest-wifi-mlo-enable-label')">MLO {{ t('guest.enable') }}</span>
-          <label class="switch">
-            <input
-              type="checkbox"
-              :data-testid="qa('guest-wifi-mlo-enable-toggle')"
-              v-model="guestWiFiData.GuestWiFi.MLOEnable"
-              :true-value="1"
-              :false-value="0"
-              :disabled="guestWiFiData.GuestWiFi.Enable === 0 || isMLODisabledByMesh"
-            >
-            <span class="slider" :data-testid="qa('guest-wifi-mlo-enable-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="guestWiFiData.GuestWiFi.MLOEnable"
+            :true-value="1"
+            :false-value="0"
+            :disabled="guestWiFiData.GuestWiFi.Enable === 0 || isMLODisabledByMesh"
+            :data-testid="qa('guest-wifi-mlo-enable-toggle')"
+            :slider-data-testid="qa('guest-wifi-mlo-enable-toggle-slider')"
+          />
         </div>
       </div>
 
@@ -186,18 +200,29 @@ onMounted(fetchGuestWiFi);
       </div>
 
       <div class="button-group">
-        <button type="button" class="btn btn-secondary" @click="fetchGuestWiFi" :disabled="loading" :data-testid="qa('guest-wifi-cancel-button')">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading" :data-testid="qa('guest-wifi-apply-button')">
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-data-testid="qa('guest-wifi-cancel-button')"
+          :apply-data-testid="qa('guest-wifi-apply-button')"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          apply-type="submit"
+          @cancel="fetchGuestWiFi"
+        />
       </div>
     </form>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('guest-wifi-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('guest-wifi-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('guest-wifi-error-toast')"
+    />
 
     <!-- Blocking Overlay -->
     <BlockingOverlay
@@ -287,22 +312,22 @@ input:disabled, select:disabled {
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */
-.switch {
+:deep(.switch) {
   width: 60px;
   height: 34px;
   flex-shrink: 0;
 }
 
-.slider:before {
+:deep(.slider:before) {
   height: 26px;
   width: 26px;
 }
 
-input:checked + .slider:before {
+:deep(input:checked + .slider:before) {
   transform: translateX(26px);
 }
 
-input:disabled + .slider {
+:deep(input:disabled + .slider) {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -312,18 +337,6 @@ input:disabled + .slider {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.success-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 100;
 }
 
 .loading-state {
@@ -346,13 +359,6 @@ input:disabled + .slider {
   box-shadow: var(--shadow-sm);
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-
 @media (max-width: 768px) {
   .guest-wifi {
     padding: 1rem;
@@ -362,7 +368,7 @@ input:disabled + .slider {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

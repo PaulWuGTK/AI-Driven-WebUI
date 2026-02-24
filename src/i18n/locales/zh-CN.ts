@@ -1,5 +1,5 @@
-// Simplified Chinese translations
-export default {
+// zh-CN translations
+const translations = {
   menu: {
     home: '仪表板',
     status: '状态',
@@ -264,7 +264,7 @@ export default {
     packetsReceived: '已接收数据包数',
     packetsSent: '已发送数据包数',
     bytesReceived: '已接收字节数',
-    bytesSent: '已发送字节数',
+    bytesSent: '已发送字节数'
   },
   wlan: {
     title: '无线网络状态',
@@ -629,7 +629,7 @@ export default {
     dnsDetection: 'DNS 检测',
     ipAddress: 'IP 地址',
     dnsServer: 'DNS 服务器',
-    enableHint: '启用后会显示 WAN 健康检查配置，禁用则会隐藏相关配置。',
+    enableHint: '启用后会显示 WAN 健康检查配置，禁用则会隐藏相关配置。'
   },
   lanBasic: {
     title: 'LAN 设置',
@@ -761,7 +761,7 @@ export default {
     clientPort: '客户端端口',
     serverId: '服务器ID',
     serverPort: '服务器端口',
-    algorithm : '算法'
+    algorithm: '算法'
   },
   device: {
     title: '设备管理',
@@ -858,7 +858,7 @@ export default {
     results_state_complete: '完成',
     results_state_error: '错误',
     message_loadConfigFailed: 'TR-471 配置加载失败',
-    message_testFailed: 'TR-471 测试失败',
+    message_testFailed: 'TR-471 测试失败'
   },
   diagnostics: {
     title: '诊断工具',
@@ -1397,7 +1397,7 @@ export default {
     portRequired: '必须填写端口',
     protocolRequired: '必须选择协议',
     deviceRequired: '必须选择设备',
-    confirmDelete: '确定要删除此规则吗？',
+    confirmDelete: '确定要删除此规则吗？'
   },
   nat: {
     title: 'NAT 设置',
@@ -1428,7 +1428,7 @@ export default {
     localPort: '本地端口',
     localPortStart: '本地端口范围（起始）',
     localPortEnd: '本地端口范围（结束）',
-    comment: '备注',
+    comment: '备注'
   },
   ipFiltering: {
     enableIpFiltering: '启用 IP 过滤',
@@ -1452,7 +1452,7 @@ export default {
     currentWhitelistFilterTable: '当前白名单过滤表',
     number: '序号',
     active: '已启用',
-    noEntries: '暂无任何条目',
+    noEntries: '暂无任何条目'
   },
   generalMacFiltering: {
     enableMacFiltering: '启用 MAC 过滤',
@@ -1471,7 +1471,7 @@ export default {
     noEntries: '暂无任何条目',
     emptyMacError: 'MAC 地址不能为空',
     invalidMacFormat: 'MAC 地址格式无效',
-    duplicateMacError: '该 MAC 地址已存在',
+    duplicateMacError: '该 MAC 地址已存在'
   },
   basicWanCht: {
     title: 'WAN 设置',
@@ -1504,7 +1504,7 @@ export default {
     pppoePassThrough: 'PPPoE 透传',
     ipv4: 'IPv4',
     ipv6: 'IPv6',
-    dnsIpAddress: 'DNS IP 地址',
+    dnsIpAddress: 'DNS 模式',
     autoObtainFromISP: '自动 - 向 ISP 获取',
     manual: '手动',
     primaryDNS: '主 DNS',
@@ -1517,18 +1517,22 @@ export default {
     vlanId: 'VLAN ID',
     vlanModifiable: '勾选 VLAN 后，此字段才可修改。',
     lanInterface: 'LAN 接口',
-    dhcpOption60: 'DHCP Option 60',
-    vendorId: 'Vendor ID',
+    dhcpOption60: 'DHCPv4 选项 60',
+    vendorId: 'DHCPv4 选项 60 值',
     dhcpOption60Modifiable: '勾选 DHCP Option 60 后，此字段才可修改。',
-    dhcpOption61: 'DHCP Option 61',
+    dhcpOption61: 'DHCPv4 选项 61',
     duid: 'DUID',
+    iaid: 'IAID',
+    duidType: 'DUID 类型',
+    enterpriseNumber: '企业编号',
+    identifier: '标识符',
     ipAddress: 'IP 地址',
     subnetMask: '子网掩码',
     gatewayIpAddress: '网关 IP 地址',
     staticFieldRequired: '当协议为 Static 时，此字段为必填且不能为空。',
     loadError: '加载 WAN 配置失败。',
     saveSuccess: 'WAN 配置已成功保存。',
-    saveError: '保存 WAN 配置失败。',
+    saveError: '保存 WAN 配置失败。'
   },
   routing: {
     title: '路由',
@@ -1573,6 +1577,8 @@ export default {
     prefixLengthRequired: '前缀长度为必填项',
     duplicateAlias: '路由名称已存在，请使用其他名称',
     comingSoon: '即将推出',
-    featureInDevelopment: '该功能目前正在开发中',
+    featureInDevelopment: '该功能目前正在开发中'
   }
 };
+
+export default translations;

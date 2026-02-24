@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { getUpnpSettings, updateUpnpSettings } from '../../services/api/upnp';
 import type { UpnpResponse, UpnpUpdateRequest, PortMapping } from '../../types/upnp';
 import BlockingOverlay from '../../components/BlockingOverlay.vue';
+import { BaseSwitch } from '../../components/common';
 import { useQA } from '../../utils/qa';
 
 const { isQAMode, qa } = useQA();
@@ -103,34 +104,14 @@ onMounted(() => {
           <label class="switch-label">
             <label class="form-label" :data-testid="qa('upnp-enable-label')">{{ t('upnp.enable') }}</label>
             <div class="form-control">
-              <label class="switch" :data-testid="qa('upnp-enable-switch')">
-                <input
-                  type="checkbox"
-                  v-model="upnpEnable"
-                  :data-testid="qa('upnp-enable-input')"
-                />
-                <span class="slider" :data-testid="qa('upnp-enable-slider')"></span>
-              </label>
+              <BaseSwitch
+                v-model="upnpEnable"
+                :data-testid="qa('upnp-enable-input')"
+                :slider-data-testid="qa('upnp-enable-slider')"
+              />
             </div>
           </label>
         </div>      
-<!--
-        <div class="form-group">
-          <label class="switch-label">
-            <span :data-testid="qa('ssh-server-edit-enable-label')">{{ t('ssh.enable') }}</span>
-            <label class="switch">
-              <input
-                type="checkbox"
-                :data-testid="qa('ssh-server-edit-enable-toggle')"
-                :checked="server.Enable === 1"
-                @change="updateServer('Enable', ($event.target as HTMLInputElement).checked ? 1 : 0)"
-              >
-              <span class="slider"></span>
-            </label>
-          </label>
-        </div>        
-
--->
           <div v-if="0" class="form-row" :data-testid="qa('upnp-interface-row')">
             <label class="form-label" :data-testid="qa('upnp-interface-label')">{{ t('upnp.interfaceSelection') }}</label>
             <div class="form-control">
