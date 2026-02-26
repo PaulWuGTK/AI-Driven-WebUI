@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { StaticRouteIPv4, StaticRouteIPv6 } from '../../types/staticRoute';
-import { BaseSwitch } from '../common';
+import { ActionButtons, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 interface Props {
@@ -362,20 +362,13 @@ const handleClose = () => {
       </div>
 
       <div class="modal-footer">
-        <button
-          class="btn btn-secondary"
-          @click="handleClose"
-          :data-testid="qa('static-route-form-cancel')"
-        >
-          {{ t('common.cancel') }}
-        </button>
-        <button
-          class="btn btn-primary"
-          @click="handleSave"
-          :data-testid="qa('static-route-form-save')"
-        >
-          {{ t('common.confirm') }}
-        </button>
+        <ActionButtons
+          :apply-text="t('common.confirm')"
+          :cancel-data-testid="qa('static-route-form-cancel')"
+          :apply-data-testid="qa('static-route-form-save')"
+          @cancel="handleClose"
+          @apply="handleSave"
+        />
       </div>
     </div>
   </div>
@@ -567,7 +560,7 @@ const handleClose = () => {
     flex-direction: column;
   }
 
-  .modal-footer .btn {
+  .modal-footer :deep(.btn) {
     width: 100%;
   }
 }

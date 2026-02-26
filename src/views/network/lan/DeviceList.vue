@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DeviceConnectedResponse } from '../../../types/lanBasic';
 import { getDeviceConnected } from '../../../services/api/lanBasic';
+import { BaseTable } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -10,6 +11,14 @@ const { t } = useI18n();
 const deviceData = ref<DeviceConnectedResponse | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+
+const deviceColumns = computed(() => [
+  { key: 'Host', label: t('lanBasic.hostName'), headerDataTestid: qa('device-connected-header-hostname') },
+  { key: 'MACAddress', label: t('lanBasic.macAddress'), headerDataTestid: qa('device-connected-header-mac') },
+  { key: 'IPAddress', label: t('lanBasic.ipAddress'), headerDataTestid: qa('device-connected-header-ip') },
+]);
+
+const connectedDevices = computed(() => deviceData.value?.LanDeviceConnected ?? []);
 
 const fetchDeviceConnected = async () => {
   loading.value = true;
@@ -40,46 +49,29 @@ onMounted(fetchDeviceConnected);
     </div>
 
     <template v-else-if="deviceData">
-      <div class="table-container" :data-testid="qa('device-connected-table-container')">
-        <table :data-testid="qa('device-connected-table')">
-          <thead>
-            <tr>
-              <th :data-testid="qa('device-connected-header-hostname')">{{ t('lanBasic.hostName') }}</th>
-              <th :data-testid="qa('device-connected-header-mac')">{{ t('lanBasic.macAddress') }}</th>
-              <th :data-testid="qa('device-connected-header-ip')">{{ t('lanBasic.ipAddress') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(device, deviceIndex) in deviceData.LanDeviceConnected" :key="device.MACAddress" :data-testid="qa(`device-connected-row-${deviceIndex}`)">
-              <td :data-testid="qa(`device-connected-hostname-${deviceIndex}`)">{{ device.Host }}</td>
-              <td :data-testid="qa(`device-connected-mac-${deviceIndex}`)">{{ device.MACAddress }}</td>
-              <td :data-testid="qa(`device-connected-ip-${deviceIndex}`)">{{ device.IPAddress }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="mobile-cards" :data-testid="qa('device-connected-mobile')">
-        <div 
-          class="table-card" 
-          v-for="(device, deviceIndex) in deviceData.LanDeviceConnected" 
-          :key="device.MACAddress"
-          :data-testid="qa(`device-connected-card-${deviceIndex}`)"
-        >
-          <div class="card-row">
-            <span class="card-label" :data-testid="qa(`device-connected-card-hostname-label-${deviceIndex}`)">{{ t('lanBasic.hostName') }}</span>
-            <span class="card-value" :data-testid="qa(`device-connected-card-hostname-value-${deviceIndex}`)">{{ device.Host }}</span>
-          </div>
-          <div class="card-row">
-            <span class="card-label" :data-testid="qa(`device-connected-card-mac-label-${deviceIndex}`)">{{ t('lanBasic.macAddress') }}</span>
-            <span class="card-value" :data-testid="qa(`device-connected-card-mac-value-${deviceIndex}`)">{{ device.MACAddress }}</span>
-          </div>
-          <div class="card-row">
-            <span class="card-label" :data-testid="qa(`device-connected-card-ip-label-${deviceIndex}`)">{{ t('lanBasic.ipAddress') }}</span>
-            <span class="card-value" :data-testid="qa(`device-connected-card-ip-value-${deviceIndex}`)">{{ device.IPAddress }}</span>
-          </div>
-        </div>
-      </div>
+      <BaseTable
+        :columns="deviceColumns"
+        :data="connectedDevices"
+        row-key="MACAddress"
+        :table-data-testid="qa('device-connected-table-container')"
+        :mobile-data-testid="qa('device-connected-mobile')"
+      >
+        <template #cell-Host="{ row, index, mobile }">
+          <span :data-testid="qa(mobile ? `device-connected-card-hostname-value-${index}` : `device-connected-hostname-${index}`)">
+            {{ row.Host }}
+          </span>
+        </template>
+        <template #cell-MACAddress="{ row, index, mobile }">
+          <span :data-testid="qa(mobile ? `device-connected-card-mac-value-${index}` : `device-connected-mac-${index}`)">
+            {{ row.MACAddress }}
+          </span>
+        </template>
+        <template #cell-IPAddress="{ row, index, mobile }">
+          <span :data-testid="qa(mobile ? `device-connected-card-ip-value-${index}` : `device-connected-ip-${index}`)">
+            {{ row.IPAddress }}
+          </span>
+        </template>
+      </BaseTable>
 
       <div class="button-group">
         <button class="btn btn-primary" :data-testid="qa('device-connected-refresh-button')" @click="fetchDeviceConnected">
@@ -136,14 +128,6 @@ onMounted(fetchDeviceConnected);
   .btn {
     width: 100%;
     justify-content: center;
-  }
-
-  .table-container {
-    display: none;
-  }
-
-  .mobile-cards {
-    display: block;
   }
 }
 </style>

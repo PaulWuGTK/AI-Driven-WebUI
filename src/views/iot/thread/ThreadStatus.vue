@@ -3,6 +3,8 @@ import { ref, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadStatusResponse, ThreadScanResponse, ThreadScanPAN } from '../../../types/thread';
 import { getThreadStatus, scanThreadNetworks } from '../../../services/api/thread';
+import { BaseSecretInput } from '../../../components/common';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -14,22 +16,20 @@ const scanLoading = ref(false);
 const error = ref<string | null>(null);
 const scanError = ref<string | null>(null);
 const refreshInterval = ref<number | null>(null);
-const showNetworkKey = ref(false);
-const showPSKc = ref(false);
 
 const fetchThreadStatus = async () => {
   loading.value = true;
   error.value = null;
   try {
     const response = await getThreadStatus();
-    
-    // Check if the response contains an error message
-    if ('NOK' in response) {
-      console.warn('Thread status API returned an error:', response.NOK);
+
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      console.warn('Thread status API returned an error:', nokMessage);
       // Don't update threadStatus.value, keep the previous valid data
       // Only set error if we don't have any data yet
       if (!threadStatus.value) {
-        error.value = 'Failed to fetch Thread status. Please try again later.';
+        error.value = nokMessage || 'Failed to fetch Thread status. Please try again later.';
       }
     } else {
       // Only update the UI with valid data
@@ -55,21 +55,20 @@ const handleScan = async () => {
   scanLoading.value = true;
   scanError.value = null;
   try {
-    scanData.value = await scanThreadNetworks();
+    const response = await scanThreadNetworks();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      scanError.value = nokMessage;
+      scanData.value = null;
+      return;
+    }
+    scanData.value = response;
   } catch (err) {
     console.error('Error scanning for Thread networks:', err);
     scanError.value = 'Failed to scan for Thread networks';
   } finally {
     scanLoading.value = false;
   }
-};
-
-const toggleShowNetworkKey = () => {
-  showNetworkKey.value = !showNetworkKey.value;
-};
-
-const toggleShowPSKc = () => {
-  showPSKc.value = !showPSKc.value;
 };
 
 onMounted(() => {
@@ -173,18 +172,13 @@ onUnmounted(() => {
               <div class="info-row">
                 <span class="info-label" :data-testid="qa('thread-status-network-key-label')">{{ t('thread.networkKey') }}</span>
                 <div class="password-value" :data-testid="qa('thread-status-network-key-value')">
-                  <span v-if="showNetworkKey" :data-testid="qa('thread-status-network-key-text')">{{ threadStatus.ThreadStatus['Border Router'].MLE.Dataset.NetworkKey || '-' }}</span>
-                  <span v-else>••••••••••••••••••••••••••••••••</span>
-                  <button 
-                    type="button" 
-                    class="toggle-password"
-                    :data-testid="qa('thread-status-network-key-toggle')"
-                    @click="toggleShowNetworkKey"
-                  >
-                    <span class="material-icons">
-                      {{ showNetworkKey ? 'visibility_off' : 'visibility' }}
-                    </span>
-                  </button>
+                  <BaseSecretInput
+                    mode="display"
+                    :model-value="threadStatus.ThreadStatus['Border Router'].MLE.Dataset.NetworkKey || ''"
+                    :toggle-data-testid="qa('thread-status-network-key-toggle')"
+                    :value-data-testid="qa('thread-status-network-key-text')"
+                    :masked-data-testid="qa('thread-status-network-key-masked')"
+                  />
                 </div>
               </div>
               <div class="info-row">
@@ -194,18 +188,13 @@ onUnmounted(() => {
               <div class="info-row">
                 <span class="info-label" :data-testid="qa('thread-status-pskc-label')">{{ t('thread.pskc') }}</span>
                 <div class="password-value" :data-testid="qa('thread-status-pskc-value')">
-                  <span v-if="showPSKc" :data-testid="qa('thread-status-pskc-text')">{{ threadStatus.ThreadStatus['Border Router'].MLE.Dataset.PSKc || '-' }}</span>
-                  <span v-else>••••••••••••••••••••••••••••••••</span>
-                  <button 
-                    type="button" 
-                    class="toggle-password"
-                    :data-testid="qa('thread-status-pskc-toggle')"
-                    @click="toggleShowPSKc"
-                  >
-                    <span class="material-icons">
-                      {{ showPSKc ? 'visibility_off' : 'visibility' }}
-                    </span>
-                  </button>
+                  <BaseSecretInput
+                    mode="display"
+                    :model-value="threadStatus.ThreadStatus['Border Router'].MLE.Dataset.PSKc || ''"
+                    :toggle-data-testid="qa('thread-status-pskc-toggle')"
+                    :value-data-testid="qa('thread-status-pskc-text')"
+                    :masked-data-testid="qa('thread-status-pskc-masked')"
+                  />
                 </div>
               </div>
               <div class="info-row">
@@ -526,24 +515,9 @@ onUnmounted(() => {
 }
 
 .password-value {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.toggle-password {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.25rem;
-}
-
-.toggle-password:hover {
-  color: var(--text-primary);
+  justify-content: flex-end;
 }
 
 @media (max-width: 768px) {
@@ -584,3 +558,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

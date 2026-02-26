@@ -8,7 +8,7 @@ import BaseCard from '../../../components/common/BaseCard.vue';
 
 import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
-import { BaseSwitch } from '../../../components/common';
+import { BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
 import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
@@ -37,7 +37,6 @@ const lastGetSnapshot = ref<WlanBasicMultiGetResponse | null>(null);
 
 const editIndex = ref<number | null>(null);
 const draft = ref<WlanGroup | null>(null);
-const showPassphrase = reactive<Record<string, boolean>>({});
 const ssidErrors = reactive<Record<string, string>>({});
 const ssidByteLengths = reactive<Record<string, number>>({});
 
@@ -183,12 +182,6 @@ const enterEdit = (index: number) => {
       SSIDAdvertisementEnabled: (group as any).SSIDAdvertisementEnabled ?? 1
     };
   }
-
-  // Reset passphrase visibility state in edit mode
-  for (const b of bands) {
-    showPassphrase[`${b}`] = false;
-  }
-  showPassphrase['CommonSSID'] = false;
 
   // Clear SSID errors and initialize byte lengths
   Object.keys(ssidErrors).forEach(key => delete ssidErrors[key]);
@@ -592,25 +585,13 @@ onMounted(fetchConfig);
               </div>
 
               <div class="cell cell-psk">
-                <div class="pass-row">
-                  <BaseInput
-                    v-model="commonSsidConfig.KeyPassPhrase"
-                    :label="t('wireless.password')"
-                    :type="showPassphrase['CommonSSID'] ? 'text' : 'password'"
-                    :disabled="Number(commonSsidConfig.Enable) === 0"
-                    :data-testid="qa('wlan-basic-multi-common-ssid-psk')"
-                  />
-                  <button
-                    type="button"
-                    class="icon-btn"
-                    :disabled="Number(commonSsidConfig.Enable) === 0"
-                    :data-testid="qa('wlan-basic-multi-common-ssid-psk-toggle')"
-                    @click="showPassphrase['CommonSSID'] = !showPassphrase['CommonSSID']"
-                    :title="showPassphrase['CommonSSID'] ? t('wireless.hide') : t('wireless.show')"
-                  >
-                    <span class="material-icons">{{ showPassphrase['CommonSSID'] ? 'visibility_off' : 'visibility' }}</span>
-                  </button>
-                </div>
+                <label class="psk-label">{{ t('wireless.password') }}</label>
+                <BaseSecretInput
+                  v-model="commonSsidConfig.KeyPassPhrase"
+                  :disabled="Number(commonSsidConfig.Enable) === 0"
+                  :input-data-testid="qa('wlan-basic-multi-common-ssid-psk')"
+                  :toggle-data-testid="qa('wlan-basic-multi-common-ssid-psk-toggle')"
+                />
               </div>
             </div>
 
@@ -686,26 +667,14 @@ onMounted(fetchConfig);
                 </div>
 
                 <div class="cell cell-psk">
-                  <div class="pass-row">
-                    <BaseInput
-                      :modelValue="getInterfaceByBand(b)!.KeyPassPhrase ?? ''"
-                      :label="t('wireless.password')"
-                      :type="showPassphrase[b] ? 'text' : 'password'"
-                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
-                      :data-testid="qa(`wlan-basic-multi-iface-psk-${slug(b)}`)"
-                      @update:modelValue="(v) => { getInterfaceByBand(b)!.KeyPassPhrase = String(v ?? ''); }"
-                    />
-                    <button
-                      type="button"
-                      class="icon-btn"
-                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
-                      :data-testid="qa(`wlan-basic-multi-iface-psk-toggle-${slug(b)}`)"
-                      @click="showPassphrase[b] = !showPassphrase[b]"
-                      :title="showPassphrase[b] ? t('wireless.hide') : t('wireless.show')"
-                    >
-                      <span class="material-icons">{{ showPassphrase[b] ? 'visibility_off' : 'visibility' }}</span>
-                    </button>
-                  </div>
+                  <label class="psk-label">{{ t('wireless.password') }}</label>
+                  <BaseSecretInput
+                    :model-value="getInterfaceByBand(b)!.KeyPassPhrase ?? ''"
+                    :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
+                    :input-data-testid="qa(`wlan-basic-multi-iface-psk-${slug(b)}`)"
+                    :toggle-data-testid="qa(`wlan-basic-multi-iface-psk-toggle-${slug(b)}`)"
+                    @update:model-value="(v) => { getInterfaceByBand(b)!.KeyPassPhrase = String(v ?? ''); }"
+                  />
                 </div>
               </div>
 
@@ -1049,34 +1018,10 @@ onMounted(fetchConfig);
   margin-bottom: 0;
 }
 
-.pass-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-  align-items: end;
-}
-
-.icon-btn {
-  height: 36px;
-  width: 36px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: white;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-/* Minimal tweak: some browsers render Material Icons slightly low inside square buttons.
-   Nudge only the glyph (not the button) to keep hit area unchanged. */
-.icon-btn .material-icons {
-  line-height: 1;
-  transform: translateY(-1px);
-}
-
-.icon-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+.psk-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .footer-actions {

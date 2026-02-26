@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR069Config } from '../../../types/device';
 import { getTR069Config, updateTR069Config, sendInformToACS } from '../../../services/api/device';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -11,10 +11,6 @@ const { t } = useI18n();
 const config = ref<TR069Config | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const showPassword = ref({
-  acs: false,
-  connection: false
-});
 
 const fetchConfig = async () => {
   loading.value = true;
@@ -127,24 +123,12 @@ onMounted(fetchConfig);
         </div>
         <div class="form-group">
           <label :data-testid="qa('tr069-config-acs-password-label')">{{ t('device.password') }}</label>
-          <div class="password-input" :data-testid="qa('tr069-config-acs-password-container')">
-            <input
-              :type="showPassword.acs ? 'text' : 'password'"
-              :data-testid="qa('tr069-config-acs-password-input')"
-              v-model="config.Password"
-              required
-            />
-            <button 
-              type="button"
-              class="toggle-password"
-              :data-testid="qa('tr069-config-acs-password-toggle')"
-              @click="showPassword.acs = !showPassword.acs"
-            >
-              <span class="material-icons">
-                {{ showPassword.acs ? 'visibility_off' : 'visibility' }}
-              </span>
-            </button>
-          </div>
+          <BaseSecretInput
+            v-model="config.Password"
+            :container-data-testid="qa('tr069-config-acs-password-container')"
+            :input-data-testid="qa('tr069-config-acs-password-input')"
+            :toggle-data-testid="qa('tr069-config-acs-password-toggle')"
+          />
         </div>
       </div>
 
@@ -161,24 +145,12 @@ onMounted(fetchConfig);
         </div>
         <div class="form-group">
           <label :data-testid="qa('tr069-config-connection-password-label')">{{ t('device.password') }}</label>
-          <div class="password-input" :data-testid="qa('tr069-config-connection-password-container')">
-            <input
-              :type="showPassword.connection ? 'text' : 'password'"
-              :data-testid="qa('tr069-config-connection-password-input')"
-              v-model="config.ConnectionRequestPassword"
-              required
-            />
-            <button 
-              type="button"
-              class="toggle-password"
-              :data-testid="qa('tr069-config-connection-password-toggle')"
-              @click="showPassword.connection = !showPassword.connection"
-            >
-              <span class="material-icons">
-                {{ showPassword.connection ? 'visibility_off' : 'visibility' }}
-              </span>
-            </button>
-          </div>
+          <BaseSecretInput
+            v-model="config.ConnectionRequestPassword"
+            :container-data-testid="qa('tr069-config-connection-password-container')"
+            :input-data-testid="qa('tr069-config-connection-password-input')"
+            :toggle-data-testid="qa('tr069-config-connection-password-toggle')"
+          />
         </div>
       </div>
 
@@ -284,30 +256,6 @@ input {
 input:disabled {
   background-color: var(--bg-secondary);
   cursor: not-allowed;
-}
-
-.password-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input input {
-  padding-right: 2.5rem;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.25rem;
-}
-
-.toggle-password:hover {
-  color: var(--text-primary);
 }
 
 .button-group {

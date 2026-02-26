@@ -11,6 +11,8 @@ import {
   getLcmDeploymentUnitConfig,
   updateLcmDeploymentUnit
 } from '../../../services/api/lcmDeploymentUnit';
+import { ActionButtons } from '../../../components/common';
+import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 
 type NetworkMode = '' | 'ShareParentNetwork' | 'PortForwarding';
@@ -61,6 +63,16 @@ const fetchConfig = async (silent = false) => {
   error.value = null;
   try {
     const response = await getLcmDeploymentUnitConfig();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
+      duList.value = [];
+      execEnvList.value = [];
+      interfaceList.value = [];
+      protocolList.value = [];
+      hostObjectMountType.value = [];
+      return;
+    }
     duList.value = response.AdvancedLcmDeploymentUnit.DUList;
     execEnvList.value = response.AdvancedLcmDeploymentUnit.ExecEnvList;
     interfaceList.value = response.AdvancedLcmDeploymentUnit.InterfaceList;
@@ -237,9 +249,9 @@ const handleSave = async () => {
 
     const res = await updateLcmDeploymentUnit({ AdvancedLcmDeploymentUnit: payload });
 
-    const du = (res as any)?.AdvancedLcmDeploymentUnit;
-    if (du && typeof du === 'object' && du.NOK) {
-      throw new Error(du.NOK);
+    const nokMessage = extractNokMessage(res);
+    if (nokMessage) {
+      throw new Error(nokMessage);
     }
 
     await fetchConfig();
@@ -247,7 +259,7 @@ const handleSave = async () => {
     closeModal();
   } catch (err) {
     console.error('Error saving DeploymentUnit:', err);
-    error.value = 'Failed to save DeploymentUnit';
+    error.value = err instanceof Error ? err.message : 'Failed to save DeploymentUnit';
   } finally {
     loading.value = false;
   }
@@ -265,16 +277,16 @@ const handleDelete = async (duid: string) => {
       }
     });
 
-    const du = (res as any)?.AdvancedLcmDeploymentUnit;
-    if (du && typeof du === 'object' && du.NOK) {
-      throw new Error(du.NOK);
+    const nokMessage = extractNokMessage(res);
+    if (nokMessage) {
+      throw new Error(nokMessage);
     }
 
     await fetchConfig();
     showSuccessMessage();
   } catch (err) {
     console.error('Error deleting DeploymentUnit:', err);
-    error.value = 'Failed to delete DeploymentUnit';
+    error.value = err instanceof Error ? err.message : 'Failed to delete DeploymentUnit';
   } finally {
     loading.value = false;
   }
@@ -697,20 +709,13 @@ onMounted(fetchConfig);
         </div>
 
         <div class="modal-footer">
-          <button
-            class="btn btn-secondary"
-            @click="closeModal"
-            :data-testid="qa('lcm-deployment-unit-modal-cancel')"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            class="btn btn-primary"
-            @click="handleSave"
-            :data-testid="qa('lcm-deployment-unit-modal-save')"
-          >
-            {{ isEditMode ? t('common.update') : t('common.add') }}
-          </button>
+          <ActionButtons
+            :apply-text="isEditMode ? t('common.update') : t('common.add')"
+            :cancel-data-testid="qa('lcm-deployment-unit-modal-cancel')"
+            :apply-data-testid="qa('lcm-deployment-unit-modal-save')"
+            @cancel="closeModal"
+            @apply="handleSave"
+          />
         </div>
       </div>
     </div>
@@ -1074,7 +1079,7 @@ onMounted(fetchConfig);
     flex-direction: column;
   }
 
-  .modal-footer .btn {
+  .modal-footer :deep(.btn) {
     width: 100%;
   }
 

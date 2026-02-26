@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WlanBasicConfig } from '../../../../types/wireless';
-import { BaseSwitch } from '../../../../components/common';
+import { BaseSecretInput, BaseSwitch } from '../../../../components/common';
 import { useQA } from '../../../../utils/qa';
 import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../../utils/ssidValidation';
 const { isQAMode, qa, slug } = useQA();
@@ -17,7 +17,6 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: WlanBasicConfig): void;
 }>();
 
-const showPassword = ref(false);
 const ssidError = ref('');
 const ssidByteLength = ref(0);
 
@@ -123,26 +122,14 @@ watch(() => props.modelValue.SSID, (newSsid) => {
 
       <div class="form-group">
         <label :data-testid="qa(`wireless-band-config-password-label-${slug(title)}`)">{{ t('wireless.password') }}</label>
-        <div class="password-input" :data-testid="qa(`wireless-band-config-password-container-${slug(title)}`)">
-          <input
-            :type="showPassword ? 'text' : 'password'"
-            :data-testid="qa(`wireless-band-config-password-input-${slug(title)}`)"
-            :value="modelValue.Password"
-            @input="updateConfig('Password', ($event.target as HTMLInputElement).value)"
-            :disabled="title !== 'MLO' && modelValue.Enable === 0"
-          />
-          <button 
-            type="button" 
-            class="toggle-password"
-            :data-testid="qa(`wireless-band-config-password-toggle-${slug(title)}`)"
-            @click="showPassword = !showPassword"
-            :disabled="title !== 'MLO' && modelValue.Enable === 0"
-          >
-            <span class="material-icons">
-              {{ showPassword ? 'visibility_off' : 'visibility' }}
-            </span>
-          </button>
-        </div>
+        <BaseSecretInput
+          :model-value="modelValue.Password"
+          :container-data-testid="qa(`wireless-band-config-password-container-${slug(title)}`)"
+          :input-data-testid="qa(`wireless-band-config-password-input-${slug(title)}`)"
+          :toggle-data-testid="qa(`wireless-band-config-password-toggle-${slug(title)}`)"
+          :disabled="title !== 'MLO' && modelValue.Enable === 0"
+          @update:model-value="(value) => updateConfig('Password', value)"
+        />
       </div>
     </div>
   </div>
@@ -230,36 +217,8 @@ input.is-invalid:focus {
   color: var(--text-secondary);
 }
 
-.password-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-.password-input input {
-  padding-right: 2.5rem;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.25rem;
-}
-
-.toggle-password:hover:not(:disabled) {
-  color: var(--text-primary);
-}
-
-.toggle-password:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* Custom switch size (60px × 34px) for larger prominence */
+/* Custom switch size (60px ? 34px) for larger prominence */
 :deep(.switch) {
   width: 60px;
   height: 34px;

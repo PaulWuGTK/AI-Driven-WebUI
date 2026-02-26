@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getAccountSettings, updateAccountPassword } from '../../../services/api/account';
 import type { ManagementAccountResponse } from '../../../types/account';
+import { ActionButtons, BaseSecretInput } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -12,9 +13,6 @@ const accountData = ref<ManagementAccountResponse | null>(null);
 const oldPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
-const showOldPassword = ref(false);
-const showNewPassword = ref(false);
-const showConfirmPassword = ref(false);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
@@ -67,9 +65,6 @@ const handleCancel = () => {
   newPassword.value = '';
   confirmPassword.value = '';
   error.value = null;
-  showOldPassword.value = false;
-  showNewPassword.value = false;
-  showConfirmPassword.value = false;
 };
 
 const handleApply = async () => {
@@ -131,87 +126,49 @@ onMounted(fetchAccountSettings);
 
             <div class="form-group">
               <label :data-testid="qa('account-old-password-label')">{{ t('account.oldPassword') }}</label>
-              <div class="password-input-wrapper">
-                <input
-                  :type="showOldPassword ? 'text' : 'password'"
-                  :data-testid="qa('account-old-password-input')"
-                  v-model="oldPassword"
-                  :placeholder="t('account.passwordPlaceholder')"
-                  :maxlength="maxLength"
-                  :disabled="loading"
-                >
-                <button
-                  type="button"
-                  class="password-toggle"
-                  :data-testid="qa('account-old-password-toggle')"
-                  @click="showOldPassword = !showOldPassword"
-                >
-                  <span class="material-icons">{{ showOldPassword ? 'visibility_off' : 'visibility' }}</span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="oldPassword"
+                :input-data-testid="qa('account-old-password-input')"
+                :toggle-data-testid="qa('account-old-password-toggle')"
+                :placeholder="t('account.passwordPlaceholder')"
+                :max-length="maxLength"
+                :disabled="loading"
+              />
             </div>
 
             <div class="form-group">
               <label :data-testid="qa('account-new-password-label')">{{ t('account.newPassword') }}</label>
-              <div class="password-input-wrapper">
-                <input
-                  :type="showNewPassword ? 'text' : 'password'"
-                  :data-testid="qa('account-new-password-input')"
-                  v-model="newPassword"
-                  :placeholder="t('account.passwordPlaceholder')"
-                  :maxlength="maxLength"
-                  :disabled="loading"
-                >
-                <button
-                  type="button"
-                  class="password-toggle"
-                  :data-testid="qa('account-new-password-toggle')"
-                  @click="showNewPassword = !showNewPassword"
-                >
-                  <span class="material-icons">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="newPassword"
+                :input-data-testid="qa('account-new-password-input')"
+                :toggle-data-testid="qa('account-new-password-toggle')"
+                :placeholder="t('account.passwordPlaceholder')"
+                :max-length="maxLength"
+                :disabled="loading"
+              />
             </div>
 
             <div class="form-group">
               <label :data-testid="qa('account-confirm-password-label')">{{ t('account.confirmPassword') }}</label>
-              <div class="password-input-wrapper">
-                <input
-                  :type="showConfirmPassword ? 'text' : 'password'"
-                  :data-testid="qa('account-confirm-password-input')"
-                  v-model="confirmPassword"
-                  :placeholder="t('account.passwordPlaceholder')"
-                  :maxlength="maxLength"
-                  :disabled="loading"
-                >
-                <button
-                  type="button"
-                  class="password-toggle"
-                  :data-testid="qa('account-confirm-password-toggle')"
-                  @click="showConfirmPassword = !showConfirmPassword"
-                >
-                  <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="confirmPassword"
+                :input-data-testid="qa('account-confirm-password-input')"
+                :toggle-data-testid="qa('account-confirm-password-toggle')"
+                :placeholder="t('account.passwordPlaceholder')"
+                :max-length="maxLength"
+                :disabled="loading"
+              />
             </div>
 
             <div class="button-group">
-              <button
-                class="btn btn-secondary"
-                :data-testid="qa('account-cancel-button')"
-                @click="handleCancel"
-                :disabled="loading"
-              >
-                {{ t('common.cancel') }}
-              </button>
-              <button
-                class="btn btn-primary"
-                :data-testid="qa('account-apply-button')"
-                @click="handleApply"
-                :disabled="loading"
-              >
-                {{ t('common.apply') }}
-              </button>
+              <ActionButtons
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                :cancel-data-testid="qa('account-cancel-button')"
+                :apply-data-testid="qa('account-apply-button')"
+                @cancel="handleCancel"
+                @apply="handleApply"
+              />
             </div>
           </div>
         </div>
@@ -252,47 +209,6 @@ onMounted(fetchAccountSettings);
   margin-bottom: 0.5rem;
   color: var(--text-primary);
   font-weight: 500;
-}
-
-.password-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input-wrapper input {
-  width: 100%;
-  padding: 0.625rem 2.5rem 0.625rem 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-.password-input-wrapper input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
-}
-
-.password-toggle {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-}
-
-.password-toggle:hover {
-  color: var(--primary-color);
-}
-
-.password-toggle .material-icons {
-  font-size: 20px;
 }
 
 .button-group {
@@ -346,7 +262,7 @@ onMounted(fetchAccountSettings);
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

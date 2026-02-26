@@ -2,7 +2,7 @@
 import { defineProps, defineEmits, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SshServer } from '../../types/ssh';
-import { BaseSwitch } from '../common';
+import { ActionButtons, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -319,14 +319,14 @@ const handleCustomKeepAliveChange = (event: Event) => {
         </div>
       </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('ssh-server-edit-cancel-button')" @click="$emit('cancel')">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('ssh-server-edit-save-button')">
-          {{ t('common.save') }}
-        </button>
-      </div>
+      <ActionButtons
+        class="button-group"
+        :apply-text="t('common.save')"
+        apply-type="submit"
+        :cancel-data-testid="qa('ssh-server-edit-cancel-button')"
+        :apply-data-testid="qa('ssh-server-edit-save-button')"
+        @cancel="$emit('cancel')"
+      />
     </form>
   </div>
 </template>
@@ -421,28 +421,6 @@ input, select {
   margin-top: 2rem;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.btn:hover {
-  opacity: 0.9;
-}
-
 .radio-group {
   display: flex;
   flex-direction: column;
@@ -489,7 +467,7 @@ input, select {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

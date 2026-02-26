@@ -2,6 +2,7 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
+import { ActionButtons } from '../common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -73,17 +74,14 @@ const handleApply = () => {
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" :data-testid="qa('mesh-steering-modal-cancel')" @click="$emit('close')">
-          {{ t('common.close') }}
-        </button>
-        <button 
-          class="btn btn-primary" 
-          :data-testid="qa('mesh-steering-modal-apply')"
-          @click="handleApply"
-          :disabled="!selectedDestination || !selectedBand"
-        >
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          :cancel-text="t('common.close')"
+          :apply-disabled="!selectedDestination || !selectedBand"
+          :cancel-data-testid="qa('mesh-steering-modal-cancel')"
+          :apply-data-testid="qa('mesh-steering-modal-apply')"
+          @cancel="$emit('close')"
+          @apply="handleApply"
+        />
       </div>
     </div>
   </div>
@@ -169,26 +167,4 @@ select {
   gap: 1rem;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 </style>

@@ -5,7 +5,7 @@ import type { MACFilteringResponse, MACFilteringEntry } from '../../../types/mac
 import { getMACFiltering, updateMACFiltering } from '../../../services/api/macFiltering';
 import MacFilterBand from './macfilter/MacFilterBand.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
-import { BaseToast } from '../../../components/common';
+import { ActionButtons, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -231,24 +231,14 @@ onMounted(fetchMACFiltering);
           </div>
 
           <div class="button-group">
-            <button 
-              type="button" 
-              class="btn btn-secondary" 
-              :data-testid="qa('mac-filter-cancel-button')"
-              @click="handleCancel"
-              :disabled="loading"
-            >
-              {{ t('common.cancel') }}
-            </button>
-            <button 
-              type="button"
-              class="btn btn-primary"
-              :data-testid="qa('mac-filter-apply-button')"
-              @click="handleApply"
-              :disabled="loading"
-            >
-              {{ t('common.apply') }}
-            </button>
+            <ActionButtons
+              :cancel-disabled="loading"
+              :apply-disabled="loading"
+              :cancel-data-testid="qa('mac-filter-cancel-button')"
+              :apply-data-testid="qa('mac-filter-apply-button')"
+              @cancel="handleCancel"
+              @apply="handleApply"
+            />
           </div>
         </div>
       </template>
@@ -314,7 +304,7 @@ onMounted(fetchMACFiltering);
     padding: 1rem;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

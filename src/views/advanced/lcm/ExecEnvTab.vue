@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExecEnvItem } from '../../../types/lcmExecEnv';
 import { getLcmExecEnvConfig, updateLcmExecEnv } from '../../../services/api/lcmExecEnv';
-import { BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -432,12 +432,13 @@ onMounted(fetchConfig);
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeModal" :data-testid="qa('lcm-execenv-modal-cancel')">
-            {{ t('common.cancel') }}
-          </button>
-          <button class="btn btn-primary" @click="handleSave" :data-testid="qa('lcm-execenv-modal-add')">
-            {{ isEditMode ? t('common.save') : t('common.add') }}
-          </button>
+          <ActionButtons
+            :apply-text="isEditMode ? t('common.save') : t('common.add')"
+            :cancel-data-testid="qa('lcm-execenv-modal-cancel')"
+            :apply-data-testid="qa('lcm-execenv-modal-add')"
+            @cancel="closeModal"
+            @apply="handleSave"
+          />
         </div>
       </div>
     </div>
@@ -673,7 +674,7 @@ onMounted(fetchConfig);
     flex-direction: column;
   }
 
-  .modal-footer .btn {
+  .modal-footer :deep(.btn) {
     width: 100%;
   }
 }

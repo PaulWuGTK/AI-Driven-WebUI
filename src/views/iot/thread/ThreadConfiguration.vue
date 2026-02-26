@@ -8,7 +8,7 @@ import type {
   ThreadSecurityPolicy
 } from '../../../types/thread';
 import { getThreadConfiguration, updateThreadConfiguration } from '../../../services/api/thread';
-import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -28,10 +28,6 @@ const threadEnabled = ref(false);
 const tempThreadEnabled = ref(false); // Temporary state for enable toggle
 const activeDataset = ref<ThreadDatasetConfig | null>(null);
 const pendingDataset = ref<ThreadDatasetConfig | null>(null);
-const showActiveNetworkKey = ref(false);
-const showPendingNetworkKey = ref(false);
-const showActivePSKc = ref(false);
-const showPendingPSKc = ref(false);
 const activeMode = ref<'Auto' | 'Manual'>('Auto');
 const pendingMode = ref<'Auto' | 'Manual'>('Manual');
 
@@ -341,24 +337,11 @@ onMounted(() => {
 
             <div class="form-group">
               <label :data-testid="qa('thread-config-active-network-key-label')">{{ t('thread.networkKey') }}</label>
-              <div class="password-input">
-                <input 
-                  :type="showActiveNetworkKey ? 'text' : 'password'" 
-                  :data-testid="qa('thread-config-active-network-key-input')"
-                  v-model="activeDataset.NetworkKey" 
-                  class="form-control"
-                />
-                <button 
-                  type="button" 
-                  class="toggle-password"
-                  :data-testid="qa('thread-config-active-network-key-toggle')"
-                  @click="showActiveNetworkKey = !showActiveNetworkKey"
-                >
-                  <span class="material-icons">
-                    {{ showActiveNetworkKey ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="activeDataset.NetworkKey"
+                :input-data-testid="qa('thread-config-active-network-key-input')"
+                :toggle-data-testid="qa('thread-config-active-network-key-toggle')"
+              />
             </div>
 
             <div class="form-group">
@@ -415,24 +398,11 @@ onMounted(() => {
 
             <div class="form-group">
               <label :data-testid="qa('thread-config-active-pskc-label')">{{ t('thread.pskc') }}</label>
-              <div class="password-input">
-                <input 
-                  :type="showActivePSKc ? 'text' : 'password'" 
-                  :data-testid="qa('thread-config-active-pskc-input')"
-                  v-model="activeDataset.PSKc" 
-                  class="form-control"
-                />
-                <button 
-                  type="button" 
-                  class="toggle-password"
-                  :data-testid="qa('thread-config-active-pskc-toggle')"
-                  @click="showActivePSKc = !showActivePSKc"
-                >
-                  <span class="material-icons">
-                    {{ showActivePSKc ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="activeDataset.PSKc"
+                :input-data-testid="qa('thread-config-active-pskc-input')"
+                :toggle-data-testid="qa('thread-config-active-pskc-toggle')"
+              />
             </div>
 
             <!-- Security Policy Section -->
@@ -630,24 +600,11 @@ onMounted(() => {
 
             <div class="form-group">
               <label :data-testid="qa('thread-config-pending-network-key-label')">{{ t('thread.networkKey') }}</label>
-              <div class="password-input">
-                <input 
-                  :type="showPendingNetworkKey ? 'text' : 'password'" 
-                  :data-testid="qa('thread-config-pending-network-key-input')"
-                  v-model="pendingDataset.NetworkKey" 
-                  class="form-control"
-                />
-                <button 
-                  type="button" 
-                  class="toggle-password"
-                  :data-testid="qa('thread-config-pending-network-key-toggle')"
-                  @click="showPendingNetworkKey = !showPendingNetworkKey"
-                >
-                  <span class="material-icons">
-                    {{ showPendingNetworkKey ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="pendingDataset.NetworkKey"
+                :input-data-testid="qa('thread-config-pending-network-key-input')"
+                :toggle-data-testid="qa('thread-config-pending-network-key-toggle')"
+              />
             </div>
 
             <div class="form-group">
@@ -704,24 +661,11 @@ onMounted(() => {
 
             <div class="form-group">
               <label :data-testid="qa('thread-config-pending-pskc-label')">{{ t('thread.pskc') }}</label>
-              <div class="password-input">
-                <input 
-                  :type="showPendingPSKc ? 'text' : 'password'" 
-                  :data-testid="qa('thread-config-pending-pskc-input')"
-                  v-model="pendingDataset.PSKc" 
-                  class="form-control"
-                />
-                <button 
-                  type="button" 
-                  class="toggle-password"
-                  :data-testid="qa('thread-config-pending-pskc-toggle')"
-                  @click="showPendingPSKc = !showPendingPSKc"
-                >
-                  <span class="material-icons">
-                    {{ showPendingPSKc ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
+              <BaseSecretInput
+                v-model="pendingDataset.PSKc"
+                :input-data-testid="qa('thread-config-pending-pskc-input')"
+                :toggle-data-testid="qa('thread-config-pending-pskc-toggle')"
+              />
             </div>
 
             <!-- Security Policy Section -->
@@ -973,30 +917,6 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-}
-
-.password-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input input {
-  padding-right: 2.5rem;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.25rem;
-}
-
-.toggle-password:hover {
-  color: var(--text-primary);
 }
 
 .loading-state {

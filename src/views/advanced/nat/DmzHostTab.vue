@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DmzResponse } from '../../../types/dmz';
 import { getDmz, updateDmz } from '../../../services/api/dmz';
-import { BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -114,24 +114,14 @@ onMounted(fetchDmz);
         </div>
 
         <div class="button-group">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="fetchDmz"
-            :disabled="loading"
-            :data-testid="qa('dmz-cancel-button')"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="handleSubmit"
-            :disabled="loading"
-            :data-testid="qa('dmz-apply-button')"
-          >
-            {{ t('common.apply') }}
-          </button>
+          <ActionButtons
+            :cancel-disabled="loading"
+            :apply-disabled="loading"
+            :cancel-data-testid="qa('dmz-cancel-button')"
+            :apply-data-testid="qa('dmz-apply-button')"
+            @cancel="fetchDmz"
+            @apply="handleSubmit"
+          />
         </div>
       </div>
     </div>
@@ -243,7 +233,7 @@ input {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

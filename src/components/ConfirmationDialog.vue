@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { ActionButtons } from './common';
 import { useQA } from '../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -24,14 +25,16 @@ defineEmits<{
     <div class="dialog-content" :data-testid="qa('confirmation-dialog-content')">
       <h3 class="dialog-title" :data-testid="qa('confirmation-dialog-title')">{{ title }}</h3>
       <p class="dialog-message" :data-testid="qa('confirmation-dialog-message')">{{ message }}</p>
-      <div class="dialog-buttons" :data-testid="qa('confirmation-dialog-buttons')">
-        <button class="btn btn-secondary" :data-testid="qa('confirmation-dialog-cancel-button')" @click="$emit('cancel')">
-          {{ cancelText || t('common.no') }}
-        </button>
-        <button class="btn btn-primary" :data-testid="qa('confirmation-dialog-confirm-button')" @click="$emit('confirm')">
-          {{ confirmText || t('common.yes') }}
-        </button>
-      </div>
+      <ActionButtons
+        class="dialog-buttons"
+        :data-testid="qa('confirmation-dialog-buttons')"
+        :cancel-text="cancelText || t('common.no')"
+        :apply-text="confirmText || t('common.yes')"
+        :cancel-data-testid="qa('confirmation-dialog-cancel-button')"
+        :apply-data-testid="qa('confirmation-dialog-confirm-button')"
+        @cancel="$emit('cancel')"
+        @apply="$emit('confirm')"
+      />
     </div>
   </div>
 </template>
@@ -85,7 +88,7 @@ defineEmits<{
     flex-direction: column-reverse;
   }
   
-  .dialog-buttons .btn {
+  .dialog-buttons :deep(.btn) {
     width: 100%;
   }
 }

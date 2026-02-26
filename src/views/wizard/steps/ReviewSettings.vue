@@ -1,6 +1,6 @@
-<script setup lang="ts">
-import { ref } from 'vue';
+﻿<script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { ActionButtons, BaseSecretInput } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
@@ -13,13 +13,6 @@ defineEmits(['prev', 'submit']);
 const { t } = useI18n();
 const { qa } = useQA();
 
-const showCommonPassword = ref(false);
-const showAdminPassword = ref(false);
-const showBandPasswords = ref({
-  '2g': false,
-  '5g': false,
-  '6g': false
-});
 </script>
 
 <template>
@@ -84,12 +77,13 @@ const showBandPasswords = ref({
               <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
               <span class="value">{{ config.wifi.common.security }}</span>
             </div>
-            <div class="review-item password-row">
+                        <div class="review-item password-row">
               <span class="label">{{ t('wizard.reviewPassword') }}</span>
-              <span class="value">{{ showCommonPassword ? config.wifi.common.password : '•'.repeat(config.wifi.common.password.length) }}</span>
-              <button type="button" class="password-toggle-btn" @click="showCommonPassword = !showCommonPassword">
-                <span class="material-icons">{{ showCommonPassword ? 'visibility_off' : 'visibility' }}</span>
-              </button>
+              <BaseSecretInput
+                mode="display"
+                class="review-secret"
+                :model-value="config.wifi.common.password"
+              />
             </div>
           </div>
 
@@ -113,12 +107,13 @@ const showBandPasswords = ref({
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['2g'].security }}</span>
               </div>
-              <div class="review-item password-row">
+                            <div class="review-item password-row">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
-                <span class="value">{{ showBandPasswords['2g'] ? config.wifi.bands['2g'].password : '•'.repeat(config.wifi.bands['2g'].password.length) }}</span>
-                <button type="button" class="password-toggle-btn" @click="showBandPasswords['2g'] = !showBandPasswords['2g']">
-                  <span class="material-icons">{{ showBandPasswords['2g'] ? 'visibility_off' : 'visibility' }}</span>
-                </button>
+                <BaseSecretInput
+                  mode="display"
+                  class="review-secret"
+                  :model-value="config.wifi.bands['2g'].password"
+                />
               </div>
             </div>
 
@@ -132,12 +127,13 @@ const showBandPasswords = ref({
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['5g'].security }}</span>
               </div>
-              <div class="review-item password-row">
+                            <div class="review-item password-row">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
-                <span class="value">{{ showBandPasswords['5g'] ? config.wifi.bands['5g'].password : '•'.repeat(config.wifi.bands['5g'].password.length) }}</span>
-                <button type="button" class="password-toggle-btn" @click="showBandPasswords['5g'] = !showBandPasswords['5g']">
-                  <span class="material-icons">{{ showBandPasswords['5g'] ? 'visibility_off' : 'visibility' }}</span>
-                </button>
+                <BaseSecretInput
+                  mode="display"
+                  class="review-secret"
+                  :model-value="config.wifi.bands['5g'].password"
+                />
               </div>
             </div>
 
@@ -151,12 +147,13 @@ const showBandPasswords = ref({
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value">{{ config.wifi.bands['6g'].security }}</span>
               </div>
-              <div class="review-item password-row">
+                            <div class="review-item password-row">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
-                <span class="value">{{ showBandPasswords['6g'] ? config.wifi.bands['6g'].password : '•'.repeat(config.wifi.bands['6g'].password.length) }}</span>
-                <button type="button" class="password-toggle-btn" @click="showBandPasswords['6g'] = !showBandPasswords['6g']">
-                  <span class="material-icons">{{ showBandPasswords['6g'] ? 'visibility_off' : 'visibility' }}</span>
-                </button>
+                <BaseSecretInput
+                  mode="display"
+                  class="review-secret"
+                  :model-value="config.wifi.bands['6g'].password"
+                />
               </div>
             </div>
           </div>
@@ -168,12 +165,16 @@ const showBandPasswords = ref({
             <span class="label">{{ t('wizard.username') }}:</span>
             <span class="value" :data-testid="qa('wizard-review-admin-username-value')">{{ config.admin.username }}</span>
           </div>
-          <div class="review-item password-row" :data-testid="qa('wizard-review-admin-password-item')">
+                    <div class="review-item password-row" :data-testid="qa('wizard-review-admin-password-item')">
             <span class="label">{{ t('wizard.reviewPassword') }}</span>
-            <span class="value" :data-testid="qa('wizard-review-admin-password-value')">{{ showAdminPassword ? config.admin.password : '•'.repeat(config.admin.password.length) }}</span>
-            <button type="button" class="password-toggle-btn" :data-testid="qa('wizard-review-admin-password-toggle')" @click="showAdminPassword = !showAdminPassword">
-              <span class="material-icons">{{ showAdminPassword ? 'visibility_off' : 'visibility' }}</span>
-            </button>
+            <BaseSecretInput
+              mode="display"
+              class="review-secret"
+              :model-value="config.admin.password"
+              :toggle-data-testid="qa('wizard-review-admin-password-toggle')"
+              :value-data-testid="qa('wizard-review-admin-password-value')"
+              :masked-data-testid="qa('wizard-review-admin-password-value')"
+            />
           </div>
         </div>
       </div>
@@ -184,8 +185,16 @@ const showBandPasswords = ref({
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" :data-testid="qa('wizard-review-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" :data-testid="qa('wizard-review-submit-button')" @click="$emit('submit')">{{ t('common.apply') }}</button>
+      <ActionButtons
+        class="wizard-actions"
+        :cancel-text="t('common.back')"
+        :apply-text="t('common.apply')"
+        cancel-variant="outline"
+        :cancel-data-testid="qa('wizard-review-back-button')"
+        :apply-data-testid="qa('wizard-review-submit-button')"
+        @cancel="$emit('prev')"
+        @apply="$emit('submit')"
+      />
     </div>
   </div>
 </template>
@@ -277,32 +286,23 @@ const showBandPasswords = ref({
   gap: 0.5rem;
 }
 
+.review-secret {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.review-secret :deep(.secret-display) {
+  justify-content: flex-end;
+  text-align: right;
+  width: 100%;
+}
+
 .value {
   color: #333;
   font-weight: 500;
   text-align: right;
   flex: 1;
   word-break: break-all;
-}
-
-.password-toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  transition: color 0.2s;
-}
-
-.password-toggle-btn:hover {
-  color: #0078d4;
-}
-
-.password-toggle-btn .material-icons {
-  font-size: 1.25rem;
 }
 
 .band-info {
@@ -340,35 +340,37 @@ const showBandPasswords = ref({
   gap: 1rem;
 }
 
-.btn-secondary {
-  background: white;
-  color: #0078d4;
-  border: 1px solid #0078d4;
+.wizard-actions :deep(.action-buttons) {
+  display: flex;
+  gap: 1rem;
+}
+
+.wizard-actions :deep(.btn) {
   border-radius: 4px;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-secondary:hover {
+.wizard-actions :deep(.btn-outline) {
+  background: white;
+  color: #0078d4;
+  border-color: #0078d4;
+}
+
+.wizard-actions :deep(.btn-outline:hover:not(:disabled)) {
   background: #f0f8ff;
 }
 
-.btn-primary {
+.wizard-actions :deep(.btn-primary) {
   background: #0078d4;
+  border-color: #0078d4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.btn-primary:hover {
+.wizard-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #006abd;
+  border-color: #006abd;
 }
 </style>
+

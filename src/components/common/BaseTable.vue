@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="table-container">
+    <div class="table-container" :data-testid="tableDataTestid || undefined">
       <table :class="tableClasses">
         <thead>
           <tr>
@@ -17,11 +17,12 @@
               v-for="column in columns"
               :key="column.key"
               :class="getColumnClass(column)"
+              :data-testid="column.headerDataTestid || undefined"
               @click="column.sortable ? handleSort(column.key) : null"
             >
               {{ column.label }}
               <span v-if="column.sortable" class="table-sort-icon">
-                {{ sortKey === column.key ? (sortOrder === 'asc' ? '↑' : '↓') : '↕' }}
+                {{ sortKey === column.key ? (sortOrder === 'asc' ? '↑' : '↓') : '-' }}
               </span>
             </th>
           </tr>
@@ -29,18 +30,28 @@
         <tbody>
           <tr v-if="sortedData.length === 0">
             <td :colspan="columns.length" class="table-empty">
-              <slot name="empty">
+              <slot name="empty" :mobile="false">
                 {{ emptyText }}
               </slot>
             </td>
           </tr>
-          <tr v-for="(row, index) in sortedData" :key="getRowKey(row, index)">
+          <tr
+            v-for="(row, index) in sortedData"
+            :key="getRowKey(row, index)"
+            :data-testid="resolveRowDataTestid(row, index, false) || undefined"
+          >
             <td
               v-for="column in columns"
               :key="column.key"
               :class="getColumnClass(column)"
             >
-              <slot :name="`cell-${column.key}`" :row="row" :column="column" :index="index">
+              <slot
+                :name="`cell-${column.key}`"
+                :row="row"
+                :column="column"
+                :index="index"
+                :mobile="false"
+              >
                 {{ getCellValue(row, column.key) }}
               </slot>
             </td>
@@ -49,15 +60,37 @@
       </table>
     </div>
 
-    <div v-if="responsive" class="mobile-cards">
+    <div v-if="responsive" class="mobile-cards" :data-testid="mobileDataTestid || undefined">
       <div v-if="sortedData.length === 0" class="table-empty">
-        <slot name="empty">{{ emptyText }}</slot>
+        <slot name="empty" :mobile="true">{{ emptyText }}</slot>
       </div>
-      <div v-else v-for="(row, index) in sortedData" :key="getRowKey(row, index)" class="table-card">
+      <div
+        v-else
+        v-for="(row, index) in sortedData"
+        :key="getRowKey(row, index)"
+        class="table-card"
+        :data-testid="resolveRowDataTestid(row, index, true) || undefined"
+      >
         <div v-for="column in columns" :key="column.key" class="card-row">
-          <span class="card-label">{{ column.label }}</span>
+          <span class="card-label">
+            <slot
+              :name="`label-${column.key}`"
+              :row="row"
+              :column="column"
+              :index="index"
+              :mobile="true"
+            >
+              {{ column.label }}
+            </slot>
+          </span>
           <span class="card-value">
-            <slot :name="`cell-${column.key}`" :row="row" :column="column" :index="index">
+            <slot
+              :name="`cell-${column.key}`"
+              :row="row"
+              :column="column"
+              :index="index"
+              :mobile="true"
+            >
               {{ getCellValue(row, column.key) }}
             </slot>
           </span>
@@ -76,6 +109,8 @@ interface Column {
   sortable?: boolean;
   align?: 'left' | 'center' | 'right';
   width?: string;
+  headerDataTestid?: string;
+  sortFn?: (a: any, b: any, order: 'asc' | 'desc') => number;
 }
 
 interface Props {
@@ -89,6 +124,11 @@ interface Props {
   responsive?: boolean;
   emptyText?: string;
   rowKey?: string;
+  tableDataTestid?: string;
+  mobileDataTestid?: string;
+  initialSortKey?: string;
+  initialSortOrder?: 'asc' | 'desc';
+  rowDataTestid?: (row: any, index: number, mobile: boolean) => string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -99,10 +139,14 @@ const props = withDefaults(defineProps<Props>(), {
   responsive: true,
   emptyText: 'No data available',
   rowKey: 'id',
+  tableDataTestid: '',
+  mobileDataTestid: '',
+  initialSortKey: '',
+  initialSortOrder: 'asc',
 });
 
-const sortKey = ref<string>('');
-const sortOrder = ref<'asc' | 'desc'>('asc');
+const sortKey = ref<string>(props.initialSortKey);
+const sortOrder = ref<'asc' | 'desc'>(props.initialSortOrder);
 
 const tableClasses = computed(() => {
   const classes = ['table'];
@@ -121,7 +165,13 @@ const sortedData = computed(() => {
     return props.data;
   }
 
+  const activeColumn = props.columns.find((column) => column.key === sortKey.value);
+
   return [...props.data].sort((a, b) => {
+    if (activeColumn?.sortFn) {
+      return activeColumn.sortFn(a, b, sortOrder.value);
+    }
+
     const aVal = getCellValue(a, sortKey.value);
     const bVal = getCellValue(b, sortKey.value);
 
@@ -166,6 +216,10 @@ const getColumnClass = (column: Column) => {
 
 const getRowKey = (row: any, index: number) => {
   return row[props.rowKey] ?? index;
+};
+
+const resolveRowDataTestid = (row: any, index: number, mobile: boolean) => {
+  return props.rowDataTestid?.(row, index, mobile) ?? '';
 };
 </script>
 

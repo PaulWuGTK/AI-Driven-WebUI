@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import routerModeWireImage from '../../../assets/icons/wizard/pict_router_mode_client_wired.svg';
 
@@ -49,8 +50,16 @@ const { qa } = useQA();
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" :data-testid="qa('wizard-router-env-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" :data-testid="qa('wizard-router-env-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
+      <ActionButtons
+        class="wizard-actions"
+        :cancel-text="t('common.back')"
+        :apply-text="t('common.next')"
+        cancel-variant="outline"
+        :cancel-data-testid="qa('wizard-router-env-back-button')"
+        :apply-data-testid="qa('wizard-router-env-next-button')"
+        @cancel="$emit('prev')"
+        @apply="$emit('next')"
+      />
     </div>
   </div>
 </template>
@@ -291,35 +300,36 @@ const { qa } = useQA();
   gap: 1rem;
 }
 
-.btn-secondary {
-  background: white;
-  color: #0078d4;
-  border: 1px solid #0078d4;
+.wizard-actions :deep(.action-buttons) {
+  display: flex;
+  gap: 1rem;
+}
+
+.wizard-actions :deep(.btn) {
   border-radius: 4px;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-secondary:hover {
+.wizard-actions :deep(.btn-outline) {
+  background: white;
+  color: #0078d4;
+  border-color: #0078d4;
+}
+
+.wizard-actions :deep(.btn-outline:hover:not(:disabled)) {
   background: #f0f8ff;
 }
 
-.btn-primary {
+.wizard-actions :deep(.btn-primary) {
   background: #0078d4;
+  border-color: #0078d4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.btn-primary:hover {
+.wizard-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #006abd;
+  border-color: #006abd;
 }
 </style>

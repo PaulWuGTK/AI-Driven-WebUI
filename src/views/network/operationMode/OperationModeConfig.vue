@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../../../types/operationMode';
 import { getOperationMode, updateOperationMode } from '../../../services/api/operationMode';
+import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 const { qa } = useQA();
@@ -110,22 +111,14 @@ onMounted(fetchOperationMode);
             </div>
 
             <div class="button-group">
-              <button
-                class="btn btn-secondary"
-                :data-testid="qa('operation-mode-cancel-button')"
-                @click="fetchOperationMode"
-                :disabled="loading"
-              >
-                {{ t('common.cancel') }}
-              </button>
-              <button
-                class="btn btn-primary"
-                :data-testid="qa('operation-mode-apply-button')"
-                @click="handleSubmit"
-                :disabled="loading"
-              >
-                {{ t('common.apply') }}
-              </button>
+              <ActionButtons
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                :cancel-data-testid="qa('operation-mode-cancel-button')"
+                :apply-data-testid="qa('operation-mode-apply-button')"
+                @cancel="fetchOperationMode"
+                @apply="handleSubmit"
+              />
             </div>
           </div>
         </div>
@@ -199,7 +192,7 @@ select:disabled {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

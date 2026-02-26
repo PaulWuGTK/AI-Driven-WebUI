@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import type { GuestWiFiResponse } from '../../../../types/guest';
 import { getGuestWiFi, updateGuestWiFi } from '../../../../services/api/guestAccess';
 import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
-import { ActionButtons, BaseSwitch, BaseToast } from '../../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../../components/common';
 import { useAutoDismiss } from '../../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../../utils/apiUtils';
 import { useQA } from '../../../../utils/qa';
@@ -20,7 +20,6 @@ const successMessage = ref('');
 const errorToastMessage = ref('');
 const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
 const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
-const showPassword = ref(false);
 const showBlockingOverlay = ref(false);
 
 // Computed property to check if MLO is disabled by Mesh
@@ -177,26 +176,13 @@ onMounted(fetchGuestWiFi);
 
       <div class="form-group">
         <label :data-testid="qa('guest-wifi-password-label')">{{ t('guest.password') }}</label>
-        <div class="password-input" :data-testid="qa('guest-wifi-password-container')">
-          <input
-            :type="showPassword ? 'text' : 'password'"
-            :data-testid="qa('guest-wifi-password-input')"
-            v-model="guestWiFiData.GuestWiFi.Password"
-            :disabled="guestWiFiData.GuestWiFi.Enable === 0"
-            required
-          />
-          <button 
-            type="button" 
-            class="toggle-password"
-            :data-testid="qa('guest-wifi-password-toggle')"
-            @click="showPassword = !showPassword"
-            :disabled="guestWiFiData.GuestWiFi.Enable === 0"
-          >
-            <span class="material-icons">
-              {{ showPassword ? 'visibility_off' : 'visibility' }}
-            </span>
-          </button>
-        </div>
+        <BaseSecretInput
+          v-model="guestWiFiData.GuestWiFi.Password"
+          :container-data-testid="qa('guest-wifi-password-container')"
+          :input-data-testid="qa('guest-wifi-password-input')"
+          :toggle-data-testid="qa('guest-wifi-password-toggle')"
+          :disabled="guestWiFiData.GuestWiFi.Enable === 0"
+        />
       </div>
 
       <div class="button-group">
@@ -282,36 +268,7 @@ input:disabled, select:disabled {
   cursor: not-allowed;
 }
 
-.password-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input input {
-  padding-right: 2.5rem;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.25rem;
-}
-
-.toggle-password:hover:not(:disabled) {
-  color: var(--text-primary);
-}
-
-.toggle-password:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* Custom switch size (60px × 34px) for larger prominence */
+/* Custom switch size (60px ? 34px) for larger prominence */
 :deep(.switch) {
   width: 60px;
   height: 34px;

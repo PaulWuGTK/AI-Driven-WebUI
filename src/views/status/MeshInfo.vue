@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MeshNode } from '../../types/mesh';
 import { getMeshMap, applySteeringControl } from '../../services/api/mesh'; 
+import { extractNokMessage } from '../../utils/apiUtils';
 import MeshNodeTable from '../../components/mesh/MeshNodeTable.vue';
 import MeshClientTable from '../../components/mesh/MeshClientTable.vue';
 import MeshSteeringModal from '../../components/mesh/MeshSteeringModal.vue';
@@ -54,14 +55,22 @@ const fetchMeshData = async () => {
   error.value = null;
   try {
     const response = await getMeshMap();
-    if ('NOK' in response) {
-      error.value = 'Mesh is disabled';
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      error.value = nokMessage;
       meshData.value = [];
-    } else {
-      // Only update if data has changed
-      if (hasMeshDataChanged(response.MeshMap, meshData.value)) {
-        meshData.value = response.MeshMap;
-      }
+      return;
+    }
+
+    if (!('MeshMap' in response)) {
+      error.value = 'Failed to fetch mesh data';
+      meshData.value = [];
+      return;
+    }
+
+    // Only update if data has changed
+    if (hasMeshDataChanged(response.MeshMap, meshData.value)) {
+      meshData.value = response.MeshMap;
     }
   } catch (err: unknown) {
     console.error('Error fetching mesh data:', err);

@@ -2,7 +2,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DdnsService } from '../../types/ddns';
-import { BaseSwitch } from '../common';
+import { ActionButtons, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -98,14 +98,15 @@ defineEmits<{
         </label>
       </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('ddns-form-cancel-button')" @click="$emit('cancel')">
-          {{ t('ddns.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('ddns-form-save-button')">
-          {{ t('ddns.save') }}
-        </button>
-      </div>
+      <ActionButtons
+        class="button-group"
+        :cancel-text="t('ddns.cancel')"
+        :apply-text="t('ddns.save')"
+        apply-type="submit"
+        :cancel-data-testid="qa('ddns-form-cancel-button')"
+        :apply-data-testid="qa('ddns-form-save-button')"
+        @cancel="$emit('cancel')"
+      />
     </form>
   </div>
 </template>
@@ -141,27 +142,5 @@ input, select {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background-color: #0070BB;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.btn:hover {
-  opacity: 0.9;
 }
 </style>

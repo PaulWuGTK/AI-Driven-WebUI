@@ -156,6 +156,7 @@ import { backupWanApi } from '../../../services/api/backupWan';
 import type { BackupWANConfig, BackupWANRequest } from '../../../types/backupWan';
 import { BaseCard, BaseButton, BaseInput, BaseSelect, BaseSpinner, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
+import { extractNokMessage } from '../../../utils/apiUtils';
 
 const router = useRouter();
 const { qa } = useQA();
@@ -247,6 +248,12 @@ const loadConfig = async () => {
   loading.value = true;
   try {
     const response = await backupWanApi.getConfig();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      console.warn('Failed to load Backup WAN config:', nokMessage);
+      return;
+    }
+
     if (response?.BackupWAN) {
       const config = response.BackupWAN;
       formData.value = {
@@ -285,10 +292,10 @@ const handleSubmit = async () => {
 
     const res = await backupWanApi.updateConfig(requestData);
 
-    const err = res?.BackupWAN?.NOK ?? res?.NOK;
-    if (err) {
-      console.warn('Failed to update Backup WAN config:', err);
-      alert(err);
+    const nokMessage = extractNokMessage(res);
+    if (nokMessage) {
+      console.warn('Failed to update Backup WAN config:', nokMessage);
+      alert(nokMessage);
     } else {
       showSuccessMessage();
       await loadConfig();

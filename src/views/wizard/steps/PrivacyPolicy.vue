@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
@@ -46,22 +47,18 @@ const isAccepted = ref(false);
     </div>
 
     <div class="button-container">
-      <button
-        class="btn-secondary"
-        :data-testid="qa('wizard-privacy-policy-skip-button')"
-        @click="emit('skip')"
-        :disabled="!isAccepted"
-      >
-        {{ t('wizard.manualConfiguration') }}
-      </button>
-      <button
-        class="btn-primary"
-        :data-testid="qa('wizard-privacy-policy-next-button')"
-        @click="emit('next')"
-        :disabled="!isAccepted"
-      >
-        {{ t('wizard.nextButton') }}
-      </button>
+      <ActionButtons
+        class="wizard-actions"
+        :cancel-text="t('wizard.manualConfiguration')"
+        :apply-text="t('wizard.nextButton')"
+        cancel-variant="secondary"
+        :cancel-disabled="!isAccepted"
+        :apply-disabled="!isAccepted"
+        :cancel-data-testid="qa('wizard-privacy-policy-skip-button')"
+        :apply-data-testid="qa('wizard-privacy-policy-next-button')"
+        @cancel="emit('skip')"
+        @apply="emit('next')"
+      />
     </div>
   </div>
 </template>
@@ -161,39 +158,36 @@ const isAccepted = ref(false);
   gap: 1rem;
 }
 
-.btn-primary,
-.btn-secondary {
-  border: none;
+.wizard-actions :deep(.action-buttons) {
+  display: flex;
+  gap: 1rem;
+}
+
+.wizard-actions :deep(.btn) {
   border-radius: 4px;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-primary {
+.wizard-actions :deep(.btn-primary) {
   background: #0078d4;
+  border-color: #0078d4;
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.wizard-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #006abd;
+  border-color: #006abd;
 }
 
-.btn-secondary {
+.wizard-actions :deep(.btn-secondary) {
   background: #f0f0f0;
   color: #333;
-  border: 1px solid #ddd;
+  border-color: #ddd;
 }
 
-.btn-secondary:hover:not(:disabled) {
+.wizard-actions :deep(.btn-secondary:hover:not(:disabled)) {
   background: #e0e0e0;
-}
-
-.btn-primary:disabled,
-.btn-secondary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 </style>

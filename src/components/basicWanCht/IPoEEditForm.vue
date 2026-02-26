@@ -177,20 +177,18 @@
           <BaseInput v-model="localData.SecondaryDNS" :disabled="localData.DNSMode === 'Auto'" :data-testid="qa('ipoe-secondary-dns-input')" />
         </div>
 
-        <template v-if="localData.Protocol === 'Static'">
-          <div class="form-group">
-            <div class="switch-label">
-              <span :data-testid="qa('ipoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
-              <BaseSwitch
-                v-model="localData.NATEnable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('ipoe-nat-toggle')"
-                :slider-data-testid="qa('ipoe-nat-toggle-slider')"
-              />
-            </div>
+        <div class="form-group">
+          <div class="switch-label">
+            <span :data-testid="qa('ipoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
+            <BaseSwitch
+              v-model="localData.NATEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('ipoe-nat-toggle')"
+              :slider-data-testid="qa('ipoe-nat-toggle-slider')"
+            />
           </div>
-        </template>
+        </div>
 
         <div class="form-group">
           <div class="switch-label">

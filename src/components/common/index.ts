@@ -19,3 +19,4 @@ export { default as BaseBadge } from './BaseBadge.vue';
 export { default as BaseSwitch } from './BaseSwitch.vue';
 export { default as BaseToast } from './BaseToast.vue';
 export { default as ActionButtons } from './ActionButtons.vue';
+export { default as BaseSecretInput } from './BaseSecretInput.vue';

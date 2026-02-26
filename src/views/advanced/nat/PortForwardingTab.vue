@@ -144,6 +144,7 @@ import PortForwardingForm from '../../../components/nat/PortForwardingForm.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 import { portForwardingApi } from '../../../services/api/portForwarding';
 import type { PortForwardRule } from '../../../types/portForwarding';
+import { extractNokMessage } from '../../../utils/apiUtils';
 
 const { t } = useI18n();
 
@@ -159,8 +160,17 @@ const errorMessage = ref('');
 
 const fetchRules = async () => {
   loading.value = true;
+  errorMessage.value = '';
   try {
     const response = await portForwardingApi.getConfig();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      errorMessage.value = nokMessage;
+      rules.value = [];
+      wanList.value = [];
+      protoList.value = [];
+      return;
+    }
     rules.value = response.PortForwarding.PortForwardList || [];
     wanList.value = response.PortForwarding.WanList || [];
     protoList.value = response.PortForwarding.ProtoList || [];
@@ -225,8 +235,9 @@ const handleSave = async () => {
       }
     });
 
-    if (response.PortForwarding.NOK) {
-      errorMessage.value = response.PortForwarding.NOK;
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      errorMessage.value = nokMessage;
       return;
     }
 
@@ -255,8 +266,9 @@ const confirmDelete = async () => {
       }
     });
 
-    if (response.PortForwarding.NOK) {
-      errorMessage.value = response.PortForwarding.NOK;
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      errorMessage.value = nokMessage;
       showDeleteDialog.value = false;
       return;
     }

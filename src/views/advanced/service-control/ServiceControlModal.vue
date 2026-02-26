@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import type { ServiceControlRule, ServiceControlOptions, ServiceOption } from '../../../types/serviceControl';
-import { BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 
 import { useQA } from '../../../utils/qa';
 
@@ -263,14 +263,12 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           </div>
 
           <!-- Form Buttons -->
-          <div class="button-group">
-            <button type="button" class="btn btn-secondary" @click="$emit('cancel')">
-              {{ t('common.cancel') }}
-            </button>
-            <button type="submit" class="btn btn-primary">
-              {{ t('common.confirm') }}
-            </button>
-          </div>
+          <ActionButtons
+            class="button-group"
+            :apply-text="t('common.confirm')"
+            apply-type="submit"
+            @cancel="$emit('cancel')"
+          />
         </form>
       </div>
     </div>
@@ -388,7 +386,7 @@ input:disabled, select:disabled {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

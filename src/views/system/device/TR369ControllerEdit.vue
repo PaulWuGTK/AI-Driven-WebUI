@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR369Controller } from '../../../types/tr369';
-import { BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -235,14 +235,14 @@ const handleSubmit = () => {
         </select>
       </div>
 
-      <div class="button-group">
-        <button type="button" class="btn btn-secondary" :data-testid="qa('tr369-controller-edit-cancel-button')" @click="$emit('cancel')">
-          {{ t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('tr369-controller-edit-save-button')">
-          {{ t('common.save') }}
-        </button>
-      </div>
+      <ActionButtons
+        class="button-group"
+        :apply-text="t('common.save')"
+        apply-type="submit"
+        :cancel-data-testid="qa('tr369-controller-edit-cancel-button')"
+        :apply-data-testid="qa('tr369-controller-edit-save-button')"
+        @cancel="$emit('cancel')"
+      />
     </form>
   </div>
 </template>
@@ -308,7 +308,7 @@ input, select {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

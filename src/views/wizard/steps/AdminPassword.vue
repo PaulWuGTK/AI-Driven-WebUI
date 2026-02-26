@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { ActionButtons, BaseSecretInput } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
@@ -14,8 +15,6 @@ const { t } = useI18n();
 const { qa } = useQA();
 
 const confirmPassword = ref('');
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
 
 const passwordsMatch = computed(() => {
   return confirmPassword.value === '' || confirmPassword.value === props.config.admin.password;
@@ -68,42 +67,28 @@ const isValid = computed(() => {
         </div>
 
         <div class="form-group">
-          <label for="new-password">{{ t('wizard.password') }} <span class="required">*</span></label>
-          <div class="password-input">
-            <input
-              id="new-password"
-              :type="showPassword ? 'text' : 'password'"
-              v-model="config.admin.password"
-              :placeholder="t('wizard.passwordPlaceholder')"
-              class="form-input"
-              :class="{ 'input-error': config.admin.password && !isPasswordValid }"
-              :data-testid="qa('wizard-admin-password-input')"
-              required
-            />
-            <button type="button" class="password-toggle" :data-testid="qa('wizard-admin-password-toggle')" @click="showPassword = !showPassword">
-              <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
-            </button>
-          </div>
+          <label>{{ t('wizard.password') }} <span class="required">*</span></label>
+          <BaseSecretInput
+            v-model="config.admin.password"
+            class="admin-password-input"
+            :class="{ 'input-error': config.admin.password && !isPasswordValid }"
+            :placeholder="t('wizard.passwordPlaceholder')"
+            :input-data-testid="qa('wizard-admin-password-input')"
+            :toggle-data-testid="qa('wizard-admin-password-toggle')"
+          />
           <p v-if="config.admin.password && !isPasswordValid" class="error-text">Password can only contain letters (a-z, A-Z) and numbers (0-9)</p>
         </div>
 
         <div class="form-group">
-          <label for="confirm-password">{{ t('wizard.confirmPassword') }} <span class="required">*</span></label>
-          <div class="password-input">
-            <input
-              id="confirm-password"
-              :type="showConfirmPassword ? 'text' : 'password'"
-              v-model="confirmPassword"
-              :placeholder="t('wizard.confirmPasswordPlaceholder')"
-              class="form-input"
-              :class="{ 'input-error': !passwordsMatch }"
-              :data-testid="qa('wizard-admin-confirm-password-input')"
-              required
-            />
-            <button type="button" class="password-toggle" :data-testid="qa('wizard-admin-confirm-password-toggle')" @click="showConfirmPassword = !showConfirmPassword">
-              <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
-            </button>
-          </div>
+          <label>{{ t('wizard.confirmPassword') }} <span class="required">*</span></label>
+          <BaseSecretInput
+            v-model="confirmPassword"
+            class="admin-password-input"
+            :class="{ 'input-error': !passwordsMatch }"
+            :placeholder="t('wizard.confirmPasswordPlaceholder')"
+            :input-data-testid="qa('wizard-admin-confirm-password-input')"
+            :toggle-data-testid="qa('wizard-admin-confirm-password-toggle')"
+          />
           <p v-if="!passwordsMatch" class="error-text">{{ t('wizard.passwordMismatch') }}</p>
         </div>
       </div>
@@ -121,8 +106,17 @@ const isValid = computed(() => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" :data-testid="qa('wizard-admin-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" :data-testid="qa('wizard-admin-next-button')" @click="$emit('next')" :disabled="!isValid">{{ t('common.next') }}</button>
+      <ActionButtons
+        class="wizard-actions"
+        :cancel-text="t('common.back')"
+        :apply-text="t('common.next')"
+        cancel-variant="outline"
+        :cancel-data-testid="qa('wizard-admin-back-button')"
+        :apply-data-testid="qa('wizard-admin-next-button')"
+        :apply-disabled="!isValid"
+        @cancel="$emit('prev')"
+        @apply="$emit('next')"
+      />
     </div>
   </div>
 </template>
@@ -219,20 +213,27 @@ const isValid = computed(() => {
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
-.password-input {
-  position: relative;
+.admin-password-input :deep(.secret-field) {
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-.password-toggle {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  padding: 0.5rem;
+.admin-password-input :deep(.secret-field:focus) {
+  outline: none;
+  border-color: #0078d4;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+
+.admin-password-input.input-error :deep(.secret-field) {
+  border-color: #dc3545;
+}
+
+.admin-password-input.input-error :deep(.secret-field:focus) {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
 .error-text {
@@ -283,40 +284,43 @@ const isValid = computed(() => {
   gap: 1rem;
 }
 
-.btn-secondary {
-  background: white;
-  color: #0078d4;
-  border: 1px solid #0078d4;
+.wizard-actions :deep(.action-buttons) {
+  display: flex;
+  gap: 1rem;
+}
+
+.wizard-actions :deep(.btn) {
   border-radius: 4px;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-secondary:hover {
+.wizard-actions :deep(.btn-outline) {
+  background: white;
+  color: #0078d4;
+  border-color: #0078d4;
+}
+
+.wizard-actions :deep(.btn-outline:hover:not(:disabled)) {
   background: #f0f8ff;
 }
 
-.btn-primary {
+.wizard-actions :deep(.btn-primary) {
   background: #0078d4;
+  border-color: #0078d4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.btn-primary:hover:not(:disabled) {
+.wizard-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #006abd;
+  border-color: #006abd;
 }
 
-.btn-primary:disabled {
+.wizard-actions :deep(.btn-primary:disabled) {
   background: #ccc;
+  border-color: #ccc;
+  opacity: 1;
   cursor: not-allowed;
 }
 </style>

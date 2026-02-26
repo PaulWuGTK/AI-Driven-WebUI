@@ -93,17 +93,12 @@
       </div>
 
       <div class="form-actions">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          :data-testid="qa('port-forward-cancel-btn')"
-          @click="handleCancel"
-        >
-          {{ $t('common.cancel') }}
-        </button>
-        <button type="submit" class="btn btn-primary" :data-testid="qa('port-forward-apply-btn')">
-          {{ $t('common.apply') }}
-        </button>
+        <ActionButtons
+          apply-type="submit"
+          :cancel-data-testid="qa('port-forward-cancel-btn')"
+          :apply-data-testid="qa('port-forward-apply-btn')"
+          @cancel="handleCancel"
+        />
       </div>
     </form>
   </div>
@@ -112,7 +107,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import type { PortForwardRule } from '../../types/portForwarding';
-import { BaseSwitch } from '../common';
+import { ActionButtons, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();
@@ -256,7 +251,7 @@ function handleSubmit() {
     gap: 0.5rem;
   }
 
-  .btn {
+  .form-actions :deep(.btn) {
     width: 100%;
     justify-content: center;
   }

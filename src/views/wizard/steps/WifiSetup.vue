@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { ActionButtons, BaseSecretInput } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
@@ -13,7 +14,6 @@ defineEmits(['next', 'prev']);
 
 const { t } = useI18n();
 const { qa } = useQA();
-const showPassword = ref(false);
 
 const savedBandPasswords = ref({
   '2g': '',
@@ -204,21 +204,13 @@ const showWpa3Warning = computed(() => {
 
         <div class="form-group">
           <label>{{ t('wizard.passwordLabel') }} <span class="required">*</span></label>
-          <div class="password-input">
-            <input
-              :type="showPassword ? 'text' : 'password'"
-              v-model="config.wifi.common.password"
-              :placeholder="t('wizard.passwordPlaceholderWifi')"
-              class="form-input"
-              :data-testid="qa('wizard-wifi-common-password-input')"
-              minlength="8"
-              maxlength="63"
-              required
-            />
-            <button type="button" class="password-toggle" :data-testid="qa('wizard-wifi-common-password-toggle')" @click="showPassword = !showPassword">
-              <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
-            </button>
-          </div>
+          <BaseSecretInput
+            v-model="config.wifi.common.password"
+            :placeholder="t('wizard.passwordPlaceholderWifi')"
+            :input-data-testid="qa('wizard-wifi-common-password-input')"
+            :toggle-data-testid="qa('wizard-wifi-common-password-toggle')"
+            :max-length="63"
+          />
           <p class="help-text">{{ t('wizard.passwordHelpText') }}</p>
         </div>
       </div>
@@ -249,12 +241,11 @@ const showWpa3Warning = computed(() => {
               </div>
               <div class="form-group">
                 <label>{{ t('wizard.passwordLabel') }}</label>
-                <input
-                  type="password"
+                <BaseSecretInput
                   v-model="config.wifi.bands['2g'].password"
-                  class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
-                  :data-testid="qa('wizard-wifi-band-2g-password-input')"
+                  :input-data-testid="qa('wizard-wifi-band-2g-password-input')"
+                  :toggle-data-testid="qa('wizard-wifi-band-2g-password-toggle')"
                 />
               </div>
             </div>
@@ -286,12 +277,11 @@ const showWpa3Warning = computed(() => {
               </div>
               <div class="form-group">
                 <label>{{ t('wizard.passwordLabel') }}</label>
-                <input
-                  type="password"
+                <BaseSecretInput
                   v-model="config.wifi.bands['5g'].password"
-                  class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
-                  :data-testid="qa('wizard-wifi-band-5g-password-input')"
+                  :input-data-testid="qa('wizard-wifi-band-5g-password-input')"
+                  :toggle-data-testid="qa('wizard-wifi-band-5g-password-toggle')"
                 />
               </div>
             </div>
@@ -323,12 +313,11 @@ const showWpa3Warning = computed(() => {
               </div>
               <div class="form-group">
                 <label>{{ t('wizard.passwordLabel') }}</label>
-                <input
-                  type="password"
+                <BaseSecretInput
                   v-model="config.wifi.bands['6g'].password"
-                  class="form-input"
                   :placeholder="t('wizard.passwordPlaceholderShort')"
-                  :data-testid="qa('wizard-wifi-band-6g-password-input')"
+                  :input-data-testid="qa('wizard-wifi-band-6g-password-input')"
+                  :toggle-data-testid="qa('wizard-wifi-band-6g-password-toggle')"
                 />
               </div>
             </div>
@@ -372,8 +361,16 @@ const showWpa3Warning = computed(() => {
     </div>
 
     <div class="button-container">
-      <button class="btn-secondary" :data-testid="qa('wizard-wifi-back-button')" @click="$emit('prev')">{{ t('common.back') }}</button>
-      <button class="btn-primary" :data-testid="qa('wizard-wifi-next-button')" @click="$emit('next')">{{ t('common.next') }}</button>
+      <ActionButtons
+        class="wizard-actions"
+        :cancel-text="t('common.back')"
+        :apply-text="t('common.next')"
+        cancel-variant="outline"
+        :cancel-data-testid="qa('wizard-wifi-back-button')"
+        :apply-data-testid="qa('wizard-wifi-next-button')"
+        @cancel="$emit('prev')"
+        @apply="$emit('next')"
+      />
     </div>
   </div>
 </template>
@@ -630,6 +627,20 @@ input:disabled + .slider {
   box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
 }
 
+.form-group :deep(.secret-field) {
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group :deep(.secret-field:focus) {
+  outline: none;
+  border-color: #0078d4;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+
 .form-select {
   padding: 0.75rem;
   border: 1px solid #ddd;
@@ -643,22 +654,6 @@ input:disabled + .slider {
   outline: none;
   border-color: #0078d4;
   box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
-}
-
-.password-input {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  padding: 0.5rem;
 }
 
 .help-text {
@@ -729,35 +724,36 @@ input:disabled + .slider {
   gap: 1rem;
 }
 
-.btn-secondary {
-  background: white;
-  color: #0078d4;
-  border: 1px solid #0078d4;
+.wizard-actions :deep(.action-buttons) {
+  display: flex;
+  gap: 1rem;
+}
+
+.wizard-actions :deep(.btn) {
   border-radius: 4px;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-secondary:hover {
+.wizard-actions :deep(.btn-outline) {
+  background: white;
+  color: #0078d4;
+  border-color: #0078d4;
+}
+
+.wizard-actions :deep(.btn-outline:hover:not(:disabled)) {
   background: #f0f8ff;
 }
 
-.btn-primary {
+.wizard-actions :deep(.btn-primary) {
   background: #0078d4;
+  border-color: #0078d4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.btn-primary:hover {
+.wizard-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #006abd;
+  border-color: #006abd;
 }
 </style>

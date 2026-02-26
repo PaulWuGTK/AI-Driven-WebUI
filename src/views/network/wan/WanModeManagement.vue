@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeConfig } from '../../../types/wanManagement';
 import { getWanModeManagement, updateWanModeManagement } from '../../../services/api/wanManagement';
 import WanModeEdit from './WanModeEdit.vue';
 import WanModeDetail from './WanModeDetail.vue';
-import { ActionButtons, BaseToast } from '../../../components/common';
+import { ActionButtons, BaseTable, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -23,6 +23,16 @@ const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const isEditing = ref(false);
 const editingMode = ref<WanModeConfig | null>(null);
 const viewingMode = ref<WanModeConfig | null>(null);
+
+const modeColumns = computed(() => [
+  { key: 'WANMode', label: t('wanManagement.name'), headerDataTestid: qa('wan-mode-management-header-name') },
+  { key: 'EnableSensing', label: t('wanManagement.enableSensing'), headerDataTestid: qa('wan-mode-management-header-enable-sensing') },
+  { key: 'DNSMode', label: t('wanManagement.ipv4DnsMode'), headerDataTestid: qa('wan-mode-management-header-ipv4-dns-mode') },
+  { key: 'IPv6DNSMode', label: t('wanManagement.ipv6DnsMode'), headerDataTestid: qa('wan-mode-management-header-ipv6-dns-mode') },
+  { key: 'PhysicalType', label: t('wanManagement.physicalType'), headerDataTestid: qa('wan-mode-management-header-physical-type') },
+  { key: 'Status', label: t('wanManagement.status'), headerDataTestid: qa('wan-mode-management-header-status') },
+  { key: 'actions', label: t('wanManagement.action'), headerDataTestid: qa('wan-mode-management-header-action') },
+]);
 
 const fetchManagementData = async () => {
   loading.value = true;
@@ -175,84 +185,58 @@ onMounted(fetchManagementData);
           </button>
         </div>
 
-        <div class="table-container" :data-testid="qa('wan-mode-management-table-container')">
-          <table :data-testid="qa('wan-mode-management-table')">
-            <thead>
-              <tr>
-                <th :data-testid="qa('wan-mode-management-header-name')">{{ t('wanManagement.name') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-enable-sensing')">{{ t('wanManagement.enableSensing') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-ipv4-dns-mode')">{{ t('wanManagement.ipv4DnsMode') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-ipv6-dns-mode')">{{ t('wanManagement.ipv6DnsMode') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-physical-type')">{{ t('wanManagement.physicalType') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-status')">{{ t('wanManagement.status') }}</th>
-                <th :data-testid="qa('wan-mode-management-header-action')">{{ t('wanManagement.action') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(mode, modeIndex) in tempManagementData" :key="mode.WANMode" :data-testid="qa(`wan-mode-management-row-${modeIndex}`)">
-                <td :data-testid="qa(`wan-mode-management-name-${modeIndex}`)">{{ mode.WANMode }}</td>
-                <td :data-testid="qa(`wan-mode-management-enable-sensing-${modeIndex}`)">{{ mode.EnableSensing ? 'True' : 'False' }}</td>
-                <td :data-testid="qa(`wan-mode-management-ipv4-dns-mode-${modeIndex}`)">{{ mode.DNSMode }}</td>
-                <td :data-testid="qa(`wan-mode-management-ipv6-dns-mode-${modeIndex}`)">{{ mode.IPv6DNSMode }}</td>
-                <td :data-testid="qa(`wan-mode-management-physical-type-${modeIndex}`)">{{ mode.PhysicalType }}</td>
-                <td :data-testid="qa(`wan-mode-management-status-${modeIndex}`)">{{ mode.Status }}</td>
-                <td>
-                  <div class="action-buttons" :data-testid="qa(`wan-mode-management-actions-${modeIndex}`)">
-                    <button class="btn-action" :data-testid="qa(`wan-mode-management-edit-${modeIndex}`)" @click="handleEdit(mode)" title="Edit">
-                      <span class="material-icons">edit</span>
-                    </button>
-                    <button class="btn-action" :data-testid="qa(`wan-mode-management-delete-${modeIndex}`)" @click="handleDelete(mode)" title="Delete">
-                      <span class="material-icons">delete</span>
-                    </button>
-                    <button class="btn-action" :data-testid="qa(`wan-mode-management-detail-${modeIndex}`)" @click="handleDetail(mode)" title="Detail">
-                      <span class="material-icons">info</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="mobile-cards" :data-testid="qa('wan-mode-management-mobile')">
-          <div class="table-card" v-for="(mode, modeIndex) in tempManagementData" :key="mode.WANMode" :data-testid="qa(`wan-mode-management-card-${modeIndex}`)">
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-name-label-${modeIndex}`)">{{ t('wanManagement.name') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-name-value-${modeIndex}`)">{{ mode.WANMode }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-enable-sensing-label-${modeIndex}`)">{{ t('wanManagement.enableSensing') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-enable-sensing-value-${modeIndex}`)">{{ mode.EnableSensing ? 'True' : 'False' }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-ipv4-dns-mode-label-${modeIndex}`)">{{ t('wanManagement.ipv4DnsMode') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-ipv4-dns-mode-value-${modeIndex}`)">{{ mode.DNSMode }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-ipv6-dns-mode-label-${modeIndex}`)">{{ t('wanManagement.ipv6DnsMode') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-ipv6-dns-mode-value-${modeIndex}`)">{{ mode.IPv6DNSMode }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-physical-type-label-${modeIndex}`)">{{ t('wanManagement.physicalType') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-physical-type-value-${modeIndex}`)">{{ mode.PhysicalType }}</span>
-            </div>
-            <div class="card-row">
-              <span class="card-label" :data-testid="qa(`wan-mode-management-card-status-label-${modeIndex}`)">{{ t('wanManagement.status') }}</span>
-              <span class="card-value" :data-testid="qa(`wan-mode-management-card-status-value-${modeIndex}`)">{{ mode.Status }}</span>
-            </div>
-            <div class="card-actions" :data-testid="qa(`wan-mode-management-card-actions-${modeIndex}`)">
-              <button class="btn-action" :data-testid="qa(`wan-mode-management-card-edit-${modeIndex}`)" @click="handleEdit(mode)" title="Edit">
+        <BaseTable
+          class="wan-mode-table"
+          :columns="modeColumns"
+          :data="tempManagementData"
+          row-key="WANMode"
+          :table-data-testid="qa('wan-mode-management-table-container')"
+          :mobile-data-testid="qa('wan-mode-management-mobile')"
+        >
+          <template #cell-WANMode="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-name-value-${index}` : `wan-mode-management-name-${index}`)">
+              {{ row.WANMode }}
+            </span>
+          </template>
+          <template #cell-EnableSensing="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-enable-sensing-value-${index}` : `wan-mode-management-enable-sensing-${index}`)">
+              {{ row.EnableSensing ? 'True' : 'False' }}
+            </span>
+          </template>
+          <template #cell-DNSMode="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-ipv4-dns-mode-value-${index}` : `wan-mode-management-ipv4-dns-mode-${index}`)">
+              {{ row.DNSMode }}
+            </span>
+          </template>
+          <template #cell-IPv6DNSMode="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-ipv6-dns-mode-value-${index}` : `wan-mode-management-ipv6-dns-mode-${index}`)">
+              {{ row.IPv6DNSMode }}
+            </span>
+          </template>
+          <template #cell-PhysicalType="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-physical-type-value-${index}` : `wan-mode-management-physical-type-${index}`)">
+              {{ row.PhysicalType }}
+            </span>
+          </template>
+          <template #cell-Status="{ row, index, mobile }">
+            <span :data-testid="qa(mobile ? `wan-mode-management-card-status-value-${index}` : `wan-mode-management-status-${index}`)">
+              {{ row.Status }}
+            </span>
+          </template>
+          <template #cell-actions="{ row, index, mobile }">
+            <div class="action-buttons" :data-testid="qa(mobile ? `wan-mode-management-card-actions-${index}` : `wan-mode-management-actions-${index}`)">
+              <button class="btn-action" :data-testid="qa(mobile ? `wan-mode-management-card-edit-${index}` : `wan-mode-management-edit-${index}`)" @click="handleEdit(row)" title="Edit">
                 <span class="material-icons">edit</span>
               </button>
-              <button class="btn-action" :data-testid="qa(`wan-mode-management-card-delete-${modeIndex}`)" @click="handleDelete(mode)" title="Delete">
+              <button class="btn-action" :data-testid="qa(mobile ? `wan-mode-management-card-delete-${index}` : `wan-mode-management-delete-${index}`)" @click="handleDelete(row)" title="Delete">
                 <span class="material-icons">delete</span>
               </button>
-              <button class="btn-action" :data-testid="qa(`wan-mode-management-card-detail-${modeIndex}`)" @click="handleDetail(mode)" title="Detail">
+              <button class="btn-action" :data-testid="qa(mobile ? `wan-mode-management-card-detail-${index}` : `wan-mode-management-detail-${index}`)" @click="handleDetail(row)" title="Detail">
                 <span class="material-icons">info</span>
               </button>
             </div>
-          </div>
-        </div>
+          </template>
+        </BaseTable>
 
         <div class="button-group">
           <ActionButtons
@@ -302,8 +286,8 @@ onMounted(fetchManagementData);
   padding: 0.5rem 0;
 }
 
-.table-container{
-  padding:1.5rem;
+.wan-mode-table :deep(.table-container) {
+  padding: 1.5rem;
 }
 
 .btn {
@@ -376,8 +360,7 @@ onMounted(fetchManagementData);
     justify-content: center;
   }
 
-  .mobile-cards {
-    display: block;
+  .wan-mode-table :deep(.mobile-cards) {
     padding: 1.5rem;
   }
   

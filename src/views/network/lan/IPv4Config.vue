@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch, BaseTable } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import IPChangeRedirect from '../../../components/IPChangeRedirect.vue';
 const { isQAMode, qa, slug } = useQA();
@@ -25,6 +25,13 @@ const tempReservation = ref<IPAddressReservation>({
   IPAddress: '',
   Enable: 1
 });
+
+const reservationColumns = computed(() => [
+  { key: 'MACAddress', label: t('lanBasic.macAddress'), headerDataTestid: qa('ipv4-configuration-reservation-header-mac') },
+  { key: 'IPAddress', label: t('lanBasic.ipAddress'), headerDataTestid: qa('ipv4-configuration-reservation-header-ip') },
+  { key: 'Enable', label: t('lanBasic.enable'), headerDataTestid: qa('ipv4-configuration-reservation-header-enable') },
+  { key: 'actions', label: t('lanBasic.action'), headerDataTestid: qa('ipv4-configuration-reservation-header-action') },
+]);
 
 // Validation functions
 const isValidIPv4 = (ip: string): boolean => {
@@ -450,139 +457,68 @@ onMounted(fetchLanBasic);
         </div>
 
         <div class="card-content" :data-testid="qa('ipv4-configuration-reservation-content')">
-          <div class="table-container" :data-testid="qa('ipv4-configuration-reservation-table-container')">
-            <table :data-testid="qa('ipv4-configuration-reservation-table')">
-              <thead>
-                <tr>
-                  <th :data-testid="qa('ipv4-configuration-reservation-header-mac')">{{ t('lanBasic.macAddress') }}</th>
-                  <th :data-testid="qa('ipv4-configuration-reservation-header-ip')">{{ t('lanBasic.ipAddress') }}</th>
-                  <th :data-testid="qa('ipv4-configuration-reservation-header-enable')">{{ t('lanBasic.enable') }}</th>
-                  <th :data-testid="qa('ipv4-configuration-reservation-header-action')">{{ t('lanBasic.action') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(reservation, resIndex) in reservations" :key="resIndex" :data-testid="qa(`ipv4-configuration-reservation-row-${resIndex}`)">
-                  <td>
-                    <input
-                      v-if="editingIndex === resIndex"
-                      type="text"
-                      :data-testid="qa(`ipv4-configuration-reservation-mac-input-${resIndex}`)"
-                      v-model="reservation.MACAddress"
-                      placeholder="00:11:22:33:44:55"
-                    />
-                    <span v-else :data-testid="qa(`ipv4-configuration-reservation-mac-value-${resIndex}`)">{{ reservation.MACAddress }}</span>
-                  </td>
-                  <td>
-                    <input
-                      v-if="editingIndex === resIndex"
-                      type="text"
-                      :data-testid="qa(`ipv4-configuration-reservation-ip-input-${resIndex}`)"
-                      v-model="reservation.IPAddress"
-                      placeholder="192.168.1.100"
-                    />
-                    <span v-else :data-testid="qa(`ipv4-configuration-reservation-ip-value-${resIndex}`)">{{ reservation.IPAddress }}</span>
-                  </td>
-                  <td>
-                    <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-enable-container-${resIndex}`)">
-                      <BaseSwitch
-                        v-model="reservation.Enable"
-                        :true-value="1"
-                        :false-value="0"
-                        :data-testid="qa(`ipv4-configuration-reservation-enable-toggle-${resIndex}`)"
-                        :slider-data-testid="qa(`ipv4-configuration-reservation-enable-slider-${resIndex}`)"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="action-buttons" :data-testid="qa(`ipv4-configuration-reservation-actions-${resIndex}`)">
-                      <template v-if="editingIndex === resIndex">
-                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-confirm-${resIndex}`)" @click="handleConfirmReservation(resIndex)">
-                          <span class="material-icons">check</span>
-                        </button>
-                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-cancel-${resIndex}`)" @click="handleCancelReservation(resIndex)">
-                          <span class="material-icons">close</span>
-                        </button>
-                      </template>
-                      <template v-else>
-                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-edit-${resIndex}`)" @click="handleEditReservation(resIndex)">
-                          <span class="material-icons">edit</span>
-                        </button>
-                        <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-delete-${resIndex}`)" @click="handleDeleteReservation(resIndex)">
-                          <span class="material-icons">delete</span>
-                        </button>
-                      </template>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mobile-cards" :data-testid="qa('ipv4-configuration-reservation-mobile')">
-            <div 
-              class="table-card" 
-              v-for="(reservation, resIndex) in reservations" 
-              :key="resIndex"
-              :data-testid="qa(`ipv4-configuration-reservation-card-${resIndex}`)"
-            >
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-mac-label-${resIndex}`)">{{ t('lanBasic.macAddress') }}</span>
-                <span class="card-value">
-                  <input
-                    v-if="editingIndex === resIndex"
-                    type="text"
-                    :data-testid="qa(`ipv4-configuration-reservation-card-mac-input-${resIndex}`)"
-                    v-model="reservation.MACAddress"
-                    placeholder="00:11:22:33:44:55"
-                  />
-                  <span v-else :data-testid="qa(`ipv4-configuration-reservation-card-mac-value-${resIndex}`)">{{ reservation.MACAddress }}</span>
-                </span>
+          <BaseTable
+            :columns="reservationColumns"
+            :data="reservations"
+            :table-data-testid="qa('ipv4-configuration-reservation-table-container')"
+            :mobile-data-testid="qa('ipv4-configuration-reservation-mobile')"
+          >
+            <template #cell-MACAddress="{ row, index, mobile }">
+              <input
+                v-if="editingIndex === index"
+                type="text"
+                :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-mac-input-${index}` : `ipv4-configuration-reservation-mac-input-${index}`)"
+                v-model="row.MACAddress"
+                placeholder="00:11:22:33:44:55"
+              />
+              <span v-else :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-mac-value-${index}` : `ipv4-configuration-reservation-mac-value-${index}`)">
+                {{ row.MACAddress }}
+              </span>
+            </template>
+            <template #cell-IPAddress="{ row, index, mobile }">
+              <input
+                v-if="editingIndex === index"
+                type="text"
+                :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-ip-input-${index}` : `ipv4-configuration-reservation-ip-input-${index}`)"
+                v-model="row.IPAddress"
+                placeholder="192.168.1.100"
+              />
+              <span v-else :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-ip-value-${index}` : `ipv4-configuration-reservation-ip-value-${index}`)">
+                {{ row.IPAddress }}
+              </span>
+            </template>
+            <template #cell-Enable="{ row, index, mobile }">
+              <div class="switch-label" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-enable-container-${index}` : `ipv4-configuration-reservation-enable-container-${index}`)">
+                <BaseSwitch
+                  v-model="row.Enable"
+                  :true-value="1"
+                  :false-value="0"
+                  :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-enable-toggle-${index}` : `ipv4-configuration-reservation-enable-toggle-${index}`)"
+                  :slider-data-testid="qa(mobile ? `ipv4-configuration-reservation-card-enable-slider-${index}` : `ipv4-configuration-reservation-enable-slider-${index}`)"
+                />
               </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-ip-label-${resIndex}`)">{{ t('lanBasic.ipAddress') }}</span>
-                <span class="card-value">
-                  <input
-                    v-if="editingIndex === resIndex"
-                    type="text"
-                    :data-testid="qa(`ipv4-configuration-reservation-card-ip-input-${resIndex}`)"
-                    v-model="reservation.IPAddress"
-                    placeholder="192.168.1.100"
-                  />
-                  <span v-else :data-testid="qa(`ipv4-configuration-reservation-card-ip-value-${resIndex}`)">{{ reservation.IPAddress }}</span>
-                </span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-label-${resIndex}`)">{{ t('lanBasic.enable') }}</span>
-                <div class="switch-label" :data-testid="qa(`ipv4-configuration-reservation-card-enable-container-${resIndex}`)">
-                  <BaseSwitch
-                    v-model="reservation.Enable"
-                    :true-value="1"
-                    :false-value="0"
-                    :data-testid="qa(`ipv4-configuration-reservation-card-enable-toggle-${resIndex}`)"
-                    :slider-data-testid="qa(`ipv4-configuration-reservation-card-enable-slider-${resIndex}`)"
-                  />
-                </div>
-              </div>
-              <div class="card-actions" :data-testid="qa(`ipv4-configuration-reservation-card-actions-${resIndex}`)">
-                <template v-if="editingIndex === resIndex">
-                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-confirm-${resIndex}`)" @click="handleConfirmReservation(resIndex)">
+            </template>
+            <template #cell-actions="{ index, mobile }">
+              <div :class="mobile ? 'card-actions' : 'action-buttons'" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-actions-${index}` : `ipv4-configuration-reservation-actions-${index}`)">
+                <template v-if="editingIndex === index">
+                  <button class="btn-action" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-confirm-${index}` : `ipv4-configuration-reservation-confirm-${index}`)" @click="handleConfirmReservation(index)">
                     <span class="material-icons">check</span>
                   </button>
-                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-cancel-${resIndex}`)" @click="handleCancelReservation(resIndex)">
+                  <button class="btn-action" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-cancel-${index}` : `ipv4-configuration-reservation-cancel-${index}`)" @click="handleCancelReservation(index)">
                     <span class="material-icons">close</span>
                   </button>
                 </template>
                 <template v-else>
-                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-edit-${resIndex}`)" @click="handleEditReservation(resIndex)">
+                  <button class="btn-action" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-edit-${index}` : `ipv4-configuration-reservation-edit-${index}`)" @click="handleEditReservation(index)">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="btn-action" :data-testid="qa(`ipv4-configuration-reservation-card-delete-${resIndex}`)" @click="handleDeleteReservation(resIndex)">
+                  <button class="btn-action" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-delete-${index}` : `ipv4-configuration-reservation-delete-${index}`)" @click="handleDeleteReservation(index)">
                     <span class="material-icons">delete</span>
                   </button>
                 </template>
               </div>
-            </div>
-          </div>
+            </template>
+          </BaseTable>
         </div>
       </div>
 
@@ -799,14 +735,6 @@ input:disabled {
 
   .button-group :deep(.btn) {
     width: 100%;
-  }
-
-  .table-container {
-    display: none;
-  }
-
-  .mobile-cards {
-    display: block;
   }
 
   .card-actions {

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { StaticRouteIPv4, StaticRouteIPv6 } from '../../../types/staticRoute';
 import { getStaticRoute, updateStaticRoute } from '../../../services/api/staticRoute';
 import StaticRouteForm from '../../../components/routing/StaticRouteForm.vue';
+import { BaseTable } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -17,6 +18,36 @@ const wanIfList = ref<string[]>([]);
 const showModal = ref(false);
 const editingItem = ref<{ type: 'IPv4' | 'IPv6'; index: number; data: StaticRouteIPv4 | StaticRouteIPv6 } | null>(null);
 const showSuccess = ref(false);
+
+const routeColumns = computed(() => [
+  { key: 'no', label: '#', headerDataTestid: qa('static-route-header-no') },
+  { key: 'status', label: t('routing.status'), headerDataTestid: qa('static-route-header-status') },
+  { key: 'Alias', label: t('routing.name'), headerDataTestid: qa('static-route-header-name') },
+  { key: 'DestIp', label: t('routing.destinationIp'), headerDataTestid: qa('static-route-header-destination-ip') },
+  { key: 'subnetMask', label: t('routing.subnetMaskPrefixLength'), headerDataTestid: qa('static-route-header-subnet-mask') },
+  { key: 'GatewayIp', label: t('routing.gateway'), headerDataTestid: qa('static-route-header-gateway') },
+  { key: 'WanIf', label: t('routing.interface'), headerDataTestid: qa('static-route-header-interface') },
+  { key: 'actions', label: t('routing.action'), headerDataTestid: qa('static-route-header-action') },
+]);
+
+const routeRows = computed(() => [
+  ...ipv4Routes.value.map((route, index) => ({
+    ...route,
+    rowKey: `ipv4-${index}`,
+    ipType: 'IPv4' as const,
+    rowIndex: index,
+    no: index + 1,
+    subnetMask: route.DestMask,
+  })),
+  ...ipv6Routes.value.map((route, index) => ({
+    ...route,
+    rowKey: `ipv6-${index}`,
+    ipType: 'IPv6' as const,
+    rowIndex: index,
+    no: ipv4Routes.value.length + index + 1,
+    subnetMask: route.PrefixLen,
+  })),
+]);
 
 const fetchRoutes = async (silent = false) => {
   if (!silent) loading.value = true;
@@ -159,192 +190,79 @@ onMounted(fetchRoutes);
         </div>
 
         <div class="card-content">
-          <div class="table-container" :data-testid="qa('static-route-table')">
-            <table>
-              <thead>
-                <tr>
-                  <th :data-testid="qa('static-route-header-no')">#</th>
-                  <th :data-testid="qa('static-route-header-status')">{{ t('routing.status') }}</th>
-                  <th :data-testid="qa('static-route-header-name')">{{ t('routing.name') }}</th>
-                  <th :data-testid="qa('static-route-header-destination-ip')">{{ t('routing.destinationIp') }}</th>
-                  <th :data-testid="qa('static-route-header-subnet-mask')">{{ t('routing.subnetMaskPrefixLength') }}</th>
-                  <th :data-testid="qa('static-route-header-gateway')">{{ t('routing.gateway') }}</th>
-                  <th :data-testid="qa('static-route-header-interface')">{{ t('routing.interface') }}</th>
-                  <th :data-testid="qa('static-route-header-action')">{{ t('routing.action') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(route, index) in ipv4Routes"
-                  :key="`ipv4-${index}`"
-                  :data-testid="qa(`static-route-ipv4-row-${index}`)"
+          <BaseTable
+            :columns="routeColumns"
+            :data="routeRows"
+            row-key="rowKey"
+            :empty-text="t('routing.noStaticRoutes')"
+            :table-data-testid="qa('static-route-table')"
+            :mobile-data-testid="qa('static-route-mobile')"
+          >
+            <template #cell-no="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-no-${row.rowIndex}`) : undefined">
+                {{ row.no }}
+              </span>
+            </template>
+            <template #cell-status="{ row, mobile }">
+              <span
+                class="material-icons status-icon"
+                :class="{ enabled: row.Enable, disabled: !row.Enable }"
+                :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-status-${row.rowIndex}`) : undefined"
+              >
+                {{ row.Enable ? 'check_circle' : 'cancel' }}
+              </span>
+            </template>
+            <template #cell-Alias="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-name-${row.rowIndex}`) : undefined">
+                {{ row.Alias }}
+              </span>
+            </template>
+            <template #cell-DestIp="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-destination-ip-${row.rowIndex}`) : undefined">
+                {{ row.DestIp }}
+              </span>
+            </template>
+            <template #cell-subnetMask="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-subnet-mask-${row.rowIndex}`) : undefined">
+                {{ row.subnetMask }}
+              </span>
+            </template>
+            <template #cell-GatewayIp="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-gateway-${row.rowIndex}`) : undefined">
+                {{ row.GatewayIp || '-' }}
+              </span>
+            </template>
+            <template #cell-WanIf="{ row, mobile }">
+              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-interface-${row.rowIndex}`) : undefined">
+                {{ row.WanIf }}
+              </span>
+            </template>
+            <template #cell-actions="{ row, mobile }">
+              <div class="action-buttons">
+                <button
+                  class="btn-action"
+                  :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-edit-${row.rowIndex}`) : undefined"
+                  @click="openEditModal(row.ipType, row.rowIndex)"
+                  :title="t('common.edit')"
                 >
-                  <td :data-testid="qa(`static-route-ipv4-no-${index}`)">{{ index + 1 }}</td>
-                  <td :data-testid="qa(`static-route-ipv4-status-${index}`)">
-                    <span class="material-icons status-icon" :class="{ enabled: route.Enable, disabled: !route.Enable }">
-                      {{ route.Enable ? 'check_circle' : 'cancel' }}
-                    </span>
-                  </td>
-                  <td :data-testid="qa(`static-route-ipv4-name-${index}`)">{{ route.Alias }}</td>
-                  <td :data-testid="qa(`static-route-ipv4-destination-ip-${index}`)">{{ route.DestIp }}</td>
-                  <td :data-testid="qa(`static-route-ipv4-subnet-mask-${index}`)">{{ route.DestMask }}</td>
-                  <td :data-testid="qa(`static-route-ipv4-gateway-${index}`)">{{ route.GatewayIp || '-' }}</td>
-                  <td :data-testid="qa(`static-route-ipv4-interface-${index}`)">{{ route.WanIf }}</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button
-                        class="btn-action"
-                        :data-testid="qa(`static-route-ipv4-edit-${index}`)"
-                        @click="openEditModal('IPv4', index)"
-                        :title="t('common.edit')"
-                      >
-                        <span class="material-icons">edit</span>
-                      </button>
-                      <button
-                        class="btn-action"
-                        :data-testid="qa(`static-route-ipv4-delete-${index}`)"
-                        @click="handleDelete('IPv4', index)"
-                        :title="t('common.delete')"
-                      >
-                        <span class="material-icons">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr
-                  v-for="(route, index) in ipv6Routes"
-                  :key="`ipv6-${index}`"
-                  :data-testid="qa(`static-route-ipv6-row-${index}`)"
-                >
-                  <td :data-testid="qa(`static-route-ipv6-no-${index}`)">{{ ipv4Routes.length + index + 1 }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-status-${index}`)">
-                    <span class="material-icons status-icon" :class="{ enabled: route.Enable, disabled: !route.Enable }">
-                      {{ route.Enable ? 'check_circle' : 'cancel' }}
-                    </span>
-                  </td>
-                  <td :data-testid="qa(`static-route-ipv6-name-${index}`)">{{ route.Alias }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-destination-ip-${index}`)">{{ route.DestIp }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-subnet-mask-${index}`)">{{ route.PrefixLen }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-gateway-${index}`)">{{ route.GatewayIp || '-' }}</td>
-                  <td :data-testid="qa(`static-route-ipv6-interface-${index}`)">{{ route.WanIf }}</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button
-                        class="btn-action"
-                        :data-testid="qa(`static-route-ipv6-edit-${index}`)"
-                        @click="openEditModal('IPv6', index)"
-                        :title="t('common.edit')"
-                      >
-                        <span class="material-icons">edit</span>
-                      </button>
-                      <button
-                        class="btn-action"
-                        :data-testid="qa(`static-route-ipv6-delete-${index}`)"
-                        @click="handleDelete('IPv6', index)"
-                        :title="t('common.delete')"
-                      >
-                        <span class="material-icons">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="ipv4Routes.length === 0 && ipv6Routes.length === 0">
-                  <td colspan="8" class="no-data" :data-testid="qa('static-route-no-data')">
-                    {{ t('routing.noStaticRoutes') }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mobile-cards" :data-testid="qa('static-route-mobile')">
-            <div
-              class="table-card"
-              v-for="(route, index) in ipv4Routes"
-              :key="`mobile-ipv4-${index}`"
-              :data-testid="qa(`static-route-ipv4-card-${index}`)"
-            >
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.status') }}</span>
-                <span class="card-value">
-                  <span class="material-icons status-icon" :class="{ enabled: route.Enable, disabled: !route.Enable }">
-                    {{ route.Enable ? 'check_circle' : 'cancel' }}
-                  </span>
-                </span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.name') }}</span>
-                <span class="card-value">{{ route.Alias }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.destinationIp') }}</span>
-                <span class="card-value">{{ route.DestIp }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.subnetMaskPrefixLength') }}</span>
-                <span class="card-value">{{ route.DestMask }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.gateway') }}</span>
-                <span class="card-value">{{ route.GatewayIp || '-' }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.interface') }}</span>
-                <span class="card-value">{{ route.WanIf }}</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn-action" @click="openEditModal('IPv4', index)" :title="t('common.edit')">
                   <span class="material-icons">edit</span>
                 </button>
-                <button class="btn-action" @click="handleDelete('IPv4', index)" :title="t('common.delete')">
+                <button
+                  class="btn-action"
+                  :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-delete-${row.rowIndex}`) : undefined"
+                  @click="handleDelete(row.ipType, row.rowIndex)"
+                  :title="t('common.delete')"
+                >
                   <span class="material-icons">delete</span>
                 </button>
               </div>
-            </div>
-            <div
-              class="table-card"
-              v-for="(route, index) in ipv6Routes"
-              :key="`mobile-ipv6-${index}`"
-              :data-testid="qa(`static-route-ipv6-card-${index}`)"
-            >
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.status') }}</span>
-                <span class="card-value">
-                  <span class="material-icons status-icon" :class="{ enabled: route.Enable, disabled: !route.Enable }">
-                    {{ route.Enable ? 'check_circle' : 'cancel' }}
-                  </span>
-                </span>
+            </template>
+            <template #empty>
+              <div class="no-data" :data-testid="qa('static-route-no-data')">
+                {{ t('routing.noStaticRoutes') }}
               </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.name') }}</span>
-                <span class="card-value">{{ route.Alias }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.destinationIp') }}</span>
-                <span class="card-value">{{ route.DestIp }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.subnetMaskPrefixLength') }}</span>
-                <span class="card-value">{{ route.PrefixLen }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.gateway') }}</span>
-                <span class="card-value">{{ route.GatewayIp || '-' }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label">{{ t('routing.interface') }}</span>
-                <span class="card-value">{{ route.WanIf }}</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn-action" @click="openEditModal('IPv6', index)" :title="t('common.edit')">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-action" @click="handleDelete('IPv6', index)" :title="t('common.delete')">
-                  <span class="material-icons">delete</span>
-                </button>
-              </div>
-            </div>
-          </div>
+            </template>
+          </BaseTable>
         </div>
       </div>
     </template>

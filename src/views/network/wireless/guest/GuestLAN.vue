@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { GuestLANResponse } from '../../../../types/guest';
 import { getGuestLAN, updateGuestLAN } from '../../../../services/api/guestAccess';
-import { BaseSwitch, BaseToast } from '../../../../components/common';
+import { ActionButtons, BaseSwitch, BaseToast } from '../../../../components/common';
 import { useAutoDismiss } from '../../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../../utils/apiUtils';
 import { useQA } from '../../../../utils/qa';
@@ -359,21 +359,14 @@ onMounted(fetchGuestLAN);
       </div>
 
       <div class="button-group">
-        <button 
-          type="button" 
-          class="btn btn-secondary" 
-          :data-testid="qa('guest-lan-cancel-button')"
-          @click="fetchGuestLAN"
-        >
-          {{ t('common.cancel') }}
-        </button>
-        <button 
-          type="submit"
-          class="btn btn-primary"
-          :data-testid="qa('guest-lan-apply-button')"
-        >
-          {{ t('common.apply') }}
-        </button>
+        <ActionButtons
+          apply-type="submit"
+          :cancel-disabled="loading"
+          :apply-disabled="loading"
+          :cancel-data-testid="qa('guest-lan-cancel-button')"
+          :apply-data-testid="qa('guest-lan-apply-button')"
+          @cancel="fetchGuestLAN"
+        />
       </div>
     </form>
 
@@ -505,7 +498,7 @@ input:disabled {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 }

@@ -5,6 +5,7 @@ import type { SshAuthorizedKey } from '../../../types/ssh';
 import { getSshAuthorizedKeys, updateSshAuthorizedKeys } from '../../../services/api/ssh';
 import { extractKeyComment, isValidSshKey } from '../../../utils/sshUtils';
 import SshPublicKeyViewer from '../../../components/ssh/SshPublicKeyViewer.vue';
+import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -156,12 +157,13 @@ onMounted(fetchKeys);
           <div v-if="error" class="error-message" :data-testid="qa('ssh-key-management-add-error')">{{ error }}</div>
         </div>
         <div class="button-group">
-          <button class="btn btn-secondary" :data-testid="qa('ssh-key-management-add-cancel')" @click="newKey = ''">
-            {{ t('common.cancel') }}
-          </button>
-          <button class="btn btn-primary" :data-testid="qa('ssh-key-management-add-create')" @click="handleAddKey">
-            {{ t('common.create') }}
-          </button>
+          <ActionButtons
+            :apply-text="t('common.create')"
+            :cancel-data-testid="qa('ssh-key-management-add-cancel')"
+            :apply-data-testid="qa('ssh-key-management-add-create')"
+            @cancel="newKey = ''"
+            @apply="handleAddKey"
+          />
         </div>
       </div>
     </div>
@@ -332,7 +334,7 @@ textarea {
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 

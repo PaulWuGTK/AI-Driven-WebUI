@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WifiNeighborStatusResponse, WifiNeighborInfo } from '../../types/wifiNeighbor';
 import { getWifiNeighbors, scanWifiNeighbors } from '../../services/api';
+import { BaseTable } from '../../components/common';
+import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -24,9 +26,31 @@ const errors = ref<{ [key: string]: string | null }>({
   '6': null
 });
 
+const neighborColumns = computed(() => [
+  { key: 'SSID', label: t('wifiNeighbor.ssid'), headerDataTestid: qa('wifi-neighbor-header-ssid') },
+  { key: 'BSSID', label: t('wifiNeighbor.bssid'), headerDataTestid: qa('wifi-neighbor-header-bssid') },
+  { key: 'Channel', label: t('wifiNeighbor.channel'), headerDataTestid: qa('wifi-neighbor-header-channel') },
+  { key: 'Signal', label: t('wifiNeighbor.signal'), headerDataTestid: qa('wifi-neighbor-header-signal') },
+  { key: 'Security', label: t('wifiNeighbor.security'), headerDataTestid: qa('wifi-neighbor-header-security') },
+  { key: 'WirelessMode', label: t('wifiNeighbor.wirelessMode'), headerDataTestid: qa('wifi-neighbor-header-wireless-mode') },
+]);
+
+const getNeighborTestId = (band: string, field: string, index: number, mobile: boolean) => {
+  if (mobile) {
+    return qa(`wifi-neighbor-${band}g-card-${field}-value-${index}`);
+  }
+  return qa(`wifi-neighbor-${band}g-${field}-${index}`);
+};
+
 const fetchWifiNeighbors = async () => {
   try {
-    wifiNeighborData.value = await getWifiNeighbors();
+    const response = await getWifiNeighbors();
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      console.error('Error fetching WiFi neighbors:', nokMessage);
+      return;
+    }
+    wifiNeighborData.value = response;
   } catch (error) {
     console.error('Error fetching WiFi neighbors:', error);
   }
@@ -39,12 +63,13 @@ const handleScan = async (band: string) => {
   errors.value[band] = null;
   try {
     const response = await scanWifiNeighbors(band);
-    if ('NOK' in response.WifiNeighbor) {
-      errors.value[band] = String(response.WifiNeighbor.NOK);
+    const nokMessage = extractNokMessage(response);
+    if (nokMessage) {
+      errors.value[band] = nokMessage;
       neighborResults.value[band] = [];
     } else {
       errors.value[band] = null;
-      neighborResults.value[band] = response.WifiNeighbor;
+      neighborResults.value[band] = Array.isArray(response.WifiNeighbor) ? response.WifiNeighbor : [];
     }
   } catch (error) {
     console.error(`Error scanning ${band}G band:`, error);
@@ -72,59 +97,33 @@ onMounted(fetchWifiNeighbors);
             {{ errors['2'] }}
           </div>
 
-          <div class="table-container" v-if="neighborResults['2'].length > 0" :data-testid="qa('wifi-neighbor-2g-table')">
-            <table>
-              <thead>
-                <tr>
-                  <th :data-testid="qa('wifi-neighbor-header-ssid')">{{ t('wifiNeighbor.ssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-bssid')">{{ t('wifiNeighbor.bssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-channel')">{{ t('wifiNeighbor.channel') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-signal')">{{ t('wifiNeighbor.signal') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-security')">{{ t('wifiNeighbor.security') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-wireless-mode')">{{ t('wifiNeighbor.wirelessMode') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(neighbor, neighborIndex) in neighborResults['2']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-2g-row-${neighborIndex}`)">
-                  <td :data-testid="qa(`wifi-neighbor-2g-ssid-${neighborIndex}`)">{{ neighbor.SSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-2g-bssid-${neighborIndex}`)">{{ neighbor.BSSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-2g-channel-${neighborIndex}`)">{{ neighbor.Channel }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-2g-signal-${neighborIndex}`)">{{ neighbor.Signal }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-2g-security-${neighborIndex}`)">{{ neighbor.Security }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-2g-wireless-mode-${neighborIndex}`)">{{ neighbor.WirelessMode }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mobile-cards" v-if="neighborResults['2'].length > 0" :data-testid="qa('wifi-neighbor-2g-mobile')">
-            <div class="table-card" v-for="(neighbor, neighborIndex) in neighborResults['2']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-2g-card-${neighborIndex}`)">
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-ssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.ssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-ssid-value-${neighborIndex}`)">{{ neighbor.SSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-bssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.bssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-bssid-value-${neighborIndex}`)">{{ neighbor.BSSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-channel-label-${neighborIndex}`)">{{ t('wifiNeighbor.channel') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-channel-value-${neighborIndex}`)">{{ neighbor.Channel }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-signal-label-${neighborIndex}`)">{{ t('wifiNeighbor.signal') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-signal-value-${neighborIndex}`)">{{ neighbor.Signal }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-security-label-${neighborIndex}`)">{{ t('wifiNeighbor.security') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-security-value-${neighborIndex}`)">{{ neighbor.Security }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-2g-card-wireless-mode-label-${neighborIndex}`)">{{ t('wifiNeighbor.wirelessMode') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-2g-card-wireless-mode-value-${neighborIndex}`)">{{ neighbor.WirelessMode }}</span>
-              </div>
-            </div>
-          </div>
+          <BaseTable
+            v-if="neighborResults['2'].length > 0"
+            :columns="neighborColumns"
+            :data="neighborResults['2']"
+            row-key="BSSID"
+            :table-data-testid="qa('wifi-neighbor-2g-table')"
+            :mobile-data-testid="qa('wifi-neighbor-2g-mobile')"
+          >
+            <template #cell-SSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'ssid', index, mobile)">{{ row.SSID }}</span>
+            </template>
+            <template #cell-BSSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'bssid', index, mobile)">{{ row.BSSID }}</span>
+            </template>
+            <template #cell-Channel="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'channel', index, mobile)">{{ row.Channel }}</span>
+            </template>
+            <template #cell-Signal="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'signal', index, mobile)">{{ row.Signal }}</span>
+            </template>
+            <template #cell-Security="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'security', index, mobile)">{{ row.Security }}</span>
+            </template>
+            <template #cell-WirelessMode="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('2', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
+            </template>
+          </BaseTable>
 
           <div class="scan-button-container">
             <button 
@@ -148,59 +147,33 @@ onMounted(fetchWifiNeighbors);
             {{ errors['5'] }}
           </div>
 
-          <div class="table-container" v-if="neighborResults['5'].length > 0" :data-testid="qa('wifi-neighbor-5g-table')">
-            <table>
-              <thead>
-                <tr>
-                  <th :data-testid="qa('wifi-neighbor-header-ssid')">{{ t('wifiNeighbor.ssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-bssid')">{{ t('wifiNeighbor.bssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-channel')">{{ t('wifiNeighbor.channel') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-signal')">{{ t('wifiNeighbor.signal') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-security')">{{ t('wifiNeighbor.security') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-wireless-mode')">{{ t('wifiNeighbor.wirelessMode') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(neighbor, neighborIndex) in neighborResults['5']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-5g-row-${neighborIndex}`)">
-                  <td :data-testid="qa(`wifi-neighbor-5g-ssid-${neighborIndex}`)">{{ neighbor.SSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-5g-bssid-${neighborIndex}`)">{{ neighbor.BSSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-5g-channel-${neighborIndex}`)">{{ neighbor.Channel }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-5g-signal-${neighborIndex}`)">{{ neighbor.Signal }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-5g-security-${neighborIndex}`)">{{ neighbor.Security }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-5g-wireless-mode-${neighborIndex}`)">{{ neighbor.WirelessMode }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mobile-cards" v-if="neighborResults['5'].length > 0" :data-testid="qa('wifi-neighbor-5g-mobile')">
-            <div class="table-card" v-for="(neighbor, neighborIndex) in neighborResults['5']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-5g-card-${neighborIndex}`)">
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-ssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.ssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-ssid-value-${neighborIndex}`)">{{ neighbor.SSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-bssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.bssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-bssid-value-${neighborIndex}`)">{{ neighbor.BSSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-channel-label-${neighborIndex}`)">{{ t('wifiNeighbor.channel') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-channel-value-${neighborIndex}`)">{{ neighbor.Channel }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-signal-label-${neighborIndex}`)">{{ t('wifiNeighbor.signal') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-signal-value-${neighborIndex}`)">{{ neighbor.Signal }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-security-label-${neighborIndex}`)">{{ t('wifiNeighbor.security') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-security-value-${neighborIndex}`)">{{ neighbor.Security }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-5g-card-wireless-mode-label-${neighborIndex}`)">{{ t('wifiNeighbor.wirelessMode') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-5g-card-wireless-mode-value-${neighborIndex}`)">{{ neighbor.WirelessMode }}</span>
-              </div>
-            </div>
-          </div>
+          <BaseTable
+            v-if="neighborResults['5'].length > 0"
+            :columns="neighborColumns"
+            :data="neighborResults['5']"
+            row-key="BSSID"
+            :table-data-testid="qa('wifi-neighbor-5g-table')"
+            :mobile-data-testid="qa('wifi-neighbor-5g-mobile')"
+          >
+            <template #cell-SSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'ssid', index, mobile)">{{ row.SSID }}</span>
+            </template>
+            <template #cell-BSSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'bssid', index, mobile)">{{ row.BSSID }}</span>
+            </template>
+            <template #cell-Channel="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'channel', index, mobile)">{{ row.Channel }}</span>
+            </template>
+            <template #cell-Signal="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'signal', index, mobile)">{{ row.Signal }}</span>
+            </template>
+            <template #cell-Security="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'security', index, mobile)">{{ row.Security }}</span>
+            </template>
+            <template #cell-WirelessMode="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('5', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
+            </template>
+          </BaseTable>
 
           <div class="scan-button-container">
             <button 
@@ -224,59 +197,33 @@ onMounted(fetchWifiNeighbors);
             {{ errors['6'] }}
           </div>
 
-          <div class="table-container" v-if="neighborResults['6'].length > 0" :data-testid="qa('wifi-neighbor-6g-table')">
-            <table>
-              <thead>
-                <tr>
-                  <th :data-testid="qa('wifi-neighbor-header-ssid')">{{ t('wifiNeighbor.ssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-bssid')">{{ t('wifiNeighbor.bssid') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-channel')">{{ t('wifiNeighbor.channel') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-signal')">{{ t('wifiNeighbor.signal') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-security')">{{ t('wifiNeighbor.security') }}</th>
-                  <th :data-testid="qa('wifi-neighbor-header-wireless-mode')">{{ t('wifiNeighbor.wirelessMode') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(neighbor, neighborIndex) in neighborResults['6']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-6g-row-${neighborIndex}`)">
-                  <td :data-testid="qa(`wifi-neighbor-6g-ssid-${neighborIndex}`)">{{ neighbor.SSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-6g-bssid-${neighborIndex}`)">{{ neighbor.BSSID }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-6g-channel-${neighborIndex}`)">{{ neighbor.Channel }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-6g-signal-${neighborIndex}`)">{{ neighbor.Signal }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-6g-security-${neighborIndex}`)">{{ neighbor.Security }}</td>
-                  <td :data-testid="qa(`wifi-neighbor-6g-wireless-mode-${neighborIndex}`)">{{ neighbor.WirelessMode }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mobile-cards" v-if="neighborResults['6'].length > 0" :data-testid="qa('wifi-neighbor-6g-mobile')">
-            <div class="table-card" v-for="(neighbor, neighborIndex) in neighborResults['6']" :key="neighbor.BSSID" :data-testid="qa(`wifi-neighbor-6g-card-${neighborIndex}`)">
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-ssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.ssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-ssid-value-${neighborIndex}`)">{{ neighbor.SSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-bssid-label-${neighborIndex}`)">{{ t('wifiNeighbor.bssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-bssid-value-${neighborIndex}`)">{{ neighbor.BSSID }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-channel-label-${neighborIndex}`)">{{ t('wifiNeighbor.channel') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-channel-value-${neighborIndex}`)">{{ neighbor.Channel }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-signal-label-${neighborIndex}`)">{{ t('wifiNeighbor.signal') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-signal-value-${neighborIndex}`)">{{ neighbor.Signal }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-security-label-${neighborIndex}`)">{{ t('wifiNeighbor.security') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-security-value-${neighborIndex}`)">{{ neighbor.Security }}</span>
-              </div>
-              <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wifi-neighbor-6g-card-wireless-mode-label-${neighborIndex}`)">{{ t('wifiNeighbor.wirelessMode') }}</span>
-                <span class="card-value" :data-testid="qa(`wifi-neighbor-6g-card-wireless-mode-value-${neighborIndex}`)">{{ neighbor.WirelessMode }}</span>
-              </div>
-            </div>
-          </div>
+          <BaseTable
+            v-if="neighborResults['6'].length > 0"
+            :columns="neighborColumns"
+            :data="neighborResults['6']"
+            row-key="BSSID"
+            :table-data-testid="qa('wifi-neighbor-6g-table')"
+            :mobile-data-testid="qa('wifi-neighbor-6g-mobile')"
+          >
+            <template #cell-SSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'ssid', index, mobile)">{{ row.SSID }}</span>
+            </template>
+            <template #cell-BSSID="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'bssid', index, mobile)">{{ row.BSSID }}</span>
+            </template>
+            <template #cell-Channel="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'channel', index, mobile)">{{ row.Channel }}</span>
+            </template>
+            <template #cell-Signal="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'signal', index, mobile)">{{ row.Signal }}</span>
+            </template>
+            <template #cell-Security="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'security', index, mobile)">{{ row.Security }}</span>
+            </template>
+            <template #cell-WirelessMode="{ row, index, mobile }">
+              <span :data-testid="getNeighborTestId('6', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
+            </template>
+          </BaseTable>
 
           <div class="scan-button-container">
             <button 

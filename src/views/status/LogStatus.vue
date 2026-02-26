@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LogEntry, LogCategory, LogSeverity } from '../../types/log';
 import { getSystemLog, exportLogs } from '../../services/api/log';
+import { BaseButton } from '../../components/common';
 import LogViewer from '../../components/log/LogViewer.vue';
 import { useQA } from '../../utils/qa';
 
@@ -224,28 +225,30 @@ onMounted(() => {
                 :data-testid="qa('log-search-input')"
                 @keyup.enter="handleSearch"
               />
-              <button
-                class="btn btn-primary"
-                :data-testid="qa('log-search-btn')"
-                @click="handleSearch"
-              >
-                {{ t('logStatus.searchBtn') }}
-              </button>
-              <button
-                class="btn btn-secondary"
-                :data-testid="qa('log-clear-btn')"
-                @click="handleClear"
-              >
-                {{ t('logStatus.clearBtn') }}
-              </button>
-              <button
-                class="btn btn-export"
-                :data-testid="qa('log-export-btn')"
-                :disabled="exporting"
-                @click="handleExport"
-              >
-                {{ exporting ? t('logStatus.exporting') : t('logStatus.exportBtn') }}
-              </button>
+              <div class="search-actions">
+                <BaseButton
+                  variant="primary"
+                  :data-testid="qa('log-search-btn')"
+                  @click="handleSearch"
+                >
+                  {{ t('logStatus.searchBtn') }}
+                </BaseButton>
+                <BaseButton
+                  variant="secondary"
+                  :data-testid="qa('log-clear-btn')"
+                  @click="handleClear"
+                >
+                  {{ t('logStatus.clearBtn') }}
+                </BaseButton>
+                <BaseButton
+                  variant="success"
+                  :data-testid="qa('log-export-btn')"
+                  :loading="exporting"
+                  @click="handleExport"
+                >
+                  {{ t('logStatus.exportBtn') }}
+                </BaseButton>
+              </div>
             </div>
           </div>
         </div>
@@ -371,7 +374,12 @@ onMounted(() => {
   box-shadow: 0 0 0 3px rgba(0, 112, 187, 0.1);
 }
 
-.btn {
+.search-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-actions :deep(.btn) {
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 6px;
@@ -382,36 +390,22 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-.btn-primary {
+.search-actions :deep(.btn-primary) {
   background: #0070bb;
   color: white;
 }
 
-.btn-primary:hover {
+.search-actions :deep(.btn-primary:hover:not(:disabled)) {
   background: #005a94;
 }
 
-.btn-secondary {
+.search-actions :deep(.btn-secondary) {
   background: #6c757d;
   color: white;
 }
 
-.btn-secondary:hover {
+.search-actions :deep(.btn-secondary:hover:not(:disabled)) {
   background: #5a6268;
-}
-
-.btn-export {
-  background: #28a745;
-  color: white;
-}
-
-.btn-export:hover:not(:disabled) {
-  background: #218838;
-}
-
-.btn-export:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .error-message {
@@ -434,6 +428,15 @@ onMounted(() => {
 
   .search-row {
     flex-direction: column;
+  }
+
+  .search-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .search-actions :deep(.btn) {
+    width: 100%;
   }
 
   .log-info {

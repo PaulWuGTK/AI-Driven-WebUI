@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { StatusBridgeLanResponse } from '../../types/statusBridgeLan';
 import { getStatusBridgeLan } from '../../services/api/statusBridgeLan';
+import { ActionButtons } from '../../components/common';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();
@@ -54,9 +55,12 @@ onMounted(() => {
       <div v-if="showDetails" class="panel-section" :data-testid="qa('lan-cht-detail-panel')">
         <div class="header-row">
           <h2 class="section-title-sp">{{ t('lanCht.connectionStatus') }}</h2>
-          <button class="btn btn-secondary" @click="closeDetails" :data-testid="qa('lan-cht-back-button')">
-            {{ t('common.back') }}
-          </button>
+          <ActionButtons
+            :show-apply="false"
+            :cancel-text="t('common.back')"
+            :cancel-data-testid="qa('lan-cht-back-button')"
+            @cancel="closeDetails"
+          />
         </div>
         <div class="card-content">
           <div class="detail-grid">
@@ -127,9 +131,12 @@ onMounted(() => {
       <div v-else class="panel-section" :data-testid="qa('lan-cht-table-panel')">
         <div class="header-row">
           <h2 class="section-title-sp">{{ t('lanCht.connectionStatus') }}</h2>
-          <button class="btn btn-primary" @click="handleUpdate" :data-testid="qa('lan-cht-update-button')">
-            {{ t('common.update') }}
-          </button>
+          <ActionButtons
+            :show-cancel="false"
+            :apply-text="t('common.update')"
+            :apply-data-testid="qa('lan-cht-update-button')"
+            @apply="handleUpdate"
+          />
         </div>
         <div class="card-content">
           <div class="table-container">
@@ -231,7 +238,7 @@ onMounted(() => {
   background-color: var(--bg-tertiary);
 }
 
-.btn {
+.header-row :deep(.btn) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -349,7 +356,7 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .btn {
+  .header-row :deep(.btn) {
     width: 100%;
     justify-content: center;
   }

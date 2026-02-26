@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BasicBridgeLanResponse, BasicBridgeLanUpdateRequest } from '../../../types/basicBridgeLan';
 import { getBasicBridgeLan, updateBasicBridgeLan } from '../../../services/api/basicBridgeLan';
-import { BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -236,22 +236,14 @@ onMounted(fetchLanChtSettings);
             </div>
 
             <div class="button-group">
-              <button
-                class="btn btn-secondary"
-                :data-testid="qa('lan-cht-cancel-button')"
-                @click="handleCancel"
-                :disabled="loading"
-              >
-                {{ t('common.cancel') }}
-              </button>
-              <button
-                class="btn btn-primary"
-                :data-testid="qa('lan-cht-apply-button')"
-                @click="handleSubmit"
-                :disabled="loading"
-              >
-                {{ t('common.apply') }}
-              </button>
+              <ActionButtons
+                :cancel-disabled="loading"
+                :apply-disabled="loading"
+                :cancel-data-testid="qa('lan-cht-cancel-button')"
+                :apply-data-testid="qa('lan-cht-apply-button')"
+                @cancel="handleCancel"
+                @apply="handleSubmit"
+              />
             </div>
           </div>
         </div>
@@ -384,7 +376,7 @@ input,
     flex-direction: column;
   }
 
-  .button-group .btn {
+  .button-group :deep(.btn) {
     width: 100%;
   }
 
