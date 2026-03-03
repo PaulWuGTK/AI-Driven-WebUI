@@ -219,7 +219,7 @@ onUnmounted(() => {
           </button>
 
           <!-- LAN tab hidden for now -->
-          <!-- <button class="tab-button" :class="{ active: activeTab === 'LAN' }" @click="activeTab = 'LAN'">
+          <!-- <button class="tab-button" :class="{ active: activeTab === 'LAN' }" :data-testid="qa('system-stats-lan-tab')" @click="activeTab = 'LAN'">
             {{ t('systemStats.lanThroughput') }}
           </button> -->
 

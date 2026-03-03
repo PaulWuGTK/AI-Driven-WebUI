@@ -71,8 +71,17 @@
         class="table-card"
         :data-testid="resolveRowDataTestid(row, index, true) || undefined"
       >
-        <div v-for="column in columns" :key="column.key" class="card-row">
-          <span class="card-label">
+        <div
+          v-for="column in columns"
+          :key="column.key"
+          class="card-row"
+          :class="{ 'card-row-actions': isActionColumn(column.key) }"
+        >
+          <component
+            :is="isActionColumn(column.key) ? 'div' : 'span'"
+            class="card-label"
+            :class="{ 'card-label-actions': isActionColumn(column.key) }"
+          >
             <slot
               :name="`label-${column.key}`"
               :row="row"
@@ -82,8 +91,12 @@
             >
               {{ column.label }}
             </slot>
-          </span>
-          <span class="card-value">
+          </component>
+          <component
+            :is="isActionColumn(column.key) ? 'div' : 'span'"
+            class="card-value"
+            :class="{ 'card-value-actions': isActionColumn(column.key) }"
+          >
             <slot
               :name="`cell-${column.key}`"
               :row="row"
@@ -93,7 +106,7 @@
             >
               {{ getCellValue(row, column.key) }}
             </slot>
-          </span>
+          </component>
         </div>
       </div>
     </div>
@@ -221,6 +234,8 @@ const getRowKey = (row: any, index: number) => {
 const resolveRowDataTestid = (row: any, index: number, mobile: boolean) => {
   return props.rowDataTestid?.(row, index, mobile) ?? '';
 };
+
+const isActionColumn = (key: string) => key === 'actions';
 </script>
 
 <style scoped>
@@ -243,6 +258,35 @@ const resolveRowDataTestid = (row: any, index: number, mobile: boolean) => {
 .table-sortable th.sorted .table-sort-icon,
 .table-sortable th:hover .table-sort-icon {
   opacity: 1;
+}
+
+.card-row-actions {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-label-actions {
+  flex: 0 0 auto;
+}
+
+.card-value-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.card-value-actions :deep(.action-buttons) {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 @media (max-width: 768px) {

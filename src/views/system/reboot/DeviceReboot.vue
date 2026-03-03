@@ -3,7 +3,7 @@ import { ref, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { restartDevice } from '../../../services/api/reset';
-import { BaseToast } from '../../../components/common';
+import { BaseToast, SectionCard } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -83,24 +83,26 @@ onUnmounted(() => {
     <h1 class="page-title" :data-testid="qa('device-reboot-title')">{{ t('reset.restartTitle') }}</h1>
 
     <div class="status-content" :data-testid="qa('device-reboot-content')">
-      <div class="panel-section" :data-testid="qa('device-reboot-section')">
-        <div class="card-content">
-          <div class="reboot-section">
-            <div class="description" :data-testid="qa('device-reboot-description')">
-              {{ t('reset.restartDescription') }}
-            </div>
-            <button
-              class="btn btn-primary"
-              :data-testid="qa('device-reboot-button')"
-              @click="handleRestart"
-              :disabled="loading || showCountdown"
-            >
-              <span class="material-icons" v-if="loading">sync</span>
-              {{ loading ? t('diagnostics.processing') : t('reset.restartButton') }}
-            </button>
+      <SectionCard
+        :data-testid="qa('device-reboot-section')"
+        :title="t('reset.restartTitle')"
+        :title-data-testid="qa('device-reboot-section-title')"
+      >
+        <div class="reboot-section">
+          <div class="description" :data-testid="qa('device-reboot-description')">
+            {{ t('reset.restartDescription') }}
           </div>
+          <button
+            class="btn btn-primary"
+            :data-testid="qa('device-reboot-button')"
+            @click="handleRestart"
+            :disabled="loading || showCountdown"
+          >
+            <span class="material-icons" v-if="loading">sync</span>
+            {{ loading ? t('diagnostics.processing') : t('reset.restartButton') }}
+          </button>
         </div>
-      </div>
+      </SectionCard>
     </div>
 
     <div v-if="showCountdown" class="countdown-overlay" :data-testid="qa('device-reboot-countdown-overlay')">

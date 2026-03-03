@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ActionButtons, BaseSecretInput } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
@@ -157,10 +157,12 @@ const showWpa3Warning = computed(() => {
               <span class="tooltip-box">{{ t('wizard.smartConnectTooltip') }}</span>
             </span>
           </label>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.smartConnect" :data-testid="qa('wizard-wifi-smart-connect-toggle')" />
-            <span class="slider" :data-testid="qa('wizard-wifi-smart-connect-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.wifi.smartConnect"
+            class="toggle-switch"
+            :data-testid="qa('wizard-wifi-smart-connect-toggle')"
+            :slider-data-testid="qa('wizard-wifi-smart-connect-toggle-slider')"
+          />
         </div>
 
         <div class="toggle-row">
@@ -172,10 +174,13 @@ const showWpa3Warning = computed(() => {
               <span class="tooltip-box">{{ t('wizard.mloTooltip') }}</span>
             </span>
           </label>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.mloEnable" :disabled="!config.wifi.smartConnect" :data-testid="qa('wizard-wifi-mlo-toggle')" />
-            <span class="slider" :data-testid="qa('wizard-wifi-mlo-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.wifi.mloEnable"
+            class="toggle-switch"
+            :disabled="!config.wifi.smartConnect"
+            :data-testid="qa('wizard-wifi-mlo-toggle')"
+            :slider-data-testid="qa('wizard-wifi-mlo-toggle-slider')"
+          />
         </div>
       </div>
 
@@ -220,10 +225,12 @@ const showWpa3Warning = computed(() => {
           <h3>{{ t('wizard.band24ghz') }}</h3>
           <div class="band-toggle">
             <label>{{ t('wizard.enable24ghz') }}</label>
-            <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['2g'].enabled" :data-testid="qa('wizard-wifi-band-2g-enable-toggle')" />
-              <span class="slider" :data-testid="qa('wizard-wifi-band-2g-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="config.wifi.bands['2g'].enabled"
+              class="toggle-switch"
+              :data-testid="qa('wizard-wifi-band-2g-enable-toggle')"
+              :slider-data-testid="qa('wizard-wifi-band-2g-enable-toggle-slider')"
+            />
           </div>
           <div v-if="config.wifi.bands['2g'].enabled" class="band-fields">
             <div class="form-group">
@@ -256,10 +263,12 @@ const showWpa3Warning = computed(() => {
           <h3>{{ t('wizard.band5ghz') }}</h3>
           <div class="band-toggle">
             <label>{{ t('wizard.enable5ghz') }}</label>
-            <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['5g'].enabled" :data-testid="qa('wizard-wifi-band-5g-enable-toggle')" />
-              <span class="slider" :data-testid="qa('wizard-wifi-band-5g-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="config.wifi.bands['5g'].enabled"
+              class="toggle-switch"
+              :data-testid="qa('wizard-wifi-band-5g-enable-toggle')"
+              :slider-data-testid="qa('wizard-wifi-band-5g-enable-toggle-slider')"
+            />
           </div>
           <div v-if="config.wifi.bands['5g'].enabled" class="band-fields">
             <div class="form-group">
@@ -292,10 +301,12 @@ const showWpa3Warning = computed(() => {
           <h3>{{ t('wizard.band6ghz') }}</h3>
           <div class="band-toggle">
             <label>{{ t('wizard.enable6ghz') }}</label>
-            <label class="toggle-switch">
-              <input type="checkbox" v-model="config.wifi.bands['6g'].enabled" :data-testid="qa('wizard-wifi-band-6g-enable-toggle')" />
-              <span class="slider" :data-testid="qa('wizard-wifi-band-6g-enable-toggle-slider')"></span>
-            </label>
+            <BaseSwitch
+              v-model="config.wifi.bands['6g'].enabled"
+              class="toggle-switch"
+              :data-testid="qa('wizard-wifi-band-6g-enable-toggle')"
+              :slider-data-testid="qa('wizard-wifi-band-6g-enable-toggle-slider')"
+            />
           </div>
           <div v-if="config.wifi.bands['6g'].enabled" class="band-fields">
             <div class="form-group">
@@ -336,10 +347,12 @@ const showWpa3Warning = computed(() => {
               <span class="tooltip-box">{{ t('wizard.pscTooltip') }}</span>
             </span>
           </label>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.psc" :data-testid="qa('wizard-wifi-psc-toggle')" />
-            <span class="slider" :data-testid="qa('wizard-wifi-psc-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.wifi.psc"
+            class="toggle-switch"
+            :data-testid="qa('wizard-wifi-psc-toggle')"
+            :slider-data-testid="qa('wizard-wifi-psc-toggle-slider')"
+          />
         </div>
 
         <div class="toggle-row">
@@ -351,10 +364,12 @@ const showWpa3Warning = computed(() => {
               <span class="tooltip-box">{{ t('wizard.pmfTooltip') }}</span>
             </span>
           </label>
-          <label class="toggle-switch">
-            <input type="checkbox" v-model="config.wifi.pmf" :data-testid="qa('wizard-wifi-pmf-toggle')" />
-            <span class="slider" :data-testid="qa('wizard-wifi-pmf-toggle-slider')"></span>
-          </label>
+          <BaseSwitch
+            v-model="config.wifi.pmf"
+            class="toggle-switch"
+            :data-testid="qa('wizard-wifi-pmf-toggle')"
+            :slider-data-testid="qa('wizard-wifi-pmf-toggle-slider')"
+          />
         </div>
       </div>
 
@@ -544,18 +559,22 @@ const showWpa3Warning = computed(() => {
 }
 
 .toggle-switch {
+  display: inline-flex;
+}
+
+.toggle-switch :deep(.switch) {
   position: relative;
   width: 60px;
   height: 32px;
 }
 
-.toggle-switch input {
+.toggle-switch :deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.toggle-switch :deep(.slider) {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -567,7 +586,7 @@ const showWpa3Warning = computed(() => {
   border-radius: 32px;
 }
 
-.slider:before {
+.toggle-switch :deep(.slider:before) {
   position: absolute;
   content: "";
   height: 24px;
@@ -579,15 +598,15 @@ const showWpa3Warning = computed(() => {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+.toggle-switch :deep(.switch input:checked + .slider) {
   background-color: #0078d4;
 }
 
-input:checked + .slider:before {
+.toggle-switch :deep(.switch input:checked + .slider:before) {
   transform: translateX(28px);
 }
 
-input:disabled + .slider {
+.toggle-switch :deep(.switch input:disabled + .slider) {
   opacity: 0.5;
   cursor: not-allowed;
 }

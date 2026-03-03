@@ -185,7 +185,6 @@ onMounted(fetchStatistics);
               :columns="ethernetColumns"
               :data="ethernetRows"
               row-key="Port"
-              striped
               :table-data-testid="qa('statistics-ethernet-table')"
               :mobile-data-testid="qa('statistics-ethernet-mobile')"
               initial-sort-key="Port"
@@ -204,7 +203,6 @@ onMounted(fetchStatistics);
               :columns="wlanColumns"
               :data="wlanRows"
               row-key="Port"
-              striped
               :table-data-testid="qa('statistics-wlan-table')"
               :mobile-data-testid="qa('statistics-wlan-mobile')"
               initial-sort-key="Port"

@@ -73,6 +73,7 @@
                       type="number"
                       :min="3"
                       :max="9999"
+                      :data-testid="qa(`backup-wan-check-count-input-${index}`)"
                     />
                     <span class="help-text">
                       {{ $t('backupWan.checkCountHint') }}
@@ -86,6 +87,7 @@
                       type="number"
                       :min="3"
                       :max="9999999"
+                      :data-testid="qa(`backup-wan-check-period-input-${index}`)"
                     />
                     <span class="help-text">
                       {{ $t('backupWan.checkPeriodHint') }}
@@ -100,6 +102,7 @@
                           :name="`checkMethod${index}`"
                           value="Ping"
                           v-model="healthCheck.CheckMethod"
+                          :data-testid="qa(`backup-wan-check-method-ping-radio-${index}`)"
                         />
                         <span>{{ $t('backupWan.pingDetection') }}</span>
                       </label>
@@ -108,6 +111,7 @@
                         <BaseInput
                           v-model="healthCheck.PingAddress"
                           placeholder="8.8.8.8"
+                          :data-testid="qa(`backup-wan-ping-address-input-${index}`)"
                         />
                       </div>
                     </div>
@@ -119,6 +123,7 @@
                           :name="`checkMethod${index}`"
                           value="DNS"
                           v-model="healthCheck.CheckMethod"
+                          :data-testid="qa(`backup-wan-check-method-dns-radio-${index}`)"
                         />
                         <span>{{ $t('backupWan.dnsDetection') }}</span>
                       </label>
@@ -127,6 +132,7 @@
                         <BaseInput
                           v-model="healthCheck.DNSAddress"
                           placeholder="www.google.com"
+                          :data-testid="qa(`backup-wan-dns-address-input-${index}`)"
                         />
                       </div>
                     </div>

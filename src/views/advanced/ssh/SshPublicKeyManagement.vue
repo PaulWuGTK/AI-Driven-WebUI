@@ -133,13 +133,21 @@ onMounted(fetchKeys);
             <span class="card-label" :data-testid="qa(`ssh-key-management-card-algorithm-label-${index}`)">{{ t('ssh.algorithm') }}</span>
             <span class="card-value" :data-testid="qa(`ssh-key-management-card-algorithm-value-${index}`)">{{ key.Key.split(' ')[0] }}</span>
           </div>
-          <div class="card-actions">
-            <button class="btn btn-view" :data-testid="qa(`ssh-key-management-card-view-${index}`)" @click="handleViewKey(key)">
-              {{ t('ssh.clickToView') }}
-            </button>
-            <button class="btn-action" :data-testid="qa(`ssh-key-management-card-delete-${index}`)" @click="handleDelete(key)" title="Delete">
-              <span class="material-icons">delete</span>
-            </button>
+          <div class="card-row">
+            <span class="card-label" :data-testid="qa(`ssh-key-management-card-public-key-label-${index}`)">{{ t('ssh.publicKey') }}</span>
+            <span class="card-value" :data-testid="qa(`ssh-key-management-card-public-key-value-${index}`)">
+              <button class="btn btn-view" :data-testid="qa(`ssh-key-management-card-view-${index}`)" @click="handleViewKey(key)">
+                {{ t('ssh.clickToView') }}
+              </button>
+            </span>
+          </div>
+          <div class="card-actions" :data-testid="qa(`ssh-key-management-card-actions-row-${index}`)">
+            <span class="card-label" :data-testid="qa(`ssh-key-management-card-actions-label-${index}`)">{{ t('common.action') }}</span>
+            <div class="action-buttons" :data-testid="qa(`ssh-key-management-card-actions-${index}`)">
+              <button class="btn-action" :data-testid="qa(`ssh-key-management-card-delete-${index}`)" @click="handleDelete(key)" title="Delete">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -179,9 +187,11 @@ onMounted(fetchKeys);
 
 <style scoped>
 .key-management {
-  background-color: white;
+  background-color: var(--bg-secondary);
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
 .section-title-sp {
@@ -237,6 +247,16 @@ onMounted(fetchKeys);
 .btn-action:hover {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
+}
+
+.table-container td:last-child .btn-action {
+  margin: 0 auto;
 }
 
 .add-key-section {
@@ -325,9 +345,20 @@ textarea {
 
   .card-actions {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-    margin-top: 1rem;
+    min-width: 0;
   }
 
   .button-group {

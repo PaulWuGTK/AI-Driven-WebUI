@@ -3,7 +3,7 @@ import { ref, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { restartDevice, factoryResetDevice } from '../../../services/api/reset';
-import { BaseToast } from '../../../components/common';
+import { BaseToast, SectionCard } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -109,48 +109,48 @@ onUnmounted(() => {
 
     <div class="status-content" :data-testid="qa('device-reset-content')">
       <!-- Restart Section -->
-      <div class="panel-section" :data-testid="qa('device-restart-section')">
-        <div class="section-title" :data-testid="qa('device-restart-title')">{{ t('reset.restartTitle') }}</div>
-        
-        <div class="card-content">
-          <div class="reset-section">
-            <div class="description" :data-testid="qa('device-restart-description')">
-              {{ t('reset.restartDescription') }}
-            </div>
-            <button 
-              class="btn btn-primary" 
-              :data-testid="qa('device-restart-button')"
-              @click="handleRestart"
-              :disabled="loading.restart || loading.factory || showCountdown"
-            >
-              <span class="material-icons" v-if="loading.restart">sync</span>
-              {{ loading.restart ? t('diagnostics.processing') : t('reset.restartButton') }}
-            </button>
+      <SectionCard
+        :data-testid="qa('device-restart-section')"
+        :title="t('reset.restartTitle')"
+        :title-data-testid="qa('device-restart-title')"
+      >
+        <div class="reset-section">
+          <div class="description" :data-testid="qa('device-restart-description')">
+            {{ t('reset.restartDescription') }}
           </div>
+          <button 
+            class="btn btn-primary" 
+            :data-testid="qa('device-restart-button')"
+            @click="handleRestart"
+            :disabled="loading.restart || loading.factory || showCountdown"
+          >
+            <span class="material-icons" v-if="loading.restart">sync</span>
+            {{ loading.restart ? t('diagnostics.processing') : t('reset.restartButton') }}
+          </button>
         </div>
-      </div>
+      </SectionCard>
 
       <!-- Factory Reset Section -->
-      <div class="panel-section" :data-testid="qa('device-factory-reset-section')">
-        <div class="section-title" :data-testid="qa('device-factory-reset-title')">{{ t('reset.factoryTitle') }}</div>
-        
-        <div class="card-content">
-          <div class="reset-section">
-            <div class="description" :data-testid="qa('device-factory-reset-description')">
-              {{ t('reset.factoryDescription') }}
-            </div>
-            <button 
-              class="btn btn-danger" 
-              :data-testid="qa('device-factory-reset-button')"
-              @click="handleFactoryReset"
-              :disabled="loading.restart || loading.factory || showCountdown"
-            >
-              <span class="material-icons" v-if="loading.factory">sync</span>
-              {{ loading.factory ? t('diagnostics.processing') : t('reset.factoryButton') }}
-            </button>
+      <SectionCard
+        :data-testid="qa('device-factory-reset-section')"
+        :title="t('reset.factoryTitle')"
+        :title-data-testid="qa('device-factory-reset-title')"
+      >
+        <div class="reset-section">
+          <div class="description" :data-testid="qa('device-factory-reset-description')">
+            {{ t('reset.factoryDescription') }}
           </div>
+          <button 
+            class="btn btn-danger" 
+            :data-testid="qa('device-factory-reset-button')"
+            @click="handleFactoryReset"
+            :disabled="loading.restart || loading.factory || showCountdown"
+          >
+            <span class="material-icons" v-if="loading.factory">sync</span>
+            {{ loading.factory ? t('diagnostics.processing') : t('reset.factoryButton') }}
+          </button>
         </div>
-      </div>
+      </SectionCard>
     </div>
 
     <!-- Countdown Overlay -->

@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { backupConfiguration, restoreConfiguration } from '../../../services/api/backup';
+import { SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -75,96 +76,96 @@ const handleRestore = async () => {
 
     <div class="status-content" :data-testid="qa('backup-content')">
       <!-- Backup Section -->
-      <div class="panel-section" :data-testid="qa('backup-section')">
-        <div class="section-title" :data-testid="qa('backup-section-title')">{{ t('backup.backupTitle') }}</div>
-        
-        <div class="card-content">
-          <div class="description" :data-testid="qa('backup-description')">
-            {{ t('backup.backupDescription') }}
-          </div>
-          <div class="button-container">
-            <button 
-              class="btn btn-primary"
-              :data-testid="qa('backup-button')"
-              @click="handleBackup"
-              :disabled="loading"
-            >
-              <span class="material-icons" v-if="loading">sync</span>
-              {{ t('backup.backupButton') }}
-            </button>
-          </div>
+      <SectionCard
+        :data-testid="qa('backup-section')"
+        :title="t('backup.backupTitle')"
+        :title-data-testid="qa('backup-section-title')"
+      >
+        <div class="description" :data-testid="qa('backup-description')">
+          {{ t('backup.backupDescription') }}
         </div>
-      </div>
+        <div class="button-container">
+          <button 
+            class="btn btn-primary"
+            :data-testid="qa('backup-button')"
+            @click="handleBackup"
+            :disabled="loading"
+          >
+            <span class="material-icons" v-if="loading">sync</span>
+            {{ t('backup.backupButton') }}
+          </button>
+        </div>
+      </SectionCard>
 
       <!-- Restore Section -->
-      <div class="panel-section" :data-testid="qa('restore-section')">
-        <div class="section-title" :data-testid="qa('restore-section-title')">{{ t('backup.restoreTitle') }}</div>
-        
-        <div class="card-content">
-          <div class="description" :data-testid="qa('restore-description')">
-            {{ t('backup.restoreDescription') }}
-          </div>
+      <SectionCard
+        :data-testid="qa('restore-section')"
+        :title="t('backup.restoreTitle')"
+        :title-data-testid="qa('restore-section-title')"
+      >
+        <div class="description" :data-testid="qa('restore-description')">
+          {{ t('backup.restoreDescription') }}
+        </div>
 
-          <div 
-            class="drop-zone"
-            :class="{ dragging: isDragging }"
-            :data-testid="qa('restore-drop-zone')"
-            @drop="handleDrop"
-            @dragover="handleDragOver"
-            @dragleave="handleDragLeave"
-          >
-            <div class="drop-zone-content">
-              <span class="material-icons">cloud_upload</span>
-              <p class="drop-text" :data-testid="qa('restore-drop-text')">{{ t('backup.dragAndDrop') }}</p>
-              <p class="separator" :data-testid="qa('restore-separator-text')">{{ t('backup.selectFromComputer') }}</p>
-              <button 
-                class="btn btn-secondary"
-                :data-testid="qa('restore-choose-file-button')"
-                @click="() => fileInput?.click()"
-              >
-                {{ t('backup.chooseFile') }}
-              </button>
-            </div>
-          </div>
-
-          <div v-if="selectedFile" class="selected-file" :data-testid="qa('restore-selected-file')">
-            <span class="material-icons">description</span>
-            <span class="file-name" :data-testid="qa('restore-selected-file-name')">{{ selectedFile.name }}</span>
+        <div 
+          class="drop-zone"
+          :class="{ dragging: isDragging }"
+          :data-testid="qa('restore-drop-zone')"
+          @drop="handleDrop"
+          @dragover="handleDragOver"
+          @dragleave="handleDragLeave"
+        >
+          <div class="drop-zone-content">
+            <span class="material-icons">cloud_upload</span>
+            <p class="drop-text" :data-testid="qa('restore-drop-text')">{{ t('backup.dragAndDrop') }}</p>
+            <p class="separator" :data-testid="qa('restore-separator-text')">{{ t('backup.selectFromComputer') }}</p>
             <button 
-              class="btn-clear"
-              :data-testid="qa('restore-clear-file-button')"
-              @click="selectedFile = null"
+              class="btn btn-secondary"
+              :data-testid="qa('restore-choose-file-button')"
+              @click="() => fileInput?.click()"
             >
-              <span class="material-icons">close</span>
-            </button>
-          </div>
-
-          <input 
-            type="file" 
-            ref="fileInput"
-            :data-testid="qa('restore-file-input')"
-            @change="handleFileSelect"
-            style="display: none"
-            accept=".bin"
-          >
-
-          <div v-if="error" class="error-message" :data-testid="qa('restore-error-message')">
-            {{ error }}
-          </div>
-
-          <div class="button-container">
-            <button 
-              class="btn btn-primary"
-              :data-testid="qa('restore-button')"
-              @click="handleRestore"
-              :disabled="!selectedFile || loading"
-            >
-              <span class="material-icons" v-if="loading">sync</span>
-              {{ loading ? t('backup.processing') : t('backup.restoreButton') }}
+              {{ t('backup.chooseFile') }}
             </button>
           </div>
         </div>
-      </div>
+
+        <div v-if="selectedFile" class="selected-file" :data-testid="qa('restore-selected-file')">
+          <span class="material-icons">description</span>
+          <span class="file-name" :data-testid="qa('restore-selected-file-name')">{{ selectedFile.name }}</span>
+          <button 
+            class="btn-clear"
+            :data-testid="qa('restore-clear-file-button')"
+            @click="selectedFile = null"
+          >
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+
+        <input 
+          type="file" 
+          ref="fileInput"
+          :data-testid="qa('restore-file-input')"
+          @change="handleFileSelect"
+          style="display: none"
+          accept=".bin"
+        >
+
+        <div v-if="error" class="error-message" :data-testid="qa('restore-error-message')">
+          {{ error }}
+        </div>
+
+        <div class="button-container">
+          <button 
+            class="btn btn-primary"
+            :data-testid="qa('restore-button')"
+            @click="handleRestore"
+            :disabled="!selectedFile || loading"
+          >
+            <span class="material-icons" v-if="loading">sync</span>
+            {{ loading ? t('backup.processing') : t('backup.restoreButton') }}
+          </button>
+        </div>
+      </SectionCard>
     </div>
   </div>
 </template>

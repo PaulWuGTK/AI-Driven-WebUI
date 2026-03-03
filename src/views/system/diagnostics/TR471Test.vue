@@ -5,12 +5,15 @@ import { getTR471Config, runTR471Test } from '../../../services/api/tr471';
 import type { TR471Config, TR471TestResult } from '../../../types/tr471';
 import BaseButton from '../../../components/common/BaseButton.vue';
 import BaseInput from '../../../components/common/BaseInput.vue';
+import BaseSecretInput from '../../../components/common/BaseSecretInput.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
 import BaseCheckbox from '../../../components/common/BaseCheckbox.vue';
 import BaseSpinner from '../../../components/common/BaseSpinner.vue';
 import LineChart from '../../../components/LineChart.vue';
+import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
+const { qa } = useQA();
 
 const loading = ref(false);
 const showAdvanced = ref(false);
@@ -162,12 +165,12 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
         <div class="form-grid">
           <div class="form-field">
             <label class="form-label">{{ t('tr471.connection_server') }}</label>
-            <BaseInput v-model="config.Server" />
+            <BaseInput v-model="config.Server" :data-testid="qa('tr471-connection-server-input')" />
           </div>
 
           <div class="form-field">
             <label class="form-label">{{ t('tr471.connection_port') }}</label>
-            <BaseInput v-model="config.Port" type="number" />
+            <BaseInput v-model="config.Port" type="number" :data-testid="qa('tr471-connection-port-input')" />
           </div>
         </div>
 
@@ -176,6 +179,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
             @click="toggleAdvanced"
             variant="secondary"
             :fullWidth="true"
+            :data-testid="qa('tr471-advanced-toggle-button')"
           >
             {{ showAdvanced ? t('tr471.advanced_toggleHide') : t('tr471.advanced_toggleShow') }}
           </BaseButton>
@@ -185,12 +189,12 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
           <div class="form-grid">
             <div class="form-field">
               <label class="form-label">{{ t('tr471.connection_mtu') }}</label>
-              <BaseInput v-model="config.MTU" type="number" />
+              <BaseInput v-model="config.MTU" type="number" :data-testid="qa('tr471-connection-mtu-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.connection_dscp') }}</label>
-              <BaseInput v-model="config.DSCP" type="number" />
+              <BaseInput v-model="config.DSCP" type="number" :data-testid="qa('tr471-connection-dscp-input')" />
             </div>
 
             <div class="form-field">
@@ -198,6 +202,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseSelect
                 v-model="config.ProtocolVersion"
                 :options="config.ListProtocolVersion || []"
+                :data-testid="qa('tr471-connection-protocol-version-select')"
               />
             </div>
 
@@ -206,6 +211,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseSelect
                 v-model="config.Interface"
                 :options="config.ListInterface || []"
+                :data-testid="qa('tr471-connection-network-interface-select')"
               />
             </div>
 
@@ -214,6 +220,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseSelect
                 v-model="config.RateAdjAlgorithm"
                 :options="config.ListRateAdjAlgorithm || []"
+                :data-testid="qa('tr471-connection-algorithm-select')"
               />
             </div>
 
@@ -222,6 +229,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
                 <input
                   type="checkbox"
                   :checked="config.JumboFramesPermitted === 1"
+                  :data-testid="qa('tr471-jumbo-frames-permitted-checkbox')"
                   @change="config.JumboFramesPermitted = ($event.target as HTMLInputElement).checked ? 1 : 0"
                 />
                 <span>{{ t('tr471.connection_jumboFramesPermitted') }}</span>
@@ -233,6 +241,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
                 <input
                   type="checkbox"
                   :checked="config.LocalInterfaceRateIncluded === 1"
+                  :data-testid="qa('tr471-local-interface-rate-included-checkbox')"
                   @change="config.LocalInterfaceRateIncluded = ($event.target as HTMLInputElement).checked ? 1 : 0"
                 />
                 <span>{{ t('tr471.connection_interfaceRateIncluded') }}</span>
@@ -244,6 +253,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
                 <input
                   type="checkbox"
                   :checked="config.IPDVEnable === 1"
+                  :data-testid="qa('tr471-ipdv-enable-checkbox')"
                   @change="config.IPDVEnable = ($event.target as HTMLInputElement).checked ? 1 : 0"
                 />
                 <span>{{ t('tr471.connection_ipdvEnable') }}</span>
@@ -252,17 +262,17 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_flowCount') }}</label>
-              <BaseInput v-model="config.FlowCount" type="number" />
+              <BaseInput v-model="config.FlowCount" type="number" :data-testid="qa('tr471-advanced-flow-count-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_maximumFlows') }}</label>
-              <BaseInput v-model="config.MaximumFlows" type="number" />
+              <BaseInput v-model="config.MaximumFlows" type="number" :data-testid="qa('tr471-advanced-maximum-flows-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.connection_ethernetPriority') }}</label>
-              <BaseInput v-model="config.EthernetPriority" type="number" />
+              <BaseInput v-model="config.EthernetPriority" type="number" :data-testid="qa('tr471-connection-ethernet-priority-input')" />
             </div>
 
             <div class="form-field">
@@ -270,47 +280,48 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseSelect
                 v-model="config.UDPPayloadContent"
                 :options="config.ListUDPPayloadContent || []"
+                :data-testid="qa('tr471-connection-udp-payload-content-select')"
               />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_maximumTestBandwidth') }}</label>
-              <BaseInput v-model="config.MaximumTestBandwidth" type="number" />
+              <BaseInput v-model="config.MaximumTestBandwidth" type="number" :data-testid="qa('tr471-advanced-maximum-test-bandwidth-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_startSendingRate') }}</label>
-              <BaseInput v-model="config.StartSendingRate" type="number" />
+              <BaseInput v-model="config.StartSendingRate" type="number" :data-testid="qa('tr471-advanced-start-sending-rate-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_startSendingRateIndex') }}</label>
-              <BaseInput v-model="config.StartSendingRateIndex" type="number" />
+              <BaseInput v-model="config.StartSendingRateIndex" type="number" :data-testid="qa('tr471-advanced-start-sending-rate-index-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_numberTestSubIntervals') }}</label>
-              <BaseInput v-model="config.NumberTestSubIntervals" type="number" />
+              <BaseInput v-model="config.NumberTestSubIntervals" type="number" :data-testid="qa('tr471-advanced-number-test-sub-intervals-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_numberFirstModeTestSubIntervals') }}</label>
-              <BaseInput v-model="config.NumberFirstModeTestSubIntervals" type="number" />
+              <BaseInput v-model="config.NumberFirstModeTestSubIntervals" type="number" :data-testid="qa('tr471-advanced-number-first-mode-test-sub-intervals-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_testSubInterval') }}</label>
-              <BaseInput v-model="config.TestSubInterval" type="number" />
+              <BaseInput v-model="config.TestSubInterval" type="number" :data-testid="qa('tr471-advanced-test-sub-interval-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_statusFeedbackInterval') }}</label>
-              <BaseInput v-model="config.StatusFeedbackInterval" type="number" />
+              <BaseInput v-model="config.StatusFeedbackInterval" type="number" :data-testid="qa('tr471-advanced-status-feedback-interval-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_retryThresh') }}</label>
-              <BaseInput v-model="config.RetryThresh" type="number" />
+              <BaseInput v-model="config.RetryThresh" type="number" :data-testid="qa('tr471-advanced-retry-thresh-input')" />
             </div>
 
             <div class="form-field">
@@ -318,12 +329,13 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseSelect
                 v-model="config.TestType"
                 :options="config.ListTestType || []"
+                :data-testid="qa('tr471-advanced-test-type-select')"
               />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_seqErrThresh') }}</label>
-              <BaseInput v-model="config.SeqErrThresh" type="number" />
+              <BaseInput v-model="config.SeqErrThresh" type="number" :data-testid="qa('tr471-advanced-seq-err-thresh-input')" />
             </div>
 
             <div class="form-field checkbox-group">
@@ -331,6 +343,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
                 <input
                   type="checkbox"
                   :checked="config.ReordDupIgnoreEnable === 1"
+                  :data-testid="qa('tr471-reord-dup-ignore-enable-checkbox')"
                   @change="config.ReordDupIgnoreEnable = ($event.target as HTMLInputElement).checked ? 1 : 0"
                 />
                 <span>{{ t('tr471.advanced_reordDupIgnoreEnable') }}</span>
@@ -339,22 +352,22 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_lowerThresh') }}</label>
-              <BaseInput v-model="config.LowerThresh" type="number" />
+              <BaseInput v-model="config.LowerThresh" type="number" :data-testid="qa('tr471-advanced-lower-thresh-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_upperThresh') }}</label>
-              <BaseInput v-model="config.UpperThresh" type="number" />
+              <BaseInput v-model="config.UpperThresh" type="number" :data-testid="qa('tr471-advanced-upper-thresh-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_slowAdjThresh') }}</label>
-              <BaseInput v-model="config.SlowAdjThresh" type="number" />
+              <BaseInput v-model="config.SlowAdjThresh" type="number" :data-testid="qa('tr471-advanced-slow-adj-thresh-input')" />
             </div>
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.advanced_highSpeedDelta') }}</label>
-              <BaseInput v-model="config.HighSpeedDelta" type="number" />
+              <BaseInput v-model="config.HighSpeedDelta" type="number" :data-testid="qa('tr471-advanced-high-speed-delta-input')" />
             </div>
 
             <div class="form-field checkbox-group">
@@ -362,6 +375,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
                 <input
                   type="checkbox"
                   :checked="config.AuthenticationEnabled === 1"
+                  :data-testid="qa('tr471-authentication-enabled-checkbox')"
                   @change="config.AuthenticationEnabled = ($event.target as HTMLInputElement).checked ? 1 : 0"
                 />
                 <span>{{ t('tr471.connection_authenticationEnabled') }}</span>
@@ -370,10 +384,11 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 
             <div class="form-field">
               <label class="form-label">{{ t('tr471.connection_authenticationCode') }}</label>
-              <BaseInput
+              <BaseSecretInput
                 v-model="config.AuthenticationCode"
-                type="password"
                 :placeholder="t('tr471.connection_authenticationCode')"
+                :input-data-testid="'tr471-authentication-code-input'"
+                :toggle-data-testid="'tr471-authentication-code-toggle'"
               />
             </div>
           </div>
@@ -386,10 +401,12 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               <BaseCheckbox
                 v-model="testTypes.upload"
                 :label="t('tr471.test_upload')"
+                :data-testid="qa('tr471-test-upload-checkbox')"
               />
               <BaseCheckbox
                 v-model="testTypes.download"
                 :label="t('tr471.test_download')"
+                :data-testid="qa('tr471-test-download-checkbox')"
               />
             </div>
           </div>
@@ -399,6 +416,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
               @click="runTest"
               :disabled="!canRunTest || isRunning"
               variant="primary"
+              :data-testid="qa('tr471-run-test-button')"
             >
               {{ isRunning ? t('tr471.test_running') : t('tr471.test_run') }}
             </BaseButton>

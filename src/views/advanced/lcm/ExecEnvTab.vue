@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExecEnvItem } from '../../../types/lcmExecEnv';
 import { getLcmExecEnvConfig, updateLcmExecEnv } from '../../../services/api/lcmExecEnv';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch, SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -245,11 +245,13 @@ onMounted(fetchConfig);
     </div>
 
     <template v-else>
-      <div class="panel-section" :data-testid="qa('lcm-execenv-section')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('lcm-execenv-title')">
-            {{ t('lcm.executionEnvironment') }}
-          </div>
+      <SectionCard
+        :data-testid="qa('lcm-execenv-section')"
+        header-mode="row"
+        :title="t('lcm.executionEnvironment')"
+        :title-data-testid="qa('lcm-execenv-title')"
+      >
+        <template #actions>
           <button
             class="btn btn-primary"
             :data-testid="qa('lcm-execenv-add-button')"
@@ -258,9 +260,8 @@ onMounted(fetchConfig);
             <span class="material-icons">add</span>
             {{ t('lcm.addEE') }}
           </button>
-        </div>
+        </template>
 
-        <div class="card-content">
           <div class="table-container" :data-testid="qa('lcm-execenv-table')">
             <table>
               <thead>
@@ -337,29 +338,31 @@ onMounted(fetchConfig);
                 />
               </div>
               <div class="card-actions">
-                <button class="btn-action" @click="openEditModal(item)" title="Edit">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-action" @click="handleDelete(item.Name)" title="Delete">
-                  <span class="material-icons">delete</span>
-                </button>
+                <span class="card-label">{{ t('lcm.action') }}</span>
+                <div class="action-buttons">
+                  <button class="btn-action" :data-testid="qa(`lcm-execenv-mobile-edit-${index}`)" @click="openEditModal(item)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn-action" :data-testid="qa(`lcm-execenv-mobile-delete-${index}`)" @click="handleDelete(item.Name)" title="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+      </SectionCard>
     </template>
 
     <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content" :data-testid="qa('lcm-execenv-modal')">
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
-          <button class="close-btn" @click="closeModal">
+          <button class="close-btn" :data-testid="qa('lcm-execenv-modal-close')" @click="closeModal">
             <span class="material-icons">close</span>
           </button>
         </div>
 
-        <div class="modal-body">
+        <div class="modal-body compact-modal-form">
           <div class="form-group">
             <label>{{ t('lcm.name') }}</label>
             <input
@@ -454,12 +457,6 @@ onMounted(fetchConfig);
   padding: 0;
 }
 
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
-}
-
 .btn {
   display: flex;
   align-items: center;
@@ -469,6 +466,31 @@ onMounted(fetchConfig);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--space-3) 0;
+}
+
+.card-actions .action-buttons {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -555,13 +577,19 @@ onMounted(fetchConfig);
   padding: 1.5rem;
 }
 
+.compact-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
   color: var(--text-primary);
   font-weight: 500;
 }
@@ -571,7 +599,7 @@ onMounted(fetchConfig);
   font-size: 0.85rem;
   color: var(--text-secondary);
   font-weight: normal;
-  margin-top: 0.25rem;
+  margin-top: 0.125rem;
 }
 
 .form-group input[type="text"],
@@ -619,14 +647,16 @@ onMounted(fetchConfig);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 1rem;
-  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .section-header {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-color);
 }
@@ -659,6 +689,33 @@ onMounted(fetchConfig);
 }
 
 @media (max-width: 768px) {
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn) {
+    width: auto;
+  }
+
   .modal-content {
     width: 95%;
     max-height: 95vh;
@@ -676,6 +733,12 @@ onMounted(fetchConfig);
 
   .modal-footer :deep(.btn) {
     width: 100%;
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>

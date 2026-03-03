@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WifiNeighborStatusResponse, WifiNeighborInfo } from '../../types/wifiNeighbor';
 import { getWifiNeighbors, scanWifiNeighbors } from '../../services/api';
-import { BaseTable } from '../../components/common';
+import { BaseTable, SectionCard } from '../../components/common';
 import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -89,72 +89,73 @@ onMounted(fetchWifiNeighbors);
 
     <div class="status-content" :data-testid="qa('wifi-neighbor-content')">
       <!-- 2.4G Section -->
-      <div class="panel-section" :data-testid="qa('wifi-neighbor-2g-section')">
-        <div class="section-title" :data-testid="qa('wifi-neighbor-2g-title')">2.4G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
-        
-        <div class="card-content">
-          <div v-if="errors['2']" class="error-message" :data-testid="qa('wifi-neighbor-2g-error')">
-            {{ errors['2'] }}
-          </div>
-
-          <BaseTable
-            v-if="neighborResults['2'].length > 0"
-            :columns="neighborColumns"
-            :data="neighborResults['2']"
-            row-key="BSSID"
-            :table-data-testid="qa('wifi-neighbor-2g-table')"
-            :mobile-data-testid="qa('wifi-neighbor-2g-mobile')"
-          >
-            <template #cell-SSID="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'ssid', index, mobile)">{{ row.SSID }}</span>
-            </template>
-            <template #cell-BSSID="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'bssid', index, mobile)">{{ row.BSSID }}</span>
-            </template>
-            <template #cell-Channel="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'channel', index, mobile)">{{ row.Channel }}</span>
-            </template>
-            <template #cell-Signal="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'signal', index, mobile)">{{ row.Signal }}</span>
-            </template>
-            <template #cell-Security="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'security', index, mobile)">{{ row.Security }}</span>
-            </template>
-            <template #cell-WirelessMode="{ row, index, mobile }">
-              <span :data-testid="getNeighborTestId('2', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
-            </template>
-          </BaseTable>
-
-          <div class="scan-button-container">
-            <button 
-              class="btn btn-primary"
-              :data-testid="qa('wifi-neighbor-2g-scan-button')"
-              @click="handleScan('2')"
-              :disabled="loading['2'] || !wifiNeighborData?.WifiNeighbor.Enable2g"
-            >
-              {{ loading['2'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
-            </button>
-          </div>
+      <SectionCard
+        :data-testid="qa('wifi-neighbor-2g-section')"
+        :title="`2.4G ${t('wifiNeighbor.wifiNeighbor')}`"
+        :title-data-testid="qa('wifi-neighbor-2g-title')"
+      >
+        <div v-if="errors['2']" class="error-message" :data-testid="qa('wifi-neighbor-2g-error')">
+          {{ errors['2'] }}
         </div>
-      </div>
+
+        <BaseTable
+          v-if="neighborResults['2'].length > 0"
+          :columns="neighborColumns"
+          :data="neighborResults['2']"
+          row-key="BSSID"
+          :table-data-testid="qa('wifi-neighbor-2g-table')"
+          :mobile-data-testid="qa('wifi-neighbor-2g-mobile')"
+        >
+          <template #cell-SSID="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'ssid', index, mobile)">{{ row.SSID }}</span>
+          </template>
+          <template #cell-BSSID="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'bssid', index, mobile)">{{ row.BSSID }}</span>
+          </template>
+          <template #cell-Channel="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'channel', index, mobile)">{{ row.Channel }}</span>
+          </template>
+          <template #cell-Signal="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'signal', index, mobile)">{{ row.Signal }}</span>
+          </template>
+          <template #cell-Security="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'security', index, mobile)">{{ row.Security }}</span>
+          </template>
+          <template #cell-WirelessMode="{ row, index, mobile }">
+            <span :data-testid="getNeighborTestId('2', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
+          </template>
+        </BaseTable>
+
+        <div class="scan-button-container">
+          <button 
+            class="btn btn-primary"
+            :data-testid="qa('wifi-neighbor-2g-scan-button')"
+            @click="handleScan('2')"
+            :disabled="loading['2'] || !wifiNeighborData?.WifiNeighbor.Enable2g"
+          >
+            {{ loading['2'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
+          </button>
+        </div>
+      </SectionCard>
 
       <!-- 5G Section -->
-      <div class="panel-section" :data-testid="qa('wifi-neighbor-5g-section')">
-        <div class="section-title" :data-testid="qa('wifi-neighbor-5g-title')">5G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
-        
-        <div class="card-content">
-          <div v-if="errors['5']" class="error-message" :data-testid="qa('wifi-neighbor-5g-error')">
-            {{ errors['5'] }}
-          </div>
+      <SectionCard
+        :data-testid="qa('wifi-neighbor-5g-section')"
+        :title="`5G ${t('wifiNeighbor.wifiNeighbor')}`"
+        :title-data-testid="qa('wifi-neighbor-5g-title')"
+      >
+        <div v-if="errors['5']" class="error-message" :data-testid="qa('wifi-neighbor-5g-error')">
+          {{ errors['5'] }}
+        </div>
 
-          <BaseTable
-            v-if="neighborResults['5'].length > 0"
-            :columns="neighborColumns"
-            :data="neighborResults['5']"
-            row-key="BSSID"
-            :table-data-testid="qa('wifi-neighbor-5g-table')"
-            :mobile-data-testid="qa('wifi-neighbor-5g-mobile')"
-          >
+        <BaseTable
+          v-if="neighborResults['5'].length > 0"
+          :columns="neighborColumns"
+          :data="neighborResults['5']"
+          row-key="BSSID"
+          :table-data-testid="qa('wifi-neighbor-5g-table')"
+          :mobile-data-testid="qa('wifi-neighbor-5g-mobile')"
+        >
             <template #cell-SSID="{ row, index, mobile }">
               <span :data-testid="getNeighborTestId('5', 'ssid', index, mobile)">{{ row.SSID }}</span>
             </template>
@@ -173,38 +174,38 @@ onMounted(fetchWifiNeighbors);
             <template #cell-WirelessMode="{ row, index, mobile }">
               <span :data-testid="getNeighborTestId('5', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
             </template>
-          </BaseTable>
+        </BaseTable>
 
-          <div class="scan-button-container">
-            <button 
-              class="btn btn-primary"
-              :data-testid="qa('wifi-neighbor-5g-scan-button')"
-              @click="handleScan('5')"
-              :disabled="loading['5'] || !wifiNeighborData?.WifiNeighbor.Enable5g"
-            >
-              {{ loading['5'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
-            </button>
-          </div>
+        <div class="scan-button-container">
+          <button 
+            class="btn btn-primary"
+            :data-testid="qa('wifi-neighbor-5g-scan-button')"
+            @click="handleScan('5')"
+            :disabled="loading['5'] || !wifiNeighborData?.WifiNeighbor.Enable5g"
+          >
+            {{ loading['5'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
+          </button>
         </div>
-      </div>
+      </SectionCard>
 
       <!-- 6G Section -->
-      <div class="panel-section" :data-testid="qa('wifi-neighbor-6g-section')">
-        <div class="section-title" :data-testid="qa('wifi-neighbor-6g-title')">6G {{ t('wifiNeighbor.wifiNeighbor') }}</div>
-        
-        <div class="card-content">
-          <div v-if="errors['6']" class="error-message" :data-testid="qa('wifi-neighbor-6g-error')">
-            {{ errors['6'] }}
-          </div>
+      <SectionCard
+        :data-testid="qa('wifi-neighbor-6g-section')"
+        :title="`6G ${t('wifiNeighbor.wifiNeighbor')}`"
+        :title-data-testid="qa('wifi-neighbor-6g-title')"
+      >
+        <div v-if="errors['6']" class="error-message" :data-testid="qa('wifi-neighbor-6g-error')">
+          {{ errors['6'] }}
+        </div>
 
-          <BaseTable
-            v-if="neighborResults['6'].length > 0"
-            :columns="neighborColumns"
-            :data="neighborResults['6']"
-            row-key="BSSID"
-            :table-data-testid="qa('wifi-neighbor-6g-table')"
-            :mobile-data-testid="qa('wifi-neighbor-6g-mobile')"
-          >
+        <BaseTable
+          v-if="neighborResults['6'].length > 0"
+          :columns="neighborColumns"
+          :data="neighborResults['6']"
+          row-key="BSSID"
+          :table-data-testid="qa('wifi-neighbor-6g-table')"
+          :mobile-data-testid="qa('wifi-neighbor-6g-mobile')"
+        >
             <template #cell-SSID="{ row, index, mobile }">
               <span :data-testid="getNeighborTestId('6', 'ssid', index, mobile)">{{ row.SSID }}</span>
             </template>
@@ -223,20 +224,19 @@ onMounted(fetchWifiNeighbors);
             <template #cell-WirelessMode="{ row, index, mobile }">
               <span :data-testid="getNeighborTestId('6', 'wireless-mode', index, mobile)">{{ row.WirelessMode }}</span>
             </template>
-          </BaseTable>
+        </BaseTable>
 
-          <div class="scan-button-container">
-            <button 
-              class="btn btn-primary"
-              :data-testid="qa('wifi-neighbor-6g-scan-button')"
-              @click="handleScan('6')"
-              :disabled="loading['6'] || !wifiNeighborData?.WifiNeighbor.Enable6g"
-            >
-              {{ loading['6'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
-            </button>
-          </div>
+        <div class="scan-button-container">
+          <button 
+            class="btn btn-primary"
+            :data-testid="qa('wifi-neighbor-6g-scan-button')"
+            @click="handleScan('6')"
+            :disabled="loading['6'] || !wifiNeighborData?.WifiNeighbor.Enable6g"
+          >
+            {{ loading['6'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
+          </button>
         </div>
-      </div>
+      </SectionCard>
     </div>
   </div>
 </template>

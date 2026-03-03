@@ -11,9 +11,10 @@
       {{ $t('basicWanCht.loadError') }}
     </div>
     <div v-if="!editMode" class="management-view" :data-testid="qa('basic-wan-cht-management')">
-      <div class="panel-section">
-        <div class="section-title">{{ $t('basicWanCht.wanManagement') }}</div>
-        <div class="card-content">
+      <SectionCard
+        :title="$t('basicWanCht.wanManagement')"
+        :title-data-testid="qa('basic-wan-cht-management-title')"
+      >
           <div class="table-container" :data-testid="qa('basic-wan-cht-table-container')">
             <table :data-testid="qa('basic-wan-cht-table')">
               <thead>
@@ -86,25 +87,27 @@
                 <span class="card-value">{{ row.protocol }}</span>
               </div>
 
-              <div class="card-actions">
-                <button class="btn-action" @click="editConnection(row.type)" title="Edit">
-                  <span class="material-icons">edit</span>
-                </button>
+              <div class="card-actions" :data-testid="qa(`basic-wan-cht-card-actions-row-${row.type.toLowerCase()}`)">
+                <span class="card-label" :data-testid="qa(`basic-wan-cht-card-actions-label-${row.type.toLowerCase()}`)">{{ $t('common.action') }}</span>
+                <div class="action-buttons" :data-testid="qa(`basic-wan-cht-card-actions-${row.type.toLowerCase()}`)">
+                  <button class="btn-action" :data-testid="qa(`basic-wan-cht-mobile-edit-${row.type.toLowerCase()}`)" @click="editConnection(row.type)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
 
-          <div class="button-group" :data-testid="qa('basic-wan-cht-button-group')">
-            <ActionButtons
-              :cancel-data-testid="qa('basic-wan-cht-cancel-button')"
-              :apply-data-testid="qa('basic-wan-cht-apply-button')"
-              @cancel="handleCancel"
-              @apply="handleApply"
-            />
-          </div>
+        <div class="button-group" :data-testid="qa('basic-wan-cht-button-group')">
+          <ActionButtons
+            :cancel-data-testid="qa('basic-wan-cht-cancel-button')"
+            :apply-data-testid="qa('basic-wan-cht-apply-button')"
+            @cancel="handleCancel"
+            @apply="handleApply"
+          />
         </div>
-      </div>
+      </SectionCard>
     </div>
 
     <div v-else class="edit-view" :data-testid="qa('basic-wan-cht-edit-view')">
@@ -147,7 +150,7 @@ import type { BasicWanChtConfig, BasicWanChtTableRow } from '../../../types/basi
 import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
 import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
 import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
-import { BaseBadge, ActionButtons } from '../../../components/common';
+import { BaseBadge, ActionButtons, SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
@@ -287,6 +290,14 @@ onMounted(() => {
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -354,9 +365,19 @@ onMounted(() => {
 
 .card-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 0.75rem;
+}
+
+.card-actions .action-buttons {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .success-message {

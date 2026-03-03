@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
-import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -401,11 +401,11 @@ onMounted(() => {
           <label class="form-label" :data-testid="qa('wireless-extender-connect-password-label')">
             {{ t('wirelessExtender.password') }}
           </label>
-          <input
-            type="password"
+          <BaseSecretInput
             v-model="password"
             class="form-input"
-            :data-testid="qa('wireless-extender-connect-password-input')"
+            :input-data-testid="qa('wireless-extender-connect-password-input')"
+            :toggle-data-testid="qa('wireless-extender-connect-password-toggle')"
           />
         </div>
 

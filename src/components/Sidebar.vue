@@ -31,6 +31,7 @@ import basicIcon from '/src/assets/icons/icon-1/menu-basic.svg';
 import advancedIcon from '/src/assets/icons/icon-1/menu-advanced.svg';
 import managementIcon from '/src/assets/icons/icon-1/menu-utilities.svg';
 import applicationIcon from '/src/assets/icons/icon-1/menu-application.svg';
+import speedTestIcon from '/src/assets/icons/icon-1/menu-speedtest.svg';
 
 interface SubMenuItem {
   name: string;
@@ -199,7 +200,7 @@ const baseMenuItems: MenuItem[] = [
   },
   {
     name: 'Speed Test',
-    icon: applicationIcon,
+    icon: speedTestIcon,
     translationKey: 'menu.speedTest',
     menuKey: 'speedtest',
     subItems: [

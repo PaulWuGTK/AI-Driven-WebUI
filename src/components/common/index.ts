@@ -20,3 +20,4 @@ export { default as BaseSwitch } from './BaseSwitch.vue';
 export { default as BaseToast } from './BaseToast.vue';
 export { default as ActionButtons } from './ActionButtons.vue';
 export { default as BaseSecretInput } from './BaseSecretInput.vue';
+export { default as SectionCard } from './SectionCard.vue';

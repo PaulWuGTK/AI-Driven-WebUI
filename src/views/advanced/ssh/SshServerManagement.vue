@@ -172,13 +172,16 @@ onMounted(fetchServers);
             <span class="card-label" :data-testid="qa(`ssh-server-management-card-root-password-login-label-${index}`)">{{ t('ssh.rootLoginWithPassword') }}</span>
             <span class="card-value" :data-testid="qa(`ssh-server-management-card-root-password-login-value-${index}`)">{{ server.AllowRootPasswordLogin ? t('ssh.enabled') : t('ssh.disabled') }}</span>
           </div>
-          <div class="card-actions">
-            <button class="btn-action" :data-testid="qa(`ssh-server-management-card-edit-${index}`)" @click="handleEdit(server)" title="Edit">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="btn-action" :data-testid="qa(`ssh-server-management-card-delete-${index}`)" @click="handleDelete(server.ID)" title="Delete">
-              <span class="material-icons">delete</span>
-            </button>
+          <div class="card-actions" :data-testid="qa(`ssh-server-management-card-actions-row-${index}`)">
+            <span class="card-label" :data-testid="qa(`ssh-server-management-card-actions-label-${index}`)">{{ t('common.action') }}</span>
+            <div class="action-buttons" :data-testid="qa(`ssh-server-management-card-actions-${index}`)">
+              <button class="btn-action" :data-testid="qa(`ssh-server-management-card-edit-${index}`)" @click="handleEdit(server)" title="Edit">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-action" :data-testid="qa(`ssh-server-management-card-delete-${index}`)" @click="handleDelete(server.ID)" title="Delete">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -199,9 +202,11 @@ onMounted(fetchServers);
 
 <style scoped>
 .server-management {
-  background-color: white;
+  background-color: var(--bg-secondary);
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
 .section-title-sp {
@@ -240,6 +245,19 @@ onMounted(fetchServers);
 
 .btn .material-icons {
   font-size: 1.25rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -307,9 +325,19 @@ onMounted(fetchServers);
 
   .card-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     margin-top: 1rem;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
   }
 }
 </style>

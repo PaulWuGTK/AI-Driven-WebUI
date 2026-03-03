@@ -65,6 +65,12 @@ onMounted(() => {
               
               <div class="table-container" :data-testid="qa(`lan-ipv4-table-${slug(iface.Name)}`)">
                 <table>
+                  <colgroup>
+                    <col class="lan-ipv4-col-name">
+                    <col class="lan-ipv4-col-address">
+                    <col class="lan-ipv4-col-netmask">
+                    <col class="lan-ipv4-col-status">
+                  </colgroup>
                   <thead>
                     <tr>
                       <th :data-testid="qa('lan-ipv4-header-name')">{{ t('lan.name') }}</th>
@@ -112,6 +118,11 @@ onMounted(() => {
               
               <div class="table-container" :data-testid="qa(`lan-ipv6-table-${slug(iface.Name)}`)">
                 <table>
+                  <colgroup>
+                    <col class="lan-ipv6-col-name">
+                    <col class="lan-ipv6-col-address">
+                    <col class="lan-ipv6-col-status">
+                  </colgroup>
                   <thead>
                     <tr>
                       <th :data-testid="qa('lan-ipv6-header-name')">{{ t('lan.name') }}</th>
@@ -156,6 +167,44 @@ onMounted(() => {
 <style scoped>
 .ip-section {
   margin-top: 1.5rem;
+}
+
+.table-container .lan-ipv4-col-name {
+  width: 18%;
+}
+
+.table-container .lan-ipv4-col-address {
+  width: 34%;
+}
+
+.table-container .lan-ipv4-col-netmask {
+  width: 28%;
+}
+
+.table-container .lan-ipv4-col-status {
+  width: 20%;
+}
+
+.table-container .lan-ipv6-col-name {
+  width: 18%;
+}
+
+.table-container .lan-ipv6-col-address {
+  width: 62%;
+}
+
+.table-container .lan-ipv6-col-status {
+  width: 20%;
+}
+
+.table-container .lan-ipv4-col-status,
+.table-container .lan-ipv6-col-status {
+  text-align: center;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  text-align: center;
 }
 
 .subsection-title {

@@ -499,7 +499,7 @@ onMounted(fetchLanBasic);
               </div>
             </template>
             <template #cell-actions="{ index, mobile }">
-              <div :class="mobile ? 'card-actions' : 'action-buttons'" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-actions-${index}` : `ipv4-configuration-reservation-actions-${index}`)">
+              <div class="action-buttons" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-actions-${index}` : `ipv4-configuration-reservation-actions-${index}`)">
                 <template v-if="editingIndex === index">
                   <button class="btn-action" :data-testid="qa(mobile ? `ipv4-configuration-reservation-card-confirm-${index}` : `ipv4-configuration-reservation-confirm-${index}`)" @click="handleConfirmReservation(index)">
                     <span class="material-icons">check</span>
@@ -650,6 +650,12 @@ input:disabled {
   gap: 0.5rem;
 }
 
+:deep(.table-container table th:last-child),
+:deep(.table-container table td:last-child) {
+  width: 5.5rem;
+  text-align: center;
+}
+
 .btn-action {
   display: flex;
   align-items: center;
@@ -735,13 +741,6 @@ input:disabled {
 
   .button-group :deep(.btn) {
     width: 100%;
-  }
-
-  .card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
   }
 }
 </style>

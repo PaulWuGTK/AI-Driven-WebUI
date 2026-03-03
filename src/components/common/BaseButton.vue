@@ -3,6 +3,7 @@
     :type="type"
     :class="buttonClasses"
     :disabled="disabled || loading"
+    :data-testid="dataTestid || undefined"
     @click="handleClick"
   >
     <span v-if="loading" class="btn-spinner"></span>
@@ -25,6 +26,7 @@ interface Props {
   loading?: boolean;
   block?: boolean;
   icon?: boolean;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   block: false,
   icon: false,
+  dataTestid: '',
 });
 
 const emit = defineEmits<{

@@ -227,7 +227,7 @@ const handleClose = () => {
       </div>
 
       <div class="modal-body">
-        <div class="form-section">
+        <div class="form-section compact-modal-form">
           <div class="form-group">
             <label class="toggle-label">
               {{ t('routing.enable') }}
@@ -444,16 +444,20 @@ const handleClose = () => {
   padding: 1.5rem;
 }
 
-.form-section {
+.compact-modal-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+}
+
+.form-section {
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.375rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -520,7 +524,7 @@ const handleClose = () => {
   background-color: var(--bg-info);
   border-left: 4px solid var(--info-color);
   padding: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   font-size: 0.9rem;
 }
 

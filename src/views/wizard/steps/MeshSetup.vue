@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { ActionButtons } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import type { WizardConfig } from '../../../types/wizard';
 
@@ -42,10 +42,12 @@ const { qa } = useQA();
             </span>
           </span>
         </div>
-        <label class="toggle-switch">
-          <input type="checkbox" v-model="config.mesh.enable" :data-testid="qa('wizard-mesh-enable-toggle')" />
-          <span class="slider" :data-testid="qa('wizard-mesh-enable-slider')"></span>
-        </label>
+        <BaseSwitch
+          v-model="config.mesh.enable"
+          class="toggle-switch"
+          :data-testid="qa('wizard-mesh-enable-toggle')"
+          :slider-data-testid="qa('wizard-mesh-enable-slider')"
+        />
       </div>
     </div>
 
@@ -216,18 +218,22 @@ const { qa } = useQA();
 }
 
 .toggle-switch {
+  display: inline-flex;
+}
+
+.toggle-switch :deep(.switch) {
   position: relative;
   width: 60px;
   height: 32px;
 }
 
-.toggle-switch input {
+.toggle-switch :deep(.switch input) {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.toggle-switch :deep(.slider) {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -239,7 +245,7 @@ const { qa } = useQA();
   border-radius: 32px;
 }
 
-.slider:before {
+.toggle-switch :deep(.slider:before) {
   position: absolute;
   content: "";
   height: 24px;
@@ -251,11 +257,11 @@ const { qa } = useQA();
   border-radius: 50%;
 }
 
-input:checked + .slider {
+.toggle-switch :deep(.switch input:checked + .slider) {
   background-color: #0078d4;
 }
 
-input:checked + .slider:before {
+.toggle-switch :deep(.switch input:checked + .slider:before) {
   transform: translateX(28px);
 }
 

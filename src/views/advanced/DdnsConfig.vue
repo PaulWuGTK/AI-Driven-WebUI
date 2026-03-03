@@ -3,15 +3,17 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DdnsService, DdnsResponse } from '../../types/ddns';
 import { getDdns, updateDdns } from '../../services/api';
-import { ActionButtons, BaseSwitch, BaseToast } from '../../components/common';
+import DdnsForm from '../../components/ddns/DdnsForm.vue';
+import { ActionButtons, BaseModal, BaseToast } from '../../components/common';
 import { useAutoDismiss } from '../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
-const { isQAMode, qa, slug } = useQA();
 
+const { qa } = useQA();
 const { t } = useI18n();
+
 const ddnsData = ref<DdnsResponse | null>(null);
-const isEditing = ref(false);
+const showModal = ref(false);
 const editingService = ref<DdnsService | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -42,20 +44,20 @@ const fetchDdns = async () => {
 
 const handleEdit = (service: DdnsService) => {
   editingService.value = { ...service };
-  isEditing.value = true;
+  showModal.value = true;
 };
 
 const handleDelete = async (serviceId: string) => {
   if (!ddnsData.value) return;
-  
+
   if (!confirm(t('ddns.confirmDelete'))) return;
 
   try {
-    const updatedServices = ddnsData.value.Ddns.Service.filter(s => s.ID !== serviceId);
+    const updatedServices = ddnsData.value.Ddns.Service.filter((service) => service.ID !== serviceId);
     const response = await updateDdns({
       Ddns: {
-        Service: updatedServices
-      }
+        Service: updatedServices,
+      },
     });
     const nokMessage = extractNokMessage(response);
     if (nokMessage) {
@@ -71,7 +73,7 @@ const handleDelete = async (serviceId: string) => {
 
 const handleAdd = () => {
   if (!ddnsData.value) return;
-  
+
   const newId = `no-${ddnsData.value.Ddns.ServNum + 1}`;
   editingService.value = {
     ID: newId,
@@ -80,9 +82,9 @@ const handleAdd = () => {
     ServPassword: '',
     DomainName: '',
     UpdatedIP: ddnsData.value.Ddns.Interfaces[0],
-    HostEnable: 1
+    HostEnable: 1,
   };
-  isEditing.value = true;
+  showModal.value = true;
 };
 
 const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
@@ -99,9 +101,9 @@ const handleSave = async (service: DdnsService) => {
   if (!ddnsData.value) return;
 
   try {
-    const existingIndex = ddnsData.value.Ddns.Service.findIndex(s => s.ID === service.ID);
+    const existingIndex = ddnsData.value.Ddns.Service.findIndex((item) => item.ID === service.ID);
     let updatedServices: DdnsService[];
-    
+
     if (existingIndex >= 0) {
       updatedServices = [...ddnsData.value.Ddns.Service];
       updatedServices[existingIndex] = service;
@@ -111,18 +113,17 @@ const handleSave = async (service: DdnsService) => {
 
     const response = await updateDdns({
       Ddns: {
-        Service: updatedServices
-      }
+        Service: updatedServices,
+      },
     });
     const nokMessage = extractNokMessage(response);
     if (nokMessage) {
       showErrorMessage(nokMessage);
       return;
     }
-    
+
     showSuccessMessage();
-    isEditing.value = false;
-    editingService.value = null;
+    closeModal();
     await fetchDdns();
   } catch (err) {
     console.error('Error saving DDNS service:', err);
@@ -130,8 +131,8 @@ const handleSave = async (service: DdnsService) => {
   }
 };
 
-const handleCancel = () => {
-  isEditing.value = false;
+const closeModal = () => {
+  showModal.value = false;
   editingService.value = null;
 };
 
@@ -154,7 +155,7 @@ onMounted(fetchDdns);
 
       <template v-else>
         <div class="panel-section" :data-testid="qa('ddns-panel')">
-          <div v-if="!isEditing" class="management-view" :data-testid="qa('ddns-management-view')">
+          <div class="management-view" :data-testid="qa('ddns-management-view')">
             <div class="header-row">
               <div class="section-title-sp" :data-testid="qa('ddns-management-title')">{{ t('ddns.management') }}</div>
               <div class="actions">
@@ -228,96 +229,49 @@ onMounted(fetchDdns);
                     <span class="card-label" :data-testid="qa(`ddns-card-last-update-label-${index}`)">{{ t('ddns.lastUpdate') }}</span>
                     <span class="card-value" :data-testid="qa(`ddns-card-last-update-value-${index}`)">{{ service.LastUpdate }}</span>
                   </div>
-                  <div class="card-actions">
-                    <button class="btn-action" :data-testid="qa(`ddns-card-edit-button-${index}`)" @click="handleEdit(service)" title="Edit">
-                      <span class="material-icons">edit</span>
-                    </button>
-                    <button class="btn-action" :data-testid="qa(`ddns-card-delete-button-${index}`)" @click="handleDelete(service.ID)" title="Delete">
-                      <span class="material-icons">delete</span>
-                    </button>
+                  <div class="card-actions" :data-testid="qa(`ddns-card-actions-row-${index}`)">
+                    <span class="card-label" :data-testid="qa(`ddns-card-actions-label-${index}`)">{{ t('common.action') }}</span>
+                    <div class="action-buttons" :data-testid="qa(`ddns-card-actions-${index}`)">
+                      <button class="btn-action" :data-testid="qa(`ddns-card-edit-button-${index}`)" @click="handleEdit(service)" title="Edit">
+                        <span class="material-icons">edit</span>
+                      </button>
+                      <button class="btn-action" :data-testid="qa(`ddns-card-delete-button-${index}`)" @click="handleDelete(service.ID)" title="Delete">
+                        <span class="material-icons">delete</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div v-else class="edit-view" :data-testid="qa('ddns-edit-view')">
-            <h2 :data-testid="qa('ddns-edit-title')">{{ editingService?.ID ? t('ddns.editService') : t('ddns.addService') }}</h2>
-            <form @submit.prevent="handleSave(editingService!)" v-if="editingService && ddnsData" :data-testid="qa('ddns-edit-form')">
-              <div class="form-group">
-                <label :data-testid="qa('ddns-edit-provider-label')">{{ t('ddns.provider') }}</label>
-                <select v-model="editingService.ServProv" :data-testid="qa('ddns-edit-provider-select')">
-                  <option v-for="provider in ddnsData.Ddns.SupServProv" :key="provider" :value="provider">
-                    {{ provider }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label :data-testid="qa('ddns-edit-domain-label')">{{ t('ddns.domain') }}</label>
-                <input 
-                  type="text" 
-                  :data-testid="qa('ddns-edit-domain-input')"
-                  v-model="editingService.DomainName"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label :data-testid="qa('ddns-edit-username-label')">{{ t('ddns.username') }}</label>
-                <input 
-                  type="text" 
-                  :data-testid="qa('ddns-edit-username-input')"
-                  v-model="editingService.ServUsername"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label :data-testid="qa('ddns-edit-password-label')">{{ t('ddns.password') }}</label>
-                <input 
-                  type="password" 
-                  :data-testid="qa('ddns-edit-password-input')"
-                  v-model="editingService.ServPassword"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label :data-testid="qa('ddns-edit-interface-label')">{{ t('ddns.wanInterface') }}</label>
-                <select v-model="editingService.UpdatedIP" :data-testid="qa('ddns-edit-interface-select')">
-                  <option v-for="iface in ddnsData.Ddns.Interfaces" :key="iface" :value="iface">
-                    {{ iface }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <div class="switch-label">
-                  <span :data-testid="qa('ddns-edit-enable-label')">{{ t('common.enable') }}</span>
-                  <BaseSwitch
-                    v-model="editingService.HostEnable"
-                    :true-value="1"
-                    :false-value="0"
-                    :data-testid="qa('ddns-edit-enable-toggle')"
-                    :slider-data-testid="qa('ddns-edit-enable-slider')"
-                  />
-                </div>
-              </div>
-
-              <div class="button-group">
-                <ActionButtons
-                  :cancel-text="t('ddns.cancel')"
-                  :apply-text="t('ddns.save')"
-                  apply-type="submit"
-                  :cancel-data-testid="qa('ddns-edit-cancel-button')"
-                  :apply-data-testid="qa('ddns-edit-save-button')"
-                  @cancel="handleCancel"
-                />
-              </div>
-            </form>
-          </div>
         </div>
+
+        <BaseModal
+          v-model="showModal"
+          size="md"
+          :close-button-data-testid="qa('ddns-edit-close-button')"
+          @close="closeModal"
+        >
+          <template #header>
+            <h3 class="modal-title" :data-testid="qa('ddns-edit-title')">
+              {{ editingService?.ID ? t('ddns.editService') : t('ddns.addService') }}
+            </h3>
+          </template>
+
+          <div v-if="editingService && ddnsData" :data-testid="qa('ddns-edit-view')">
+            <DdnsForm
+              :service="editingService"
+              :supported-providers="ddnsData.Ddns.SupServProv"
+              :interfaces="ddnsData.Ddns.Interfaces"
+              :show-title="false"
+              :embedded="true"
+              test-id-prefix="ddns-edit"
+              @update:service="(service) => editingService = service"
+              @save="handleSave(editingService)"
+              @cancel="closeModal"
+            />
+          </div>
+        </BaseModal>
       </template>
 
       <BaseToast
@@ -337,84 +291,16 @@ onMounted(fetchDdns);
 </template>
 
 <style scoped>
-
 .section-title-sp {
   font-size: 1rem;
   color: var(--text-primary);
-  padding: 0.5rem 0rem;
+  padding: 0.5rem 0;
   background-color: white;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
-}
-
-.btn-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.btn-action:hover {
-  color: var(--text-primary);
-}
-
-.edit-view {
-  padding: 1.5rem;
-}
-
-.edit-view h2 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.1rem;
-  color: var(--text-primary);
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-input, select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-/* Custom switch size (60px × 34px) with left margin for layout */
-:deep(.switch) {
-  width: 60px;
-  height: 34px;
-  margin-left: 1rem;
-  flex-shrink: 0;
-}
-
-:deep(.slider:before) {
-  height: 26px;
-  width: 26px;
-}
-
-:deep(input:checked + .slider:before) {
-  transform: translateX(26px);
-}
-
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
 }
 
 .loading-state {
@@ -437,10 +323,18 @@ input, select {
   box-shadow: var(--shadow-sm);
 }
 
-.card-actions {
+.card-actions,
+.action-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.5rem;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -478,25 +372,23 @@ input, select {
     width: 100%;
   }
 
-  .edit-view {
-    padding: 1rem;
-  }
-
-  .button-group {
-    flex-direction: column;
-  }
-
-  .button-group :deep(.btn) {
-    width: 100%;
-  }
-
   .btn-danger {
     background-color: #dc3545;
     color: white;
   }
 
   .card-actions {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
     justify-content: flex-end;
+    min-width: 0;
   }
 
   .btn-action {

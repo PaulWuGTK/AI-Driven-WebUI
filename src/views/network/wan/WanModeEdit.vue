@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { WanModeConfig, WanInterface } from '../../../types/wanManagement';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -270,13 +270,13 @@ const validateVLANPriority = (value: number) => {
 
             <div class="form-group">
               <label :data-testid="qa(`wan-mode-edit-pppoe-password-label-${ifaceIndex}`)">{{ t('wanManagement.pppoePassword') }}</label>
-              <input
-                type="password"
-                :data-testid="qa(`wan-mode-edit-pppoe-password-input-${ifaceIndex}`)"
-                v-model="iface.PPPoEPassword"
-                required
-                maxlength="64"
-                @input="iface.PPPoEPassword = validatePPPoEInput(($event.target as HTMLInputElement).value, 'password')"
+              <BaseSecretInput
+                :model-value="iface.PPPoEPassword"
+                :input-data-testid="qa(`wan-mode-edit-pppoe-password-input-${ifaceIndex}`)"
+                :toggle-data-testid="qa(`wan-mode-edit-pppoe-password-toggle-${ifaceIndex}`)"
+                :required="true"
+                :max-length="64"
+                @update:model-value="iface.PPPoEPassword = validatePPPoEInput($event, 'password')"
               />
             </div>
           </div>
@@ -416,6 +416,15 @@ h2 {
 input, select {
   width: 100%;
   padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form-group :deep(.secret-field) {
+  width: 100%;
+  padding: 0.5rem;
+  padding-right: 2.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;

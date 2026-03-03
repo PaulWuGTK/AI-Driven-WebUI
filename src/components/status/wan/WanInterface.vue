@@ -42,7 +42,15 @@ defineProps<{
         <h4 class="subsection-title" :data-testid="qa('wan-interface-ipv4-title')">IPv4</h4>
         
         <div class="table-container" :data-testid="qa('wan-interface-ipv4-table-container')">
-          <table :data-testid="qa('wan-interface-ipv4-table')">
+          <table class="wan-interface-table" :data-testid="qa('wan-interface-ipv4-table')">
+            <colgroup>
+              <col class="wan-ipv4-col-mode">
+              <col class="wan-ipv4-col-address">
+              <col class="wan-ipv4-col-gateway">
+              <col class="wan-ipv4-col-dns">
+              <col class="wan-ipv4-col-subnet">
+              <col class="wan-ipv4-col-status">
+            </colgroup>
             <thead>
               <tr>
                 <th :data-testid="qa('wan-interface-ipv4-header-mode')">{{ t('wan.mode') }}</th>
@@ -101,7 +109,15 @@ defineProps<{
         <h4 class="subsection-title" :data-testid="qa('wan-interface-ipv6-title')">IPv6</h4>
         
         <div class="table-container" :data-testid="qa('wan-interface-ipv6-table-container')">
-          <table :data-testid="qa('wan-interface-ipv6-table')">
+          <table class="wan-interface-table" :data-testid="qa('wan-interface-ipv6-table')">
+            <colgroup>
+              <col class="wan-ipv6-col-type">
+              <col class="wan-ipv6-col-address">
+              <col class="wan-ipv6-col-prefix">
+              <col class="wan-ipv6-col-gateway">
+              <col class="wan-ipv6-col-dns">
+              <col class="wan-ipv6-col-status">
+            </colgroup>
             <thead>
               <tr>
                 <th :data-testid="qa('wan-interface-ipv6-header-type')">{{ t('wan.type') }}</th>
@@ -177,6 +193,43 @@ defineProps<{
 
 .ip-section {
   margin-top: 2rem;
+}
+
+.wan-interface-table {
+  table-layout: fixed;
+}
+
+.table-container .wan-ipv4-col-mode,
+.table-container .wan-ipv6-col-type {
+  width: 12%;
+}
+
+.table-container .wan-ipv4-col-address,
+.table-container .wan-ipv6-col-address {
+  width: 22%;
+}
+
+.table-container .wan-ipv4-col-gateway,
+.table-container .wan-ipv4-col-dns,
+.table-container .wan-ipv6-col-prefix,
+.table-container .wan-ipv6-col-gateway {
+  width: 16%;
+}
+
+.table-container .wan-ipv4-col-subnet,
+.table-container .wan-ipv6-col-dns {
+  width: 14%;
+}
+
+.table-container .wan-ipv4-col-status,
+.table-container .wan-ipv6-col-status {
+  width: 20%;
+  text-align: center;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  text-align: center;
 }
 
 .subsection-title {

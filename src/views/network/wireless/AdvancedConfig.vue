@@ -154,9 +154,6 @@ onMounted(fetchAdvancedConfig);
 
 <style scoped>
 .wireless-advanced-config {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
 }
 
@@ -235,36 +232,6 @@ onMounted(fetchAdvancedConfig);
 .button-group {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-.button-group :deep(.btn) {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-}
-
-.button-group :deep(.btn:disabled) {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.button-group :deep(.btn-primary) {
-  background-color: #0070BB;
-  color: white;
-}
-
-.button-group :deep(.btn-secondary) {
-  background-color: #f0f0f0;
-  color: #666;
-}
-
-.button-group :deep(.btn:not(:disabled):hover) {
-  opacity: 0.9;
+  padding: 0 1.5rem 1.5rem;
 }
 </style>

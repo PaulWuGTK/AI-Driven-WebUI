@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -558,12 +558,13 @@ onMounted(() => {
                 
                 <div class="form-group">
                   <label :data-testid="qa('wireless-extender-connect-password-label')">{{ t('wirelessExtender.wpaPreshareKey') }}</label>
-                  <input 
-                    type="password" 
-                    :data-testid="qa('wireless-extender-connect-password-input')"
+                  <BaseSecretInput
                     v-model="password"
+                    class="wireless-extender-password"
+                    :input-data-testid="qa('wireless-extender-connect-password-input')"
+                    :toggle-data-testid="qa('wireless-extender-connect-password-toggle')"
                     :placeholder="t('ntp.placeholder')"
-                    required
+                    :required="true"
                   />
                 </div>
               </div>
@@ -758,6 +759,15 @@ onMounted(() => {
 input {
   width: 100%;
   padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form-group :deep(.secret-field) {
+  width: 100%;
+  padding: 0.5rem;
+  padding-right: 2.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;

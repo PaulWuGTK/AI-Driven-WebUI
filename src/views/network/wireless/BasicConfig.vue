@@ -667,7 +667,7 @@ onMounted(fetchConfig);
                 </div>
 
                 <div class="cell cell-psk">
-                  <label class="psk-label">{{ t('wireless.password') }}</label>
+                  <label class="psk-label">{{ t('wireless.wpaPreshareKey') }}</label>
                   <BaseSecretInput
                     :model-value="getInterfaceByBand(b)!.KeyPassPhrase ?? ''"
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
@@ -1020,7 +1020,9 @@ onMounted(fetchConfig);
 
 .psk-label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
 }
 

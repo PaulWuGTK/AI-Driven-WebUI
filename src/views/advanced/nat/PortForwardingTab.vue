@@ -1,17 +1,21 @@
 <template>
-  <div class="port-forwarding-management">
-    <div class="header-row">
-      <div class="section-title-sp">{{ $t('portForwarding.title') }}</div>
-      <button v-if="!isEditing" class="btn btn-primary" @click="handleAdd">
+  <SectionCard
+    header-mode="row"
+    :title="$t('portForwarding.title')"
+    :title-data-testid="qa('port-forwarding-section-title')"
+    :content-data-testid="qa('port-forwarding-section-content')"
+  >
+    <template #actions>
+      <button class="btn btn-primary" :data-testid="qa('port-forwarding-add-button')" @click="handleAdd">
         <span class="material-icons">add</span>
         {{ $t('common.add') }}
       </button>
-    </div>
+    </template>
 
     <div v-if="errorMessage" class="error-banner">
       <span class="material-icons">error</span>
       <span>{{ errorMessage }}</span>
-      <button class="close-btn" @click="errorMessage = ''">
+      <button class="close-btn" :data-testid="qa('port-forwarding-error-close-button')" @click="errorMessage = ''">
         <span class="material-icons">close</span>
       </button>
     </div>
@@ -21,7 +25,7 @@
       <span>{{ $t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="!isEditing" class="rule-list">
+    <div v-else class="rule-list">
       <div class="table-container">
         <table>
           <thead>
@@ -33,7 +37,7 @@
               <th>{{ $t('portForwarding.externalPortRange') }}</th>
               <th>{{ $t('portForwarding.internalPortRange') }}</th>
               <th>{{ $t('portForwarding.internalIPAddress') }}</th>
-              <th>{{ $t('portForwarding.active') }}</th>
+              <th>{{ $t('common.action') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -51,10 +55,10 @@
               <td>{{ rule.InternalIPAdress }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn-action" @click="handleEdit(rule)" :title="$t('common.edit')">
+                  <button class="btn-action" :data-testid="qa(`port-forwarding-edit-${index}`)" @click="handleEdit(rule)" :title="$t('common.edit')">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="btn-action" @click="handleDelete(rule)" :title="$t('common.delete')">
+                  <button class="btn-action" :data-testid="qa(`port-forwarding-delete-${index}`)" @click="handleDelete(rule)" :title="$t('common.delete')">
                     <span class="material-icons">delete</span>
                   </button>
                 </div>
@@ -71,7 +75,7 @@
         <div v-if="rules.length === 0" class="no-data-mobile">
           {{ $t('portForwarding.noRules') }}
         </div>
-        <div class="table-card" v-else v-for="rule in rules" :key="rule.No">
+        <div class="table-card" v-else v-for="(rule, index) in rules" :key="rule.No">
           <div class="card-row">
             <span class="card-label">{{ $t('portForwarding.number') }}</span>
             <span class="card-value">{{ rule.No }}</span>
@@ -104,37 +108,55 @@
             <span class="card-label">{{ $t('portForwarding.internalIPAddress') }}</span>
             <span class="card-value">{{ rule.InternalIPAdress }}</span>
           </div>
-          <div class="card-actions">
-            <button class="btn-action" @click="handleEdit(rule)" :title="$t('common.edit')">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="btn-action" @click="handleDelete(rule)" :title="$t('common.delete')">
-              <span class="material-icons">delete</span>
-            </button>
+          <div class="card-actions" :data-testid="qa(`port-forwarding-card-actions-row-${index}`)">
+            <span class="card-label" :data-testid="qa(`port-forwarding-card-actions-label-${index}`)">{{ $t('common.action') }}</span>
+            <div class="action-buttons" :data-testid="qa(`port-forwarding-card-actions-${index}`)">
+              <button class="btn-action" :data-testid="qa(`port-forwarding-mobile-edit-${index}`)" @click="handleEdit(rule)" :title="$t('common.edit')">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-action" :data-testid="qa(`port-forwarding-mobile-delete-${index}`)" @click="handleDelete(rule)" :title="$t('common.delete')">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </SectionCard>
+
+  <BaseModal
+    v-model="showModal"
+    size="md"
+    :close-button-data-testid="qa('port-forwarding-close-button')"
+    @close="closeModal"
+  >
+    <template #header>
+      <h3 class="modal-title" :data-testid="qa('port-forwarding-title')">
+        {{ isEditMode ? $t('portForwarding.editRule') : $t('portForwarding.addRule') }}
+      </h3>
+    </template>
 
     <PortForwardingForm
-      v-else
       v-if="editingRule"
       :rule="editingRule"
       :wan-list="wanList"
       :proto-list="protoList"
+      :show-title="false"
+      :embedded="true"
+      :is-edit="isEditMode"
       @update:rule="handleRuleUpdate"
       @save="handleSave"
-      @cancel="isEditing = false"
+      @cancel="closeModal"
     />
+  </BaseModal>
 
-    <ConfirmationDialog
-      :is-open="showDeleteDialog"
-      :title="$t('portForwarding.deleteRule')"
-      :message="$t('portForwarding.deleteConfirmMessage')"
-      @confirm="confirmDelete"
-      @cancel="showDeleteDialog = false"
-    />
-  </div>
+  <ConfirmationDialog
+    :is-open="showDeleteDialog"
+    :title="$t('portForwarding.deleteRule')"
+    :message="$t('portForwarding.deleteConfirmMessage')"
+    @confirm="confirmDelete"
+    @cancel="showDeleteDialog = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -142,17 +164,21 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PortForwardingForm from '../../../components/nat/PortForwardingForm.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
+import { BaseModal, SectionCard } from '../../../components/common';
 import { portForwardingApi } from '../../../services/api/portForwarding';
 import type { PortForwardRule } from '../../../types/portForwarding';
 import { extractNokMessage } from '../../../utils/apiUtils';
+import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
+const { qa } = useQA();
 
 const rules = ref<PortForwardRule[]>([]);
 const wanList = ref<string[]>([]);
 const protoList = ref<string[]>([]);
-const isEditing = ref(false);
+const showModal = ref(false);
 const editingRule = ref<PortForwardRule | null>(null);
+const isEditMode = ref(false);
 const showDeleteDialog = ref(false);
 const ruleToDelete = ref<PortForwardRule | null>(null);
 const loading = ref(true);
@@ -196,12 +222,14 @@ const handleAdd = () => {
     InternalPort: '',
     InternalIPAdress: ''
   };
-  isEditing.value = true;
+  isEditMode.value = false;
+  showModal.value = true;
 };
 
 const handleEdit = (rule: PortForwardRule) => {
   editingRule.value = { ...rule };
-  isEditing.value = true;
+  isEditMode.value = true;
+  showModal.value = true;
 };
 
 const handleDelete = (rule: PortForwardRule) => {
@@ -211,6 +239,12 @@ const handleDelete = (rule: PortForwardRule) => {
 
 const handleRuleUpdate = (rule: PortForwardRule) => {
   editingRule.value = rule;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  editingRule.value = null;
+  isEditMode.value = false;
 };
 
 const handleSave = async () => {
@@ -242,8 +276,7 @@ const handleSave = async () => {
     }
 
     await fetchRules();
-    isEditing.value = false;
-    editingRule.value = null;
+    closeModal();
   } catch (error) {
     console.error('Failed to save port forwarding rule:', error);
     errorMessage.value = error instanceof Error ? error.message : 'Failed to save port forwarding rule';
@@ -288,20 +321,8 @@ onMounted(fetchRules);
 </script>
 
 <style scoped>
-.port-forwarding-management {
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
-}
-
 .rule-list {
-  padding: 1.5rem;
+  padding: 0;
 }
 
 .loading-state {
@@ -369,6 +390,13 @@ onMounted(fetchRules);
   display: flex;
   gap: 0.25rem;
   justify-content: center;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .no-data {
@@ -390,7 +418,7 @@ onMounted(fetchRules);
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  margin: 0 1.5rem 1rem;
+  margin: 0 0 1rem;
   background-color: #ffebee;
   border-left: 4px solid #c62828;
   border-radius: 4px;
@@ -437,14 +465,34 @@ onMounted(fetchRules);
 }
 
 @media (max-width: 768px) {
-  .section-title-sp {
+  .rule-list {
     padding: 0;
   }
 
-  .rule-list {
-    padding: 1rem;
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
   }
 
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn),
   .btn {
     width: 100%;
     justify-content: center;
@@ -455,7 +503,7 @@ onMounted(fetchRules);
   }
 
   .error-banner {
-    margin: 0 1rem 1rem;
+    margin: 0 0 1rem;
     padding: 0.875rem 1rem;
   }
 
@@ -469,9 +517,20 @@ onMounted(fetchRules);
 
   .card-actions {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-    margin-top: 1rem;
+    min-width: 0;
   }
 }
 </style>

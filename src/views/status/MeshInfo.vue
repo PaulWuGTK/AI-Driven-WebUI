@@ -8,6 +8,7 @@ import MeshNodeTable from '../../components/mesh/MeshNodeTable.vue';
 import MeshClientTable from '../../components/mesh/MeshClientTable.vue';
 import MeshSteeringModal from '../../components/mesh/MeshSteeringModal.vue';
 import MeshTopologyMap from '../../components/mesh/MeshTopologyMap.vue';
+import { SectionCard } from '../../components/common';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -142,9 +143,13 @@ onUnmounted(() => {
       <!-- Content State -->
       <template v-else>
         <!-- Network Information Section -->
-        <div class="panel-section" :data-testid="qa('mesh-network-section')">
-          <div class="header-row">
-            <div class="section-title-sp" :data-testid="qa('mesh-network-title')">{{ t('mesh.networkInformation') }}</div>
+        <SectionCard
+          :data-testid="qa('mesh-network-section')"
+          header-mode="row"
+          :title="t('mesh.networkInformation')"
+          :title-data-testid="qa('mesh-network-title')"
+        >
+          <template #actions>
             <button 
               class="btn btn-primary"
               :data-testid="qa('mesh-toggle-view-button')"
@@ -153,33 +158,31 @@ onUnmounted(() => {
               <span class="material-icons">{{ showMap ? 'list' : 'map' }}</span>
               {{ showMap ? t('mesh.list') : t('mesh.map') }}
             </button>
-          </div>
+          </template>
 
-          <div class="card-content">
-            <template v-if="!showMap" :data-testid="qa('mesh-list-view')">
-              <MeshNodeTable :nodes="nodes" />
-              <MeshClientTable 
-                :clients="clients"
-                @action="handleAction"
-              />
-            </template>
-            <template v-else :data-testid="qa('mesh-map-view')">
-              <MeshTopologyMap :nodes="meshData" />
-            </template>
+          <template v-if="!showMap" :data-testid="qa('mesh-list-view')">
+            <MeshNodeTable :nodes="nodes" />
+            <MeshClientTable 
+              :clients="clients"
+              @action="handleAction"
+            />
+          </template>
+          <template v-else :data-testid="qa('mesh-map-view')">
+            <MeshTopologyMap :nodes="meshData" />
+          </template>
 
-            <div class="button-group">
-              <button 
-                class="btn btn-primary"
-                :data-testid="qa('mesh-refresh-button')"
-                @click="fetchMeshData"
-                :disabled="loading"
-              >
-                <span class="material-icons">refresh</span>
-                {{ t('common.refresh') }}
-              </button>
-            </div>
+          <div class="button-group">
+            <button 
+              class="btn btn-primary"
+              :data-testid="qa('mesh-refresh-button')"
+              @click="fetchMeshData"
+              :disabled="loading"
+            >
+              <span class="material-icons">refresh</span>
+              {{ t('common.refresh') }}
+            </button>
           </div>
-        </div>
+        </SectionCard>
       </template>
     </div>
 
@@ -195,13 +198,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0rem;
-  background-color: white;
-}
-
 .button-group {
   display: flex;
   justify-content: center;
@@ -230,12 +226,6 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .header-row {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
   .btn {
     width: 100%;
     justify-content: center;

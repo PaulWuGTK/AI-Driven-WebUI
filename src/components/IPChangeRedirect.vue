@@ -30,7 +30,7 @@
           <div class="countdown-number">{{ countdown }}</div>
         </div>
 
-        <button class="btn btn-primary redirect-now-btn" @click="redirectNow">
+        <button class="btn btn-primary redirect-now-btn" :data-testid="qa('ip-change-redirect-now-button')" @click="redirectNow">
           {{ $t('lanBasic.redirectNow') }}
         </button>
       </div>
@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue';
+import { useQA } from '../utils/qa';
 
 interface Props {
   isVisible: boolean;
@@ -50,6 +51,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   duration: 15
 });
+const { qa } = useQA();
 
 const emit = defineEmits<{
   redirect: [];

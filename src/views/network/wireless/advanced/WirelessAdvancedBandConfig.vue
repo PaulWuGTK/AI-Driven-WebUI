@@ -151,10 +151,10 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
 }
 
 .band-config {
-  background-color: white;
-  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
   margin-bottom: 1.5rem;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .band-config:last-child {
@@ -166,7 +166,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
   justify-content: space-between;
   align-items: center;
   padding: 0.4rem 1.5rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -174,7 +174,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
   font-size: 1rem;
   color: var(--text-primary);
   padding: 0.5rem 0rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
 }
 
 .band-content {

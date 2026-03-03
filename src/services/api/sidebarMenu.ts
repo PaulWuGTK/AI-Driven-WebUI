@@ -33,6 +33,18 @@ export interface SidebarMenuUpdateRequest {
   }
 }
 
+const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMenu']['NetLayoutType'] => {
+  return value === 'prpl' || value === 'genix' || value === 'cht' ? value : 'prpl';
+};
+
+const normalizeSidebarMenuResponse = (payload: SidebarMenuResponse): SidebarMenuResponse => ({
+  ...payload,
+  SidebarMenu: {
+    ...payload.SidebarMenu,
+    NetLayoutType: normalizeNetLayoutType(payload.SidebarMenu?.NetLayoutType),
+  }
+});
+
 export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
   if (isDevelopment) {
     return {
@@ -45,8 +57,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
             duid: "00000000-0000-5000-b000-000000000001"
           }
         ],
-        mode: "Bridge",
-        NetLayoutType: "cht",
+        mode: "Gateway",
+        NetLayoutType: "prpl",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: "en"
@@ -81,7 +93,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
       throw new Error(`Failed to fetch sidebar menu: ${response.status}`);
     }
 
-    return response.json();
+    const payload = await response.json();
+    return normalizeSidebarMenuResponse(payload);
   } catch (err) {
     console.error('Error fetching sidebar menu:', err);
     
@@ -157,7 +170,8 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
       throw new Error(`Failed to update sidebar menu language: ${response.status}`);
     }
 
-    return response.json();
+    const payload = await response.json();
+    return normalizeSidebarMenuResponse(payload);
   } catch (err) {
     console.error('Error updating sidebar menu language:', err);
     

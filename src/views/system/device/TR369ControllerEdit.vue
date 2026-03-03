@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR369Controller } from '../../../types/tr369';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -157,10 +157,10 @@ const handleSubmit = () => {
 
       <div class="form-group">
         <label :data-testid="qa('tr369-controller-edit-password-label')">{{ t('device.password') }}</label>
-        <input
-          type="password"
-          :data-testid="qa('tr369-controller-edit-password-input')"
+        <BaseSecretInput
           v-model="editingController.Password"
+          :input-data-testid="qa('tr369-controller-edit-password-input')"
+          :toggle-data-testid="qa('tr369-controller-edit-password-toggle')"
         />
       </div>
 
@@ -271,6 +271,15 @@ h2 {
 input, select {
   width: 100%;
   padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form-group :deep(.secret-field) {
+  width: 100%;
+  padding: 0.5rem;
+  padding-right: 2.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;

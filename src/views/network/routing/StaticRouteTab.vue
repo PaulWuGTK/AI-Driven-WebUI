@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { StaticRouteIPv4, StaticRouteIPv6 } from '../../../types/staticRoute';
 import { getStaticRoute, updateStaticRoute } from '../../../services/api/staticRoute';
 import StaticRouteForm from '../../../components/routing/StaticRouteForm.vue';
-import { BaseTable } from '../../../components/common';
+import { BaseTable, SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -174,11 +174,13 @@ onMounted(fetchRoutes);
     </div>
 
     <template v-else>
-      <div class="panel-section" :data-testid="qa('static-route-section')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('static-route-title')">
-            {{ t('routing.staticRoute') }}
-          </div>
+      <SectionCard
+        :data-testid="qa('static-route-section')"
+        header-mode="row"
+        :title="t('routing.staticRoute')"
+        :title-data-testid="qa('static-route-title')"
+      >
+        <template #actions>
           <button
             class="btn btn-primary"
             :data-testid="qa('static-route-add-button')"
@@ -187,84 +189,82 @@ onMounted(fetchRoutes);
             <span class="material-icons">add</span>
             {{ t('routing.addStaticRoute') }}
           </button>
-        </div>
+        </template>
 
-        <div class="card-content">
-          <BaseTable
-            :columns="routeColumns"
-            :data="routeRows"
-            row-key="rowKey"
-            :empty-text="t('routing.noStaticRoutes')"
-            :table-data-testid="qa('static-route-table')"
-            :mobile-data-testid="qa('static-route-mobile')"
-          >
-            <template #cell-no="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-no-${row.rowIndex}`) : undefined">
-                {{ row.no }}
-              </span>
-            </template>
-            <template #cell-status="{ row, mobile }">
-              <span
-                class="material-icons status-icon"
-                :class="{ enabled: row.Enable, disabled: !row.Enable }"
-                :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-status-${row.rowIndex}`) : undefined"
-              >
-                {{ row.Enable ? 'check_circle' : 'cancel' }}
-              </span>
-            </template>
-            <template #cell-Alias="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-name-${row.rowIndex}`) : undefined">
-                {{ row.Alias }}
-              </span>
-            </template>
-            <template #cell-DestIp="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-destination-ip-${row.rowIndex}`) : undefined">
-                {{ row.DestIp }}
-              </span>
-            </template>
-            <template #cell-subnetMask="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-subnet-mask-${row.rowIndex}`) : undefined">
-                {{ row.subnetMask }}
-              </span>
-            </template>
-            <template #cell-GatewayIp="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-gateway-${row.rowIndex}`) : undefined">
-                {{ row.GatewayIp || '-' }}
-              </span>
-            </template>
-            <template #cell-WanIf="{ row, mobile }">
-              <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-interface-${row.rowIndex}`) : undefined">
-                {{ row.WanIf }}
-              </span>
-            </template>
-            <template #cell-actions="{ row, mobile }">
-              <div class="action-buttons">
+        <BaseTable
+          :columns="routeColumns"
+          :data="routeRows"
+          row-key="rowKey"
+          :empty-text="t('routing.noStaticRoutes')"
+          :table-data-testid="qa('static-route-table')"
+          :mobile-data-testid="qa('static-route-mobile')"
+        >
+          <template #cell-no="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-no-${row.rowIndex}`) : undefined">
+              {{ row.no }}
+            </span>
+          </template>
+          <template #cell-status="{ row, mobile }">
+            <span
+              class="material-icons status-icon"
+              :class="{ enabled: row.Enable, disabled: !row.Enable }"
+              :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-status-${row.rowIndex}`) : undefined"
+            >
+              {{ row.Enable ? 'check_circle' : 'cancel' }}
+            </span>
+          </template>
+          <template #cell-Alias="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-name-${row.rowIndex}`) : undefined">
+              {{ row.Alias }}
+            </span>
+          </template>
+          <template #cell-DestIp="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-destination-ip-${row.rowIndex}`) : undefined">
+              {{ row.DestIp }}
+            </span>
+          </template>
+          <template #cell-subnetMask="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-subnet-mask-${row.rowIndex}`) : undefined">
+              {{ row.subnetMask }}
+            </span>
+          </template>
+          <template #cell-GatewayIp="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-gateway-${row.rowIndex}`) : undefined">
+              {{ row.GatewayIp || '-' }}
+            </span>
+          </template>
+          <template #cell-WanIf="{ row, mobile }">
+            <span :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-interface-${row.rowIndex}`) : undefined">
+              {{ row.WanIf }}
+            </span>
+          </template>
+          <template #cell-actions="{ row, mobile }">
+            <div class="action-buttons">
                 <button
                   class="btn-action"
                   :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-edit-${row.rowIndex}`) : undefined"
-                  @click="openEditModal(row.ipType, row.rowIndex)"
-                  :title="t('common.edit')"
-                >
-                  <span class="material-icons">edit</span>
-                </button>
-                <button
-                  class="btn-action"
-                  :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-delete-${row.rowIndex}`) : undefined"
-                  @click="handleDelete(row.ipType, row.rowIndex)"
-                  :title="t('common.delete')"
-                >
-                  <span class="material-icons">delete</span>
-                </button>
-              </div>
-            </template>
-            <template #empty>
-              <div class="no-data" :data-testid="qa('static-route-no-data')">
-                {{ t('routing.noStaticRoutes') }}
-              </div>
-            </template>
-          </BaseTable>
-        </div>
-      </div>
+                @click="openEditModal(row.ipType, row.rowIndex)"
+                :title="t('common.edit')"
+              >
+                <span class="material-icons">edit</span>
+              </button>
+              <button
+                class="btn-action"
+                :data-testid="!mobile ? qa(`static-route-${row.ipType.toLowerCase()}-delete-${row.rowIndex}`) : undefined"
+                @click="handleDelete(row.ipType, row.rowIndex)"
+                :title="t('common.delete')"
+              >
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </template>
+          <template #empty>
+            <div class="no-data" :data-testid="qa('static-route-no-data')">
+              {{ t('routing.noStaticRoutes') }}
+            </div>
+          </template>
+        </BaseTable>
+      </SectionCard>
     </template>
 
     <StaticRouteForm
@@ -302,12 +302,6 @@ onMounted(fetchRoutes);
   line-height: 1.5;
 }
 
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
-}
-
 .btn {
   display: flex;
   align-items: center;
@@ -330,6 +324,14 @@ onMounted(fetchRoutes);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+:deep(.table-container table th:last-child),
+:deep(.table-container table td:last-child) {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -398,6 +400,35 @@ onMounted(fetchRoutes);
   100% {
     opacity: 0;
     transform: translateY(-20px);
+  }
+}
+
+@media (max-width: 768px) {
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn) {
+    width: auto;
   }
 }
 </style>

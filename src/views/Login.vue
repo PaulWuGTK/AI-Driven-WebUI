@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { AuthService } from '../services/auth';
+import { BaseSecretInput } from '../components/common';
 import { useQA } from '../utils/qa';
 import { getMockCaptcha } from '../services/mockData/authMockData';
 
@@ -238,15 +239,14 @@ onUnmounted(() => {
           />
         </div>
         <div class="form-group">
-          <label for="password" :data-testid="qa('login-password-label')">{{ t('login.password') }}</label>
-          <input
-            id="password"
-            :data-testid="qa('login-password-input')"
+          <label :data-testid="qa('login-password-label')">{{ t('login.password') }}</label>
+          <BaseSecretInput
             v-model="password"
-            type="password"
-            required
             :placeholder="t('login.passwordPlaceholder')"
             :disabled="loading"
+            :required="true"
+            :input-data-testid="qa('login-password-input')"
+            :toggle-data-testid="qa('login-password-toggle')"
           />
         </div>
         <div class="form-group">
@@ -356,6 +356,25 @@ input:focus {
 }
 
 input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.form-group :deep(.secret-field) {
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group :deep(.secret-field:focus) {
+  outline: none;
+  border-color: #0c78be;
+  box-shadow: 0 0 0 2px rgba(12, 120, 190, 0.1);
+}
+
+.form-group :deep(.secret-field:disabled) {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }

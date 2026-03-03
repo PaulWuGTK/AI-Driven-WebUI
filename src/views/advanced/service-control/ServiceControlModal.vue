@@ -144,7 +144,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
       </div>
 
       <div class="modal-body">
-        <form @submit.prevent="handleSubmit">
+        <form class="compact-modal-form" @submit.prevent="handleSubmit">
           <!-- Enable/Disable Toggle -->
           <div class="form-group">
             <div class="switch-label">
@@ -160,7 +160,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- Predefined Service Selection -->
           <div class="form-group">
             <label>{{ t('serviceControl.serviceType') }}</label>
-            <select v-model="selectedPredefinedService">
+            <select v-model="selectedPredefinedService" :data-testid="qa('service-control-predefined-service-select')">
               <option value="">Custom Service</option>
               <option v-for="service in options.Services" :key="service.value" :value="service.value">
                 {{ service.value }}
@@ -176,13 +176,14 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
               v-model="editingRule.Service" 
               required
               :disabled="!!selectedPredefinedService"
+              :data-testid="qa('service-control-service-input')"
             />
           </div>
 
           <!-- Protocol -->
           <div class="form-group">
             <label>{{ t('serviceControl.protocol') }}</label>
-            <select v-model="editingRule.Protocol" required>
+            <select v-model="editingRule.Protocol" required :data-testid="qa('service-control-protocol-select')">
               <option v-for="protocol in enhancedProtocolOptions" :key="protocol.value" :value="protocol.value">
                 {{ protocol.label }}
               </option>
@@ -197,13 +198,14 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
               v-model="editingRule.DestPort" 
               required
               placeholder="e.g., 80 or 80-90"
+              :data-testid="qa('service-control-dest-port-input')"
             />
           </div>
 
           <!-- Interface Selection -->
           <div class="form-group">
             <label>{{ t('serviceControl.accessDirection') }}</label>
-            <select v-model="editingRule.Interface" required>
+            <select v-model="editingRule.Interface" required :data-testid="qa('service-control-interface-select')">
               <option v-for="iface in options.Interfaces" :key="iface.value" :value="iface.value">
                 {{ iface.label }}
               </option>
@@ -213,7 +215,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- IP Version -->
           <div class="form-group">
             <label>{{ t('serviceControl.ipRange') }}</label>
-            <select v-model="editingRule.IPVersion" required>
+            <select v-model="editingRule.IPVersion" required :data-testid="qa('service-control-ip-version-select')">
               <option v-for="ipVersion in enhancedIPVersionOptions" :key="ipVersion.value" :value="Number(ipVersion.value)">
                 {{ ipVersion.label }}
               </option>
@@ -241,6 +243,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
                 type="text" 
                 v-model="editingRule.SourceIPStart" 
                 placeholder="e.g., 192.168.1.1"
+                :data-testid="qa('service-control-source-ip-start-input')"
               />
             </div>
             <div class="form-group">
@@ -249,6 +252,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
                 type="text" 
                 v-model="editingRule.SourceIPEnd" 
                 placeholder="e.g., 192.168.1.255"
+                :data-testid="qa('service-control-source-ip-end-input')"
               />
             </div>
           </div>
@@ -256,7 +260,7 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <!-- Action Selection -->
           <div class="form-group">
             <label>{{ t('serviceControl.action') }}</label>
-            <select v-model="editingRule.Action" required>
+            <select v-model="editingRule.Action" required :data-testid="qa('service-control-action-select')">
               <option value="Accept">Accept</option>
               <option value="Drop">Drop</option>
             </select>
@@ -266,6 +270,8 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
           <ActionButtons
             class="button-group"
             :apply-text="t('common.confirm')"
+            :cancel-data-testid="qa('service-control-cancel-button')"
+            :apply-data-testid="qa('service-control-confirm-button')"
             apply-type="submit"
             @cancel="$emit('cancel')"
           />
@@ -324,19 +330,25 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
   padding: 1.5rem;
 }
 
+.compact-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
   color: var(--text-primary);
 }
 
 input, select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.625rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
@@ -373,7 +385,7 @@ input:disabled, select:disabled {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 @media (max-width: 768px) {

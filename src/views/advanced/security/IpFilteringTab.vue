@@ -68,6 +68,7 @@
             :placeholder="ipVersion === 'IPv4' ? '192.168.1.1' : '2001:db8::1'"
             class="form-input"
             :class="{ 'input-error': errorMessage }"
+            :data-testid="qa('ip-filtering-ip-start-input')"
           >
         </div>
         <div class="form-group">
@@ -78,6 +79,7 @@
             :placeholder="ipVersion === 'IPv4' ? '192.168.1.10' : '2001:db8::10'"
             class="form-input"
             :class="{ 'input-error': errorMessage }"
+            :data-testid="qa('ip-filtering-ip-end-input')"
           >
         </div>
       </div>
@@ -88,7 +90,7 @@
 
       <div class="form-group">
         <label>{{ $t('ipFiltering.protocol') }}</label>
-        <select v-model="newEntry.Protocol" class="form-select">
+        <select v-model="newEntry.Protocol" class="form-select" :data-testid="qa('ip-filtering-protocol-select')">
           <option v-for="proto in config.ProtoList" :key="proto" :value="proto">
             {{ proto }}
           </option>
@@ -102,11 +104,12 @@
           :placeholder="$t('ipFiltering.placeholder')"
           class="form-textarea"
           rows="3"
+          :data-testid="qa('ip-filtering-comment-textarea')"
         ></textarea>
       </div>
 
       <div class="form-actions">
-        <button @click="addEntry" class="btn btn-add">
+        <button @click="addEntry" class="btn btn-add" :data-testid="qa('ip-filtering-add-button')">
           <span class="material-icons">add</span>
           {{ $t('ipFiltering.add') }}
         </button>
@@ -134,7 +137,7 @@
               <td>{{ entry.Protocol.toLowerCase() }}</td>
               <td>{{ entry.Comment }}</td>
               <td>
-                <button @click="deleteEntry(entry.No)" class="btn-icon">
+                <button @click="deleteEntry(entry.No)" class="btn-icon" :data-testid="qa(`ip-filtering-delete-${entry.No}`)">
                   <span class="material-icons">delete</span>
                 </button>
               </td>
@@ -150,10 +153,10 @@
     </template>
 
     <div class="form-footer">
-      <button @click="cancel" class="btn btn-outline">
+      <button @click="cancel" class="btn btn-outline" :data-testid="qa('ip-filtering-cancel-button')">
         {{ $t('common.cancel') }}
       </button>
-      <button @click="apply" class="btn btn-primary">
+      <button @click="apply" class="btn btn-primary" :data-testid="qa('ip-filtering-apply-button')">
         {{ $t('common.apply') }}
       </button>
     </div>

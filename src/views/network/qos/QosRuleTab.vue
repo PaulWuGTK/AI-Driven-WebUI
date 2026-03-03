@@ -1,12 +1,20 @@
 <template>
   <div class="qos-rule-tab">
-    <BaseCard>
-      <div class="rule-header">
-        <h3>{{ t('qos.qosRuleLists') }}</h3>
-        <BaseButton @click="openAddModal" variant="primary">
+    <SectionCard
+      :title="t('qos.qosRuleLists')"
+      header-mode="row"
+      :data-testid="qa('qos-rule-section')"
+      :title-data-testid="qa('qos-rule-title')"
+    >
+      <template #actions>
+        <BaseButton
+          variant="primary"
+          :data-testid="qa('qos-rule-add-button')"
+          @click="openAddModal"
+        >
           {{ t('qos.addRule') }}
         </BaseButton>
-      </div>
+      </template>
 
       <div class="rule-table-container">
         <table class="draggable-table">
@@ -44,10 +52,10 @@
               <td>{{ row.Priority }}</td>
               <td>
                 <div class="action-buttons">
-                  <button @click="handleEdit(row, index)" class="icon-btn" :title="t('common.edit')">
+                  <button @click="handleEdit(row, index)" class="icon-btn" :title="t('common.edit')" :data-testid="qa(`qos-rule-edit-${index}`)">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button @click="handleDelete(index)" class="icon-btn" :title="t('common.delete')">
+                  <button @click="handleDelete(index)" class="icon-btn" :title="t('common.delete')" :data-testid="qa(`qos-rule-delete-${index}`)">
                     <span class="material-icons">delete</span>
                   </button>
                 </div>
@@ -57,27 +65,37 @@
         </table>
       </div>
 
-      <div class="button-group">
-        <BaseButton @click="handleCancel" variant="secondary">
-          {{ t('common.cancel') }}
-        </BaseButton>
-        <BaseButton @click="handleApply" variant="primary">
-          {{ t('common.apply') }}
-        </BaseButton>
-      </div>
-    </BaseCard>
+      <ActionButtons
+        class="button-group"
+        :apply-loading="loading"
+        :cancel-data-testid="qa('qos-rule-cancel-button')"
+        :apply-data-testid="qa('qos-rule-apply-button')"
+        @cancel="handleCancel"
+        @apply="handleApply"
+      />
+    </SectionCard>
 
     <BaseModal
       v-model="showAddModal"
       :title="editingIndex !== null ? t('qos.editRule') : t('qos.addQosRule')"
+      :close-button-data-testid="qa('qos-rule-modal-close-button')"
       @close="closeModal"
     >
       <div class="modal-form">
+        <div
+          v-if="modalErrorMessage"
+          class="modal-error-banner"
+          :data-testid="qa('qos-rule-modal-error')"
+        >
+          {{ modalErrorMessage }}
+        </div>
+
         <div class="form-group">
           <label class="form-label">{{ t('qos.type') }}</label>
           <BaseSelect
             v-model="currentRule.Type"
             :options="typeOptions"
+            :data-testid="qa('qos-rule-modal-type-select')"
             @change="handleTypeChange"
           />
         </div>
@@ -88,6 +106,7 @@
             <BaseSelect
               v-model="selectedDevice"
               :options="deviceOptions"
+              :data-testid="qa('qos-rule-modal-device-select')"
               @change="handleDeviceChange"
             />
           </div>
@@ -97,6 +116,7 @@
             <BaseInput
               v-model="currentRule.MACAddress"
               :disabled="true"
+              :data-testid="qa('qos-rule-modal-mac-address-input')"
             />
           </div>
         </template>
@@ -107,6 +127,7 @@
             <BaseSelect
               v-model="selectedApplicationType"
               :options="applicationTypeOptions"
+              :data-testid="qa('qos-rule-modal-application-type-select')"
               @change="handleApplicationTypeChange"
             />
           </div>
@@ -116,6 +137,7 @@
             <BaseInput
               v-model="currentRule.ApplicationName"
               :disabled="selectedApplicationType !== 'Self-defined'"
+              :data-testid="qa('qos-rule-modal-application-name-input')"
             />
           </div>
 
@@ -125,6 +147,7 @@
               v-model="currentRule.Port"
               :disabled="selectedApplicationType !== 'Self-defined'"
               :placeholder="t('qos.portPlaceholder')"
+              :data-testid="qa('qos-rule-modal-port-input')"
             />
             <div class="field-hint">
               {{ t('qos.portHint') }}
@@ -137,6 +160,7 @@
               v-model="currentRule.Protocol"
               :options="protocolOptions"
               :disabled="selectedApplicationType !== 'Self-defined'"
+              :data-testid="qa('qos-rule-modal-protocol-select')"
             />
           </div>
         </template>
@@ -146,35 +170,47 @@
           <BaseSelect
             v-model="currentRule.Priority"
             :options="priorityOptions"
+            :data-testid="qa('qos-rule-modal-priority-select')"
           />
         </div>
 
-        <div class="modal-actions">
-          <BaseButton @click="handleAddOrUpdate" variant="primary">
-            {{ editingIndex !== null ? t('common.update') : t('common.add') }}
-          </BaseButton>
-          <BaseButton @click="closeModal" variant="secondary">
-            {{ t('common.cancel') }}
-          </BaseButton>
-        </div>
+        <ActionButtons
+          class="modal-actions"
+          :apply-text="editingIndex !== null ? t('common.save') : t('common.add')"
+          :cancel-data-testid="qa('qos-rule-modal-cancel-button')"
+          :apply-data-testid="qa('qos-rule-modal-add-or-update-button')"
+          @cancel="closeModal"
+          @apply="handleAddOrUpdate"
+        />
       </div>
     </BaseModal>
+
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('qos-rule-success-message')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('qos-rule-error-message')"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import BaseCard from '../../../components/common/BaseCard.vue';
-import BaseButton from '../../../components/common/BaseButton.vue';
-import BaseTable from '../../../components/common/BaseTable.vue';
-import BaseModal from '../../../components/common/BaseModal.vue';
-import BaseInput from '../../../components/common/BaseInput.vue';
-import BaseSelect from '../../../components/common/BaseSelect.vue';
+import { useQA } from '../../../utils/qa';
+import { ActionButtons, BaseButton, BaseInput, BaseModal, BaseSelect, BaseToast, SectionCard } from '../../../components/common';
 import { qosApi } from '../../../services/api/qos';
 import type { QosRule, QosRuleData, QosApplicationType, QosDevice } from '../../../types/qos';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 
 const { t } = useI18n();
+const { qa } = useQA();
 
 const formData = ref<QosRuleData>({
   ApplicationTypeList: [],
@@ -190,6 +226,11 @@ const editingIndex = ref<number | null>(null);
 const selectedApplicationType = ref('');
 const selectedDevice = ref('');
 const loading = ref(false);
+const modalErrorMessage = ref('');
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 const draggedIndex = ref<number | null>(null);
 const dragOverIndex = ref<number | null>(null);
@@ -204,15 +245,6 @@ const currentRule = ref<QosRule>({
   Protocol: '',
   Priority: ''
 });
-
-const columns = [
-  { key: 'no', label: t('qos.no'), slot: 'no' },
-  { key: 'type', label: t('qos.type'), slot: 'type' },
-  { key: 'name', label: t('qos.name'), slot: 'name' },
-  { key: 'description', label: t('qos.description'), slot: 'description' },
-  { key: 'priority', label: t('qos.priority'), slot: 'priority' },
-  { key: 'action', label: t('qos.action'), slot: 'action', width: '120px' }
-];
 
 const typeOptions = computed(() => [
   { value: 'Application', label: t('qos.application') },
@@ -247,15 +279,38 @@ const priorityOptions = computed(() => {
   }));
 });
 
+const showSuccessMessage = (message: string) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
+
 const formatDescription = (rule: QosRule): string => {
   if (rule.Type === 'Device') {
     return rule.MACAddress;
-  } else {
-    const parts = [];
-    if (rule.Port) parts.push(rule.Port);
-    if (rule.Protocol) parts.push(rule.Protocol.toLowerCase());
-    return parts.join('/');
   }
+
+  const parts = [];
+  if (rule.Port) parts.push(rule.Port);
+  if (rule.Protocol) parts.push(rule.Protocol.toLowerCase());
+  return parts.join('/');
+};
+
+const resetCurrentRule = () => {
+  currentRule.value = {
+    Order: 0,
+    Type: 'Application',
+    ApplicationName: '',
+    DeviceName: '',
+    MACAddress: '',
+    Port: '',
+    Protocol: '',
+    Priority: ''
+  };
 };
 
 const handleTypeChange = () => {
@@ -271,6 +326,7 @@ const handleTypeChange = () => {
   };
   selectedApplicationType.value = '';
   selectedDevice.value = '';
+  modalErrorMessage.value = '';
 };
 
 const handleApplicationTypeChange = () => {
@@ -287,13 +343,13 @@ const handleApplicationTypeChange = () => {
     currentRule.value.Port = '';
     currentRule.value.Protocol = '';
   }
+
+  modalErrorMessage.value = '';
 };
 
 const openAddModal = () => {
-  // 這次是新增，不是編輯
   editingIndex.value = null;
 
-  // 從後端帶回來的清單裡挑預設值
   const defaultProtocol =
     formData.value.ProtocolList.includes('TCP,UDP')
       ? 'TCP,UDP'
@@ -304,23 +360,20 @@ const openAddModal = () => {
       ? 'Medium'
       : formData.value.PriorityList[0] || '';
 
-  // 初始化這次要新增的 rule
   currentRule.value = {
     Order: 0,
-    Type: 'Application',      // 走 Application 分支
+    Type: 'Application',
     ApplicationName: '',
     DeviceName: '',
     MACAddress: '',
-    Port: '',                 // 留空，顯示 placeholder
+    Port: '',
     Protocol: defaultProtocol,
     Priority: defaultPriority
   };
 
-  // dropdown 的預設值
-  selectedApplicationType.value = 'Self-defined'; // Application Type
+  selectedApplicationType.value = 'Self-defined';
   selectedDevice.value = '';
-
-  // 打開彈窗
+  modalErrorMessage.value = '';
   showAddModal.value = true;
 };
 
@@ -333,6 +386,8 @@ const handleDeviceChange = () => {
     currentRule.value.DeviceName = device.DeviceName;
     currentRule.value.MACAddress = device.MACAddress;
   }
+
+  modalErrorMessage.value = '';
 };
 
 const handleEdit = (rule: QosRule, index: number) => {
@@ -345,6 +400,7 @@ const handleEdit = (rule: QosRule, index: number) => {
     selectedDevice.value = rule.DeviceName;
   }
 
+  modalErrorMessage.value = '';
   showAddModal.value = true;
 };
 
@@ -355,6 +411,36 @@ const handleDelete = (index: number) => {
       rule.Order = idx + 1;
     });
   }
+};
+
+const validateRule = (): boolean => {
+  if (!currentRule.value.Priority) {
+    modalErrorMessage.value = t('qos.priorityRequired');
+    return false;
+  }
+
+  if (currentRule.value.Type === 'Application') {
+    if (!currentRule.value.ApplicationName) {
+      modalErrorMessage.value = t('qos.applicationNameRequired');
+      return false;
+    }
+    if (selectedApplicationType.value === 'Self-defined') {
+      if (!currentRule.value.Port) {
+        modalErrorMessage.value = t('qos.portRequired');
+        return false;
+      }
+      if (!currentRule.value.Protocol) {
+        modalErrorMessage.value = t('qos.protocolRequired');
+        return false;
+      }
+    }
+  } else if (!currentRule.value.DeviceName) {
+    modalErrorMessage.value = t('qos.deviceRequired');
+    return false;
+  }
+
+  modalErrorMessage.value = '';
+  return true;
 };
 
 const handleAddOrUpdate = () => {
@@ -372,52 +458,13 @@ const handleAddOrUpdate = () => {
   closeModal();
 };
 
-const validateRule = (): boolean => {
-  if (!currentRule.value.Priority) {
-    alert(t('qos.priorityRequired'));
-    return false;
-  }
-
-  if (currentRule.value.Type === 'Application') {
-    if (!currentRule.value.ApplicationName) {
-      alert(t('qos.applicationNameRequired'));
-      return false;
-    }
-    if (selectedApplicationType.value === 'Self-defined') {
-      if (!currentRule.value.Port) {
-        alert(t('qos.portRequired'));
-        return false;
-      }
-      if (!currentRule.value.Protocol) {
-        alert(t('qos.protocolRequired'));
-        return false;
-      }
-    }
-  } else {
-    if (!currentRule.value.DeviceName) {
-      alert(t('qos.deviceRequired'));
-      return false;
-    }
-  }
-
-  return true;
-};
-
 const closeModal = () => {
   showAddModal.value = false;
   editingIndex.value = null;
   selectedApplicationType.value = '';
   selectedDevice.value = '';
-  currentRule.value = {
-    Order: 0,
-    Type: 'Application',
-    ApplicationName: '',
-    DeviceName: '',
-    MACAddress: '',
-    Port: '',
-    Protocol: '',
-    Priority: ''
-  };
+  modalErrorMessage.value = '';
+  resetCurrentRule();
 };
 
 const handleApply = async () => {
@@ -429,10 +476,10 @@ const handleApply = async () => {
       }
     });
     originalData.value = JSON.parse(JSON.stringify(formData.value));
-    alert(t('common.saveSuccess'));
+    showSuccessMessage(t('common.saveSuccess'));
   } catch (error) {
     console.error('Failed to save QoS rules:', error);
-    alert(t('common.saveFailed'));
+    showErrorMessage(t('common.saveFailed'));
   } finally {
     loading.value = false;
   }
@@ -452,6 +499,7 @@ const loadData = async () => {
     originalData.value = JSON.parse(JSON.stringify(response.QosRule));
   } catch (error) {
     console.error('Failed to load QoS rules:', error);
+    showErrorMessage('Failed to load QoS rules');
   } finally {
     loading.value = false;
   }
@@ -528,20 +576,6 @@ onMounted(() => {
   padding: 20px;
 }
 
-.rule-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.rule-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary, #1f2937);
-}
-
 .rule-table-container {
   width: 100%;
   overflow-x: auto;
@@ -551,6 +585,8 @@ onMounted(() => {
 .action-buttons {
   display: flex;
   gap: 8px;
+  justify-content: center;
+  min-width: 4.5rem;
 }
 
 .icon-btn {
@@ -571,22 +607,21 @@ onMounted(() => {
 }
 
 .button-group {
-  display: flex;
   justify-content: flex-end;
-  gap: 1rem;
   margin-top: 2rem;
 }
 
 .modal-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  margin-bottom: 0;
 }
 
 .form-label {
@@ -594,17 +629,27 @@ onMounted(() => {
   color: var(--text-primary, #1f2937);
 }
 
+.form-group :deep(.form-group) {
+  margin-bottom: 0;
+}
+
 .field-hint {
   font-size: 12px;
   color: var(--text-secondary, #6b7280);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .modal-actions {
-  display: flex;
-  gap: 12px;
   justify-content: flex-end;
-  margin-top: 8px;
+  margin-top: 4px;
+}
+
+.modal-error-banner {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #c62828;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
 }
 
 .draggable-table {
@@ -618,6 +663,12 @@ onMounted(() => {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.draggable-table th:last-child,
+.draggable-table td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .draggable-table th {
@@ -657,12 +708,6 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .rule-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
   .draggable-table {
     font-size: 14px;
   }

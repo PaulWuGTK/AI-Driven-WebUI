@@ -13,6 +13,7 @@
       :required="required"
       :rows="rows"
       :class="textareaClasses"
+      :data-testid="dataTestid || undefined"
       @input="handleInput"
       @blur="handleBlur"
       @focus="handleFocus"
@@ -41,6 +42,7 @@ interface Props {
   errorMessage?: string;
   helpText?: string;
   id?: string;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,6 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   rows: 4,
   error: false,
+  dataTestid: '',
 });
 
 const emit = defineEmits<{

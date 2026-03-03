@@ -12,6 +12,7 @@
       :maxlength="maxLength"
       :disabled="disabled"
       :readonly="readonly"
+      :required="required"
       :data-testid="inputDataTestid || undefined"
       class="secret-field"
       @input="handleInput"
@@ -26,6 +27,7 @@
     </span>
 
     <button
+      v-if="showToggle"
       type="button"
       class="secret-toggle"
       :disabled="disabled"
@@ -49,6 +51,8 @@ interface Props {
   maxLength?: number;
   disabled?: boolean;
   readonly?: boolean;
+  required?: boolean;
+  showToggle?: boolean;
   emptyText?: string;
   maskSymbol?: string;
   containerDataTestid?: string;
@@ -64,6 +68,8 @@ const props = withDefaults(defineProps<Props>(), {
   maxLength: undefined,
   disabled: false,
   readonly: false,
+  required: false,
+  showToggle: true,
   emptyText: '-',
   maskSymbol: '*',
   containerDataTestid: '',
@@ -110,14 +116,19 @@ const handleInput = (event: Event) => {
 
 .secret-field {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+  padding: var(--space-3) 2.5rem var(--space-3) var(--space-4);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  transition: all var(--transition-fast);
 }
 
 .secret-field:disabled {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
   cursor: not-allowed;
 }
 

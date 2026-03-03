@@ -5,7 +5,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
 import type { WlanMeshResponse } from '../../../types/wireless';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
-import { ActionButtons, BaseSwitch, BaseToast } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -151,12 +151,12 @@ onMounted(fetchMeshConfig);
           </div>
           <div class="form-group">
             <label :data-testid="qa('wireless-mesh-config-password-label')">Password</label>
-            <input
-              type="password"
-              :data-testid="qa('wireless-mesh-config-password-input')"
+            <BaseSecretInput
               v-model="meshData.WlanMesh.Password"
-              disabled
-              class="disabled-input"
+              class="secret-password disabled-input"
+              :input-data-testid="qa('wireless-mesh-config-password-input')"
+              :disabled="true"
+              :show-toggle="false"
             />
           </div>
         </div>
@@ -306,7 +306,21 @@ input {
   font-size: 0.9rem;
 }
 
+.secret-password :deep(.secret-field) {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
 .disabled-input {
+  background-color: #f5f5f5;
+  color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.secret-password :deep(.secret-field:disabled) {
   background-color: #f5f5f5;
   color: #9e9e9e;
   cursor: not-allowed;

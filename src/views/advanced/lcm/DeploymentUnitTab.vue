@@ -11,7 +11,7 @@ import {
   getLcmDeploymentUnitConfig,
   updateLcmDeploymentUnit
 } from '../../../services/api/lcmDeploymentUnit';
-import { ActionButtons } from '../../../components/common';
+import { ActionButtons, BaseSecretInput, SectionCard } from '../../../components/common';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 
@@ -314,11 +314,13 @@ onMounted(fetchConfig);
     </div>
 
     <template v-else>
-      <div class="panel-section" :data-testid="qa('lcm-deployment-unit-section')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('lcm-deployment-unit-title')">
-            {{ t('lcm.deploymentUnit') }}
-          </div>
+      <SectionCard
+        :data-testid="qa('lcm-deployment-unit-section')"
+        header-mode="row"
+        :title="t('lcm.deploymentUnit')"
+        :title-data-testid="qa('lcm-deployment-unit-title')"
+      >
+        <template #actions>
           <button
             class="btn btn-primary"
             :data-testid="qa('lcm-deployment-unit-add-button')"
@@ -327,9 +329,8 @@ onMounted(fetchConfig);
             <span class="material-icons">add</span>
             {{ t('lcm.addDU') }}
           </button>
-        </div>
+        </template>
 
-        <div class="card-content">
           <div class="table-container" :data-testid="qa('lcm-deployment-unit-table')">
             <table>
               <thead>
@@ -428,29 +429,31 @@ onMounted(fetchConfig);
                 <span class="card-value">{{ item.InstalledEE }}</span>
               </div>
               <div class="card-actions">
-                <button class="btn-action" @click="openEditModal(item)" title="Edit">
+                <span class="card-label">{{ t('lcm.action') }}</span>
+                <div class="action-buttons">
+                <button class="btn-action" @click="openEditModal(item)" title="Edit" :data-testid="qa(`lcm-deployment-unit-card-edit-${index}`)">
                   <span class="material-icons">edit</span>
                 </button>
-                <button class="btn-action" @click="handleDelete(item.DUID)" title="Delete">
+                <button class="btn-action" @click="handleDelete(item.DUID)" title="Delete" :data-testid="qa(`lcm-deployment-unit-card-delete-${index}`)">
                   <span class="material-icons">delete</span>
                 </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </SectionCard>
     </template>
 
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content large-modal" :data-testid="qa('lcm-deployment-unit-modal')">
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
-          <button class="close-btn" @click="closeModal">
+          <button class="close-btn" @click="closeModal" :data-testid="qa('lcm-deployment-unit-modal-close')">
             <span class="material-icons">close</span>
           </button>
         </div>
 
-        <div class="modal-body">
+        <div class="modal-body compact-modal-form">
           <div class="form-section">
             <div class="section-header">{{ t('lcm.appRegistry') }}</div>
 
@@ -510,11 +513,12 @@ onMounted(fetchConfig);
                 <label>
                   {{ t('lcm.password') }}
                 </label>
-                <input
-                  type="password"
+                <BaseSecretInput
                   v-model="formData.Password"
+                  class="password-field"
                   :class="{ error: formErrors.Password }"
-                  :data-testid="qa('lcm-deployment-unit-modal-password')"
+                  :input-data-testid="qa('lcm-deployment-unit-modal-password')"
+                  :toggle-data-testid="qa('lcm-deployment-unit-modal-password-toggle')"
                 />
                 <span v-if="formErrors.Password" class="error-message">{{
                   formErrors.Password
@@ -594,7 +598,7 @@ onMounted(fetchConfig);
               >
                 <div class="form-group">
                   <label>{{ t('lcm.interface') }}</label>
-                  <select v-model="pf.Interface">
+                  <select v-model="pf.Interface" :data-testid="qa(`lcm-deployment-unit-port-forwarding-interface-${index}`)">
                     <option v-for="iface in interfaceList" :key="iface" :value="iface">
                       {{ iface }}
                     </option>
@@ -603,7 +607,7 @@ onMounted(fetchConfig);
 
                 <div class="form-group">
                   <label>{{ t('lcm.protocol') }}</label>
-                  <select v-model="pf.Protocol">
+                  <select v-model="pf.Protocol" :data-testid="qa(`lcm-deployment-unit-port-forwarding-protocol-${index}`)">
                     <option v-for="proto in protocolList" :key="proto" :value="proto">
                       {{ proto }}
                     </option>
@@ -612,12 +616,12 @@ onMounted(fetchConfig);
 
                 <div class="form-group">
                   <label>{{ t('lcm.externalPort') }}</label>
-                  <input type="number" v-model.number="pf.ExternalPort" min="1" max="65535" />
+                  <input type="number" v-model.number="pf.ExternalPort" min="1" max="65535" :data-testid="qa(`lcm-deployment-unit-port-forwarding-external-port-${index}`)" />
                 </div>
 
                 <div class="form-group">
                   <label>{{ t('lcm.internalPort') }}</label>
-                  <input type="number" v-model.number="pf.InternalPort" min="1" max="65535" />
+                  <input type="number" v-model.number="pf.InternalPort" min="1" max="65535" :data-testid="qa(`lcm-deployment-unit-port-forwarding-internal-port-${index}`)" />
                 </div>
 
                 <button
@@ -651,17 +655,17 @@ onMounted(fetchConfig);
               >
                 <div class="form-group">
                   <label>{{ t('lcm.source') }}</label>
-                  <input type="text" v-model="ho.Source" />
+                  <input type="text" v-model="ho.Source" :data-testid="qa(`lcm-deployment-unit-host-object-source-${index}`)" />
                 </div>
 
                 <div class="form-group">
                   <label>{{ t('lcm.destination') }}</label>
-                  <input type="text" v-model="ho.Destination" />
+                  <input type="text" v-model="ho.Destination" :data-testid="qa(`lcm-deployment-unit-host-object-destination-${index}`)" />
                 </div>
 
                 <div class="form-group">
                   <label>{{ t('lcm.type') }}</label>
-                  <select v-model="ho.Type">
+                  <select v-model="ho.Type" :data-testid="qa(`lcm-deployment-unit-host-object-type-${index}`)">
                     <option v-for="type in hostObjectMountType" :key="type" :value="type">
                       {{ type }}
                     </option>
@@ -735,12 +739,6 @@ onMounted(fetchConfig);
   padding: 0;
 }
 
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
-}
-
 .btn {
   display: flex;
   align-items: center;
@@ -750,6 +748,31 @@ onMounted(fetchConfig);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--space-3) 0;
+}
+
+.card-actions .action-buttons {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -840,18 +863,27 @@ onMounted(fetchConfig);
   padding: 1.5rem;
 }
 
+.compact-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .form-section {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .section-header {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-color);
 }
@@ -860,7 +892,7 @@ onMounted(fetchConfig);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -868,7 +900,7 @@ onMounted(fetchConfig);
 .form-row {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .form-row.two-cols {
@@ -878,7 +910,7 @@ onMounted(fetchConfig);
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   flex: 1;
 }
 
@@ -888,7 +920,7 @@ onMounted(fetchConfig);
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
   color: var(--text-primary);
   font-weight: 500;
 }
@@ -927,13 +959,33 @@ onMounted(fetchConfig);
   color: var(--text-primary);
 }
 
+.form-group :deep(.secret-field) {
+  width: 100%;
+  padding: 0.75rem;
+  padding-right: 2.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
 .form-group input.error,
 .form-group select.error {
   border-color: #dc3545;
 }
 
+.password-field.error :deep(.secret-field) {
+  border-color: #dc3545;
+}
+
 .form-group input:disabled,
 .form-group select:disabled {
+  background-color: var(--bg-primary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-group :deep(.secret-field:disabled) {
   background-color: var(--bg-primary);
   cursor: not-allowed;
   opacity: 0.6;
@@ -948,9 +1000,12 @@ onMounted(fetchConfig);
 
 .port-forwarding-section,
 .host-object-section {
-  margin-top: 1rem;
+  margin-top: 0;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .port-forwarding-row,
@@ -1056,6 +1111,33 @@ onMounted(fetchConfig);
 }
 
 @media (max-width: 768px) {
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn) {
+    width: auto;
+  }
+
   .modal-content {
     width: 95%;
     max-height: 95vh;
@@ -1086,6 +1168,20 @@ onMounted(fetchConfig);
   .port-forwarding-row,
   .host-object-row {
     grid-template-columns: 1fr;
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
   }
 }
 </style>

@@ -10,6 +10,7 @@
             :key="tab.id"
             class="tab-button"
             :class="{ active: activeTab === tab.id }"
+            :data-testid="qa(`qos-tab-${tab.id}`)"
             @click="activeTab = tab.id"
           >
             {{ tab.label }}
@@ -30,8 +31,10 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import QosBandwidthTab from './QosBandwidthTab.vue';
 import QosRuleTab from './QosRuleTab.vue';
+import { useQA } from '../../../utils/qa';
 
 const { t } = useI18n();
+const { qa } = useQA();
 
 const activeTab = ref('bandwidth');
 

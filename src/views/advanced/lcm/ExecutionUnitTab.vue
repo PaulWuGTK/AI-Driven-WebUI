@@ -197,22 +197,27 @@ onMounted(fetchConfig);
                 <span class="card-value">{{ formatUptime(item.Uptime) }}</span>
               </div>
               <div class="card-actions">
-                <button
-                  class="action-btn play"
-                  :disabled="actioningEUID === item.EUID || item.Status === 'Active'"
-                  @click="handleStart(item.EUID)"
-                  :title="t('lcm.start')"
-                >
-                  <span class="material-icons">play_circle</span>
-                </button>
-                <button
-                  class="action-btn stop"
-                  :disabled="actioningEUID === item.EUID || item.Status === 'Idle'"
-                  @click="handleStop(item.EUID)"
-                  :title="t('lcm.stop')"
-                >
-                  <span class="material-icons">stop_circle</span>
-                </button>
+                <span class="card-label">{{ t('common.action') }}</span>
+                <div class="action-buttons">
+                  <button
+                    class="action-btn play"
+                    :disabled="actioningEUID === item.EUID || item.Status === 'Active'"
+                    :data-testid="qa(`lcm-execution-unit-mobile-start-${index}`)"
+                    @click="handleStart(item.EUID)"
+                    :title="t('lcm.start')"
+                  >
+                    <span class="material-icons">play_circle</span>
+                  </button>
+                  <button
+                    class="action-btn stop"
+                    :disabled="actioningEUID === item.EUID || item.Status === 'Idle'"
+                    :data-testid="qa(`lcm-execution-unit-mobile-stop-${index}`)"
+                    @click="handleStop(item.EUID)"
+                    :title="t('lcm.stop')"
+                  >
+                    <span class="material-icons">stop_circle</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -244,7 +249,31 @@ onMounted(fetchConfig);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
-  justify-content: left;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: var(--space-3);
+}
+
+.card-actions .action-buttons {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .action-btn {

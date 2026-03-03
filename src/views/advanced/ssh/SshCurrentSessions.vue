@@ -46,6 +46,13 @@ onMounted(fetchSessions);
         <!-- PC版表格 -->
         <div class="table-container" :data-testid="qa('ssh-sessions-table')">
           <table>
+            <colgroup>
+              <col class="col-user">
+              <col class="col-client-address">
+              <col class="col-client-port">
+              <col class="col-server-id">
+              <col class="col-server-port">
+            </colgroup>
             <thead>
               <tr>
                 <th :data-testid="qa('ssh-sessions-header-user')">{{ t('ssh.user') }}</th>
@@ -105,9 +112,11 @@ onMounted(fetchSessions);
 
 <style scoped>
 .sessions-management {
-  background-color: white;
+  background-color: var(--bg-secondary);
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
 .section-title-sp {
@@ -146,6 +155,35 @@ onMounted(fetchSessions);
 
 .btn .material-icons {
   font-size: 1.25rem;
+}
+
+.table-container .col-user {
+  width: 14%;
+}
+
+.table-container .col-client-address {
+  width: 24%;
+}
+
+.table-container .col-client-port {
+  width: 16%;
+}
+
+.table-container .col-server-id {
+  width: 14%;
+}
+
+.table-container .col-server-port {
+  width: 14%;
+}
+
+.table-container th:nth-child(3),
+.table-container td:nth-child(3),
+.table-container th:nth-child(4),
+.table-container td:nth-child(4),
+.table-container th:nth-child(5),
+.table-container td:nth-child(5) {
+  text-align: center;
 }
 
 .no-data {

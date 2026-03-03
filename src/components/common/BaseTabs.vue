@@ -6,6 +6,7 @@
         :key="tab.key || index"
         :class="getTabButtonClass(index)"
         :disabled="tab.disabled"
+        :data-testid="tabButtonDataTestidPrefix ? `${tabButtonDataTestidPrefix}-${tab.key || index}` : undefined"
         @click="selectTab(index)"
       >
         <span v-if="tab.icon" class="tab-button-icon">
@@ -45,12 +46,14 @@ interface Props {
   modelValue?: number;
   variant?: 'default' | 'pills' | 'boxed';
   vertical?: boolean;
+  tabButtonDataTestidPrefix?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 0,
   variant: 'default',
   vertical: false,
+  tabButtonDataTestidPrefix: '',
 });
 
 const emit = defineEmits<{

@@ -1,7 +1,13 @@
 <template>
-  <div class="port-forward-edit" :data-testid="qa('port-forward-edit')">
-    <h3>{{ isEdit ? $t('portForwarding.editRule') : $t('portForwarding.addRule') }}</h3>
-    <form @submit.prevent="handleSubmit" :data-testid="qa('port-forward-form')">
+  <div
+    class="port-forward-edit"
+    :class="{ 'port-forward-edit-embedded': embedded }"
+    :data-testid="qa('port-forward-edit')"
+  >
+    <h3 v-if="showTitle" :data-testid="qa('port-forward-title')">
+      {{ isEdit ? $t('portForwarding.editRule') : $t('portForwarding.addRule') }}
+    </h3>
+    <form class="compact-modal-form" @submit.prevent="handleSubmit" :data-testid="qa('port-forward-form')">
       <div class="form-section">
         <div class="form-group">
           <div class="switch-label">
@@ -116,6 +122,9 @@ interface Props {
   rule: PortForwardRule;
   wanList: string[];
   protoList: string[];
+  showTitle?: boolean;
+  embedded?: boolean;
+  isEdit?: boolean;
 }
 
 interface Emits {
@@ -124,10 +133,16 @@ interface Emits {
   (e: 'cancel'): void;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showTitle: true,
+  embedded: false,
+  isEdit: undefined,
+});
 const emit = defineEmits<Emits>();
 
-const isEdit = computed(() => !!props.rule.No);
+const isEdit = computed(() => (
+  typeof props.isEdit === 'boolean' ? props.isEdit : !!props.rule.No
+));
 
 const formData = ref<PortForwardRule>({ ...props.rule });
 
@@ -176,23 +191,34 @@ function handleSubmit() {
   background-color: white;
 }
 
+.port-forward-edit-embedded {
+  padding: 0;
+  background-color: transparent;
+}
+
 .port-forward-edit h3 {
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
+.compact-modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.375rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -227,8 +253,8 @@ function handleSubmit() {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
 }
 
 

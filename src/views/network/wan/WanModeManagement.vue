@@ -303,6 +303,14 @@ onMounted(fetchManagementData);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.wan-mode-table :deep(.table-container table th:last-child),
+.wan-mode-table :deep(.table-container table td:last-child) {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -362,13 +370,6 @@ onMounted(fetchManagementData);
 
   .wan-mode-table :deep(.mobile-cards) {
     padding: 1.5rem;
-  }
-  
-  .card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
   }
 
   .button-group {

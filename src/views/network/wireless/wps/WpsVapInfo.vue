@@ -15,7 +15,14 @@ defineProps<{
   <div class="vap-info" :data-testid="qa('wps-vap-info-content')">
     <div class="section-title" :data-testid="qa('wps-vap-info-title')">{{ t('wireless.vapInformation') }}</div>
     <div class="table-container" :data-testid="qa('wps-vap-info-table-container')">
-      <table :data-testid="qa('wps-vap-info-table')">
+      <table class="wps-vap-table" :data-testid="qa('wps-vap-info-table')">
+        <colgroup>
+          <col class="wps-vap-col-band">
+          <col class="wps-vap-col-ssid">
+          <col class="wps-vap-col-authentication">
+          <col class="wps-vap-col-encryption">
+          <col class="wps-vap-col-status">
+        </colgroup>
         <thead>
           <tr>
             <th :data-testid="qa('wps-vap-info-header-band')">{{ t('wireless.band') }}</th>
@@ -72,24 +79,40 @@ defineProps<{
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
 }
 
-.section-title-sp {
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  background-color: white;
-  border-bottom: 1px solid var(--border-color);
-}
-
 .table-container {
   padding: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .section-title-sp {
-    padding: 0.75rem 1rem;
-  }
+.wps-vap-table {
+  table-layout: fixed;
+}
 
+.table-container .wps-vap-col-band {
+  width: 12%;
+}
+
+.table-container .wps-vap-col-ssid {
+  width: 28%;
+}
+
+.table-container .wps-vap-col-authentication {
+  width: 24%;
+}
+
+.table-container .wps-vap-col-encryption {
+  width: 14%;
+}
+
+.table-container .wps-vap-col-status {
+  width: 22%;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
   .table-container {
     padding: 1rem;
   }

@@ -5,7 +5,7 @@ import type { ServiceControlRule, ServiceControlResponse } from '../../types/ser
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
 import ServiceControlModal from './service-control/ServiceControlModal.vue';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
-import { BaseToast } from '../../components/common';
+import { BaseToast, SectionCard } from '../../components/common';
 import { useAutoDismiss } from '../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
@@ -226,16 +226,20 @@ onMounted(fetchServiceControl);
         {{ error }}
       </div>
 
-      <div v-else-if="serviceControlData" class="panel-section" :data-testid="qa('service-control-panel')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('service-control-management-title')">{{ t('serviceControl.management') }}</div>
+      <SectionCard
+        v-else-if="serviceControlData"
+        :data-testid="qa('service-control-panel')"
+        header-mode="row"
+        :title="t('serviceControl.management')"
+        :title-data-testid="qa('service-control-management-title')"
+      >
+        <template #actions>
           <button class="btn btn-primary add-rule-btn" :data-testid="qa('service-control-add-rule-button')" @click="handleAddRule">
             <span class="material-icons">add</span>
             <span>{{ t('serviceControl.addRule') }}</span>
           </button>
-        </div>
+        </template>
 
-        <div class="card-content">
           <div class="table-container" :data-testid="qa('service-control-table')">
             <table>
               <thead>
@@ -326,17 +330,19 @@ onMounted(fetchServiceControl);
                 </span>
               </div>
               <div class="card-actions">
-                <button class="btn-action" :data-testid="qa(`service-control-card-edit-button-${ruleIndex}`)" @click="handleEditRule(rule)" title="Edit">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-action" :data-testid="qa(`service-control-card-delete-button-${ruleIndex}`)" @click="handleDeleteRule(rule.Service)" title="Delete">
-                  <span class="material-icons">delete</span>
-                </button>
+                <span class="card-label">{{ t('serviceControl.action') }}</span>
+                <div class="action-buttons">
+                  <button class="btn-action" :data-testid="qa(`service-control-card-edit-button-${ruleIndex}`)" @click="handleEditRule(rule)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn-action" :data-testid="qa(`service-control-card-delete-button-${ruleIndex}`)" @click="handleDeleteRule(rule.Service)" title="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </SectionCard>
 
       <BaseToast
         v-model="showSuccessToast"
@@ -375,12 +381,6 @@ onMounted(fetchServiceControl);
 </template>
 
 <style scoped>
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
-}
-
 .status-enabled {
   color: #4caf50;
   font-weight: 500;
@@ -395,6 +395,31 @@ onMounted(fetchServiceControl);
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  min-width: 4.5rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0;
+  padding-top: var(--space-3);
+}
+
+.card-actions .action-buttons {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -440,14 +465,31 @@ onMounted(fetchServiceControl);
 }
 
 @media (max-width: 768px) {
-  .header-row {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
   }
 
-  .section-title-sp {
-    padding: 0;
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn) {
+    width: auto;
   }
 
   .btn {
@@ -464,10 +506,8 @@ onMounted(fetchServiceControl);
   }
 
   .card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>

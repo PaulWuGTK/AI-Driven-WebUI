@@ -28,7 +28,11 @@
 
         <div class="form-group">
           <label>{{ $t('basicWanCht.password') }}</label>
-          <BaseInput v-model="localData.Password" type="password" :data-testid="qa('pppoe-password-input')" />
+          <BaseSecretInput
+            v-model="localData.Password"
+            :input-data-testid="qa('pppoe-password-input')"
+            :toggle-data-testid="qa('pppoe-password-toggle')"
+          />
         </div>
 
         <div class="form-group">
@@ -188,7 +192,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import type { BasicWanChtPPPoE } from '../../types/basicWanCht';
-import { BaseInput, BaseSelect, BaseSwitch } from '../common';
+import { BaseInput, BaseSecretInput, BaseSelect, BaseSwitch } from '../common';
 import { useQA } from '../../utils/qa';
 
 const { qa } = useQA();
@@ -256,6 +260,15 @@ watch(
 input, select {
   width: 100%;
   padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form-group :deep(.secret-field) {
+  width: 100%;
+  padding: 0.5rem;
+  padding-right: 2.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;

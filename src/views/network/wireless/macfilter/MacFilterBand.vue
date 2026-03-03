@@ -513,6 +513,13 @@ onMounted(() => {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-icon {

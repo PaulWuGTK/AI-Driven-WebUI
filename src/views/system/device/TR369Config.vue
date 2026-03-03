@@ -258,16 +258,19 @@ onMounted(fetchConfig);
                 <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-status-label-${index}`)">{{ t('device.status') }}</span>
                 <span class="card-value" :data-testid="qa(`tr369-config-controllers-card-status-value-${index}`)">{{ controller.Status }}</span>
               </div>
-              <div class="card-actions">
-                <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-edit-${index}`)" @click="handleEdit(controller)" title="Edit">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-delete-${index}`)" @click="handleDelete(controller.Alias)" title="Delete">
-                  <span class="material-icons">delete</span>
-                </button>
-                <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-detail-${index}`)" @click="handleDetail(controller)" title="Detail">
-                  <span class="material-icons">info</span>
-                </button>
+              <div class="card-actions" :data-testid="qa(`tr369-config-controllers-card-actions-row-${index}`)">
+                <span class="card-label" :data-testid="qa(`tr369-config-controllers-card-actions-label-${index}`)">{{ t('common.action') }}</span>
+                <div class="action-buttons" :data-testid="qa(`tr369-config-controllers-card-actions-${index}`)">
+                  <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-edit-${index}`)" @click="handleEdit(controller)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-delete-${index}`)" @click="handleDelete(controller.Alias)" title="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                  <button class="btn-action" :data-testid="qa(`tr369-config-controllers-card-detail-${index}`)" @click="handleDetail(controller)" title="Detail">
+                    <span class="material-icons">info</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -361,6 +364,14 @@ onMounted(fetchConfig);
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.table-container th:last-child,
+.table-container td:last-child {
+  width: 7rem;
+  text-align: center;
 }
 
 .btn-action {
@@ -427,9 +438,19 @@ onMounted(fetchConfig);
 
   .card-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     margin-top: 1rem;
+  }
+
+  .card-actions .action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
   }
 
   .button-group {

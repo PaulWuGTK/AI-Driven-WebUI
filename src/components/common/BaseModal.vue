@@ -11,6 +11,7 @@
               v-if="closable"
               class="modal-close"
               type="button"
+              :data-testid="closeButtonDataTestid || undefined"
               @click="close"
             >
               <span>&times;</span>
@@ -40,6 +41,7 @@ interface Props {
   closable?: boolean;
   closeOnOverlay?: boolean;
   closeOnEscape?: boolean;
+  closeButtonDataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -47,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   closable: true,
   closeOnOverlay: true,
   closeOnEscape: true,
+  closeButtonDataTestid: '',
 });
 
 const emit = defineEmits<{

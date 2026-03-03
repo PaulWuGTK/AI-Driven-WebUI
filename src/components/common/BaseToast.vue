@@ -13,6 +13,7 @@
           v-if="closable"
           class="toast-close"
           type="button"
+          :data-testid="closeButtonDataTestid || undefined"
           aria-label="Close notification"
           @click="close"
         >
@@ -34,12 +35,14 @@ interface Props {
   type?: ToastType;
   closable?: boolean;
   dataTestid?: string;
+  closeButtonDataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'success',
   closable: false,
   dataTestid: '',
+  closeButtonDataTestid: '',
 });
 
 const emit = defineEmits<{

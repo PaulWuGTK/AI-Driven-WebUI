@@ -83,6 +83,9 @@ const { qa } = useQA();
                 mode="display"
                 class="review-secret"
                 :model-value="config.wifi.common.password"
+                :toggle-data-testid="qa('wizard-review-common-password-toggle')"
+                :value-data-testid="qa('wizard-review-common-password-value')"
+                :masked-data-testid="qa('wizard-review-common-password-masked')"
               />
             </div>
           </div>
@@ -113,6 +116,9 @@ const { qa } = useQA();
                   mode="display"
                   class="review-secret"
                   :model-value="config.wifi.bands['2g'].password"
+                  :toggle-data-testid="qa('wizard-review-band-2g-password-toggle')"
+                  :value-data-testid="qa('wizard-review-band-2g-password-value')"
+                  :masked-data-testid="qa('wizard-review-band-2g-password-masked')"
                 />
               </div>
             </div>
@@ -133,6 +139,9 @@ const { qa } = useQA();
                   mode="display"
                   class="review-secret"
                   :model-value="config.wifi.bands['5g'].password"
+                  :toggle-data-testid="qa('wizard-review-band-5g-password-toggle')"
+                  :value-data-testid="qa('wizard-review-band-5g-password-value')"
+                  :masked-data-testid="qa('wizard-review-band-5g-password-masked')"
                 />
               </div>
             </div>
@@ -153,6 +162,9 @@ const { qa } = useQA();
                   mode="display"
                   class="review-secret"
                   :model-value="config.wifi.bands['6g'].password"
+                  :toggle-data-testid="qa('wizard-review-band-6g-password-toggle')"
+                  :value-data-testid="qa('wizard-review-band-6g-password-value')"
+                  :masked-data-testid="qa('wizard-review-band-6g-password-masked')"
                 />
               </div>
             </div>

@@ -401,6 +401,32 @@ interface Column {
 - `empty`: Custom empty state
 - `cell-{key}`: Custom cell content (per column)
 
+**`actions` Column Rule:**
+- Use `key: 'actions'` for row action columns
+- In `#cell-actions`, return a single `.action-buttons` wrapper
+- `BaseTable` will automatically normalize the mobile card layout for the `actions` column
+- Do not add page-local mobile `inline-flex / nowrap / card-actions-inline` hacks unless the page is not using `BaseTable`
+
+**Recommended `#cell-actions` pattern:**
+```vue
+<template #cell-actions="{ row, index, mobile }">
+  <div class="action-buttons" :data-testid="mobile ? `row-card-actions-${index}` : `row-actions-${index}`">
+    <button class="btn-action" @click="handleEdit(row)" title="Edit">
+      <span class="material-icons">edit</span>
+    </button>
+    <button class="btn-action" @click="handleDelete(row)" title="Delete">
+      <span class="material-icons">delete</span>
+    </button>
+  </div>
+</template>
+```
+
+**Mobile behavior:**
+- `BaseTable` renders the `actions` column as a dedicated mobile card row
+- Label stays on the left
+- `.action-buttons` stays on the right with `inline-flex + nowrap`
+- This avoids icon wrapping and invalid `span > div` layouts
+
 **Example:**
 ```vue
 <script setup lang="ts">
@@ -434,8 +460,14 @@ const users = ref([
     </template>
 
     <template #cell-actions="{ row }">
-      <BaseButton size="sm" variant="primary">Edit</BaseButton>
-      <BaseButton size="sm" variant="danger">Delete</BaseButton>
+      <div class="action-buttons">
+        <button class="btn-action" @click="editUser(row)" title="Edit">
+          <span class="material-icons">edit</span>
+        </button>
+        <button class="btn-action" @click="deleteUser(row)" title="Delete">
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
     </template>
   </BaseTable>
 </template>
