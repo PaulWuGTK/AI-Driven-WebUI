@@ -144,10 +144,10 @@ const tid = (suffix: string) => qa(`${props.testIdPrefix}-${suffix}`);
 
 <style scoped>
 .edit-view {
-  background-color: white;
-  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .edit-view-embedded {

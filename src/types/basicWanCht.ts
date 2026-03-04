@@ -26,7 +26,6 @@ export interface BasicWanChtPPPoE {
 export interface BasicWanChtIPoE {
   Enable: boolean;
   Protocol: string;
-  Status?: string;
   MTU: number;
   DefaultGateway: boolean;
   IPv4Enable: boolean;

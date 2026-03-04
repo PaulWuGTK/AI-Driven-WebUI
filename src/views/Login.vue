@@ -26,6 +26,8 @@ const lockRetryAfter = ref(0);
 const captchaTimeout = ref<number | null>(null);
 const lockCountdown = ref<number | null>(null);
 const logoutMessage = ref('');
+const wizardStatusLoading = ref(false);
+const wizardStatusRetryCount = ref(0);
 
 const resetCaptchaTimer = () => {
   if (captchaTimeout.value) {
@@ -130,7 +132,16 @@ const handleLogin = async () => {
     );
 
     if (success) {
-      if (auth.needsWizard()) {
+      wizardStatusLoading.value = true;
+      wizardStatusRetryCount.value = 0;
+
+      const needsWizard = await auth.resolveWizardRequirementWithRetry({
+        onRetry: (attempt) => {
+          wizardStatusRetryCount.value = attempt;
+        }
+      });
+
+      if (needsWizard) {
         await router.push('/wizard');
       } else {
         await router.push('/dashboard');
@@ -181,6 +192,11 @@ const handleLogin = async () => {
       return;
     }
 
+    if (err.message && (err.message.includes('Wizard status check failed') || err.message.includes('WizardRouter') || err.message.includes('wizard status') || err.message.includes('Missing WizardRouter OpMode') || err.message.includes('Invalid WizardRouter response'))) {
+      error.value = t('login.networkError');
+      return;
+    }
+
     // Default error handling - show user-friendly message
     if (err.message && err.message.length > 100) {
       // If error message is too long, show generic error
@@ -190,14 +206,23 @@ const handleLogin = async () => {
     }
     await fetchCaptcha(false); // Keep error message
   } finally {
+    wizardStatusLoading.value = false;
     loading.value = false;
   }
 };
 
 const submitButtonText = computed(() => {
+  if (wizardStatusLoading.value) return t('common.loading');
   if (loading.value) return t('login.loggingIn');
   if (isLocked.value) return t('login.lockedWithSeconds', { seconds: lockRetryAfter.value });
   return t('login.submit');
+});
+
+const wizardStatusMessage = computed(() => {
+  if (!wizardStatusLoading.value) return '';
+  return wizardStatusRetryCount.value > 0
+    ? `${t('common.loading')} (${wizardStatusRetryCount.value + 1})`
+    : t('common.loading');
 });
 
 onMounted(() => {
@@ -286,6 +311,13 @@ onUnmounted(() => {
         </div>
         <div v-if="logoutMessage" class="info-message" :data-testid="qa('login-logout-message')">
           {{ logoutMessage }}
+        </div>
+        <div
+          v-if="wizardStatusLoading"
+          class="info-message"
+          :data-testid="qa('login-wizard-status-loading')"
+        >
+          {{ wizardStatusMessage }}
         </div>
         <div v-if="error" class="error-message" :data-testid="qa('login-error-message')">
           {{ isLocked ? lockMessage : error }}

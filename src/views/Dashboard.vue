@@ -108,11 +108,11 @@ onUnmounted(() => {
 }
 
 .dashboard-item {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 100%;       /* 限制寬度不能被內部撐爆 */
-  overflow: hidden;      /* 限制文字外溢 */
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;       /* ?�制寬度不能被內?��???*/
+  overflow: hidden;      /* ?�制?��?外溢 */
   padding: 1.5rem;
 }
 
@@ -135,15 +135,15 @@ onUnmounted(() => {
 .retry-button {
   margin-top: 1rem;
   padding: 0.5rem 1.5rem;
-  background-color: #0070BB;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .retry-button:hover {
-  background-color: #005a96;
+  background-color: var(--color-primary-hover);
 }
 
 @media (min-width: 1200px) {

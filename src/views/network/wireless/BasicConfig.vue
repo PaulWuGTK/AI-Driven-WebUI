@@ -11,7 +11,7 @@ import BaseSelect from '../../../components/common/BaseSelect.vue';
 import { BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
-import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
+import { validateSsid, getByteLength, normalizeSsid, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
 import type {
   WlanBasicMultiGetResponse,
   WlanBasicMultiPostRequest,
@@ -291,11 +291,12 @@ const validateSsidField = (ssid: string, key: string) => {
 };
 
 const handleSsidInput = (value: string, key: string, callback: (val: string) => void) => {
-  const byteLength = getByteLength(value);
+  const normalizedValue = normalizeSsid(value);
+  const byteLength = getByteLength(normalizedValue);
 
   if (byteLength <= SSID_MAX_BYTES) {
-    callback(value);
-    validateSsidField(value, key);
+    callback(normalizedValue);
+    validateSsidField(normalizedValue, key);
   } else {
     // Show error message when exceeding max bytes
     ssidByteLengths[key] = byteLength;
@@ -335,7 +336,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
       Index: (g as any).Index,
       Enable: (g as any).Enable,
       Alias: (g as any).Alias || norm.Alias,
-      SSID: groupSSID,
+      SSID: typeof groupSSID === 'string' ? normalizeSsid(groupSSID) : groupSSID,
       KeyPassPhrase: groupKeyPassPhrase,
       SecurityMode: groupSecurityMode,
       CommonSSIDEnable: norm.CommonSSIDEnable,
@@ -347,7 +348,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
         Enable: i.Enable,
         Band: i.Band,
         Alias: i.Alias,
-        SSID: i.SSID,
+        SSID: normalizeSsid(i.SSID),
         KeyPassPhrase: (i.KeyPassPhrase ?? i.WpaPreShareKey ?? '').toString(),
         SecurityMode: i.SecurityMode,
         MFPConfig: i.MFPConfig,
@@ -771,11 +772,6 @@ onMounted(fetchConfig);
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
 }
 
 .card-title {

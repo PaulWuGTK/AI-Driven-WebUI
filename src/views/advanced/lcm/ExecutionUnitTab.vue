@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExecutionUnitItem } from '../../../types/lcmExecutionUnit';
 import { getLcmExecutionUnitConfig, controlExecutionUnit } from '../../../services/api/lcmExecutionUnit';
+import { SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -105,14 +106,12 @@ onMounted(fetchConfig);
     </div>
 
     <template v-else>
-      <div class="panel-section" :data-testid="qa('lcm-execution-unit-section')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('lcm-execution-unit-title')">
-            {{ t('lcm.executionUnit') }}
-          </div>
-        </div>
-
-        <div class="card-content">
+      <SectionCard
+        :data-testid="qa('lcm-execution-unit-section')"
+        header-mode="row"
+        :title="t('lcm.executionUnit')"
+        :title-data-testid="qa('lcm-execution-unit-title')"
+      >
           <div class="table-container" :data-testid="qa('lcm-execution-unit-table')">
             <table>
               <thead>
@@ -221,8 +220,7 @@ onMounted(fetchConfig);
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </SectionCard>
     </template>
 
     <div
@@ -238,12 +236,6 @@ onMounted(fetchConfig);
 <style scoped>
 .execution-unit-tab {
   padding: 0;
-}
-
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
 }
 
 .action-buttons {
@@ -382,4 +374,5 @@ onMounted(fetchConfig);
     font-size: 1.25rem;
   }
 }
+
 </style>

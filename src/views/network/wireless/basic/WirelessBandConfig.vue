@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { WlanBasicConfig } from '../../../../types/wireless';
 import { BaseSecretInput, BaseSwitch } from '../../../../components/common';
 import { useQA } from '../../../../utils/qa';
-import { validateSsid, getByteLength, SSID_MAX_BYTES } from '../../../../utils/ssidValidation';
+import { validateSsid, getByteLength, normalizeSsid, SSID_MAX_BYTES } from '../../../../utils/ssidValidation';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
@@ -46,12 +46,13 @@ const validateSsidField = (ssid: string) => {
 
 const handleSsidInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  const value = target.value;
-  const byteLength = getByteLength(value);
+  const normalizedValue = normalizeSsid(target.value);
+  const byteLength = getByteLength(normalizedValue);
 
   if (byteLength <= SSID_MAX_BYTES) {
-    updateConfig('SSID', value);
-    validateSsidField(value);
+    target.value = normalizedValue;
+    updateConfig('SSID', normalizedValue);
+    validateSsidField(normalizedValue);
   } else {
     // Show error message when exceeding max bytes
     ssidByteLength.value = byteLength;

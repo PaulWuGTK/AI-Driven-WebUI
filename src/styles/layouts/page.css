@@ -73,6 +73,8 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4) var(--space-6);
+  min-height: 83px;
+  box-sizing: border-box;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
 }
