@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ServiceControlRule, ServiceControlResponse } from '../../types/serviceControl';
 import { getServiceControl, updateServiceControl } from '../../services/api/serviceControl';
-import ServiceControlModal from './service-control/ServiceControlModal.vue';
+import ServiceControlModal from '../../components/advanced/service-control/ServiceControlModal.vue';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
 import { BaseToast, SectionCard } from '../../components/common';
 import { useAutoDismiss } from '../../composables/useAutoDismiss';

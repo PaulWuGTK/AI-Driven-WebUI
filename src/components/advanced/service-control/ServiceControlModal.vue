@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import type { ServiceControlRule, ServiceControlOptions, ServiceOption } from '../../../types/serviceControl';
-import { ActionButtons, BaseSwitch } from '../../../components/common';
+import { ActionButtons, BaseSwitch } from '../../common';
 
 import { useQA } from '../../../utils/qa';
 

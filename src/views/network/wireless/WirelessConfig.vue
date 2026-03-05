@@ -7,7 +7,7 @@ import WirelessAdvancedConfig from './AdvancedConfig.vue';
 import WirelessWpsConfig from './WpsConfig.vue';
 import WirelessMeshConfig from './MeshConfig.vue';
 import WirelessExtenderTab from './ExtenderConfig.vue';
-import GuestNetworkTab from './GuestNetwork.vue';
+import GuestNetworkTab from './GuestNetworkTab.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
 import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
