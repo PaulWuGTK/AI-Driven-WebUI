@@ -1,4 +1,4 @@
-import type { StaticRouteResponse } from '../../types/staticRoute';
+import type { StaticRouteResponse, StaticRouteUpdateRequest } from '../../types/staticRoute';
 
 export const staticRouteMockData: StaticRouteResponse = {
   StaticRoute: {
@@ -35,4 +35,17 @@ export const staticRouteMockData: StaticRouteResponse = {
     ],
     WanIfList: ["IPoE", "PPPoE"]
   }
+};
+
+export const getStaticRouteMockData = (): StaticRouteResponse => staticRouteMockData;
+
+export const updateStaticRouteMockData = (
+  data: StaticRouteUpdateRequest
+): StaticRouteResponse => {
+  return {
+    StaticRoute: {
+      IPv4: data.StaticRoute.IPv4,
+      IPv6: data.StaticRoute.IPv6
+    }
+  };
 };

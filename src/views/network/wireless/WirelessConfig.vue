@@ -9,8 +9,7 @@ import WirelessMeshConfig from './MeshConfig.vue';
 import WirelessExtenderTab from './ExtenderConfig.vue';
 import GuestNetworkTab from './GuestNetwork.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
-import { getSidebarMenu } from '../../../services/api/sidebarMenu';
-import { isMenuVisible, type NetLayoutType, type OperationMode } from '../../../types/menuVisibility';
+import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -19,26 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const activeTab = ref('basic');
 
-const operationMode = ref<OperationMode>('Gateway');
-const netLayoutType = ref<NetLayoutType>('prpl');
-const features = ref<Record<string, boolean>>({});
-
-const fetchMenuContext = async () => {
-  try {
-    const response = await getSidebarMenu();
-    const modeMapping: Record<string, OperationMode> = {
-      Init: 'Init',
-      Gateway: 'Gateway',
-      Bridge: 'Bridge',
-      Extender: 'Extender'
-    };
-    operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
-    netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
-    features.value = response.SidebarMenu.features || {};
-  } catch (e) {
-    console.warn('fetchMenuContext failed, fallback to defaults', e);
-  }
-};
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
 // 檢查是否啟用開發者模式（通過 URL 參數）
 const isDeveloperMode = computed(() => {
@@ -66,7 +46,7 @@ const tabs = computed<Tab[]>(() => {
     { id: 'mesh',     label: t('wireless.meshNetwork'),    menuKey: 'basicSetup.wlan.meshNetwork' },
     { id: 'zones',    label: t('wireless.wifiZones'),      menuKey: 'basicSetup.wlan.wifiZones' },
   ].filter(tab =>
-    !tab.menuKey || isMenuVisible(tab.menuKey, netLayoutType.value, operationMode.value, features.value)
+    !tab.menuKey || canShowMenu(tab.menuKey)
   );
 
   if (isDeveloperMode.value) {
@@ -103,11 +83,8 @@ const handleTabChange = (tabId: string) => {
 };
 
 // 初始化時檢查 URL 參數
-onMounted(() => {
-  const tabFromQuery = route.query.tab;
-  if (tabFromQuery && typeof tabFromQuery === 'string' && tabs.value.some(tab => tab.id === tabFromQuery)) {
-    activeTab.value = tabFromQuery;
-  }
+onMounted(async () => {
+  await fetchMenuContext();
 });
 </script>
 

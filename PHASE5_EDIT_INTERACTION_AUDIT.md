@@ -318,6 +318,103 @@ Do not include in this whitelist yet:
 - `MeshClientTable`
   - reason: component-level table/card hybrid, needs separate review
 
+## Phase 5-2: Sidebar User Role Visibility Control
+
+Background:
+- `PRPL CPE WebUI.csv` has role-based visibility requirements (`super user` / `normal user`)
+- backend plans to append role info in `SidebarMenu` API payload (example: `user: "normal"`)
+- current frontend visibility only considers `menuKey + NetLayoutType + operationMode + features`
+
+Goal:
+- add role-based visibility without breaking existing menu rules
+- keep one source of truth for visibility across sidebar and route access
+- prevent hidden-menu pages from being directly accessed by URL
+
+### Planned Data Contract
+
+Target `SidebarMenu` payload extension:
+- `SidebarMenu.user: "super" | "normal"` (backend may temporarily return unknown variants)
+
+Frontend normalization rule:
+- unknown / missing role value falls back to `normal` (secure default)
+
+### Implementation Checklist
+
+Step A: Sidebar API Type + Normalization
+- [x] update `src/services/api/sidebarMenu.ts`
+- [x] add `UserRole` type (`super | normal`)
+- [x] add `normalizeUserRole(value)` helper
+- [x] include normalized `user` in `normalizeSidebarMenuResponse(...)`
+- [x] keep existing `NetLayoutType` normalization unchanged
+
+Step B: Visibility Rule Engine Extension
+- [x] update `src/types/menuVisibility.ts`
+- [x] extend `MenuVisibilityRule` with role dimension
+- [x] update `isMenuVisible(...)` signature to accept `userRole`
+- [x] keep existing behavior equivalent for pages that do not define role-specific difference
+- [x] define explicit allow matrix for role-restricted items from csv
+
+Step C: Sidebar Rendering Integration
+- [x] update `src/components/Sidebar.vue`
+- [x] read `response.SidebarMenu.user` into local reactive state
+- [x] pass `userRole` into all `isMenuVisible(...)` calls
+- [x] preserve current language/mode/netlayout/features behavior
+
+Step D: Route Guard Protection
+- [x] update `src/router/index.ts`
+- [x] add route-level deny check using same visibility rule source
+- [x] block direct URL access to menu-hidden pages
+- [x] define fallback route when denied (recommend `/dashboard`)
+
+Step E: Auth Session Hygiene
+- [x] update `src/services/auth.ts`
+- [x] clear role-related cache value on logout/session clear
+- [x] ensure no stale role remains after user switch
+
+Step F: QA and Regression
+- [x] verify `super` login can access all intended pages
+- [x] verify `normal` login hides restricted menu items
+- [x] verify direct URL to restricted route is blocked
+- [x] verify role fallback works when backend returns unknown role
+- [x] verify existing mode/netlayout/features visibility is unchanged
+
+Step F execution notes:
+- automated rule check executed via `npx tsx` against `menuRoleVisibilityRules`
+  - restricted key count: `18`
+  - failed key count: `0`
+- route guard coverage gap found and fixed during Step F
+  - added `/basic/nat` and `/basic/security` prefixes in `routeVisibilityRules`
+- static fallback validation confirmed
+  - unknown role path is normalized to `normal` in `normalizeUserRole(...)`
+- type/build regression check passed
+  - `npm run build` passed after all Step F updates
+
+Manual smoke still recommended:
+- one browser pass with backend returning `user=super`
+- one browser pass with backend returning `user=normal`
+
+### Acceptance Criteria
+
+- same menu item visibility result is used by sidebar and router
+- no route is reachable by URL when hidden due to role restriction
+- unknown backend role does not crash UI and defaults to `normal`
+- existing `PRPL/GENIX/CHT + mode + features` behavior has no regression
+
+### Risks and Mitigation
+
+Risk:
+- backend role naming may differ during integration (`super user`, `admin`, `normal user`, etc.)
+
+Mitigation:
+- implement robust role normalization map in sidebar API layer
+- keep raw value logging in development for quick mapping adjustment
+
+Risk:
+- duplicated visibility logic between sidebar and router
+
+Mitigation:
+- route guard must call same shared visibility function/rule table used by sidebar
+
 Extraction rule:
 - only extract `BaseMobileActionRow` after at least two more whitelist pages need the exact same markup
 - do not force special pages into this component just to increase reuse count
@@ -464,6 +561,95 @@ Notable outlier:
 Assessment:
 - this is structural, not interaction-critical
 - do not expand scope here
+
+## Step G: Tab-Level Permission Audit
+
+Purpose:
+- identify tab container pages that should enforce menu visibility at tab level
+- prevent hidden submenu items from still appearing via in-page tabs
+
+Current status:
+
+### Already role-aware at tab level
+
+- [x] `src/views/network/wireless/WirelessConfig.vue`
+  - tab keys mapped to:
+    - `basicSetup.wlan.basicConfig`
+    - `basicSetup.wlan.advancedConfig`
+    - `basicSetup.wlan.wpsConfig`
+    - `basicSetup.wlan.meshNetwork`
+    - `basicSetup.wlan.wifiZones`
+- [x] `src/views/advanced/nat/NatConfig.vue`
+  - tab keys mapped to:
+    - `basicSetup.nat.portForwarding`
+    - `basicSetup.nat.dmzHost`
+    - `basicSetup.nat.alg`
+- [x] `src/views/advanced/SecurityConfig.vue`
+  - tab keys mapped to:
+    - `basicSetup.security.ipFiltering`
+    - `basicSetup.security.macFiltering`
+
+### Pending: should add tab-level visibility (high value)
+
+- [x] `src/views/network/lan/LanConfig.vue`
+  - suggested tab keys:
+    - `ipv4` -> `basicSetup.lan.ipv4`
+    - `devices` -> `basicSetup.lan.deviceConnected`
+  - reason: these two submenu keys already exist and can differ by mode/layout
+  - status: implemented with `useMenuVisibilityContext`, plus active-tab fallback after filtering
+
+### Pending: optional/future-proof
+
+- [x] `src/views/system/settings/SettingsManagement.vue`
+  - suggested tab keys:
+    - `reset` -> `management.settings.resetToDefault`
+    - `backup` -> `management.settings.backupRestore`
+    - `update` -> `management.settings.updateSoftware`
+  - reason: currently same visibility, but mapping now prevents future drift
+  - status: implemented with `useMenuVisibilityContext`, query-tab sync, and filtered-tab fallback
+
+- [x] `src/views/system/diagnostics/DiagnosticsTools.vue`
+  - suggested tab keys:
+    - `ping` -> `management.tools.pingDiagnosis`
+    - `traceroute` -> `management.tools.traceRoute`
+    - `dnslookup` -> `management.tools.dnsDiagnosis`
+  - reason: currently same visibility, but mapping now prevents future drift
+  - status: implemented with `useMenuVisibilityContext`, query-tab sync, and filtered-tab fallback
+
+### Not required now (single-bucket tabs)
+
+- `src/views/network/wan/WanConfig.vue`
+- `src/views/network/routing/RoutingConfig.vue`
+- `src/views/network/qos/QosConfig.vue`
+- `src/views/advanced/SshConfig.vue`
+- `src/views/advanced/LcmConfig.vue`
+- `src/views/system/device/DeviceManagement.vue`
+- `src/views/network/wireless/GuestNetwork.vue`
+- `src/views/iot/thread/ThreadLayout.vue`
+- `src/views/network/wireless/MacFiltering.vue`
+- `src/views/advanced/security/MacFilteringTab.vue`
+
+These tabs are feature/content partitions inside one permission bucket, not sidebar submenu-level permission splits.
+
+### Step G execution order
+
+1. `LanConfig` tab-level gating (required) - done
+2. `SettingsManagement` tab-level gating (optional) - done
+3. `DiagnosticsTools` tab-level gating (optional) - done
+4. extend route-level guard mapping only if direct URL bypass is found in validation - done
+
+Step G-4 execution notes:
+- `src/router/index.ts` route visibility mapping extended for:
+  - `Lan` container/sub-routes
+  - `Wireless` container/sub-routes
+  - `SettingsManagement` container/sub-routes
+  - `DiagnosticsTools` container/sub-routes (including `tr471`)
+- `resolveMenuKeyFromRoute(...)` switched to longest-prefix match to avoid generic prefix overriding specific route keys
+
+## Related Refactor Docs
+
+- Service/mock cleanup batching plan:
+  - `SERVICE_MOCK_REFACTOR_PLAN.md`
 
 ## Verification Checklist
 

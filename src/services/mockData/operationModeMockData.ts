@@ -1,4 +1,4 @@
-import type { OperationModeResponse } from '../../types/operationMode';
+import type { OperationModeResponse, OperationModeUpdateRequest } from '../../types/operationMode';
 
 export const operationModeMockData: OperationModeResponse = {
   "OperationMode": {
@@ -9,4 +9,17 @@ export const operationModeMockData: OperationModeResponse = {
     ],
     "Mode": "Gateway"
   }
+};
+
+export const getOperationModeMockData = (): OperationModeResponse => operationModeMockData;
+
+export const updateOperationModeMockData = (
+  data: OperationModeUpdateRequest
+): OperationModeResponse => {
+  return {
+    OperationMode: {
+      ...operationModeMockData.OperationMode,
+      Mode: data.OperationMode.Mode
+    }
+  };
 };

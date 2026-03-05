@@ -15,11 +15,14 @@ export interface SidebarMenuApp {
   duid: string;
 }
 
+export type UserRole = 'super' | 'normal';
+
 export interface SidebarMenuResponse {
   SidebarMenu: {
     Apps: SidebarMenuApp[];
     mode: 'Gateway' | 'Extender' | 'Bridge' | 'Init';
     NetLayoutType: 'prpl' | 'genix' | 'cht';
+    user: UserRole;
     language: SidebarMenuLanguage;
     features: Record<string, boolean>;
   }
@@ -37,11 +40,29 @@ const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMen
   return value === 'prpl' || value === 'genix' || value === 'cht' ? value : 'prpl';
 };
 
+const normalizeUserRole = (value: unknown): UserRole => {
+  if (typeof value !== 'string') return 'normal';
+
+  const normalized = value.trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const superRoles = new Set(['super', 'superuser', 'admin', 'administrator', 'root']);
+  const normalRoles = new Set(['normal', 'normaluser', 'user']);
+
+  if (superRoles.has(normalized)) return 'super';
+  if (normalRoles.has(normalized)) return 'normal';
+
+  if (isDevelopment && normalized.length > 0) {
+    console.warn(`[SidebarMenu] Unknown user role "${value}", fallback to "normal"`);
+  }
+
+  return 'normal';
+};
+
 const normalizeSidebarMenuResponse = (payload: SidebarMenuResponse): SidebarMenuResponse => ({
   ...payload,
   SidebarMenu: {
     ...payload.SidebarMenu,
     NetLayoutType: normalizeNetLayoutType(payload.SidebarMenu?.NetLayoutType),
+    user: normalizeUserRole(payload.SidebarMenu?.user),
   }
 });
 
@@ -58,7 +79,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
           }
         ],
         mode: "Gateway",
-        NetLayoutType: "prpl",
+        NetLayoutType: "cht",
+        user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: "en"
@@ -127,6 +149,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
         ],
         mode: "Gateway",
         NetLayoutType: "prpl",
+        user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: language

@@ -38,6 +38,12 @@ export class AuthService {
     localStorage.removeItem('sessionId');
     localStorage.removeItem('username');
     localStorage.removeItem('wizardRequired');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('sidebarAccessContext');
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth:session-cleared'));
+    }
   }
 
   isAuthenticated(): boolean {

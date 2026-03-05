@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import IpFilteringTab from './security/IpFilteringTab.vue';
 import MacFilteringTab from './security/MacFilteringTab.vue';
 import GeneralMacFilteringTab from './security/GeneralMacFilteringTab.vue';
+import { useMenuVisibilityContext } from '../../composables/useMenuVisibilityContext';
 import { useQA } from '../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
@@ -12,27 +13,35 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const activeTab = ref('ipfiltering');
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
 const isDevMode = computed(() => route.query.dev === 'true');
 
 const tabs = computed(() => {
   const baseTabs = [
-    { id: 'ipfiltering', label: t('menu.ipFiltering') },
-    { id: 'general-macfiltering', label: t('menu.generalMacFiltering') }
-  ];
+    { id: 'ipfiltering', label: t('menu.ipFiltering'), menuKey: 'basicSetup.security.ipFiltering' },
+    { id: 'general-macfiltering', label: t('menu.generalMacFiltering'), menuKey: 'basicSetup.security.macFiltering' }
+  ].filter(tab => canShowMenu(tab.menuKey));
 
   if (isDevMode.value) {
-    baseTabs.push({ id: 'wifi-macfiltering', label: t('menu.wifiMacFiltering') });
+    baseTabs.push({ id: 'wifi-macfiltering', label: t('menu.wifiMacFiltering'), menuKey: 'basicSetup.security.macFiltering' });
   }
 
-  return baseTabs;
+  return baseTabs.filter(tab => !tab.menuKey || canShowMenu(tab.menuKey));
 });
 
-watch(() => route.query.tab, (newTab) => {
-  if (newTab && typeof newTab === 'string' && tabs.value.some(tab => tab.id === newTab)) {
-    activeTab.value = newTab;
+const ensureActiveTab = () => {
+  const tabFromQuery = typeof route.query.tab === 'string' ? route.query.tab : '';
+  const exists = tabFromQuery && tabs.value.some(t => t.id === tabFromQuery);
+  const nextTab = exists ? tabFromQuery : (tabs.value[0]?.id || 'ipfiltering');
+
+  if (activeTab.value !== nextTab) activeTab.value = nextTab;
+  if (!exists) {
+    router.replace({ path: route.path, query: { ...route.query, tab: nextTab } });
   }
-}, { immediate: true });
+};
+
+watch([() => route.query.tab, tabs], ensureActiveTab, { immediate: true });
 
 const handleTabChange = (tabId: string) => {
   activeTab.value = tabId;
@@ -42,11 +51,8 @@ const handleTabChange = (tabId: string) => {
   });
 };
 
-onMounted(() => {
-  const tabFromQuery = route.query.tab;
-  if (tabFromQuery && typeof tabFromQuery === 'string' && tabs.value.some(tab => tab.id === tabFromQuery)) {
-    activeTab.value = tabFromQuery;
-  }
+onMounted(async () => {
+  await fetchMenuContext();
 });
 </script>
 

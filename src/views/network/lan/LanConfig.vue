@@ -1,18 +1,42 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import IPv4Configuration from './IPv4Config.vue';
 import DeviceConnected from './DeviceList.vue';
+import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const activeTab = ref('ipv4');
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
-const tabs = computed(() => [
-  { id: 'ipv4', label: t('lanBasic.ipv4Configuration') },
-  { id: 'devices', label: t('lanBasic.deviceConnected') }
-]);
+type Tab = {
+  id: string;
+  label: string;
+  menuKey: string;
+};
+
+const tabs = computed<Tab[]>(() =>
+  [
+    { id: 'ipv4', label: t('lanBasic.ipv4Configuration'), menuKey: 'basicSetup.lan.ipv4' },
+    { id: 'devices', label: t('lanBasic.deviceConnected'), menuKey: 'basicSetup.lan.deviceConnected' }
+  ].filter(tab => canShowMenu(tab.menuKey))
+);
+
+watch(
+  tabs,
+  (nextTabs) => {
+    if (!nextTabs.some(tab => tab.id === activeTab.value)) {
+      activeTab.value = nextTabs[0]?.id || '';
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(async () => {
+  await fetchMenuContext();
+});
 </script>
 
 <template>

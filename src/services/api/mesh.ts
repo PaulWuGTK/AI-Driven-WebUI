@@ -1,13 +1,13 @@
 import type { MeshMapResponse, SteeringControlData } from '../../types/mesh';
 import { handleApiResponse } from '../../utils/apiUtils';
-import { getMockMeshMap } from '../mockApi';
 import { callApi } from '../apiClient';
+import { getMeshMapMockData } from '../mockData/meshMockData';
 
 const isDevelopment = import.meta.env.DEV;
 
 export async function getMeshMap(): Promise<MeshMapResponse | { NOK: string }> {
   if (isDevelopment) {
-    return getMockMeshMap();
+    return getMeshMapMockData();
   }
   return callApi<MeshMapResponse | { NOK: string }>('/API/info?list=MeshMap');
 }

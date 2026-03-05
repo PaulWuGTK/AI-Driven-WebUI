@@ -1,29 +1,55 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import FactoryReset from './tabs/FactoryReset.vue';
 import BackupRestore from './tabs/BackupRestore.vue';
 import FirmwareUpdate from './tabs/FirmwareUpdate.vue';
+import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const activeTab = ref('reset');
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
-const activeTab = ref((route.query.tab as string) || 'reset');
+type Tab = {
+  id: string;
+  label: string;
+  menuKey: string;
+};
 
-const tabs = computed(() => [
-  { id: 'reset', label: t('settings.reset') },
-  { id: 'backup', label: t('settings.backup') },
-  { id: 'update', label: t('settings.update') }
-]);
+const tabs = computed<Tab[]>(() =>
+  [
+    { id: 'reset', label: t('settings.reset'), menuKey: 'management.settings.resetToDefault' },
+    { id: 'backup', label: t('settings.backup'), menuKey: 'management.settings.backupRestore' },
+    { id: 'update', label: t('settings.update'), menuKey: 'management.settings.updateSoftware' }
+  ].filter(tab => canShowMenu(tab.menuKey))
+);
+
+const ensureActiveTab = () => {
+  const tabFromQuery = typeof route.query.tab === 'string' ? route.query.tab : '';
+  const exists = tabFromQuery && tabs.value.some(tab => tab.id === tabFromQuery);
+  const nextTab = exists ? tabFromQuery : (tabs.value[0]?.id || 'reset');
+
+  if (activeTab.value !== nextTab) activeTab.value = nextTab;
+  if (!exists) {
+    router.replace({ path: route.path, query: { ...route.query, tab: nextTab } });
+  }
+};
+
+watch([() => route.query.tab, tabs], ensureActiveTab, { immediate: true });
 
 const selectTab = (tabId: string) => {
   activeTab.value = tabId;
-  router.replace({ query: { tab: tabId } });
+  router.replace({ path: route.path, query: { ...route.query, tab: tabId } });
 };
+
+onMounted(async () => {
+  await fetchMenuContext();
+});
 </script>
 
 <template>
