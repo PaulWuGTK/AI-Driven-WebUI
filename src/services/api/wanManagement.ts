@@ -1,5 +1,4 @@
 import type { WanModeManagementResponse, WanModeManagementUpdateRequest } from '../../types/wanManagement';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { wanManagementMockData } from '../mockData/wanManagementMockData';
 import { callApi } from '../apiClient';
 
@@ -27,12 +26,8 @@ export async function updateWanModeManagement(data: WanModeManagementUpdateReque
     return wanManagementMockData;
   }
 
-  const response = await fetch('/API/info?list=WanModeManagement', {
+  return callApi<WanModeManagementResponse>('/API/info?list=WanModeManagement', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<WanModeManagementResponse>(response);
 }

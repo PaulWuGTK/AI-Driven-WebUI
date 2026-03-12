@@ -13,8 +13,17 @@ export const getDiagnostics = async (): Promise<DiagnosticsResponse> => {
   if (isDevelopment) {
     return diagnosticsMockData;
   }
+  const auth = AuthService.getInstance();
+  const sessionId = auth.getSessionId();
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
 
-  const response = await fetch('/API/info?list=ManagementDiagnostic');
+  const response = await fetch('/API/info?list=ManagementDiagnostic', {
+    headers: {
+      'Authorization': `bearer ${sessionId}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch diagnostics data');
   }
@@ -33,6 +42,7 @@ export const startPing = async (params: PingRequest): Promise<{ SetNSubscribe: s
   const response = await fetch('/API/info?list=SetNSubscribe', {
     method: 'POST',
     headers: {
+      'Authorization': `bearer ${sessionId}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(params)

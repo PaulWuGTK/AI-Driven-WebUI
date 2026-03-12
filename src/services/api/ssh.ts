@@ -5,7 +5,6 @@ import type {
   SshServer,
   SshAuthorizedKey 
 } from '../../types/ssh';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import { sshServerData, sshAuthorizedKeyData, sshSessionData } from '../mockData/sshData';
 
@@ -23,14 +22,10 @@ export async function updateSshServers(servers: SshServer[]): Promise<SshServerR
     sshServerData.SshServer.SshServers = servers;
     return sshServerData;
   }
-  const response = await fetch('/API/info?list=SshServer', {
+  return callApi<SshServerResponse>('/API/info?list=SshServer', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ SshServer: servers }),
   });
-  return handleApiResponse<SshServerResponse>(response);
 }
 
 export async function getSshAuthorizedKeys(): Promise<SshAuthorizedKeyResponse> {
@@ -45,14 +40,10 @@ export async function updateSshAuthorizedKeys(keys: SshAuthorizedKey[]): Promise
     sshAuthorizedKeyData.SshAuthorizedKey = keys;
     return sshAuthorizedKeyData;
   }
-  const response = await fetch('/API/info?list=SshAuthorizedKey', {
+  return callApi<SshAuthorizedKeyResponse>('/API/info?list=SshAuthorizedKey', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ SshAuthorizedKey: keys }),
   });
-  return handleApiResponse<SshAuthorizedKeyResponse>(response);
 }
 
 export async function getSshSessions(): Promise<SshSessionResponse> {

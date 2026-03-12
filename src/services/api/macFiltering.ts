@@ -1,5 +1,4 @@
 import type { MACFilteringResponse, MACFilteringUpdateRequest } from '../../types/macFiltering';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   getMACFilteringMockData,
@@ -22,13 +21,8 @@ export const updateMACFiltering = async (data: MACFilteringUpdateRequest): Promi
     return updateMACFilteringMockData(data);
   }
 
-  const response = await fetch('/API/info?list=MACFiltering', {
+  return callApi<MACFilteringResponse>('/API/info?list=MACFiltering', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-
-  return handleApiResponse<MACFilteringResponse>(response);
 };

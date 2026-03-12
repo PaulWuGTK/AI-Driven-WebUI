@@ -2,7 +2,6 @@ import type {
   LcmDeploymentUnitResponse,
   LcmDeploymentUnitRequest
 } from '../../types/lcmDeploymentUnit';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   getLcmDeploymentUnitMockData,
@@ -26,13 +25,11 @@ export const updateLcmDeploymentUnit = async (
     return updateLcmDeploymentUnitMockData(data);
   }
 
-  const response = await fetch('/API/info?list=AdvancedLcmDeploymentUnit', {
+  return callApi<LcmDeploymentUnitResponse>('/API/info?list=AdvancedLcmDeploymentUnit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
   });
-
-  return handleApiResponse<LcmDeploymentUnitResponse>(response);
 };

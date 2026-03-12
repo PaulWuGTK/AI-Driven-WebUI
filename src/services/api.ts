@@ -87,16 +87,12 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanR
     };
   }
   
-  const response = await fetch(`${API_BASE_URL}/info?list=WifiNeighbor`, {
+  return callApi<WifiNeighborScanResponse>(`${API_BASE_URL}/info?list=WifiNeighbor`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({
       WifiNeighbor: { Band: band }
     } as WifiNeighborScanRequest),
   });
-  return handleApiResponse<WifiNeighborScanResponse>(response);
 }
 
 const generateUUID = () => {
@@ -158,14 +154,10 @@ export async function updateNtpSettings(data: NtpUpdateRequest): Promise<NtpResp
     };
   }
   
-  const response = await fetch(`${API_BASE_URL}/info?list=Ntp`, {
+  return callApi<NtpResponse>(`${API_BASE_URL}/info?list=Ntp`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<NtpResponse>(response);
 }
 export async function getTimezones(): Promise<TimezoneResponse> {
   if (isDevelopment) {
@@ -178,14 +170,10 @@ export async function updateTimezone(data: TimezoneUpdateRequest): Promise<Timez
   if (isDevelopment) {
     return timezoneData;
   }
-  const response = await fetch('/API/info?list=Timezone', {
+  return callApi<TimezoneResponse>('/API/info?list=Timezone', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<TimezoneResponse>(response);
 }
 
 export async function getDdns(): Promise<DdnsResponse> {
@@ -199,14 +187,10 @@ export async function updateDdns(data: DdnsUpdateRequest): Promise<DdnsResponse>
   if (isDevelopment) {
     return ddnsData;
   }
-  const response = await fetch('/API/info?list=Ddns', {
+  return callApi<DdnsResponse>('/API/info?list=Ddns', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<DdnsResponse>(response);
 }
 
 export async function getDualImageStatus(): Promise<DualImageResponse> {
@@ -227,14 +211,10 @@ export async function updateQosBandwidth(data: { QosBandwidth: QosBandwidthConfi
   if (isDevelopment) {
     return { ...qosBandwidthMockData, QosBandwidth: data.QosBandwidth };
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=QosBandwidth`, {
+  return callApi<QosBandwidthResponse>(`${API_BASE_URL}/info?list=QosBandwidth`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<QosBandwidthResponse>(response);
 }
 
 export async function getQosRule(): Promise<QosRuleResponse> {
@@ -248,12 +228,8 @@ export async function updateQosRule(data: QosRuleRequest): Promise<QosRuleRespon
   if (isDevelopment) {
     return { ...qosRuleMockData, QosRule: { ...qosRuleMockData.QosRule, RuleList: data.QosRule.RuleList } };
   }
-  const response = await fetch(`${API_BASE_URL}/info?list=QosRule`, {
+  return callApi<QosRuleResponse>(`${API_BASE_URL}/info?list=QosRule`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<QosRuleResponse>(response);
 }

@@ -1,5 +1,4 @@
 import type { WanModeSetupResponse, WanModeSetupUpdateRequest } from '../../types/wanSetup';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import { wanModeSetupMockData } from '../mockData/wanSetupMockData';
 
@@ -22,12 +21,8 @@ export async function updateWanModeSetup(data: WanModeSetupUpdateRequest): Promi
     return wanModeSetupMockData;
   }
 
-  const response = await fetch('/API/info?list=WanModeSetup', {
+  return callApi<WanModeSetupResponse>('/API/info?list=WanModeSetup', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<WanModeSetupResponse>(response);
 }

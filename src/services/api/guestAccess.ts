@@ -5,7 +5,6 @@ import type {
   GuestLANUpdateRequest,
   GuestDeviceConnectedResponse
 } from '../../types/guest';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
@@ -39,14 +38,10 @@ export const updateGuestWiFi = async (data: GuestWiFiUpdateRequest): Promise<Gue
     };
   }
 
-  const response = await fetch('/API/info?list=GuestWiFi', {
+  return callApi<GuestWiFiResponse>('/API/info?list=GuestWiFi', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<GuestWiFiResponse>(response);
 };
 
 // Guest LAN API
@@ -87,14 +82,10 @@ export const updateGuestLAN = async (data: GuestLANUpdateRequest): Promise<Guest
     };
   }
 
-  const response = await fetch('/API/info?list=GuestLAN', {
+  return callApi<GuestLANResponse>('/API/info?list=GuestLAN', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<GuestLANResponse>(response);
 };
 
 // Guest Device Connected API

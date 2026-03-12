@@ -1,5 +1,4 @@
 import type { ServiceControlResponse, ServiceControlUpdateRequest } from '../../types/serviceControl';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   getServiceControlMockData,
@@ -28,13 +27,8 @@ export const updateServiceControl = async (data: ServiceControlUpdateRequest): P
     return updateServiceControlMockData(data);
   }
 
-  const response = await fetch('/API/info?list=AdvancedServiceControl', {
+  return callApi<ServiceControlResponse>('/API/info?list=AdvancedServiceControl', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-
-  return handleApiResponse<ServiceControlResponse>(response);
 };
