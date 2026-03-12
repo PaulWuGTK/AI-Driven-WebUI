@@ -43,7 +43,17 @@ export async function getFirmwareStatus(): Promise<FirmwareResponse> {
     };
   }
 
-  const response = await fetch('/API/info?list=UpgradeFw');
+  const auth = AuthService.getInstance();
+  const sessionId = auth.getSessionId();
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+
+  const response = await fetch('/API/info?list=UpgradeFw', {
+    headers: {
+      'Authorization': `bearer ${sessionId}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch firmware status');
   }

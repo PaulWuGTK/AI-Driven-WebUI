@@ -1,5 +1,4 @@
 import type { LanBasicResponse, LanBasicUpdateRequest, DeviceConnectedResponse } from '../../types/lanBasic';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
@@ -60,12 +59,8 @@ export const updateLanBasic = async (data: LanBasicUpdateRequest): Promise<LanBa
     return getLanBasic();
   }
 
-  const response = await fetch('/API/info?list=LanBasic', {
+  return callApi<LanBasicResponse>('/API/info?list=LanBasic', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<LanBasicResponse>(response);
 };

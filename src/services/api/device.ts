@@ -1,7 +1,16 @@
 import type { TR069Config } from '../../types/device';
 import { tr069MockData } from '../mockData/deviceMockData';
+import { AuthService } from '../auth';
 
 const isDevelopment = import.meta.env.DEV;
+
+const getAuthHeaders = (): Record<string, string> => {
+  const sessionId = AuthService.getInstance().getSessionId();
+  if (!sessionId) {
+    throw new Error('No active session');
+  }
+  return { Authorization: `bearer ${sessionId}` };
+};
 
 // Helper function to escape forward slashes in URLs
 const escapeUrl = (url: string): string => {
@@ -13,7 +22,9 @@ export const getTR069Config = async (): Promise<{ ManagementServer: TR069Config 
     return { ManagementServer: { ...tr069MockData } };
   }
   
-  const response = await fetch('/API/info?list=ManagementServer');
+  const response = await fetch('/API/info?list=ManagementServer', {
+    headers: getAuthHeaders()
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch TR-069 configuration');
   }
@@ -37,6 +48,7 @@ export const updateTR069Config = async (config: TR069Config): Promise<{ Manageme
   const response = await fetch('/API/info?list=ManagementServer', {
     method: 'POST',
     headers: {
+      ...getAuthHeaders(),
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
@@ -62,6 +74,7 @@ export const sendInformToACS = async (): Promise<{ ManagementServer: { OK: strin
   const response = await fetch('/API/info?list=ManagementServer', {
     method: 'POST',
     headers: {
+      ...getAuthHeaders(),
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({

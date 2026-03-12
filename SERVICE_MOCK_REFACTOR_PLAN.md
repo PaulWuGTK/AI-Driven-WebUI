@@ -30,6 +30,7 @@ These files currently define `const mock...` (or mutable mock state) inside `src
 - `src/services/api/serviceControl.ts`
 - `src/services/api/thread.ts`
 - `src/services/api/tr471.ts` (inline mock result generation path)
+- `src/services/api/upnp.ts`
 
 ### Group B: API files still using legacy `mockApi.ts` aggregator (high priority)
 
@@ -174,6 +175,22 @@ Status:
   - `src/services/api/staticRoute.ts`
 - removed legacy aggregator:
   - `src/services/mockApi.ts`
+
+### Post-Batch Follow-up (auth hardening + missed inline mock)
+
+Target:
+- `upnp.ts`
+
+Action:
+- extract inline mock payload/state to dedicated mock module
+- align authenticated POST flow with `callApi` to avoid missing Authorization header
+
+Status:
+- [x] completed
+- extracted mock module:
+  - `src/services/mockData/upnpMockData.ts`
+- updated API file:
+  - `src/services/api/upnp.ts`
 
 ## Verification Checklist (run every batch)
 

@@ -1,5 +1,4 @@
 import type { GeneralMacFilteringResponse, GeneralMacFilteringUpdateRequest } from '../../types/generalMacFiltering';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   getGeneralMacFilteringMockData,
@@ -22,13 +21,8 @@ export const updateGeneralMacFiltering = async (data: GeneralMacFilteringUpdateR
     return updateGeneralMacFilteringMockData(data);
   }
 
-  const response = await fetch('/API/info?list=MACFiltering', {
+  return callApi<GeneralMacFilteringResponse>('/API/info?list=MACFiltering', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-
-  return handleApiResponse<GeneralMacFilteringResponse>(response);
 };

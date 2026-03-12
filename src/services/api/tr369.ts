@@ -1,5 +1,4 @@
 import type { TR369Response, TR369UpdateRequest } from '../../types/tr369';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import { tr369MockData } from '../mockData/tr369MockData';
 
@@ -18,13 +17,8 @@ export const updateTR369Config = async (data: TR369UpdateRequest): Promise<TR369
     return getTR369Config();
   }
 
-  const response = await fetch('/API/info?list=TR369', {
+  return callApi<TR369Response>('/API/info?list=TR369', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-
-  return handleApiResponse<TR369Response>(response);
 };

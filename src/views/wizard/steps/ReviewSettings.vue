@@ -61,16 +61,26 @@ const { qa } = useQA();
           <div :data-testid="qa('wizard-review-wifi-configuration')">
             <h3 :data-testid="qa('wizard-review-wifi-title')">{{ t('wizard.reviewWifiConfiguration') }}</h3>
           </div>
-          <div class="review-item">
+          <div class="review-item" :data-testid="qa('wizard-review-smart-connect-item')">
             <span class="label">{{ t('wizard.smartConnect') }}:</span>
-            <span class="value">{{ config.wifi.smartConnect ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
+            <span
+              class="value"
+              :data-testid="qa(config.wifi.smartConnect ? 'wizard-review-smart-connect-enabled' : 'wizard-review-smart-connect-disabled')"
+            >
+              {{ config.wifi.smartConnect ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}
+            </span>
           </div>
-          <div class="review-item">
+          <div class="review-item" :data-testid="qa('wizard-review-mlo-item')">
             <span class="label">{{ t('wizard.reviewMloNetwork') }}</span>
-            <span class="value">{{ config.wifi.mloEnable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
+            <span
+              class="value"
+              :data-testid="qa(config.wifi.mloEnable ? 'wizard-review-mlo-enabled' : 'wizard-review-mlo-disabled')"
+            >
+              {{ config.wifi.mloEnable ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}
+            </span>
           </div>
 
-          <div v-if="config.wifi.smartConnect">
+          <div v-if="config.wifi.smartConnect" :data-testid="qa('wizard-review-smart-connect-enabled-section')">
             <div class="review-item">
               <span class="label">SSID:</span>
               <span class="value">{{ config.wifi.common.ssid }}</span>
@@ -92,14 +102,24 @@ const { qa } = useQA();
             </div>
           </div>
 
-          <div v-else >
-            <div class="review-item">
+          <div v-else :data-testid="qa('wizard-review-smart-connect-disabled-section')">
+            <div class="review-item" :data-testid="qa('wizard-review-psc-item')">
               <span class="label">{{ t('wizard.reviewPsc') }}</span>
-              <span class="value">{{ config.wifi.psc ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
+              <span
+                class="value"
+                :data-testid="qa(config.wifi.psc ? 'wizard-review-psc-enabled' : 'wizard-review-psc-disabled')"
+              >
+                {{ config.wifi.psc ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}
+              </span>
             </div>
-            <div class="review-item">
+            <div class="review-item" :data-testid="qa('wizard-review-pmf-item')">
               <span class="label">{{ t('wizard.reviewPmf') }}</span>
-              <span class="value">{{ config.wifi.pmf ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>
+              <span
+                class="value"
+                :data-testid="qa(config.wifi.pmf ? 'wizard-review-pmf-enabled' : 'wizard-review-pmf-disabled')"
+              >
+                {{ config.wifi.pmf ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}
+              </span>
             </div>
 
             <div v-if="config.wifi.bands['2g'].enabled" class="band-info">
@@ -187,7 +207,7 @@ const { qa } = useQA();
               :model-value="config.admin.password"
               :toggle-data-testid="qa('wizard-review-admin-password-toggle')"
               :value-data-testid="qa('wizard-review-admin-password-value')"
-              :masked-data-testid="qa('wizard-review-admin-password-value')"
+              :masked-data-testid="qa('wizard-review-admin-password-masked')"
             />
           </div>
         </div>

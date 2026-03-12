@@ -1,6 +1,5 @@
 import type { DmzResponse, DmzUpdateRequest } from '../../types/dmz';
 import { callApi } from '../apiClient';
-import { handleApiResponse } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -26,12 +25,8 @@ export const updateDmz = async (data: DmzUpdateRequest): Promise<DmzResponse> =>
     };
   }
 
-  const response = await fetch('/API/info?list=AdvancedDmz', {
+  return callApi<DmzResponse>('/API/info?list=AdvancedDmz', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<DmzResponse>(response);
 };

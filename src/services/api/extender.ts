@@ -1,5 +1,4 @@
 import type { ExtenderResponse, ExtenderScanResponse, ExtenderUpdateRequest, ExtenderConnectRequest } from '../../types/extender';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   connectExtenderMockData,
@@ -23,14 +22,10 @@ export const updateExtenderSettings = async (data: ExtenderUpdateRequest): Promi
     return updateExtenderMockData(data);
   }
 
-  const response = await fetch('/API/info?list=Extender', {
+  return callApi<ExtenderResponse>('/API/info?list=Extender', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<ExtenderResponse>(response);
 };
 
 export const scanNeighborAPs = async (): Promise<ExtenderScanResponse> => {
@@ -40,18 +35,14 @@ export const scanNeighborAPs = async (): Promise<ExtenderScanResponse> => {
     return getExtenderScanMockData();
   }
 
-  const response = await fetch('/API/info?list=ExtenderScan', {
+  return callApi<ExtenderScanResponse>('/API/info?list=ExtenderScan', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({
       ExtenderScan: {
         Action: "trigger_scan"
       }
     }),
   });
-  return handleApiResponse<ExtenderScanResponse>(response);
 };
 
 export const connectToAP = async (data: ExtenderConnectRequest): Promise<ExtenderResponse> => {
@@ -59,14 +50,10 @@ export const connectToAP = async (data: ExtenderConnectRequest): Promise<Extende
     return connectExtenderMockData(data);
   }
 
-  const response = await fetch('/API/info?list=Extender', {
+  return callApi<ExtenderResponse>('/API/info?list=Extender', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(data),
   });
-  return handleApiResponse<ExtenderResponse>(response);
 };
 
 export const triggerWPS = async (): Promise<ExtenderResponse> => {
@@ -76,16 +63,12 @@ export const triggerWPS = async (): Promise<ExtenderResponse> => {
     return triggerWpsMockData();
   }
 
-  const response = await fetch('/API/info?list=Extender', {
+  return callApi<ExtenderResponse>('/API/info?list=Extender', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({
       Extender: {
         Action: "WPSbtn"
       }
     }),
   });
-  return handleApiResponse<ExtenderResponse>(response);
 };

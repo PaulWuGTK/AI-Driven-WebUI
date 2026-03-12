@@ -1,5 +1,4 @@
 import type { MeshMapResponse, SteeringControlData } from '../../types/mesh';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import { getMeshMapMockData } from '../mockData/meshMockData';
 
@@ -26,13 +25,8 @@ export async function applySteeringControl(data: SteeringControlData): Promise<v
     return Promise.resolve();
   }
 
-  const response = await fetch('/API/info?list=MeshMap', {
+  await callApi<unknown>('/API/info?list=MeshMap', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(payload),
   });
-
-  return handleApiResponse(response);
 }
