@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import SshServerManagement from './ssh/SshServerManagement.vue';
-import SshPublicKeyManagement from './ssh/SshPublicKeyManagement.vue';
-import SshCurrentSessions from './ssh/SshCurrentSessions.vue';
+import SshServerManagementTab from './ssh/SshServerManagementTab.vue';
+import SshPublicKeyManagementTab from './ssh/SshPublicKeyManagementTab.vue';
+import SshCurrentSessionsTab from './ssh/SshCurrentSessionsTab.vue';
 import { useQA } from '../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -38,9 +38,9 @@ const tabs = computed(() => [
         </div>
 
         <div class="tab-content" :data-testid="qa('ssh-tab-content')">
-          <SshServerManagement v-if="activeTab === 'server'" :data-testid="qa('ssh-server-management')" />
-          <SshPublicKeyManagement v-if="activeTab === 'key'" :data-testid="qa('ssh-public-key-management')" />
-          <SshCurrentSessions v-if="activeTab === 'sessions'" :data-testid="qa('ssh-current-sessions')" />
+          <SshServerManagementTab v-if="activeTab === 'server'" :data-testid="qa('ssh-server-management')" />
+          <SshPublicKeyManagementTab v-if="activeTab === 'key'" :data-testid="qa('ssh-public-key-management')" />
+          <SshCurrentSessionsTab v-if="activeTab === 'sessions'" :data-testid="qa('ssh-current-sessions')" />
         </div>
       </div>
     </div>

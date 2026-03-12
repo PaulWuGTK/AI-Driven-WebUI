@@ -62,6 +62,11 @@ const handleLanguageChange = async (event: Event) => {
 };
 
 const fetchAvailableLanguages = async () => {
+  const auth = AuthService.getInstance();
+  if (!auth.isAuthenticated()) {
+    return;
+  }
+
   try {
     const response = await getSidebarMenu();
     const availableCodes = response.SidebarMenu.language.available;
@@ -82,7 +87,7 @@ const fetchAvailableLanguages = async () => {
          error.message.includes('403') ||
          error.message.includes('Failed to fetch sidebar menu'))) {
       // Clear session and redirect to login
-      AuthService.getInstance().clearSession();
+      auth.clearSession();
       router.push(`/login?t=${Date.now()}`);
     }
   }

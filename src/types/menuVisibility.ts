@@ -1,5 +1,11 @@
 export type NetLayoutType = 'prpl' | 'genix' | 'cht';
 export type OperationMode = 'Init' | 'Gateway' | 'Bridge' | 'Extender';
+export type UserRole = 'super' | 'normal';
+
+export interface RoleVisibilityRule {
+  super: boolean;
+  normal: boolean;
+}
 
 export interface MenuVisibilityRule {
   netLayoutTypes: {
@@ -13,6 +19,7 @@ export interface MenuVisibilityRule {
     Bridge: boolean;
     Extender: boolean;
   };
+  roles?: RoleVisibilityRule;
 }
 
 export interface MenuVisibilityRules {
@@ -149,7 +156,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.wifiZones': {
-    netLayoutTypes: { prpl: true, genix: true, cht: false },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.wlan.wirelessExtender': {
@@ -205,7 +212,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'advanceSetup.sshService': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'advanceSetup.serviceControl': {
@@ -302,16 +309,41 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   }
 };
 
+// Source: PRPL CPE WebUI.csv (super user vs normal user)
+// Only role-differentiated entries are listed here.
+export const menuRoleVisibilityRules: Record<string, RoleVisibilityRule> = {
+  'basicSetup.nat': { super: true, normal: false },
+  'basicSetup.nat.portForwarding': { super: true, normal: false },
+  'basicSetup.nat.dmzHost': { super: true, normal: false },
+  'basicSetup.nat.alg': { super: true, normal: false },
+  'basicSetup.security': { super: true, normal: false },
+  'basicSetup.security.ipFiltering': { super: true, normal: false },
+  'basicSetup.security.macFiltering': { super: true, normal: false },
+  'basicSetup.routing': { super: true, normal: false },
+  'advanceSetup': { super: true, normal: false },
+  'advanceSetup.sshService': { super: true, normal: false },
+  'advanceSetup.serviceControl': { super: true, normal: false },
+  'advanceSetup.qos': { super: true, normal: false },
+  'advanceSetup.lcm': { super: true, normal: false },
+  'application': { super: true, normal: false },
+  'application.upnp': { super: true, normal: false },
+  'application.ddns': { super: true, normal: false },
+  'management.account': { super: true, normal: false },
+  'management.device': { super: true, normal: false }
+};
+
 export function isMenuVisible(
   menuKey: string,
   netLayoutType: NetLayoutType,
   operationMode: OperationMode,
-  features?: { cellular?: boolean; matter?: boolean; thread?: boolean }
+  features?: { cellular?: boolean; matter?: boolean; thread?: boolean },
+  userRole: UserRole = 'super'
 ): boolean {
   const rule = menuVisibilityRules[menuKey];
 
   if (!rule) {
-    return true;
+    const roleRule = menuRoleVisibilityRules[menuKey];
+    return roleRule ? roleRule[userRole] : true;
   }
 
   if (menuKey.includes('cellular') && features?.cellular === false) {
@@ -320,6 +352,8 @@ export function isMenuVisible(
 
   const netLayoutVisible = rule.netLayoutTypes[netLayoutType];
   const operationModeVisible = rule.operationModes[operationMode];
+  const roleRule = rule.roles ?? menuRoleVisibilityRules[menuKey];
+  const roleVisible = roleRule ? roleRule[userRole] : true;
 
-  return netLayoutVisible && operationModeVisible;
+  return netLayoutVisible && operationModeVisible && roleVisible;
 }

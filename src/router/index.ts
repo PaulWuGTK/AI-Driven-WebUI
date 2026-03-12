@@ -1,13 +1,141 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { AuthService } from '../services/auth';
+import { getSidebarMenu } from '../services/api/sidebarMenu';
+import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
 
-const requireAuth = (to: any, from: any, next: any) => {
+interface SidebarAccessContext {
+  operationMode: OperationMode;
+  netLayoutType: NetLayoutType;
+  features: { cellular?: boolean; matter?: boolean; thread?: boolean };
+  userRole: UserRole;
+}
+
+let cachedSidebarAccess: { sessionId: string; context: SidebarAccessContext } | null = null;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('auth:session-cleared', () => {
+    cachedSidebarAccess = null;
+  });
+}
+
+const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
+  { pathPrefix: '/network/lan/ipv4', menuKey: 'basicSetup.lan.ipv4' },
+  { pathPrefix: '/network/lan/devices', menuKey: 'basicSetup.lan.deviceConnected' },
+  { pathPrefix: '/network/lan', menuKey: 'basicSetup.lan' },
+  { pathPrefix: '/basic/lan', menuKey: 'basicSetup.lan' },
+  { pathPrefix: '/basic/lan-cht', menuKey: 'basicSetup.lanCht' },
+
+  { pathPrefix: '/network/wireless/basic', menuKey: 'basicSetup.wlan.basicConfig' },
+  { pathPrefix: '/network/wireless/advanced', menuKey: 'basicSetup.wlan.advancedConfig' },
+  { pathPrefix: '/network/wireless/wps', menuKey: 'basicSetup.wlan.wpsConfig' },
+  { pathPrefix: '/network/wireless/mesh', menuKey: 'basicSetup.wlan.meshNetwork' },
+  { pathPrefix: '/basic/wlan/zones', menuKey: 'basicSetup.wlan.wifiZones' },
+  { pathPrefix: '/network/wireless/extender', menuKey: 'basicSetup.wlan.wirelessExtender' },
+  { pathPrefix: '/network/wireless', menuKey: 'basicSetup.wlan' },
+  { pathPrefix: '/basic/wlan', menuKey: 'basicSetup.wlan' },
+
+  { pathPrefix: '/advanced/nat/dmz', menuKey: 'basicSetup.nat.dmzHost' },
+  { pathPrefix: '/advanced/nat', menuKey: 'basicSetup.nat' },
+  { pathPrefix: '/basic/nat', menuKey: 'basicSetup.nat' },
+  { pathPrefix: '/advanced/security', menuKey: 'basicSetup.security' },
+  { pathPrefix: '/basic/security', menuKey: 'basicSetup.security' },
+  { pathPrefix: '/basic/routing', menuKey: 'basicSetup.routing' },
+  { pathPrefix: '/advanced/ssh', menuKey: 'advanceSetup.sshService' },
+  { pathPrefix: '/advanced/service-control', menuKey: 'advanceSetup.serviceControl' },
+  { pathPrefix: '/advanced/qos', menuKey: 'advanceSetup.qos' },
+  { pathPrefix: '/advanced/lcm', menuKey: 'advanceSetup.lcm' },
+  { pathPrefix: '/application/upnp', menuKey: 'application.upnp' },
+  { pathPrefix: '/advanced/ddns', menuKey: 'application.ddns' },
+  { pathPrefix: '/application/ddns', menuKey: 'application.ddns' },
+
+  { pathPrefix: '/system/settings/reset', menuKey: 'management.settings.resetToDefault' },
+  { pathPrefix: '/system/settings/backup', menuKey: 'management.settings.backupRestore' },
+  { pathPrefix: '/system/settings/update', menuKey: 'management.settings.updateSoftware' },
+  { pathPrefix: '/system/settings', menuKey: 'management.settings' },
+  { pathPrefix: '/system/diagnostics/ping', menuKey: 'management.tools.pingDiagnosis' },
+  { pathPrefix: '/system/diagnostics/traceroute', menuKey: 'management.tools.traceRoute' },
+  { pathPrefix: '/system/diagnostics/dns', menuKey: 'management.tools.dnsDiagnosis' },
+  { pathPrefix: '/system/diagnostics/tr471', menuKey: 'speedtest.tr471' },
+  { pathPrefix: '/system/diagnostics', menuKey: 'management.tools' },
+
+  { pathPrefix: '/system/account', menuKey: 'management.account' },
+  { pathPrefix: '/system/device', menuKey: 'management.device' }
+];
+
+const resolveMenuKeyFromRoute = (path: string): string | null => {
+  let matchedRule: { pathPrefix: string; menuKey: string } | null = null;
+  for (const rule of routeVisibilityRules) {
+    const matched = path === rule.pathPrefix || path.startsWith(`${rule.pathPrefix}/`);
+    if (!matched) continue;
+    if (!matchedRule || rule.pathPrefix.length > matchedRule.pathPrefix.length) {
+      matchedRule = rule;
+    }
+  }
+  return matchedRule?.menuKey ?? null;
+};
+
+const fetchSidebarAccessContext = async (auth: AuthService): Promise<SidebarAccessContext | null> => {
+  const sessionId = auth.getSessionId();
+  if (!sessionId) return null;
+
+  if (cachedSidebarAccess && cachedSidebarAccess.sessionId === sessionId) {
+    return cachedSidebarAccess.context;
+  }
+
+  try {
+    const response = await getSidebarMenu();
+    const modeMapping: Record<string, OperationMode> = {
+      Init: 'Init',
+      Gateway: 'Gateway',
+      Bridge: 'Bridge',
+      Extender: 'Extender'
+    };
+
+    const context: SidebarAccessContext = {
+      operationMode: modeMapping[response.SidebarMenu.mode] || 'Gateway',
+      netLayoutType: response.SidebarMenu.NetLayoutType || 'prpl',
+      features: response.SidebarMenu.features || {},
+      userRole: response.SidebarMenu.user || 'super'
+    };
+
+    cachedSidebarAccess = { sessionId, context };
+    return context;
+  } catch (error) {
+    console.warn('Failed to fetch sidebar access context for route guard:', error);
+    return null;
+  }
+};
+
+const canAccessRouteByVisibility = async (path: string, auth: AuthService): Promise<boolean> => {
+  const menuKey = resolveMenuKeyFromRoute(path);
+  if (!menuKey) return true;
+
+  const context = await fetchSidebarAccessContext(auth);
+  if (!context) return true;
+
+  return isMenuVisible(
+    menuKey,
+    context.netLayoutType,
+    context.operationMode,
+    context.features,
+    context.userRole
+  );
+};
+
+const requireAuth = async (to: any, from: any, next: any) => {
   const auth = AuthService.getInstance();
   if (!auth.isAuthenticated() && to.path !== '/login') {
+    cachedSidebarAccess = null;
     next('/login');
   } else if (auth.needsWizard() && to.path !== '/wizard') {
     next('/wizard');
   } else {
+    const canAccess = await canAccessRouteByVisibility(to.path, auth);
+    if (!canAccess) {
+      next('/dashboard');
+      return;
+    }
+
     next();
   }
 };

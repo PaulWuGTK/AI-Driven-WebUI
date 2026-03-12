@@ -1,84 +1,26 @@
 import type { ExtenderResponse, ExtenderScanResponse, ExtenderUpdateRequest, ExtenderConnectRequest } from '../../types/extender';
 import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
+import {
+  connectExtenderMockData,
+  getExtenderMockData,
+  getExtenderScanMockData,
+  triggerWpsMockData,
+  updateExtenderMockData
+} from '../mockData/extenderMockData';
 
 const isDevelopment = import.meta.env.DEV;
 
-// Mock data for development
-const mockExtenderData: ExtenderResponse = {
-  Extender: {
-    ExtenderEnabled: {
-      Enabled: 0
-    },
-    ExtenderRole: {
-      Role: "Repeater"
-    },
-    ConnectionStatus: {
-      "2.4GHz": {
-        Status: "disconnected",
-        SSID: "-",
-        Security: "-"
-      },
-      "5GHz": {
-        Status: "connected",
-        SSID: "Gemtek_workshop_2025",
-        Security: "WPA2-WPA3-Personal"
-      },
-      "6GHz": {
-        Status: "disconnected",
-        SSID: "-",
-        Security: "-"
-      }
-    },
-    Wps: {
-      WpsPinCode: "12345678"
-    }
-  }
-};
-
-const mockScanResults: ExtenderScanResponse = {
-  ExtenderScan: [
-    {
-      SSID: "GJ1900_5G",
-      Channel: 48,
-      Band: "5GHz",
-      Signal: "-54",
-      Security: "WPA2-Personal"
-    },
-    {
-      SSID: "GJ1900_2G",
-      Channel: 1,
-      Band: "2.4GHz",
-      Signal: "-54",
-      Security: "WPA2-Personal"
-    },
-    {
-      SSID: "Gemtek_Wi-Fi7_6G_02918E",
-      Channel: 1,
-      Band: "6GHz",
-      Signal: "-54",
-      Security: "WPA3-Personal"
-    }
-  ]
-};
-
 export const getExtenderStatus = async (): Promise<ExtenderResponse> => {
   if (isDevelopment) {
-    return mockExtenderData;
+    return getExtenderMockData();
   }
   return callApi<ExtenderResponse>('/API/info?list=Extender');
 };
 
 export const updateExtenderSettings = async (data: ExtenderUpdateRequest): Promise<ExtenderResponse> => {
   if (isDevelopment) {
-    // Update mock data based on the request
-    if (data.Extender.Action === 'ExtenderEnable' && data.Extender.Enabled !== undefined) {
-      mockExtenderData.Extender.ExtenderEnabled.Enabled = data.Extender.Enabled;
-    }
-    if (data.Extender.Role) {
-      mockExtenderData.Extender.ExtenderRole.Role = data.Extender.Role;
-    }
-    return mockExtenderData;
+    return updateExtenderMockData(data);
   }
 
   const response = await fetch('/API/info?list=Extender', {
@@ -95,7 +37,7 @@ export const scanNeighborAPs = async (): Promise<ExtenderScanResponse> => {
   if (isDevelopment) {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return mockScanResults;
+    return getExtenderScanMockData();
   }
 
   const response = await fetch('/API/info?list=ExtenderScan', {
@@ -114,16 +56,7 @@ export const scanNeighborAPs = async (): Promise<ExtenderScanResponse> => {
 
 export const connectToAP = async (data: ExtenderConnectRequest): Promise<ExtenderResponse> => {
   if (isDevelopment) {
-    // Update mock data based on the connection request
-    const band = data.Extender.Band;
-    if (band === "2.4GHz" || band === "5GHz" || band === "6GHz") {
-      mockExtenderData.Extender.ConnectionStatus[band] = {
-        Status: "connected",
-        SSID: data.Extender.SSID,
-        Security: data.Extender.Security
-      };
-    }
-    return mockExtenderData;
+    return connectExtenderMockData(data);
   }
 
   const response = await fetch('/API/info?list=Extender', {
@@ -140,7 +73,7 @@ export const triggerWPS = async (): Promise<ExtenderResponse> => {
   if (isDevelopment) {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return mockExtenderData;
+    return triggerWpsMockData();
   }
 
   const response = await fetch('/API/info?list=Extender', {

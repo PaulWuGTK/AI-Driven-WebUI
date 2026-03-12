@@ -6,25 +6,17 @@ export interface SsidValidationResult {
 
 export const SSID_MIN_BYTES = 1;
 export const SSID_MAX_BYTES = 32;
+const utf8Encoder = new TextEncoder();
+
+export function normalizeSsid(str: string): string {
+  return str.normalize('NFC');
+}
 
 /**
  * Calculate the byte length of a string in UTF-8 encoding
  */
 export function getByteLength(str: string): number {
-  let byteLength = 0;
-  for (let i = 0; i < str.length; i++) {
-    const charCode = str.charCodeAt(i);
-    if (charCode < 0x80) {
-      byteLength += 1;
-    } else if (charCode < 0x800) {
-      byteLength += 2;
-    } else if (charCode < 0x10000) {
-      byteLength += 3;
-    } else {
-      byteLength += 4;
-    }
-  }
-  return byteLength;
+  return utf8Encoder.encode(normalizeSsid(str)).length;
 }
 
 /**
@@ -35,7 +27,7 @@ export function getByteLength(str: string): number {
 export function hasValidCharacters(ssid: string): boolean {
   // Allow: ASCII printable characters (0x20-0x7E) and CJK Unified Ideographs (Chinese: 0x4E00-0x9FFF)
   const validCharPattern = /^[\x20-\x7E\u4E00-\u9FFF]*$/;
-  return validCharPattern.test(ssid);
+  return validCharPattern.test(normalizeSsid(ssid));
 }
 
 /**
@@ -43,7 +35,8 @@ export function hasValidCharacters(ssid: string): boolean {
  * Character restrictions: English, numbers, ASCII symbols, Chinese only
  */
 export function validateSsid(ssid: string, t: (key: string, params?: any) => string): SsidValidationResult {
-  const byteLength = getByteLength(ssid);
+  const normalizedSsid = normalizeSsid(ssid);
+  const byteLength = getByteLength(normalizedSsid);
 
   if (byteLength === 0) {
     return {
@@ -54,7 +47,7 @@ export function validateSsid(ssid: string, t: (key: string, params?: any) => str
   }
 
   // Check for invalid characters
-  if (!hasValidCharacters(ssid)) {
+  if (!hasValidCharacters(normalizedSsid)) {
     return {
       isValid: false,
       errorMessage: t('wireless.ssidInvalidCharacters'),
@@ -88,28 +81,17 @@ export function validateSsid(ssid: string, t: (key: string, params?: any) => str
  * Truncate string to fit within byte limit
  */
 export function truncateToByteLength(str: string, maxBytes: number): string {
+  const normalized = normalizeSsid(str);
   let byteLength = 0;
   let truncatedStr = '';
 
-  for (let i = 0; i < str.length; i++) {
-    const charCode = str.charCodeAt(i);
-    let charByteLength = 0;
-
-    if (charCode < 0x80) {
-      charByteLength = 1;
-    } else if (charCode < 0x800) {
-      charByteLength = 2;
-    } else if (charCode < 0x10000) {
-      charByteLength = 3;
-    } else {
-      charByteLength = 4;
-    }
-
+  for (const char of normalized) {
+    const charByteLength = utf8Encoder.encode(char).length;
     if (byteLength + charByteLength > maxBytes) {
       break;
     }
 
-    truncatedStr += str[i];
+    truncatedStr += char;
     byteLength += charByteLength;
   }
 

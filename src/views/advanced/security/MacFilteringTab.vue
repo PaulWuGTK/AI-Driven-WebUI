@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MACFilteringResponse, MACFilteringEntry } from '../../../types/macFiltering';
 import { getMACFiltering, updateMACFiltering } from '../../../services/api/macFiltering';
-import MacFilterBand from '../../network/wireless/macfilter/MacFilterBand.vue';
+import MacFilterBand from '../../../components/network/wireless/macfilter/MacFilterBand.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 import { ActionButtons } from '../../../components/common';
 import { useQA } from '../../../utils/qa';

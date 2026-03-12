@@ -2,6 +2,14 @@ import { AuthService } from '../auth';
 import { useRouter } from 'vue-router';
 
 const isDevelopment = import.meta.env.DEV;
+const SIDEBAR_MENU_CACHE_TTL_MS = 800;
+
+let sidebarMenuInFlight: Promise<SidebarMenuResponse> | null = null;
+let sidebarMenuCache: {
+  sessionId: string;
+  data: SidebarMenuResponse;
+  ts: number;
+} | null = null;
 
 export interface SidebarMenuLanguage {
   available: string[];
@@ -15,11 +23,14 @@ export interface SidebarMenuApp {
   duid: string;
 }
 
+export type UserRole = 'super' | 'normal';
+
 export interface SidebarMenuResponse {
   SidebarMenu: {
     Apps: SidebarMenuApp[];
     mode: 'Gateway' | 'Extender' | 'Bridge' | 'Init';
     NetLayoutType: 'prpl' | 'genix' | 'cht';
+    user: UserRole;
     language: SidebarMenuLanguage;
     features: Record<string, boolean>;
   }
@@ -37,11 +48,29 @@ const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMen
   return value === 'prpl' || value === 'genix' || value === 'cht' ? value : 'prpl';
 };
 
+const normalizeUserRole = (value: unknown): UserRole => {
+  if (typeof value !== 'string') return 'normal';
+
+  const normalized = value.trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const superRoles = new Set(['super', 'superuser', 'admin', 'administrator', 'root']);
+  const normalRoles = new Set(['normal', 'normaluser', 'user']);
+
+  if (superRoles.has(normalized)) return 'super';
+  if (normalRoles.has(normalized)) return 'normal';
+
+  if (isDevelopment && normalized.length > 0) {
+    console.warn(`[SidebarMenu] Unknown user role "${value}", fallback to "normal"`);
+  }
+
+  return 'normal';
+};
+
 const normalizeSidebarMenuResponse = (payload: SidebarMenuResponse): SidebarMenuResponse => ({
   ...payload,
   SidebarMenu: {
     ...payload.SidebarMenu,
     NetLayoutType: normalizeNetLayoutType(payload.SidebarMenu?.NetLayoutType),
+    user: normalizeUserRole(payload.SidebarMenu?.user),
   }
 });
 
@@ -58,7 +87,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
           }
         ],
         mode: "Gateway",
-        NetLayoutType: "prpl",
+        NetLayoutType: "cht",
+        user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: "en"
@@ -74,11 +104,30 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
+  const username = localStorage.getItem('username')?.trim();
+
+  if (!sessionId) {
+    throw new Error('Missing session token for SidebarMenu request');
+  }
+
+  const now = Date.now();
+  if (
+    sidebarMenuCache &&
+    sidebarMenuCache.sessionId === sessionId &&
+    now - sidebarMenuCache.ts <= SIDEBAR_MENU_CACHE_TTL_MS
+  ) {
+    return sidebarMenuCache.data;
+  }
+
+  if (sidebarMenuInFlight) {
+    return sidebarMenuInFlight;
+  }
   
-  try {
+  sidebarMenuInFlight = (async () => {
     const response = await fetch('/API/info?list=SidebarMenu', {
       headers: {
-        ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
+        'Authorization': `bearer ${sessionId}`,
+        ...(username ? { 'X-Auth-Username': username } : {})
       }
     });
 
@@ -94,7 +143,17 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
     }
 
     const payload = await response.json();
-    return normalizeSidebarMenuResponse(payload);
+    const normalized = normalizeSidebarMenuResponse(payload);
+    sidebarMenuCache = {
+      sessionId,
+      data: normalized,
+      ts: Date.now()
+    };
+    return normalized;
+  })();
+
+  try {
+    return await sidebarMenuInFlight;
   } catch (err) {
     console.error('Error fetching sidebar menu:', err);
     
@@ -110,6 +169,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
     }
     
     throw err;
+  } finally {
+    sidebarMenuInFlight = null;
   }
 };
 
@@ -127,6 +188,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
         ],
         mode: "Gateway",
         NetLayoutType: "prpl",
+        user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
           current: language
@@ -142,13 +204,19 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
+  const username = localStorage.getItem('username')?.trim();
+
+  if (!sessionId) {
+    throw new Error('Missing session token for SidebarMenu update request');
+  }
   
   try {
     const response = await fetch('/API/info?list=SidebarMenu', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
+        'Authorization': `bearer ${sessionId}`,
+        ...(username ? { 'X-Auth-Username': username } : {})
       },
       body: JSON.stringify({
         SidebarMenu: {
@@ -171,7 +239,13 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
     }
 
     const payload = await response.json();
-    return normalizeSidebarMenuResponse(payload);
+    const normalized = normalizeSidebarMenuResponse(payload);
+    sidebarMenuCache = {
+      sessionId,
+      data: normalized,
+      ts: Date.now()
+    };
+    return normalized;
   } catch (err) {
     console.error('Error updating sidebar menu language:', err);
     

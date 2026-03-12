@@ -2,7 +2,7 @@
 import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { WanStatusResponse } from './types/wan';
-import { getMockWanStatus } from './services/mockApi';
+import { wanMockData } from './services/mockData/wanMockData';
 import { AuthService } from './services/auth';
 import { AutoLogoutService } from './services/autoLogout';
 import Sidebar from './components/Sidebar.vue';
@@ -15,7 +15,7 @@ const autoLogout = AutoLogoutService.getInstance();
 
 const fetchWanStatus = async () => {
   try {
-    wanData.value = getMockWanStatus();
+    wanData.value = wanMockData;
   } catch (error) {
     console.error('Error fetching WAN status:', error);
   }

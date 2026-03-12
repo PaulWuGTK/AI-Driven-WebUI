@@ -1,4 +1,3 @@
-```vue
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import type { WlanWpsBand } from '../../../../types/wireless';
@@ -132,4 +131,3 @@ defineProps<{
   }
 }
 </style>
-```

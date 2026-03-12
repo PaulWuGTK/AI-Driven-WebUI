@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ExecEnvMonitorInfo } from '../../../types/lcmMonitor';
 import { getLcmMonitorInfo } from '../../../services/api/lcmMonitor';
+import { SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -53,12 +54,12 @@ onUnmounted(() => {
     </div>
 
     <template v-else>
-      <div class="panel-section" :data-testid="qa('lcm-monitor-section')">
-        <div class="header-row">
-          <div class="section-title-sp" :data-testid="qa('lcm-monitor-title')">
-            {{ t('lcm.systemResourceUsage') }}
-          </div>
-        </div>
+      <SectionCard
+        :data-testid="qa('lcm-monitor-section')"
+        header-mode="row"
+        :title="t('lcm.systemResourceUsage')"
+        :title-data-testid="qa('lcm-monitor-title')"
+      >
         <div class="monitor-content">
           <div
             v-for="(ee, eeIndex) in monitorData"
@@ -120,7 +121,7 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-      </div>
+      </SectionCard>
     </template>
   </div>
 </template>
@@ -128,12 +129,6 @@ onUnmounted(() => {
 <style scoped>
 .monitor-tab {
   padding: 0;
-}
-
-.section-title-sp {
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.5rem 0;
 }
 
 .loading-state {

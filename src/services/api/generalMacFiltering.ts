@@ -1,37 +1,16 @@
 import type { GeneralMacFilteringResponse, GeneralMacFilteringUpdateRequest } from '../../types/generalMacFiltering';
 import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
+import {
+  getGeneralMacFilteringMockData,
+  updateGeneralMacFilteringMockData
+} from '../mockData/generalMacFilteringMockData';
 
 const isDevelopment = import.meta.env.DEV;
 
-const mockGeneralMacFilteringData: GeneralMacFilteringResponse = {
-  MACFiltering: {
-    Enable: true,
-    WhiteList: [
-      {
-        No: 1,
-        Comment: "012349",
-        MACAddress: "00:11:22:33:44:99"
-      },
-      {
-        No: 2,
-        Comment: "88",
-        MACAddress: "00:11:22:33:44:88"
-      }
-    ],
-    BlackList: [
-      {
-        No: 1,
-        Comment: "012345",
-        MACAddress: "00:11:22:33:44:55"
-      }
-    ]
-  }
-};
-
 export const getGeneralMacFiltering = async (): Promise<GeneralMacFilteringResponse> => {
   if (isDevelopment) {
-    return mockGeneralMacFilteringData;
+    return getGeneralMacFilteringMockData();
   }
 
   return callApi<GeneralMacFilteringResponse>('/API/info?list=MACFiltering');
@@ -40,14 +19,7 @@ export const getGeneralMacFiltering = async (): Promise<GeneralMacFilteringRespo
 export const updateGeneralMacFiltering = async (data: GeneralMacFilteringUpdateRequest): Promise<GeneralMacFilteringResponse> => {
   if (isDevelopment) {
     console.log('Update General MAC Filtering:', data);
-
-    mockGeneralMacFilteringData.MACFiltering = {
-      Enable: data.MACFiltering.Enable,
-      WhiteList: [...data.MACFiltering.WhiteList],
-      BlackList: [...data.MACFiltering.BlackList]
-    };
-
-    return mockGeneralMacFilteringData;
+    return updateGeneralMacFilteringMockData(data);
   }
 
   const response = await fetch('/API/info?list=MACFiltering', {

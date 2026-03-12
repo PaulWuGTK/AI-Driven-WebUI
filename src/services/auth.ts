@@ -2,8 +2,10 @@ import type { LoginResponse,LoginVerifyResponse } from '../types/auth';
 import { loginMockData } from './mockData/authMockData';
 import { wizardApi } from './api/wizard';
 import { callApi } from './apiClient';
+import { extractNokMessage } from '../utils/apiUtils';
 
-
+const DEFAULT_WIZARD_RETRY_DELAY_MS = 3000;
+const DEFAULT_WIZARD_MAX_ATTEMPTS = 20;
 
 export class AuthService {
   private static instance: AuthService;
@@ -35,6 +37,13 @@ export class AuthService {
     this.sessionId = null;
     localStorage.removeItem('sessionId');
     localStorage.removeItem('username');
+    localStorage.removeItem('wizardRequired');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('sidebarAccessContext');
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth:session-cleared'));
+    }
   }
 
   isAuthenticated(): boolean {
@@ -46,16 +55,7 @@ export class AuthService {
       const mockData = loginMockData;
       this.setSessionId(mockData.sessionID);
       localStorage.setItem('username', username);
-          try {
-      const wizardData = await wizardApi.getWizardInfo();
-      if (wizardData.OpMode === 'Init') {
-          localStorage.setItem('wizardRequired', 'true');
-        } else {
-          localStorage.removeItem('wizardRequired');
-        }
-      } catch (err) {
-        console.warn('Failed to check wizard status:', err);
-      }
+      localStorage.removeItem('wizardRequired');
       return true;
     }
 
@@ -114,17 +114,67 @@ export class AuthService {
 
     this.setSessionId(sessionData.sessionID);
     localStorage.setItem('username', username);
-    try {
-      const wizardData = await wizardApi.getWizardInfo();
-      if (wizardData.OpMode === 'Init') {
-        localStorage.setItem('wizardRequired', 'true');
-      } else {
-        localStorage.removeItem('wizardRequired');
-      }
-    } catch (err) {
-      console.warn('Failed to check wizard status:', err);
-    }
+    localStorage.removeItem('wizardRequired');
     return true;
+  }
+
+  private async resolveWizardRequirementOnce(): Promise<boolean> {
+    const wizardData = await wizardApi.getWizardInfo() as unknown;
+    const nokMessage = extractNokMessage(wizardData);
+
+    if (nokMessage) {
+      throw new Error(nokMessage);
+    }
+
+    if (!wizardData || typeof wizardData !== 'object' || !('OpMode' in wizardData)) {
+      throw new Error('Invalid WizardRouter response');
+    }
+
+    const opMode = (wizardData as { OpMode?: string }).OpMode;
+    if (!opMode) {
+      throw new Error('Missing WizardRouter OpMode');
+    }
+
+    const needsWizard = opMode === 'Init';
+    if (needsWizard) {
+      localStorage.setItem('wizardRequired', 'true');
+    } else {
+      localStorage.removeItem('wizardRequired');
+    }
+
+    return needsWizard;
+  }
+
+  async resolveWizardRequirementWithRetry(options?: {
+    maxAttempts?: number;
+    retryDelayMs?: number;
+    onRetry?: (attempt: number, error: Error) => void;
+  }): Promise<boolean> {
+    const maxAttempts = options?.maxAttempts ?? DEFAULT_WIZARD_MAX_ATTEMPTS;
+    const retryDelayMs = options?.retryDelayMs ?? DEFAULT_WIZARD_RETRY_DELAY_MS;
+
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await this.resolveWizardRequirementOnce();
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error('Failed to resolve wizard status');
+        console.warn(`Failed to check wizard status (attempt ${attempt}/${maxAttempts}):`, lastError);
+
+        if (attempt >= maxAttempts) {
+          break;
+        }
+
+        options?.onRetry?.(attempt, lastError);
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+      }
+    }
+
+    const finalError = new Error(
+      `Wizard status check failed: ${lastError?.message || 'Unknown error'}`
+    );
+    throw finalError;
   }
 
   needsWizard(): boolean {

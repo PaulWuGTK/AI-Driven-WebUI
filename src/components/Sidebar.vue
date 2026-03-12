@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
-import { isMenuVisible, type NetLayoutType, type OperationMode } from '../types/menuVisibility';
+import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
 
 const { qa, slug } = useQA();
 
@@ -18,6 +18,7 @@ const expandedMenus = ref<string[]>([]);
 const isMobileMenuOpen = ref(false);
 const operationMode = ref<OperationMode>('Gateway');
 const netLayoutType = ref<NetLayoutType>('prpl');
+const userRole = ref<UserRole>('super');
 const hasStreambow = ref(false);
 const features = ref<Record<string, boolean>>({});
 
@@ -219,7 +220,8 @@ const filterSubItems = (subItems: SubMenuItem[]): SubMenuItem[] => {
         subItem.menuKey,
         netLayoutType.value,
         operationMode.value,
-        features.value
+        features.value,
+        userRole.value
       );
       return visible;
     })
@@ -230,7 +232,8 @@ const filterSubItems = (subItems: SubMenuItem[]): SubMenuItem[] => {
             child.menuKey,
             netLayoutType.value,
             operationMode.value,
-            features.value
+            features.value,
+            userRole.value
           )
         );
         return {
@@ -249,7 +252,8 @@ const filterMenuItems = () => {
         item.menuKey,
         netLayoutType.value,
         operationMode.value,
-        features.value
+        features.value,
+        userRole.value
       );
     })
     .map(item => {
@@ -273,7 +277,8 @@ const filterMenuItems = () => {
       'speedtest.xperienceControl',
       netLayoutType.value,
       operationMode.value,
-      features.value
+      features.value,
+      userRole.value
     );
 
     if (xperienceControlVisible) {
@@ -331,6 +336,11 @@ const isMenuExpanded = (menuName: string): boolean => {
 const STREAMBOW_KEYWORDS = ['streambow'];
 
 const fetchSidebarMenu = async () => {
+  const auth = AuthService.getInstance();
+  if (!auth.isAuthenticated()) {
+    return;
+  }
+
   try {
     const response = await getSidebarMenu();
 
@@ -343,6 +353,7 @@ const fetchSidebarMenu = async () => {
 
     operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
     netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
+    userRole.value = response.SidebarMenu.user || 'super';
     features.value = response.SidebarMenu.features || {};
 
     hasStreambow.value = response.SidebarMenu.Apps.some(app => {
@@ -367,7 +378,6 @@ const fetchSidebarMenu = async () => {
         (err.message.includes('403') ||
          err.message.includes('401') ||
          err.message.includes('Failed to fetch sidebar menu'))) {
-      const auth = AuthService.getInstance();
       auth.clearSession();
       router.push(`/login?t=${Date.now()}`);
     }

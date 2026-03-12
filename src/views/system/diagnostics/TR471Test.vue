@@ -396,7 +396,7 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 
         <div class="test-controls">
           <div class="test-type-section">
-            <h3 class="section-title">{{ t('tr471.test_sectionTitle') }}</h3>
+            <h3 class="tr471-test-title">{{ t('tr471.test_sectionTitle') }}</h3>
             <div class="checkbox-row">
               <BaseCheckbox
                 v-model="testTypes.upload"
@@ -564,10 +564,13 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 }
 
 .test-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "title run"
+    "options run";
+  gap: 0.75rem 1.5rem;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
   margin: 2rem 0;
   padding: 1.5rem;
   background: var(--bg-secondary);
@@ -576,6 +579,15 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 
 .test-type-section {
   flex: 1;
+  min-width: 0;
+}
+
+.tr471-test-title {
+  grid-area: title;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .section-title {
@@ -586,12 +598,18 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
 }
 
 .checkbox-row {
+  grid-area: options;
   display: flex;
   gap: 2rem;
+  align-items: center;
+  min-height: 40px;
 }
 
 .run-test-button {
+  grid-area: run;
   flex-shrink: 0;
+  align-self: start;
+  justify-self: end;
 }
 
 .results-section {
@@ -666,13 +684,22 @@ const getCombinedChartData = (field: 'IPLayerCapacity' | 'RTTRange' | 'PDVRange'
   }
 
   .test-controls {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "options"
+      "run";
     align-items: stretch;
   }
 
   .checkbox-row {
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
+  }
+
+  .run-test-button {
+    justify-self: stretch;
   }
 
   .charts-grid {

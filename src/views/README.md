@@ -1,230 +1,87 @@
-# Views Directory Structure
+﻿# Views Structure Guide
 
-This document describes the reorganized views directory structure for better maintainability and scalability.
+This file is the source of truth for `src/views` placement rules.
 
-## Directory Organization
+## Current Buckets
 
-```
-src/views/
-├── Dashboard.vue               # Main dashboard
-├── Login.vue                   # Login page
-├── InProgress.vue              # Placeholder for features in development
-│
-├── status/                     # Status & Monitoring
-│   ├── WanStatus.vue          # WAN status display
-│   ├── LanStatus.vue          # LAN status display
-│   ├── WlanStatus.vue         # WLAN status display
-│   ├── Statistics.vue          # Network statistics
-│   ├── MeshInfo.vue           # Mesh network information
-│   ├── SystemStats.vue         # System statistics
-│   ├── LogStatus.vue           # System logs
-│   ├── DualImage.vue           # Dual image status
-│   ├── LcmStatus.vue           # LCM status
-│   └── WifiNeighbor.vue        # WiFi neighbor information
-│
-├── network/                    # Network Configuration
-│   ├── wan/                    # WAN Configuration
-│   │   ├── WanConfig.vue       # Main WAN configuration page
-│   │   ├── WanModeManagement.vue
-│   │   ├── WanModeDetail.vue
-│   │   ├── WanModeEdit.vue
-│   │   └── WanModeSetup.vue
-│   ├── lan/                    # LAN Configuration
-│   │   ├── LanConfig.vue       # Main LAN configuration page
-│   │   ├── IPv4Config.vue      # IPv4 settings
-│   │   └── DeviceList.vue      # Connected devices
-│   └── wireless/               # Wireless Configuration
-│       ├── WirelessConfig.vue  # Main wireless page
-│       ├── BasicConfig.vue     # Basic wireless settings
-│       ├── AdvancedConfig.vue  # Advanced wireless settings
-│       ├── MeshConfig.vue      # Mesh network settings
-│       ├── WpsConfig.vue       # WPS configuration
-│       ├── ExtenderConfig.vue  # Wireless extender
-│       ├── GuestNetwork.vue    # Guest network settings
-│       ├── MacFiltering.vue    # MAC address filtering
-│       ├── advanced/           # Advanced wireless subcomponents
-│       ├── basic/              # Basic wireless subcomponents
-│       ├── guest/              # Guest network subcomponents
-│       ├── macfilter/          # MAC filtering subcomponents
-│       └── wps/                # WPS subcomponents
-│
-├── advanced/                   # Advanced Features
-│   ├── nat/                    # NAT Configuration
-│   │   ├── NatConfig.vue       # Main NAT configuration
-│   │   ├── DmzConfig.vue       # DMZ settings
-│   │   └── DmzHostTab.vue      # DMZ host tab
-│   ├── DdnsConfig.vue          # Dynamic DNS settings
-│   ├── SecurityConfig.vue      # Security settings
-│   ├── ServiceControl.vue      # Service control
-│   ├── SshConfig.vue           # SSH configuration
-│   ├── security/               # Security subcomponents
-│   ├── service-control/        # Service control subcomponents
-│   └── ssh/                    # SSH subcomponents
-│       ├── SshServerManagement.vue
-│       ├── SshPublicKeyManagement.vue
-│       └── SshCurrentSessions.vue
-│
-├── application/                # Application Features
-│   ├── UpnpConfig.vue          # UPnP settings
-│   └── XperienceControl.vue    # Xperience control
-│
-├── iot/                        # IoT Features
-│   ├── thread/                 # Thread protocol
-│   │   ├── ThreadLayout.vue
-│   │   ├── ThreadCommissioner.vue
-│   │   ├── ThreadConfiguration.vue
-│   │   ├── ThreadJoin.vue
-│   │   ├── ThreadStatus.vue
-│   │   └── ThreadTopology.vue
-│   └── matter/                 # Matter protocol
-│       └── MatterDashboard.vue
-│
-└── system/                     # System Management
-    ├── account/                # Account management
-    │   └── AccountManagement.vue
-    ├── device/                 # Device management
-    │   ├── DeviceManagement.vue
-    │   ├── TR069Config.vue
-    │   ├── TR369Config.vue
-    │   ├── TR369ControllerDetail.vue
-    │   └── TR369ControllerEdit.vue
-    ├── diagnostics/            # Diagnostic tools
-    │   ├── DiagnosticsTools.vue
-    │   ├── PingTool.vue
-    │   ├── TraceRouteTool.vue
-    │   └── DNSLookupTool.vue
-    ├── firmware/               # Firmware management
-    │   └── FirmwareUpgrade.vue
-    ├── backup/                 # Backup & restore
-    │   └── BackupManagement.vue
-    ├── reset/                  # Factory reset
-    │   └── DeviceReset.vue
-    ├── reboot/                 # Device reboot
-    │   └── DeviceReboot.vue
-    ├── ntp/                    # NTP configuration
-    │   └── NtpConfig.vue
-    └── settings/               # General settings
-        ├── SettingsManagement.vue
-        └── tabs/
-            ├── BackupRestore.vue
-            ├── FactoryReset.vue
-            └── FirmwareUpdate.vue
+Top-level route pages should stay under these menu-aligned buckets:
+
+- `src/views/status/*`
+- `src/views/network/*`
+- `src/views/advanced/*`
+- `src/views/application/*`
+- `src/views/iot/*`
+- `src/views/system/*`
+- `src/views/wizard/*`
+
+Special root pages:
+
+- `src/views/Login.vue`
+- `src/views/Dashboard.vue`
+- `src/views/InProgress.vue`
+
+## Placement Rules
+
+1. Route entry pages live in the bucket root, for example:
+   - `src/views/network/wan/WanConfig.vue`
+   - `src/views/advanced/SshConfig.vue`
+2. Tab-only or child-only views live in a bucket subfolder (`tabs`, feature folder, or domain folder), for example:
+   - `src/views/advanced/lcm/ExecEnvTab.vue`
+   - `src/views/advanced/ssh/SshPublicKeyManagementTab.vue`
+3. Do not place new route pages under legacy folders like `src/views/settings/*`.
+4. If a file is shared only as a building block and is not a page, prefer `src/components/*` instead of `src/views/*`.
+
+Legacy cleanup note:
+- `src/views/settings/*` has been drained from active tree and archived under `archive/views-legacy/batch3-2026-03-05/`.
+
+## Naming Rules
+
+- Route page: `*Config.vue`, `*Management.vue`, `*Status.vue`, or a clear feature name.
+- Tab page: `*Tab.vue`.
+- Modal-only view shell: `*Modal.vue`.
+- Avoid generic names like `Settings.vue` for new files.
+
+## Usage Audit Command
+
+Run this command before moving or deleting files:
+
+```bash
+npm run check:view-usage
 ```
 
-## Routing Structure
+The script reports:
 
-### New Routes (Canonical)
+- route views
+- embedded-only views
+- orphan views (not referenced by router or any imports)
 
-All routes now follow a consistent naming pattern:
+## Current Orphan Candidates
 
-```
-/status/*           - Status and monitoring pages
-/network/*          - Network configuration (WAN, LAN, Wireless)
-/advanced/*         - Advanced features (NAT, DDNS, Security, SSH)
-/application/*      - Application features (UPnP, Xperience)
-/iot/*             - IoT protocols (Thread, Matter)
-/system/*          - System management (Account, Device, Diagnostics, etc.)
-```
+As of the latest audit after Batch 1:
 
-### Legacy Route Redirects
+- none
 
-For backward compatibility, all old routes are redirected to new routes:
+Archived from Batch 1:
 
-```
-/basic/wan          → /network/wan
-/basic/lan          → /network/lan
-/basic/wlan         → /network/wireless
-/basic/nat          → /advanced/nat
-/basic/security     → /advanced/security
-/advance/ssh        → /advanced/ssh
-/application/ddns   → /advanced/ddns
-/management/*       → /system/*
-```
+- `src/views/Settings.vue`
+- `src/views/network/wireless/MacFiltering.vue`
+- `src/views/network/wireless/basic/WirelessBandConfig.vue`
+- `src/views/settings/wireless/WirelessExtenderTab.vue`
 
-## File Naming Conventions
+Archive location:
 
-### Pages (Main Views)
-- Use descriptive names ending with context
-- Examples: `WanConfig.vue`, `LanConfig.vue`, `WirelessConfig.vue`
-- Avoid generic names like `Settings.vue`
+- `archive/views-orphans/batch1-2026-03-05/`
 
-### Components (Sub-components)
-- Use clear, specific names
-- Examples: `DeviceList.vue`, `IPv4Config.vue`, `BasicConfig.vue`
+## Reorg Workflow
 
-### Tabs and Modals
-- Include type in name
-- Examples: `DmzHostTab.vue`, `ServiceControlModal.vue`
+When adjusting `src/views`:
 
-## Import Path Guidelines
+1. run `npm run check:view-usage`
+2. move files in one small batch
+3. update imports/routes
+4. run `npm run build`
+5. run `npm run check:view-usage` again and confirm orphan count trend
 
-### Relative Imports
-Always use relative paths for component imports:
+For the current execution order, see:
 
-```typescript
-// From network/wan/WanConfig.vue
-import WanModeSetup from './WanModeSetup.vue';        // Same directory
-import { useQA } from '../../../utils/qa';            // Utility
-
-// From network/wireless/guest/GuestWiFi.vue
-import { GuestConfig } from '../../../../types/guest'; // Type
-import BlockingOverlay from '../../../../components/BlockingOverlay.vue'; // Component
-```
-
-### Path Depth Reference
-- 1 level up: `../`  - Same parent directory
-- 2 levels up: `../../` - Grandparent directory
-- 3 levels up: `../../../` - From network/* to src/
-- 4 levels up: `../../../../` - From network/*/subdir/ to src/
-
-## Migration Guide
-
-### For Developers
-
-When creating or modifying views:
-
-1. **Determine the category**: Is it status, network, advanced, application, iot, or system?
-2. **Place in correct directory**: Follow the structure above
-3. **Use consistent naming**: Follow naming conventions
-4. **Update imports**: Adjust relative paths based on depth
-5. **Test routing**: Ensure navigation works correctly
-
-### Finding Files
-
-Old location → New location mapping:
-
-```
-views/settings/WanSettings.vue           → views/network/wan/WanConfig.vue
-views/settings/lan/LanSettings.vue       → views/network/lan/LanConfig.vue
-views/settings/WirelessSettings.vue      → views/network/wireless/WirelessConfig.vue
-views/advanced/NatSettings.vue           → views/advanced/nat/NatConfig.vue
-views/basic/SecuritySettings.vue         → views/advanced/SecurityConfig.vue
-views/management/ssh/SshManagement.vue   → views/advanced/SshConfig.vue
-views/management/ntp/NtpSettings.vue     → views/system/ntp/NtpConfig.vue
-views/management/device/*                → views/system/device/*
-```
-
-## Benefits of New Structure
-
-1. **Clear Organization**: Logical grouping by functionality
-2. **Consistent Naming**: All config pages end with `Config.vue`
-3. **Scalability**: Easy to add new features in appropriate categories
-4. **Maintainability**: Clear structure makes code easier to find and update
-5. **Better Navigation**: Route structure matches directory structure
-6. **Backward Compatible**: Old routes redirect to new ones
-
-## Route Names
-
-All routes now have meaningful names for programmatic navigation:
-
-```typescript
-// Use route names instead of paths
-router.push({ name: 'NetworkWan' });        // /network/wan
-router.push({ name: 'AdvancedSsh' });       // /advanced/ssh
-router.push({ name: 'SystemAccount' });     // /system/account
-```
-
----
-
-**Last Updated:** 2025-11-14
-**Version:** 2.0.0
+- `VIEWS_REORG_PLAN.md`

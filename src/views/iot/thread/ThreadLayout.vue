@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import ThreadStatus from './ThreadStatus.vue'
-import ThreadConfiguration from './ThreadConfiguration.vue'
-import ThreadJoin from './ThreadJoin.vue'
-import ThreadCommissioner from './ThreadCommissioner.vue'
-import ThreadTopology from './ThreadTopology.vue'
+import ThreadStatusTab from './ThreadStatusTab.vue'
+import ThreadConfigurationTab from './ThreadConfigurationTab.vue'
+import ThreadJoinTab from './ThreadJoinTab.vue'
+import ThreadCommissionerTab from './ThreadCommissionerTab.vue'
+import ThreadTopologyTab from './ThreadTopologyTab.vue'
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -43,11 +43,11 @@ const tabs = computed(() => [
         </div>
 
         <div class="tab-content" :data-testid="qa('thread-tab-content')">
-          <ThreadStatus v-if="activeTab === 'status'" :data-testid="qa('thread-status')" />
-          <ThreadConfiguration v-if="activeTab === 'configuration'" :data-testid="qa('thread-configuration')" />
-          <ThreadJoin v-if="activeTab === 'join'" :data-testid="qa('thread-join')" />
-          <ThreadCommissioner v-if="activeTab === 'commissioner'" :data-testid="qa('thread-commissioner')" />
-          <ThreadTopology v-if="activeTab === 'topology'" :data-testid="qa('thread-topology')" />
+          <ThreadStatusTab v-if="activeTab === 'status'" :data-testid="qa('thread-status')" />
+          <ThreadConfigurationTab v-if="activeTab === 'configuration'" :data-testid="qa('thread-configuration')" />
+          <ThreadJoinTab v-if="activeTab === 'join'" :data-testid="qa('thread-join')" />
+          <ThreadCommissionerTab v-if="activeTab === 'commissioner'" :data-testid="qa('thread-commissioner')" />
+          <ThreadTopologyTab v-if="activeTab === 'topology'" :data-testid="qa('thread-topology')" />
         </div>
       </div>
     </div>

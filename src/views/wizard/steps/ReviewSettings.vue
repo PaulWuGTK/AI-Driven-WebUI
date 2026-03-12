@@ -58,7 +58,9 @@ const { qa } = useQA();
         </div>
 
         <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-wifi-section')">
-          <h3 :data-testid="qa('wizard-review-wifi-title')">{{ t('wizard.reviewWifiConfiguration') }}</h3>
+          <div :data-testid="qa('wizard-review-wifi-configuration')">
+            <h3 :data-testid="qa('wizard-review-wifi-title')">{{ t('wizard.reviewWifiConfiguration') }}</h3>
+          </div>
           <div class="review-item">
             <span class="label">{{ t('wizard.smartConnect') }}:</span>
             <span class="value">{{ config.wifi.smartConnect ? t('wizard.reviewEnabled') : t('wizard.reviewDisabled') }}</span>

@@ -6,6 +6,12 @@
       <div v-if="showSuccess" class="success-message" :data-testid="qa('backup-wan-success')">
         {{ $t('common.saveSuccess') }}
       </div>
+      <BaseToast
+        v-model="showErrorToast"
+        :message="errorToastMessage"
+        type="error"
+        :data-testid="qa('backup-wan-error-toast')"
+      />
       <div v-if="loading" class="loading-container" :data-testid="qa('backup-wan-loading')">
         <BaseSpinner />
       </div>
@@ -160,15 +166,23 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { backupWanApi } from '../../../services/api/backupWan';
 import type { BackupWANConfig, BackupWANRequest } from '../../../types/backupWan';
-import { BaseCard, BaseButton, BaseInput, BaseSelect, BaseSpinner, BaseSwitch } from '../../../components/common';
+import { BaseButton, BaseInput, BaseSelect, BaseSpinner, BaseSwitch, BaseToast } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import { extractNokMessage } from '../../../utils/apiUtils';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 
 const router = useRouter();
 const { qa } = useQA();
 const loading = ref(false);
 const originalData = ref<BackupWANConfig | null>(null);
 const showSuccess = ref(false);
+const errorToastMessage = ref('');
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const showSuccessMessage = () => {
   showSuccess.value = true;
@@ -301,14 +315,14 @@ const handleSubmit = async () => {
     const nokMessage = extractNokMessage(res);
     if (nokMessage) {
       console.warn('Failed to update Backup WAN config:', nokMessage);
-      alert(nokMessage);
+      showErrorMessage(nokMessage);
     } else {
       showSuccessMessage();
       await loadConfig();
     }
   } catch (error) {
     console.error('Failed to update Backup WAN config:', error);
-   // alert('Failed to update Backup WAN configuration');
+    showErrorMessage('Failed to update Backup WAN configuration');
   } finally {
     loading.value = false;
   }

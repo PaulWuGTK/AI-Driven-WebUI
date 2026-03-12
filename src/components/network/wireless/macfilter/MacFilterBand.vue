@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MACFilteringEntry } from '../../../../types/macFiltering';
-import ConfirmationDialog from '../../../../components/ConfirmationDialog.vue';
+import ConfirmationDialog from '../../../ConfirmationDialog.vue';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 

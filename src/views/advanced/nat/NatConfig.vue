@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import PortForwardingTab from './PortForwardingTab.vue';
 import DmzHostTab from './DmzHostTab.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
+import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -12,18 +13,28 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const activeTab = ref('portforwarding');
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
-const tabs = computed(() => [
-  { id: 'portforwarding', label: t('nat.portForwarding') },
-  { id: 'dmz', label: t('nat.dmzHost') },
-  { id: 'alg', label: t('nat.alg') }
-]);
+const tabs = computed(() =>
+  [
+    { id: 'portforwarding', label: t('nat.portForwarding'), menuKey: 'basicSetup.nat.portForwarding' },
+    { id: 'dmz', label: t('nat.dmzHost'), menuKey: 'basicSetup.nat.dmzHost' },
+    { id: 'alg', label: t('nat.alg'), menuKey: 'basicSetup.nat.alg' }
+  ].filter(tab => canShowMenu(tab.menuKey))
+);
 
-watch(() => route.query.tab, (newTab) => {
-  if (newTab && typeof newTab === 'string' && tabs.value.some(tab => tab.id === newTab)) {
-    activeTab.value = newTab;
+const ensureActiveTab = () => {
+  const tabFromQuery = typeof route.query.tab === 'string' ? route.query.tab : '';
+  const exists = tabFromQuery && tabs.value.some(t => t.id === tabFromQuery);
+  const nextTab = exists ? tabFromQuery : (tabs.value[0]?.id || 'portforwarding');
+
+  if (activeTab.value !== nextTab) activeTab.value = nextTab;
+  if (!exists) {
+    router.replace({ path: route.path, query: { ...route.query, tab: nextTab } });
   }
-}, { immediate: true });
+};
+
+watch([() => route.query.tab, tabs], ensureActiveTab, { immediate: true });
 
 const handleTabChange = (tabId: string) => {
   activeTab.value = tabId;
@@ -33,11 +44,8 @@ const handleTabChange = (tabId: string) => {
   });
 };
 
-onMounted(() => {
-  const tabFromQuery = route.query.tab;
-  if (tabFromQuery && typeof tabFromQuery === 'string' && tabs.value.some(tab => tab.id === tabFromQuery)) {
-    activeTab.value = tabFromQuery;
-  }
+onMounted(async () => {
+  await fetchMenuContext();
 });
 </script>
 

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { updateWlanWps } from '../../../../services/api/wireless';
-import ConfirmationDialog from '../../../../components/ConfirmationDialog.vue';
+import ConfirmationDialog from '../../../ConfirmationDialog.vue';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
