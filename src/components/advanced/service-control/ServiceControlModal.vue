@@ -27,6 +27,7 @@ const editingRule = ref<ServiceControlRule>({
 });
 const selectedPredefinedService = ref<string>('');
 const showSourceIPRange = ref(false);
+const validationError = ref('');
 
 // Enhanced protocol options that include combined protocols
 const enhancedProtocolOptions = computed(() => {
@@ -85,16 +86,24 @@ watch(() => editingRule.value, (newValue) => {
   showSourceIPRange.value = !!(newValue.SourceIPStart || newValue.SourceIPEnd);
 }, { immediate: true });
 
+watch(editingRule, () => {
+  if (validationError.value) {
+    validationError.value = '';
+  }
+}, { deep: true });
+
 // Handle form submission
 const handleSubmit = () => {
+  validationError.value = '';
+
   // Validate form
   if (!editingRule.value.Service) {
-    alert('Service name is required');
+    validationError.value = 'Service name is required';
     return;
   }
 
   if (!editingRule.value.DestPort && editingRule.value.Protocol !== '1' && editingRule.value.Protocol !== '58') {
-    alert('Destination port is required for this protocol');
+    validationError.value = 'Destination port is required for this protocol';
     return;
   }
 
@@ -145,6 +154,10 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
 
       <div class="modal-body">
         <form class="compact-modal-form" @submit.prevent="handleSubmit">
+          <div v-if="validationError" class="validation-error" :data-testid="qa('service-control-validation-error')">
+            {{ validationError }}
+          </div>
+
           <!-- Enable/Disable Toggle -->
           <div class="form-group">
             <div class="switch-label">
@@ -386,6 +399,14 @@ input:disabled, select:disabled {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.validation-error {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #c62828;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

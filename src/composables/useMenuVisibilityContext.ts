@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { getSidebarMenu } from '../services/api/sidebarMenu';
+import { AuthService } from '../services/auth';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
 
 export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
@@ -9,6 +10,11 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
   const features = ref<Record<string, boolean>>({});
 
   const fetchMenuContext = async () => {
+    const auth = AuthService.getInstance();
+    if (!auth.isAuthenticated()) {
+      return;
+    }
+
     try {
       const response = await getSidebarMenu();
       const modeMapping: Record<string, OperationMode> = {

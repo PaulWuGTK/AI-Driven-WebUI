@@ -182,8 +182,6 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
 
   if (!restoreResponse.ok) {
     throw new Error('Failed to restore configuration');
-  }else{
-    alert("Restore configuration Success");
   }
 
   setTimeout(() => {

@@ -336,6 +336,11 @@ const isMenuExpanded = (menuName: string): boolean => {
 const STREAMBOW_KEYWORDS = ['streambow'];
 
 const fetchSidebarMenu = async () => {
+  const auth = AuthService.getInstance();
+  if (!auth.isAuthenticated()) {
+    return;
+  }
+
   try {
     const response = await getSidebarMenu();
 
@@ -373,7 +378,6 @@ const fetchSidebarMenu = async () => {
         (err.message.includes('403') ||
          err.message.includes('401') ||
          err.message.includes('Failed to fetch sidebar menu'))) {
-      const auth = AuthService.getInstance();
       auth.clearSession();
       router.push(`/login?t=${Date.now()}`);
     }

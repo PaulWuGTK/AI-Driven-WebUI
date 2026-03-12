@@ -2,6 +2,14 @@ import { AuthService } from '../auth';
 import { useRouter } from 'vue-router';
 
 const isDevelopment = import.meta.env.DEV;
+const SIDEBAR_MENU_CACHE_TTL_MS = 800;
+
+let sidebarMenuInFlight: Promise<SidebarMenuResponse> | null = null;
+let sidebarMenuCache: {
+  sessionId: string;
+  data: SidebarMenuResponse;
+  ts: number;
+} | null = null;
 
 export interface SidebarMenuLanguage {
   available: string[];
@@ -96,11 +104,30 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
+  const username = localStorage.getItem('username')?.trim();
+
+  if (!sessionId) {
+    throw new Error('Missing session token for SidebarMenu request');
+  }
+
+  const now = Date.now();
+  if (
+    sidebarMenuCache &&
+    sidebarMenuCache.sessionId === sessionId &&
+    now - sidebarMenuCache.ts <= SIDEBAR_MENU_CACHE_TTL_MS
+  ) {
+    return sidebarMenuCache.data;
+  }
+
+  if (sidebarMenuInFlight) {
+    return sidebarMenuInFlight;
+  }
   
-  try {
+  sidebarMenuInFlight = (async () => {
     const response = await fetch('/API/info?list=SidebarMenu', {
       headers: {
-        ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
+        'Authorization': `bearer ${sessionId}`,
+        ...(username ? { 'X-Auth-Username': username } : {})
       }
     });
 
@@ -116,7 +143,17 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
     }
 
     const payload = await response.json();
-    return normalizeSidebarMenuResponse(payload);
+    const normalized = normalizeSidebarMenuResponse(payload);
+    sidebarMenuCache = {
+      sessionId,
+      data: normalized,
+      ts: Date.now()
+    };
+    return normalized;
+  })();
+
+  try {
+    return await sidebarMenuInFlight;
   } catch (err) {
     console.error('Error fetching sidebar menu:', err);
     
@@ -132,6 +169,8 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
     }
     
     throw err;
+  } finally {
+    sidebarMenuInFlight = null;
   }
 };
 
@@ -165,13 +204,19 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
+  const username = localStorage.getItem('username')?.trim();
+
+  if (!sessionId) {
+    throw new Error('Missing session token for SidebarMenu update request');
+  }
   
   try {
     const response = await fetch('/API/info?list=SidebarMenu', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
+        'Authorization': `bearer ${sessionId}`,
+        ...(username ? { 'X-Auth-Username': username } : {})
       },
       body: JSON.stringify({
         SidebarMenu: {
@@ -194,7 +239,13 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
     }
 
     const payload = await response.json();
-    return normalizeSidebarMenuResponse(payload);
+    const normalized = normalizeSidebarMenuResponse(payload);
+    sidebarMenuCache = {
+      sessionId,
+      data: normalized,
+      ts: Date.now()
+    };
+    return normalized;
   } catch (err) {
     console.error('Error updating sidebar menu language:', err);
     

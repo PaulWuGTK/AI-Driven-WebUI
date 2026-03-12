@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useQA } from '../../utils/qa';
 import { wizardApi } from '../../services/api/wizard';
+import { BaseToast } from '../../components/common';
+import { useAutoDismiss } from '../../composables/useAutoDismiss';
 import type { WizardData, WizardConfig, AgentSetupMode } from '../../types/wizard';
 import PrivacyPolicy from './steps/PrivacyPolicy.vue';
 import ModeSelect from './steps/ModeSelect.vue';
@@ -53,6 +55,13 @@ const isApplying = ref(false);
 const isComplete = ref(false);
 const isAgentComplete = ref(false);
 const etaSeconds = ref(120);
+const errorToastMessage = ref('');
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const config = ref<WizardConfig>({
   mode: 'router',
@@ -159,7 +168,7 @@ const submitWizard = async () => {
     }
   } catch (error) {
     console.error('Failed to submit wizard configuration:', error);
-    alert('Failed to save configuration. Please try again.');
+    showErrorMessage('Failed to save configuration. Please try again.');
     isApplying.value = false;
   }
 };
@@ -189,7 +198,7 @@ const handleSkipWizard = async () => {
     }
   } catch (error) {
     console.error('Failed to skip wizard:', error);
-    alert('Failed to skip wizard. Please try again.');
+    showErrorMessage('Failed to skip wizard. Please try again.');
     isApplying.value = false;
   }
 };
@@ -288,6 +297,13 @@ const getStepComponent = () => {
         @submit="submitWizard"
       />
     </div>
+
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('wizard-error-toast')"
+    />
   </div>
 </template>
 

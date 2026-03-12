@@ -66,7 +66,7 @@ const generateNextAlias = () => {
 
 const handleAdd = () => {
   if (!canAddController.value) {
-    alert(t('device.maxControllersReached'));
+    showErrorMessage(t('device.maxControllersReached'));
     return;
   }
 

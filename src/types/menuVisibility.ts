@@ -212,7 +212,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'advanceSetup.sshService': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'advanceSetup.serviceControl': {

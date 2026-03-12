@@ -216,23 +216,43 @@
           <BaseButton @click="handleCancel" variant="secondary" data-testid="cancel-button">
             {{ t('common.cancel') }}
           </BaseButton>
-          <BaseButton @click="handleSave" variant="primary" data-testid="apply-button">
+          <BaseButton
+            @click="handleSave"
+            variant="primary"
+            :loading="loading"
+            data-testid="apply-button"
+          >
             {{ t('common.apply') }}
           </BaseButton>
         </div>
       </div>
     </BaseCard>
+
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      data-testid="qos-bandwidth-success-toast"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      data-testid="qos-bandwidth-error-toast"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BaseCard from '../../../components/common/BaseCard.vue';
 import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseButton from '../../../components/common/BaseButton.vue';
 import BaseSwitch from '../../../components/common/BaseSwitch.vue';
+import BaseToast from '../../../components/common/BaseToast.vue';
 import { qosApi } from '../../../services/api/qos';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import type { QosBandwidthConfig } from '../../../types/qos';
 
 const { t } = useI18n();
@@ -253,6 +273,10 @@ const formData = ref<QosBandwidthConfig>({
 
 const originalData = ref<QosBandwidthConfig | null>(null);
 const loading = ref(false);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
 type PriorityKey = 'High' | 'Medium' | 'Low' | 'Low-latency';
 type ValidationErrors = {
@@ -263,6 +287,16 @@ type ValidationErrors = {
 };
 
 const validationErrors = ref<ValidationErrors>({});
+
+const showSuccessMessage = (message: string) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
 
 const calculateSpeed = (priority: keyof typeof formData.value.Bandwidth.Priority) => {
   const upload = formData.value.Bandwidth.Upload;
@@ -342,7 +376,7 @@ const validateForm = (): boolean => {
   }
 
   if (hasError) {
-    alert(t('qos.validation1'));
+    showErrorMessage(t('qos.validation1'));
     return false;
   }
 
@@ -358,10 +392,10 @@ const handleSave = async () => {
     loading.value = true;
     await qosApi.updateBandwidth({ QosBandwidth: formData.value });
     originalData.value = JSON.parse(JSON.stringify(formData.value));
-    alert(t('common.saveSuccess'));
+    showSuccessMessage(t('common.saveSuccess'));
   } catch (error) {
     console.error('Failed to save QoS bandwidth:', error);
-    alert(t('common.saveFailed'));
+    showErrorMessage(t('common.saveFailed'));
   } finally {
     loading.value = false;
   }
