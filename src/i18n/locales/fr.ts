@@ -1532,7 +1532,8 @@ const translations = {
     staticFieldRequired: 'Lorsque le protocole est « Static », ce champ est obligatoire et ne peut pas être vide.',
     loadError: 'Échec du chargement de la configuration WAN.',
     saveSuccess: 'Configuration WAN enregistrée avec succès.',
-    saveError: 'Échec de l’enregistrement de la configuration WAN.'
+    saveError: 'Échec de l’enregistrement de la configuration WAN.',
+    atLeastOneWanModeRequired: 'Au moins un mode WAN doit rester activé'
   },
   routing: {
     title: 'Routage',

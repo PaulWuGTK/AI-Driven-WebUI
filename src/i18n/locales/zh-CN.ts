@@ -1532,7 +1532,8 @@ const translations = {
     staticFieldRequired: '当协议为 Static 时，此字段为必填且不能为空。',
     loadError: '加载 WAN 配置失败。',
     saveSuccess: 'WAN 配置已成功保存。',
-    saveError: '保存 WAN 配置失败。'
+    saveError: '保存 WAN 配置失败。',
+    atLeastOneWanModeRequired: '至少必须保留一个启用中的 WAN 模式'
   },
   routing: {
     title: '路由',

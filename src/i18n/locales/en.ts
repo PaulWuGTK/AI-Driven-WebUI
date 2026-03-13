@@ -1,4 +1,4 @@
-﻿// English translations
+// English translations
 const translations = {
   menu: {
     status: 'Status',
@@ -1536,7 +1536,8 @@ const translations = {
     staticFieldRequired: 'This field is required and cannot be empty when Protocol is Static',
     loadError: 'Failed to load WAN configuration',
     saveSuccess: 'WAN configuration saved successfully',
-    saveError: 'Failed to save WAN configuration'
+    saveError: 'Failed to save WAN configuration',
+    atLeastOneWanModeRequired: 'At least one WAN mode must remain enabled'
   },
   routing: {
     title: 'Routing',
