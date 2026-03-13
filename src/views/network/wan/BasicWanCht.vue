@@ -10,6 +10,9 @@
     <div v-if="showLoadFail" class="fail-message" :data-testid="qa('basic-wan-cht-load-error')">
       {{ $t('basicWanCht.loadError') }}
     </div>
+    <div v-if="validationMessage" class="fail-message" :data-testid="qa('basic-wan-cht-validation-error')">
+      {{ validationMessage }}
+    </div>
     <div v-if="!editMode" class="management-view" :data-testid="qa('basic-wan-cht-management')">
       <SectionCard
         :title="$t('basicWanCht.wanManagement')"
@@ -158,6 +161,7 @@ const { qa } = useQA();
 const showSuccess = ref(false);
 const showFail = ref(false);
 const showLoadFail = ref(false);
+const validationMessage = ref('');
 //const loading = ref(false);
 const config = ref<BasicWanChtConfig | null>(null);
 const editData = ref<BasicWanChtConfig | null>(null);
@@ -223,6 +227,16 @@ const showLoadFailMessage = () => {
     showLoadFail.value = false;
   }, 3000);
 };
+const showValidationMessage = (message: string) => {
+  validationMessage.value = message;
+  setTimeout(() => {
+    validationMessage.value = '';
+  }, 3000);
+};
+
+const hasAtLeastOneWanModeEnabled = (wanConfig: BasicWanChtConfig) => (
+  wanConfig.PPPoE.Enable || wanConfig.IPoE.Enable || wanConfig.Bridge.Enable
+);
 
 const loadConfig = async () => {
   try {
@@ -265,6 +279,10 @@ const handleCancel = () => {
 
 const handleApply = async () => {
   if (!config.value) return;
+  if (!hasAtLeastOneWanModeEnabled(config.value)) {
+    showValidationMessage(t('basicWanCht.atLeastOneWanModeRequired'));
+    return;
+  }
 
   try {
 //    loading.value = true;

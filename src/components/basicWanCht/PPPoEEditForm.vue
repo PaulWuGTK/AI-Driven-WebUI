@@ -8,8 +8,6 @@
             <span :data-testid="qa('pppoe-enable-label')">{{ $t('basicWanCht.enable') }}</span>
             <BaseSwitch
               v-model="localData.Enable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-enable-toggle')"
               :slider-data-testid="qa('pppoe-enable-toggle-slider')"
             />
@@ -67,8 +65,6 @@
             <span :data-testid="qa('pppoe-default-gateway-label')">{{ $t('basicWanCht.defaultGateway') }}</span>
             <BaseSwitch
               v-model="localData.DefaultGateway"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-default-gateway-toggle')"
               :slider-data-testid="qa('pppoe-default-gateway-toggle-slider')"
             />
@@ -80,8 +76,6 @@
             <span :data-testid="qa('pppoe-passthrough-label')">{{ $t('basicWanCht.pppoePassThrough') }}</span>
             <BaseSwitch
               v-model="localData.PassthroughEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-passthrough-toggle')"
               :slider-data-testid="qa('pppoe-passthrough-toggle-slider')"
             />
@@ -93,8 +87,6 @@
             <span :data-testid="qa('pppoe-ipv4-label')">{{ $t('basicWanCht.ipv4') }}</span>
             <BaseSwitch
               v-model="localData.IPv4Enable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-ipv4-toggle')"
               :slider-data-testid="qa('pppoe-ipv4-toggle-slider')"
             />
@@ -106,8 +98,6 @@
             <span :data-testid="qa('pppoe-ipv6-label')">{{ $t('basicWanCht.ipv6') }}</span>
             <BaseSwitch
               v-model="localData.IPv6Enable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-ipv6-toggle')"
               :slider-data-testid="qa('pppoe-ipv6-toggle-slider')"
             />
@@ -141,8 +131,6 @@
             <span :data-testid="qa('pppoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
             <BaseSwitch
               v-model="localData.NATEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-nat-toggle')"
               :slider-data-testid="qa('pppoe-nat-toggle-slider')"
             />
@@ -154,8 +142,6 @@
             <span :data-testid="qa('pppoe-igmp-label')">{{ $t('basicWanCht.igmpProxy') }}</span>
             <BaseSwitch
               v-model="localData.IGMPEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-igmp-toggle')"
               :slider-data-testid="qa('pppoe-igmp-toggle-slider')"
             />
@@ -167,8 +153,6 @@
             <span :data-testid="qa('pppoe-vlan-label')">{{ $t('basicWanCht.vlan') }}</span>
             <BaseSwitch
               v-model="localData.VLANEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('pppoe-vlan-toggle')"
               :slider-data-testid="qa('pppoe-vlan-toggle-slider')"
             />

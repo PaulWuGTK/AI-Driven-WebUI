@@ -1532,7 +1532,8 @@ const translations = {
     staticFieldRequired: 'Wenn das Protokoll „Static“ ist, ist dieses Feld erforderlich und darf nicht leer sein.',
     loadError: 'WAN-Konfiguration konnte nicht geladen werden.',
     saveSuccess: 'WAN-Konfiguration wurde erfolgreich gespeichert.',
-    saveError: 'WAN-Konfiguration konnte nicht gespeichert werden.'
+    saveError: 'WAN-Konfiguration konnte nicht gespeichert werden.',
+    atLeastOneWanModeRequired: 'Mindestens ein WAN-Modus muss aktiviert bleiben'
   },
   routing: {
     title: 'Routing',

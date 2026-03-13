@@ -8,8 +8,6 @@
             <span :data-testid="qa('ipoe-enable-label')">{{ $t('basicWanCht.enable') }}</span>
             <BaseSwitch
               v-model="localData.Enable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('ipoe-enable-toggle')"
               :slider-data-testid="qa('ipoe-enable-toggle-slider')"
             />
@@ -55,39 +53,33 @@
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipoe-ipv4-label')">{{ $t('basicWanCht.ipv4') }}</span>
-              <BaseSwitch
-                v-model="localData.IPv4Enable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('ipoe-ipv4-toggle')"
-                :slider-data-testid="qa('ipoe-ipv4-toggle-slider')"
-              />
+            <BaseSwitch
+              v-model="localData.IPv4Enable"
+              :data-testid="qa('ipoe-ipv4-toggle')"
+              :slider-data-testid="qa('ipoe-ipv4-toggle-slider')"
+            />
             </div>
           </div>
 
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipoe-ipv6-label')">{{ $t('basicWanCht.ipv6') }}</span>
-              <BaseSwitch
-                v-model="localData.IPv6Enable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('ipoe-ipv6-toggle')"
-                :slider-data-testid="qa('ipoe-ipv6-toggle-slider')"
-              />
+            <BaseSwitch
+              v-model="localData.IPv6Enable"
+              :data-testid="qa('ipoe-ipv6-toggle')"
+              :slider-data-testid="qa('ipoe-ipv6-toggle-slider')"
+            />
             </div>
           </div>
 
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipoe-option60-label')">{{ $t('basicWanCht.dhcpOption60') }}</span>
-              <BaseSwitch
-                v-model="localData.DHCPv4Option60Enable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('ipoe-option60-toggle')"
-                :slider-data-testid="qa('ipoe-option60-toggle-slider')"
-              />
+            <BaseSwitch
+              v-model="localData.DHCPv4Option60Enable"
+              :data-testid="qa('ipoe-option60-toggle')"
+              :slider-data-testid="qa('ipoe-option60-toggle-slider')"
+            />
             </div>
           </div>
 
@@ -103,13 +95,11 @@
           <div class="form-group">
             <div class="switch-label">
               <span :data-testid="qa('ipoe-option61-label')">{{ $t('basicWanCht.dhcpOption61') }}</span>
-              <BaseSwitch
-                v-model="localData.DHCPv4Option61Enable"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('ipoe-option61-toggle')"
-                :slider-data-testid="qa('ipoe-option61-toggle-slider')"
-              />
+            <BaseSwitch
+              v-model="localData.DHCPv4Option61Enable"
+              :data-testid="qa('ipoe-option61-toggle')"
+              :slider-data-testid="qa('ipoe-option61-toggle-slider')"
+            />
             </div>
           </div>
 
@@ -147,8 +137,6 @@
             <span :data-testid="qa('ipoe-default-gateway-label')">{{ $t('basicWanCht.defaultGateway') }}</span>
             <BaseSwitch
               v-model="localData.DefaultGateway"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('ipoe-default-gateway-toggle')"
               :slider-data-testid="qa('ipoe-default-gateway-toggle-slider')"
             />
@@ -182,8 +170,6 @@
             <span :data-testid="qa('ipoe-nat-label')">{{ $t('basicWanCht.natFunction') }}</span>
             <BaseSwitch
               v-model="localData.NATEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('ipoe-nat-toggle')"
               :slider-data-testid="qa('ipoe-nat-toggle-slider')"
             />
@@ -195,8 +181,6 @@
             <span :data-testid="qa('ipoe-igmp-label')">{{ $t('basicWanCht.igmpProxy') }}</span>
             <BaseSwitch
               v-model="localData.IGMPEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('ipoe-igmp-toggle')"
               :slider-data-testid="qa('ipoe-igmp-toggle-slider')"
             />
@@ -208,8 +192,6 @@
             <span :data-testid="qa('ipoe-vlan-label')">{{ $t('basicWanCht.vlan') }}</span>
             <BaseSwitch
               v-model="localData.VLANEnable"
-              :true-value="1"
-              :false-value="0"
               :data-testid="qa('ipoe-vlan-toggle')"
               :slider-data-testid="qa('ipoe-vlan-toggle-slider')"
             />

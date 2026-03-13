@@ -1531,7 +1531,8 @@ const translations = {
     staticFieldRequired: '프로토콜이 Static인 경우, 이 필드는 필수이며 비워 둘 수 없습니다.',
     loadError: 'WAN 구성을 불러오지 못했습니다.',
     saveSuccess: 'WAN 구성이 성공적으로 저장되었습니다.',
-    saveError: 'WAN 구성을 저장하지 못했습니다.'
+    saveError: 'WAN 구성을 저장하지 못했습니다.',
+    atLeastOneWanModeRequired: '최소 하나의 WAN 모드는 활성화된 상태로 유지되어야 합니다'
   },
   routing: {
     title: '라우팅',

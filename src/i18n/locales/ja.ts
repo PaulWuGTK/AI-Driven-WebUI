@@ -1532,7 +1532,8 @@ const translations = {
     staticFieldRequired: 'プロトコルが Static の場合、この項目は必須で空欄にはできません。',
     loadError: 'WAN 設定の読み込みに失敗しました。',
     saveSuccess: 'WAN 設定を正常に保存しました。',
-    saveError: 'WAN 設定の保存に失敗しました。'
+    saveError: 'WAN 設定の保存に失敗しました。',
+    atLeastOneWanModeRequired: '少なくとも 1 つの WAN モードを有効のままにする必要があります'
   },
   routing: {
     title: 'ルーティング',

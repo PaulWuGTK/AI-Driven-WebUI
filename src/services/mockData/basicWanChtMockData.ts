@@ -27,7 +27,7 @@ export const basicWanChtMockData: BasicWanChtResponse = {
       ListDNSMode: ['Auto', 'Manual']
     },
     IPoE: {
-      Enable: false,
+      Enable: true,
       Protocol: 'DHCP',
       MTU: 1500,
       DefaultGateway: false,
