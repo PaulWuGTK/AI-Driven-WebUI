@@ -1,5 +1,4 @@
 import { AuthService } from '../auth';
-import { useRouter } from 'vue-router';
 
 const isDevelopment = import.meta.env.DEV;
 const SIDEBAR_MENU_CACHE_TTL_MS = 800;
@@ -104,8 +103,6 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
-  const username = localStorage.getItem('username')?.trim();
-
   if (!sessionId) {
     throw new Error('Missing session token for SidebarMenu request');
   }
@@ -126,8 +123,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
   sidebarMenuInFlight = (async () => {
     const response = await fetch('/API/info?list=SidebarMenu', {
       headers: {
-        'Authorization': `bearer ${sessionId}`,
-        ...(username ? { 'X-Auth-Username': username } : {})
+        'Authorization': `bearer ${sessionId}`
       }
     });
 
@@ -204,8 +200,6 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
 
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
-  const username = localStorage.getItem('username')?.trim();
-
   if (!sessionId) {
     throw new Error('Missing session token for SidebarMenu update request');
   }
@@ -215,8 +209,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `bearer ${sessionId}`,
-        ...(username ? { 'X-Auth-Username': username } : {})
+        'Authorization': `bearer ${sessionId}`
       },
       body: JSON.stringify({
         SidebarMenu: {
