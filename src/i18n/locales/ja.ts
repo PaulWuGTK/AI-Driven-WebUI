@@ -333,7 +333,9 @@ const translations = {
     band: 'バンド',
     selectBand: 'バンドを選択',
     nodeDetails: 'ノード詳細',
-    deviceName: 'デバイス名'
+    deviceName: 'デバイス名',
+    upstreamBand: 'Upstream Band',
+    rssi: 'RSSI (dBm)'
   },
   lcm: {
     titleStatus: 'LCM ステータス',
@@ -1318,6 +1320,12 @@ const translations = {
   },
   account: {
     title: 'アカウント管理',
+    users: 'Users',
+    passwordSectionTitle: 'Password',
+    addUserSectionTitle: 'Add User',
+    webViewer: 'WebViewer',
+    webAdmin: 'WebAdmin',
+    confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',
     oldPassword: '旧パスワード',
     newPassword: '新しいパスワード',
     confirmPassword: 'パスワードの確認',

@@ -202,6 +202,10 @@ export interface Translations {
     selectDestination: string;
     band: string;
     selectBand: string;
+    nodeDetails: string;
+    deviceName: string;
+    upstreamBand: string;
+    rssi: string;
   };
   lcm: {
     title: string;

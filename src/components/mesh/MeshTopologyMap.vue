@@ -56,6 +56,17 @@ const getNodeSize = (nodeType: string) => {
   return NODE_SIZES[nodeType as keyof typeof NODE_SIZES] || NODE_SIZES.Client;
 };
 
+const formatRssi = (rssi: MeshNode['RSSI']) => {
+  if (rssi === undefined || rssi === null || rssi === '') {
+    return '-';
+  }
+  const raw = String(rssi).trim();
+  if (raw === '-') {
+    return '-';
+  }
+  return /dbm/i.test(raw) ? raw : `${raw} dBm`;
+};
+
 // Calculate hierarchical levels for each node
 const calculateHierarchy = (nodes: MeshNode[]) => {
   const nodeMap = new Map<string, { node: MeshNode; level: number }>();
@@ -412,7 +423,7 @@ onUnmounted(() => {
             @click="selectedNode = null"
             :data-testid="qa('mesh-topology-map-detail-close')"
           >
-            ✕
+            &times;
           </button>
         </div>
         <div class="panel-content">
@@ -443,8 +454,12 @@ onUnmounted(() => {
               <span class="detail-label">{{ t('mesh.upstream') || 'Upstream' }}:</span>
               <span class="detail-value mono">{{ selectedNode.Upstream }}</span>
             </div>
+            <div class="detail-row" v-if="selectedNode.UpstreamBand">
+              <span class="detail-label">{{ t('mesh.upstreamBand') }}:</span>
+              <span class="detail-value">{{ selectedNode.UpstreamBand }}</span>
+            </div>
             <div class="detail-row" v-if="selectedNode.SupportedBand">
-              <span class="detail-label">{{ t('mesh.band') || 'Band' }}:</span>
+              <span class="detail-label">{{ t('mesh.supportedBand') || 'Supported Band' }}:</span>
               <span class="detail-value">{{ selectedNode.SupportedBand }}</span>
             </div>
             <div class="detail-row" v-if="selectedNode.TxRate">
@@ -455,9 +470,9 @@ onUnmounted(() => {
               <span class="detail-label">{{ t('mesh.rxRate') || 'RX Rate' }}:</span>
               <span class="detail-value">{{ selectedNode.RxRate }}</span>
             </div>
-            <div class="detail-row" v-if="selectedNode.RSSI">
-              <span class="detail-label">{{ t('mesh.rssi') || 'RSSI' }}:</span>
-              <span class="detail-value">{{ selectedNode.RSSI }} dBm</span>
+            <div class="detail-row" v-if="selectedNode.RSSI !== undefined && selectedNode.RSSI !== null && selectedNode.RSSI !== ''">
+              <span class="detail-label">{{ t('mesh.rssi') }}:</span>
+              <span class="detail-value">{{ formatRssi(selectedNode.RSSI) }}</span>
             </div>
           </div>
         </div>

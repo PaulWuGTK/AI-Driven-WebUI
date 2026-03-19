@@ -335,7 +335,9 @@ const translations = {
     band: 'Band',
     selectBand: 'Select Band',
     nodeDetails: 'Node Details',
-    deviceName: 'Device Name'
+    deviceName: 'Device Name',
+    upstreamBand: 'Upstream Band',
+    rssi: 'RSSI (dBm)'
   },
   lcm: {
     titleStatus: 'LCM Status',
@@ -1353,6 +1355,12 @@ const translations = {
   },
   account: {
     title: 'Account Management',
+    users: 'Users',
+    passwordSectionTitle: 'Password',
+    addUserSectionTitle: 'Add User',
+    webViewer: 'WebViewer',
+    webAdmin: 'WebAdmin',
+    confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',
     oldPassword: 'Old Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
@@ -1587,4 +1595,3 @@ const translations = {
 };
 
 export default translations;
-

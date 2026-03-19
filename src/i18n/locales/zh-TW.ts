@@ -333,7 +333,9 @@ const translations = {
     band: '頻段',
     selectBand: '選擇頻段',
     nodeDetails: '節點詳細資訊',
-    deviceName: '裝置名稱'
+    deviceName: '裝置名稱',
+    upstreamBand: 'Upstream Band',
+    rssi: 'RSSI (dBm)'
   },
   lcm: {
     titleStatus: 'LCM 狀態',
@@ -1318,6 +1320,12 @@ const translations = {
   },
   account: {
     title: '帳戶管理',
+    users: 'Users',
+    passwordSectionTitle: 'Password',
+    addUserSectionTitle: 'Add User',
+    webViewer: 'WebViewer',
+    webAdmin: 'WebAdmin',
+    confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',
     oldPassword: '舊密碼',
     newPassword: '新密碼',
     confirmPassword: '確認密碼',

@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
 
 export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
+  const isDevelopment = import.meta.env.DEV;
   const operationMode = ref<OperationMode>('Gateway');
   const netLayoutType = ref<NetLayoutType>('prpl');
   const userRole = ref<UserRole>(defaultRole);
@@ -11,7 +12,7 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
 
   const fetchMenuContext = async () => {
     const auth = AuthService.getInstance();
-    if (!auth.isAuthenticated()) {
+    if (!auth.isAuthenticated() && !isDevelopment) {
       return;
     }
 

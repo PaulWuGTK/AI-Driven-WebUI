@@ -332,7 +332,9 @@ const translations = {
     band: '대역',
     selectBand: '대역 선택',
     nodeDetails: '노드 상세 정보',
-    deviceName: '장치 이름'
+    deviceName: '장치 이름',
+    upstreamBand: 'Upstream Band',
+    rssi: 'RSSI (dBm)'
   },
   lcm: {
     titleStatus: 'LCM 상태',
@@ -1317,6 +1319,12 @@ const translations = {
   },
   account: {
     title: '계정 관리',
+    users: 'Users',
+    passwordSectionTitle: 'Password',
+    addUserSectionTitle: 'Add User',
+    webViewer: 'WebViewer',
+    webAdmin: 'WebAdmin',
+    confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',
     oldPassword: '이전 비밀번호',
     newPassword: '새 비밀번호',
     confirmPassword: '비밀번호 확인',

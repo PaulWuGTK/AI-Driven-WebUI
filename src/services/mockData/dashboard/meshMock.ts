@@ -18,7 +18,9 @@ const baseNodes: MeshNode[] = [
     MACAddress: "76:e2:f9:a5:5d:02",
     MediaType: "Wi-Fi",
     Upstream: "76:e2:f9:a5:5d:01",
-    SupportedBand: "2.4G/5G"
+    UpstreamBand: "5GHz",
+    SupportedBand: "2.4G/5G",
+    RSSI: -58
   }
 ];
 
@@ -31,7 +33,9 @@ const dynamicNodePool: MeshNode[] = [
     MACAddress: "76:e2:f9:a5:5d:03",
     MediaType: "Ethernet",
     Upstream: "76:e2:f9:a5:5d:01",
-    SupportedBand: "5G/6G"
+    UpstreamBand: "Ethernet",
+    SupportedBand: "5G/6G",
+    RSSI: -42
   },
   {
     Name: "Device-5d04",
@@ -40,7 +44,9 @@ const dynamicNodePool: MeshNode[] = [
     MACAddress: "76:e2:f9:a5:5d:04",
     MediaType: "Wi-Fi",
     Upstream: "76:e2:f9:a5:5d:03",
-    SupportedBand: "5G/6G"
+    UpstreamBand: "6GHz",
+    SupportedBand: "5G/6G",
+    RSSI: -65
   },
   {
     Name: "Device-5da1",
@@ -48,7 +54,9 @@ const dynamicNodePool: MeshNode[] = [
     ipv4: "192.168.1.101",
     MACAddress: "76:e2:f9:a5:5d:a1",
     MediaType: "Wi-Fi",
-    Upstream: "76:e2:f9:a5:5d:02"
+    Upstream: "76:e2:f9:a5:5d:02",
+    UpstreamBand: "2.4GHz",
+    RSSI: -71
   },
   {
     Name: "Device-5da2",
@@ -56,7 +64,8 @@ const dynamicNodePool: MeshNode[] = [
     ipv4: "192.168.1.102",
     MACAddress: "76:e2:f9:a5:5d:a2",
     MediaType: "Ethernet",
-    Upstream: "76:e2:f9:a5:5d:02"
+    Upstream: "76:e2:f9:a5:5d:02",
+    UpstreamBand: "Ethernet"
   },
   {
     Name: "Device-5da3",
@@ -64,7 +73,9 @@ const dynamicNodePool: MeshNode[] = [
     ipv4: "192.168.1.103",
     MACAddress: "76:e2:f9:a5:5d:a3",
     MediaType: "Wi-Fi",
-    Upstream: "76:e2:f9:a5:5d:04"
+    Upstream: "76:e2:f9:a5:5d:04",
+    UpstreamBand: "5GHz",
+    RSSI: -67
   },
   {
     Name: "Device-5da4",
@@ -72,7 +83,9 @@ const dynamicNodePool: MeshNode[] = [
     ipv4: "192.168.1.104",
     MACAddress: "76:e2:f9:a5:5d:a4",
     MediaType: "Wi-Fi",
-    Upstream: "76:e2:f9:a5:5d:02"
+    Upstream: "76:e2:f9:a5:5d:02",
+    UpstreamBand: "2.4GHz",
+    RSSI: -73
   },
   {
     Name: "Device-5da5",
@@ -80,7 +93,9 @@ const dynamicNodePool: MeshNode[] = [
     ipv4: "192.168.1.105",
     MACAddress: "76:e2:f9:a5:5d:a5",
     MediaType: "Wi-Fi",
-    Upstream: "76:e2:f9:a5:5d:03"
+    Upstream: "76:e2:f9:a5:5d:03",
+    UpstreamBand: "5GHz",
+    RSSI: -69
   }
 ];
 

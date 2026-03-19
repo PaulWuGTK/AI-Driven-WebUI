@@ -4,7 +4,7 @@ import { Router } from 'vue-router';
 export class AutoLogoutService {
   private static instance: AutoLogoutService;
   private logoutTimer: number | null = null;
-  private readonly INACTIVITY_TIMEOUT = 3 * 60 * 1000; // 3 minutes in milliseconds
+  private readonly DEFAULT_INACTIVITY_TIMEOUT_MS = 3 * 60 * 1000;
   private router: Router | null = null;
   private isEnabled = false;
 
@@ -30,13 +30,12 @@ export class AutoLogoutService {
    * Start monitoring user activity
    */
   start() {
-    if (this.isEnabled) {
-      return;
+    if (!this.isEnabled) {
+      this.isEnabled = true;
+      this.setupEventListeners();
     }
 
-    this.isEnabled = true;
     this.resetTimer();
-    this.setupEventListeners();
   }
 
   /**
@@ -60,7 +59,15 @@ export class AutoLogoutService {
 
     this.logoutTimer = window.setTimeout(() => {
       this.performLogout();
-    }, this.INACTIVITY_TIMEOUT);
+    }, this.getInactivityTimeoutMs());
+  }
+
+  private getInactivityTimeoutMs(): number {
+    const idleTimeoutSeconds = AuthService.getInstance().getIdleTimeoutSeconds();
+    if (typeof idleTimeoutSeconds === 'number' && Number.isFinite(idleTimeoutSeconds) && idleTimeoutSeconds > 0) {
+      return idleTimeoutSeconds * 1000;
+    }
+    return this.DEFAULT_INACTIVITY_TIMEOUT_MS;
   }
 
   /**

@@ -252,7 +252,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'management.account': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: true, genix: true, cht: false },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
+  'management.accountCht': {
+    netLayoutTypes: { prpl: false, genix: false, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'management.ntp': {
@@ -329,6 +333,7 @@ export const menuRoleVisibilityRules: Record<string, RoleVisibilityRule> = {
   'application.upnp': { super: true, normal: false },
   'application.ddns': { super: true, normal: false },
   'management.account': { super: true, normal: false },
+  'management.accountCht': { super: true, normal: false },
   'management.device': { super: true, normal: false }
 };
 

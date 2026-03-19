@@ -46,7 +46,11 @@ const hasMeshDataChanged = (newData: MeshNode[], oldData: MeshNode[]): boolean =
       newNode.ipv4 !== oldNode.ipv4 ||
       newNode.MediaType !== oldNode.MediaType ||
       newNode.Upstream !== oldNode.Upstream ||
-      newNode.SupportedBand !== oldNode.SupportedBand
+      newNode.UpstreamBand !== oldNode.UpstreamBand ||
+      newNode.SupportedBand !== oldNode.SupportedBand ||
+      newNode.TxRate !== oldNode.TxRate ||
+      newNode.RxRate !== oldNode.RxRate ||
+      newNode.RSSI !== oldNode.RSSI
     );
   });
 };
