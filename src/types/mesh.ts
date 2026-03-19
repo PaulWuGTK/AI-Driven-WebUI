@@ -5,10 +5,11 @@ export interface MeshNode {
   MACAddress: string;
   MediaType: string;
   Upstream: string;
+  UpstreamBand?: string;
   SupportedBand?: string;
   TxRate?: string;
   RxRate?: string;
-  RSSI?: number;
+  RSSI?: number | string;
 }
 
 export interface MeshMapResponse {

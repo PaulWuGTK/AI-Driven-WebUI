@@ -44,7 +44,9 @@ export interface SidebarMenuUpdateRequest {
 }
 
 const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMenu']['NetLayoutType'] => {
-  return value === 'prpl' || value === 'genix' || value === 'cht' ? value : 'prpl';
+  if (typeof value !== 'string') return 'prpl';
+  const normalized = value.trim().toLowerCase();
+  return normalized === 'prpl' || normalized === 'genix' || normalized === 'cht' ? normalized : 'prpl';
 };
 
 const normalizeUserRole = (value: unknown): UserRole => {

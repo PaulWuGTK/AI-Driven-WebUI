@@ -113,8 +113,13 @@ const canAccessRouteByVisibility = async (path: string, auth: AuthService): Prom
   const context = await fetchSidebarAccessContext(auth);
   if (!context) return true;
 
+  const resolvedMenuKey =
+    menuKey === 'management.account' && context.netLayoutType === 'cht'
+      ? 'management.accountCht'
+      : menuKey;
+
   return isMenuVisible(
-    menuKey,
+    resolvedMenuKey,
     context.netLayoutType,
     context.operationMode,
     context.features,
@@ -603,7 +608,7 @@ const router = createRouter({
     {
       path: '/system/account',
       name: 'SystemAccount',
-      component: () => import('../views/system/account/AccountManagement.vue'),
+      component: () => import('../views/system/account/AccountManagementEntry.vue'),
       beforeEnter: requireAuth
     },
     {

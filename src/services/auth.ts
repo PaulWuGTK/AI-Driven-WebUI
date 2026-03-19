@@ -10,11 +10,17 @@ const DEFAULT_WIZARD_MAX_ATTEMPTS = 20;
 export class AuthService {
   private static instance: AuthService;
   private sessionId: string | null = null;
+  private idleTimeoutSeconds: number | null = null;
   private isDevelopment = import.meta.env.DEV;
+  private static readonly IDLE_TIMEOUT_STORAGE_KEY = 'sessionIdleTimeout';
 
   private constructor() {
     // Try to restore session from localStorage
     this.sessionId = localStorage.getItem('sessionId');
+    const storedIdleTimeout = Number(localStorage.getItem(AuthService.IDLE_TIMEOUT_STORAGE_KEY));
+    this.idleTimeoutSeconds = Number.isFinite(storedIdleTimeout) && storedIdleTimeout > 0
+      ? storedIdleTimeout
+      : null;
   }
 
   static getInstance(): AuthService {
@@ -29,13 +35,30 @@ export class AuthService {
     localStorage.setItem('sessionId', sessionId);
   }
 
+  setIdleTimeoutSeconds(timeoutSeconds: number | null) {
+    if (typeof timeoutSeconds === 'number' && Number.isFinite(timeoutSeconds) && timeoutSeconds > 0) {
+      this.idleTimeoutSeconds = timeoutSeconds;
+      localStorage.setItem(AuthService.IDLE_TIMEOUT_STORAGE_KEY, String(timeoutSeconds));
+      return;
+    }
+
+    this.idleTimeoutSeconds = null;
+    localStorage.removeItem(AuthService.IDLE_TIMEOUT_STORAGE_KEY);
+  }
+
   getSessionId(): string | null {
     return this.sessionId;
   }
 
+  getIdleTimeoutSeconds(): number | null {
+    return this.idleTimeoutSeconds;
+  }
+
   clearSession() {
     this.sessionId = null;
+    this.idleTimeoutSeconds = null;
     localStorage.removeItem('sessionId');
+    localStorage.removeItem(AuthService.IDLE_TIMEOUT_STORAGE_KEY);
     localStorage.removeItem('username');
     localStorage.removeItem('wizardRequired');
     localStorage.removeItem('userRole');
@@ -54,6 +77,7 @@ export class AuthService {
     if (this.isDevelopment) {
       const mockData = loginMockData;
       this.setSessionId(mockData.sessionID);
+      this.setIdleTimeoutSeconds(mockData.idleTimeout);
       localStorage.setItem('username', username);
       localStorage.removeItem('wizardRequired');
       return true;
@@ -113,6 +137,7 @@ export class AuthService {
     }
 
     this.setSessionId(sessionData.sessionID);
+    this.setIdleTimeoutSeconds(sessionData.idleTimeout);
     localStorage.setItem('username', username);
     localStorage.removeItem('wizardRequired');
     return true;

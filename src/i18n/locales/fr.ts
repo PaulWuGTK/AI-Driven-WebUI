@@ -333,7 +333,9 @@ const translations = {
     band: 'Bande',
     selectBand: 'Sélectionner la Bande',
     nodeDetails: 'Détails du nœud',
-    deviceName: 'Nom de l’appareil'
+    deviceName: 'Nom de l’appareil',
+    upstreamBand: 'Upstream Band',
+    rssi: 'RSSI (dBm)'
   },
   lcm: {
     titleStatus: 'État du LCM',
@@ -1318,6 +1320,12 @@ const translations = {
   },
   account: {
     title: 'Gestion du compte',
+    users: 'Users',
+    passwordSectionTitle: 'Password',
+    addUserSectionTitle: 'Add User',
+    webViewer: 'WebViewer',
+    webAdmin: 'WebAdmin',
+    confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',
     oldPassword: 'Ancien mot de passe',
     newPassword: 'Nouveau mot de passe',
     confirmPassword: 'Confirmer le mot de passe',

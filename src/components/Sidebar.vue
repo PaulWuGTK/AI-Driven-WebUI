@@ -173,6 +173,7 @@ const baseMenuItems: MenuItem[] = [
     subItems: [
       { name: 'Reboot', path: '/management/reboot', translationKey: 'menu.reboot', menuKey: 'management.reboot' },
       { name: 'Account Management', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.account' },
+      { name: 'Account Management CHT', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.accountCht' },
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp', menuKey: 'management.ntp' },
       { name: 'Device Management', path: '/management/device', translationKey: 'menu.device', menuKey: 'management.device' },
       {
