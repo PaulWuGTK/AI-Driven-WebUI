@@ -27,6 +27,7 @@ export interface Translations {
     ssh: string;
     advanced: string;
     serviceControl: string;
+    mcl: string;
     ddns: string;
     dmz: string;
     device: string;
@@ -433,6 +434,34 @@ export interface Translations {
     enabled: string;
     disabled: string;
     confirmDelete: string;
+  };
+  mcl: {
+    title: string;
+    mgmtServices: string;
+    trustDomain: string;
+    wanInterfacesForAccessingServices: string;
+    anyWan: string;
+    multipleWans: string;
+    service: string;
+    lan: string;
+    wan: string;
+    port: string;
+    ipAddress: string;
+    ipAddresses: string;
+    addTrustDomain: string;
+    trustDomainPlaceholder: string;
+    cidrHint: string;
+    saveSuccess: string;
+    errorFetch: string;
+    errorSave: string;
+    errorSelectWanInterface: string;
+    errorTrustDomainRequired: string;
+    errorTrustDomainFormat: string;
+    errorTrustDomainDuplicate: string;
+    addTrustDomainSuccess: string;
+    deleteTrustDomainSuccess: string;
+    confirmDeleteTrustDomainTitle: string;
+    confirmDeleteTrustDomainMessage: string;
   };
   dmz: {
     title: string;

@@ -42,6 +42,7 @@ const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
   { pathPrefix: '/basic/routing', menuKey: 'basicSetup.routing' },
   { pathPrefix: '/advanced/ssh', menuKey: 'advanceSetup.sshService' },
   { pathPrefix: '/advanced/service-control', menuKey: 'advanceSetup.serviceControl' },
+  { pathPrefix: '/advanced/mcl', menuKey: 'advanceSetup.mcl' },
   { pathPrefix: '/advanced/qos', menuKey: 'advanceSetup.qos' },
   { pathPrefix: '/advanced/lcm', menuKey: 'advanceSetup.lcm' },
   { pathPrefix: '/application/upnp', menuKey: 'application.upnp' },
@@ -453,6 +454,16 @@ const router = createRouter({
     {
       path: '/advance/service-control',
       redirect: '/advanced/service-control'
+    },
+    {
+      path: '/advanced/mcl',
+      name: 'AdvancedMcl',
+      component: () => import('../views/advanced/MclConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/advance/mcl',
+      redirect: '/advanced/mcl'
     },
     {
       path: '/advanced/qos',
