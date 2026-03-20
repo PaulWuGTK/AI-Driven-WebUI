@@ -719,6 +719,8 @@ onMounted(fetchConfig);
       :data-testid="qa('wlan-basic-multi-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       :message="t('wireless.applyingBasicSettings')"
+      :description1="t('common.loading')"
+      :description2="''"
       :duration="30"
       @complete="handleBlockingComplete"
     />

@@ -486,6 +486,8 @@ const translations = {
     perBandInterfaces: '各頻段介面',
     mfpConfig: 'MFP 設定',
     applyingBasicSettings: '正在套用 Wi-Fi 基本設定…',
+    applyingAdvancedSettings: '正在套用 Wi-Fi 進階設定…',
+    applyingMeshSettings: '正在套用 Wi-Fi Mesh 設定…',
     bandsEnabled: '個頻段已啟用',
     commonSsidShort: '共用 SSID',
     mloShort: 'MLO',
@@ -520,7 +522,8 @@ const translations = {
     leaseTime: '租約時間',
     seconds: '秒',
     hostName: '主機名稱',
-    macAddress: 'MAC 位址'
+    macAddress: 'MAC 位址',
+    applyingSettings: '正在套用訪客 Wi-Fi 設定…'
   },
   macfilter: {
     title: '無線 MAC 篩選',
@@ -717,7 +720,10 @@ const translations = {
     mode: '模式',
     gateway: '閘道',
     extender: '延伸器',
-    bridge: '橋接'
+    bridge: '橋接',
+    applyingModeConfig: '正在套用 {mode} 模式設定...',
+    applyingDescription: '正在套用運作模式設定，請稍候。',
+    applyingDurationHint: '此流程最多可能需要 {seconds} 秒。'
   },
   ssh: {
     title: 'SSH',

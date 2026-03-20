@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../../../types/operationMode';
 import { getOperationMode, updateOperationMode } from '../../../services/api/operationMode';
@@ -15,6 +15,11 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const showCountdown = ref(false);
 const countdownMessage = ref('');
+const overlayDurationSeconds = 30;
+const overlayDescription1 = computed(() => t('operationMode.applyingDescription'));
+const overlayDescription2 = computed(() =>
+  t('operationMode.applyingDurationHint', { seconds: overlayDurationSeconds })
+);
 
 const fetchOperationMode = async () => {
   loading.value = true;
@@ -62,7 +67,7 @@ const handleSubmit = async () => {
     };
     await updateOperationMode(updateData);
 
-    countdownMessage.value = `Applying ${selectedMode.value} mode configuration...`;
+    countdownMessage.value = t('operationMode.applyingModeConfig', { mode: selectedMode.value });
     showCountdown.value = true;
   } catch (err) {
     console.error('Error updating operation mode:', err);
@@ -128,7 +133,9 @@ onMounted(fetchOperationMode);
     <BlockingOverlay
       :is-visible="showCountdown"
       :message="countdownMessage"
-      :duration="30"
+      :description1="overlayDescription1"
+      :description2="overlayDescription2"
+      :duration="overlayDurationSeconds"
       @complete="handleCountdownComplete"
     />
   </div>

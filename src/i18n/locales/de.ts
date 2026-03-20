@@ -486,6 +486,8 @@ const translations = {
     perBandInterfaces: 'Bandbezogene Schnittstellen',
     mfpConfig: 'MFP-Konfiguration',
     applyingBasicSettings: 'WLAN-Basiseinstellungen werden übernommen...',
+    applyingAdvancedSettings: 'WLAN-Erweiterteinstellungen werden übernommen...',
+    applyingMeshSettings: 'WLAN-Mesh-Einstellungen werden übernommen...',
     bandsEnabled: 'Bänder aktiviert',
     commonSsidShort: 'Gemeinsame SSID',
     mloShort: 'MLO',
@@ -520,7 +522,8 @@ const translations = {
     leaseTime: 'Lease-Zeit',
     seconds: 'Sekunden',
     hostName: 'Host-Name',
-    macAddress: 'MAC-Adresse'
+    macAddress: 'MAC-Adresse',
+    applyingSettings: 'Gast-WLAN-Einstellungen werden übernommen...'
   },
   macfilter: {
     title: 'WLAN-MAC-Filter',
@@ -717,7 +720,10 @@ const translations = {
     mode: 'Modus',
     gateway: 'Gateway',
     extender: 'Extender',
-    bridge: 'Bridge'
+    bridge: 'Bridge',
+    applyingModeConfig: 'Konfiguration des Modus {mode} wird angewendet...',
+    applyingDescription: 'Bitte warten Sie, während die Betriebsmodus-Konfiguration angewendet wird.',
+    applyingDurationHint: 'Dieser Vorgang kann bis zu {seconds} Sekunden dauern.'
   },
   ssh: {
     title: 'SSH',

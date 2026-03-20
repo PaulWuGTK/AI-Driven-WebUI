@@ -489,6 +489,8 @@ const translations = {
     perBandInterfaces: 'Per-band Interfaces',
     mfpConfig: 'MFP Config',
     applyingBasicSettings: 'Applying WiFi Basic Settings...',
+    applyingAdvancedSettings: 'Applying WiFi Advanced Settings...',
+    applyingMeshSettings: 'Applying WiFi Mesh Settings...',
     bandsEnabled: 'bands enabled',
     commonSsidShort: 'Common SSID',
     mloShort: 'MLO',
@@ -523,7 +525,8 @@ const translations = {
     leaseTime: 'Lease Time',
     seconds: 'Seconds',
     hostName: 'Host Name',
-    macAddress: 'MAC Address'
+    macAddress: 'MAC Address',
+    applyingSettings: 'Applying Guest WiFi Settings...'
   },
   macfilter: {
     title: 'Wireless MAC Filter',
@@ -752,7 +755,10 @@ const translations = {
     mode: 'Mode',
     gateway: 'Gateway',
     extender: 'Extender',
-    bridge: 'Bridge'
+    bridge: 'Bridge',
+    applyingModeConfig: 'Applying {mode} mode configuration...',
+    applyingDescription: 'Please wait while the operation mode configuration is being applied.',
+    applyingDurationHint: 'This process may take up to {seconds} seconds.'
   },
   ssh: {
     title: 'SSH',
