@@ -488,6 +488,7 @@ const translations = {
     groupDefaultName: 'Home',
     perBandInterfaces: 'Per-band Interfaces',
     mfpConfig: 'MFP Config',
+    applyingDescription: 'Please wait while the Wi-Fi configuration is being applied.',
     applyingBasicSettings: 'Applying WiFi Basic Settings...',
     applyingAdvancedSettings: 'Applying WiFi Advanced Settings...',
     applyingMeshSettings: 'Applying WiFi Mesh Settings...',

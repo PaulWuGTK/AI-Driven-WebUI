@@ -215,7 +215,7 @@ onMounted(fetchGuestWiFi);
       :data-testid="qa('guest-wifi-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       :message="t('guest.applyingSettings')"
-      :description1="t('common.loading')"
+      :description1="t('wireless.applyingDescription')"
       :description2="''"
       :duration="30"
       @complete="handleBlockingComplete"
