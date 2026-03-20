@@ -9,7 +9,6 @@ import type {
   ThreadTopologyResponse,
   ThreadScanResponse
 } from '../../types/thread';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   getThreadCommissionerMockData,
@@ -55,15 +54,10 @@ export const updateThreadConfiguration = async (data: ThreadConfigurationUpdateR
     return updateThreadConfigurationMockData(data);
   }
 
-  const response = await fetch(`${API_URL}?list=ThreadConfiguration`, {
+  return callApi<ThreadConfigurationResponse>(`${API_URL}?list=ThreadConfiguration`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-
-  return handleApiResponse<ThreadConfigurationResponse>(response);
 };
 
 // Thread Join Network API
@@ -73,15 +67,10 @@ export const joinThreadNetwork = async (data: ThreadJoinNetworkRequest): Promise
     return joinThreadNetworkMockData(data);
   }
 
-  const response = await fetch(`${API_URL}?list=ThreadJoinNetwork`, {
+  return callApi<ThreadJoinNetworkResponse>(`${API_URL}?list=ThreadJoinNetwork`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-
-  return handleApiResponse<ThreadJoinNetworkResponse>(response);
 };
 
 // Thread Commissioner API
@@ -99,15 +88,10 @@ export const updateThreadCommissioner = async (data: ThreadCommissionerUpdateReq
     return updateThreadCommissionerMockData(data);
   }
 
-  const response = await fetch(`${API_URL}?list=ThreadCommissioner`, {
+  return callApi<ThreadCommissionerResponse>(`${API_URL}?list=ThreadCommissioner`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-
-  return handleApiResponse<ThreadCommissionerResponse>(response);
 };
 
 // Thread Topology API

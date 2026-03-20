@@ -1,5 +1,5 @@
 import type { SpeedTestResponse } from '../../types/speedtest';
-import { AuthService } from '../auth';
+import { callApi } from '../apiClient';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -30,29 +30,8 @@ export const runSpeedTest = async (): Promise<SpeedTestResponse> => {
     };
   }
 
-  const auth = AuthService.getInstance();
-  const sessionId = auth.getSessionId();
-  
-  const response = await fetch('/API/info?list=AppXperienceControl', {
+  return callApi<SpeedTestResponse>('/API/info?list=AppXperienceControl', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(sessionId ? { 'Authorization': `bearer ${sessionId}` } : {})
-    },
     body: JSON.stringify({AppXperienceControl:""})
   });
-
-
-  if (response.status === 401 || response.status === 403) {
-      // Authentication error - redirect to login
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
-      throw new Error(`Authentication error: ${response.status}`);
-  }
-  
-  if (!response.ok) {
-    throw new Error(`Speed test failed with status: ${response.status}`);
-  }
-
-  return response.json();
 };

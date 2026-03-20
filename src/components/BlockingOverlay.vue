@@ -1,26 +1,53 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { useQA } from '../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
-const { t } = useI18n();
-
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   isVisible: boolean;
   message?: string;
+  description1?: string;
+  description2?: string;
   duration?: number; // in seconds
-}>();
+  autoComplete?: boolean;
+  showCountdown?: boolean;
+  showProgress?: boolean;
+}>(), {
+  autoComplete: true,
+  showCountdown: true,
+  showProgress: true
+});
 
 const emit = defineEmits<{
   (e: 'complete'): void;
 }>();
 
-const countdown = ref(props.duration || 30);
+const effectiveDuration = computed(() => {
+  if (typeof props.duration !== 'number') return null;
+  if (!Number.isFinite(props.duration) || props.duration <= 0) return null;
+  return Math.floor(props.duration);
+});
+const shouldAutoComplete = computed(() => Boolean(props.autoComplete && effectiveDuration.value));
+const shouldShowCountdown = computed(() => Boolean(shouldAutoComplete.value && props.showCountdown));
+const shouldShowProgress = computed(() => Boolean(shouldAutoComplete.value && props.showProgress));
+const countdown = ref(effectiveDuration.value ?? 0);
 const timer = ref<number | null>(null);
+const resolvedDescription1 = computed(() =>
+  props.description1 || 'Please wait while the WiFi configuration is being applied.'
+);
+const resolvedDescription2 = computed(() => {
+  if (props.description2 !== undefined) return props.description2;
+  if (!effectiveDuration.value) return '';
+  return `This process may take up to ${effectiveDuration.value} seconds.`;
+});
+const progressPercent = computed(() => {
+  if (!effectiveDuration.value) return 0;
+  return ((effectiveDuration.value - countdown.value) / effectiveDuration.value) * 100;
+});
 
 const startCountdown = () => {
-  countdown.value = props.duration || 30;
+  if (!effectiveDuration.value) return;
+  countdown.value = effectiveDuration.value;
   
   timer.value = window.setInterval(() => {
     countdown.value--;
@@ -42,8 +69,8 @@ const stopCountdown = () => {
 };
 
 // Watch for visibility changes
-watch(() => props.isVisible, (newValue) => {
-  if (newValue) {
+watch([() => props.isVisible, shouldAutoComplete], ([isVisible, autoComplete]) => {
+  if (isVisible && autoComplete) {
     startCountdown();
   } else {
     stopCountdown();
@@ -51,7 +78,7 @@ watch(() => props.isVisible, (newValue) => {
 });
 
 onMounted(() => {
-  if (props.isVisible) {
+  if (props.isVisible && shouldAutoComplete.value) {
     startCountdown();
   }
 });
@@ -66,14 +93,14 @@ onUnmounted(() => {
     <div class="blocking-content" :data-testid="qa('blocking-overlay-content')">
       <div class="spinner" :data-testid="qa('blocking-overlay-spinner')"></div>
       <h2 :data-testid="qa('blocking-overlay-title')">{{ message || 'Applying WiFi Settings...' }}</h2>
-      <p :data-testid="qa('blocking-overlay-description-1')">Please wait while the WiFi configuration is being applied.</p>
-      <p :data-testid="qa('blocking-overlay-description-2')">This process may take up to 30 seconds.</p>
-      <div class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ countdown }}s</div>
-      <div class="progress-bar" :data-testid="qa('blocking-overlay-progress-bar')">
+      <p v-if="resolvedDescription1" :data-testid="qa('blocking-overlay-description-1')">{{ resolvedDescription1 }}</p>
+      <p v-if="resolvedDescription2" :data-testid="qa('blocking-overlay-description-2')">{{ resolvedDescription2 }}</p>
+      <div v-if="shouldShowCountdown" class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ countdown }}s</div>
+      <div v-if="shouldShowProgress" class="progress-bar" :data-testid="qa('blocking-overlay-progress-bar')">
         <div 
           class="progress-fill" 
           :data-testid="qa('blocking-overlay-progress-fill')"
-          :style="{ width: `${((duration || 30) - countdown) / (duration || 30) * 100}%` }"
+          :style="{ width: `${progressPercent}%` }"
         ></div>
       </div>
     </div>

@@ -73,14 +73,19 @@ export class AuthService {
     return !!this.sessionId;
   }
 
-  async login(username: string, password: string, captchaId: string, captcha: string): Promise<boolean> {
+  async login(
+    username: string,
+    password: string,
+    captchaId: string,
+    captcha: string
+  ): Promise<{ success: boolean; needsWizard: boolean | null }> {
     if (this.isDevelopment) {
       const mockData = loginMockData;
       this.setSessionId(mockData.sessionID);
       this.setIdleTimeoutSeconds(mockData.idleTimeout);
       localStorage.setItem('username', username);
       localStorage.removeItem('wizardRequired');
-      return true;
+      return { success: true, needsWizard: null };
     }
 
     // A-1) verify captcha (Lua)
@@ -117,7 +122,15 @@ export class AuthService {
       throw error;
     }
 
-    // A-2) create session (must be browser → to receive Set-Cookie)
+    // A-2) create session (must be browser to receive Set-Cookie)
+    const wizardFromLoginRaw = verify.Login.wizardRequired;
+    let needsWizardFromLogin: boolean | null = null;
+    if (typeof wizardFromLoginRaw === 'boolean') {
+      needsWizardFromLogin = wizardFromLoginRaw;
+    } else if (wizardFromLoginRaw === 1 || wizardFromLoginRaw === 0) {
+      needsWizardFromLogin = wizardFromLoginRaw === 1;
+    }
+
     const sessionResp = await fetch('/session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -139,8 +152,12 @@ export class AuthService {
     this.setSessionId(sessionData.sessionID);
     this.setIdleTimeoutSeconds(sessionData.idleTimeout);
     localStorage.setItem('username', username);
-    localStorage.removeItem('wizardRequired');
-    return true;
+    if (needsWizardFromLogin === true) {
+      localStorage.setItem('wizardRequired', 'true');
+    } else {
+      localStorage.removeItem('wizardRequired');
+    }
+    return { success: true, needsWizard: needsWizardFromLogin };
   }
 
   private async resolveWizardRequirementOnce(): Promise<boolean> {
@@ -210,3 +227,4 @@ export class AuthService {
     localStorage.removeItem('wizardRequired');
   }
 }
+

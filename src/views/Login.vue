@@ -124,22 +124,24 @@ const handleLogin = async () => {
 
   try {
     const auth = AuthService.getInstance();
-    const success = await auth.login(
+    const loginResult = await auth.login(
       username.value,
       password.value,
       captchaId.value,
       captcha.value
     );
 
-    if (success) {
+    if (loginResult.success) {
       wizardStatusLoading.value = true;
       wizardStatusRetryCount.value = 0;
 
-      const needsWizard = await auth.resolveWizardRequirementWithRetry({
-        onRetry: (attempt) => {
-          wizardStatusRetryCount.value = attempt;
-        }
-      });
+      const needsWizard = typeof loginResult.needsWizard === 'boolean'
+        ? loginResult.needsWizard
+        : await auth.resolveWizardRequirementWithRetry({
+          onRetry: (attempt) => {
+            wizardStatusRetryCount.value = attempt;
+          }
+        });
 
       if (needsWizard) {
         await router.push('/wizard');
