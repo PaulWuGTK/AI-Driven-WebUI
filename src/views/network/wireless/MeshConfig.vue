@@ -205,7 +205,7 @@ onMounted(fetchMeshConfig);
       :data-testid="qa('wireless-mesh-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       :message="t('wireless.applyingMeshSettings')"
-      :description1="t('common.loading')"
+      :description1="t('wireless.applyingDescription')"
       :description2="''"
       :duration="30"
       @complete="handleBlockingComplete"

@@ -485,6 +485,7 @@ const translations = {
     groupDefaultName: 'Home',
     perBandInterfaces: 'Bandbezogene Schnittstellen',
     mfpConfig: 'MFP-Konfiguration',
+    applyingDescription: 'Bitte warten Sie, während die WLAN-Konfiguration angewendet wird.',
     applyingBasicSettings: 'WLAN-Basiseinstellungen werden übernommen...',
     applyingAdvancedSettings: 'WLAN-Erweiterteinstellungen werden übernommen...',
     applyingMeshSettings: 'WLAN-Mesh-Einstellungen werden übernommen...',

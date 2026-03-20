@@ -146,7 +146,7 @@ onMounted(fetchAdvancedConfig);
       :data-testid="qa('wireless-advanced-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
       :message="t('wireless.applyingAdvancedSettings')"
-      :description1="t('common.loading')"
+      :description1="t('wireless.applyingDescription')"
       :description2="''"
       :duration="30"
       @complete="handleBlockingComplete"

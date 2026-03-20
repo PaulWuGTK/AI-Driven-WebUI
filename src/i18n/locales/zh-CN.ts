@@ -485,6 +485,7 @@ const translations = {
     groupDefaultName: 'Home',
     perBandInterfaces: '各频段接口',
     mfpConfig: 'MFP 配置',
+    applyingDescription: '正在应用 Wi-Fi 设置，请稍候。',
     applyingBasicSettings: '正在应用 Wi-Fi 基本设置…',
     applyingAdvancedSettings: '正在应用 Wi-Fi 高级设置…',
     applyingMeshSettings: '正在应用 Wi-Fi Mesh 设置…',

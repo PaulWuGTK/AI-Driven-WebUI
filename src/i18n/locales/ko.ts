@@ -484,6 +484,7 @@ const translations = {
     groupDefaultName: 'Home',
     perBandInterfaces: '밴드별 인터페이스',
     mfpConfig: 'MFP 설정',
+    applyingDescription: 'Wi-Fi 설정을 적용하고 있습니다. 잠시만 기다려 주세요.',
     applyingBasicSettings: 'Wi-Fi 기본 설정을 적용하는 중입니다...',
     applyingAdvancedSettings: 'Wi-Fi 고급 설정을 적용하는 중입니다...',
     applyingMeshSettings: 'Wi-Fi Mesh 설정을 적용하는 중입니다...',
