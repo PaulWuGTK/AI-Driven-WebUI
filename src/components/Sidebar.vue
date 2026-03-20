@@ -151,6 +151,7 @@ const baseMenuItems: MenuItem[] = [
     subItems: [
       { name: 'SSH Service', path: '/advance/ssh', translationKey: 'menu.sshService', menuKey: 'advanceSetup.sshService' },
       { name: 'Service Control', path: '/advance/service-control', translationKey: 'menu.serviceControl', menuKey: 'advanceSetup.serviceControl' },
+      { name: 'MCL', path: '/advance/mcl', translationKey: 'menu.mcl', menuKey: 'advanceSetup.mcl' },
       { name: 'QoS', path: '/advance/qos', translationKey: 'menu.qos', menuKey: 'advanceSetup.qos' },
       { name: 'LCM', path: '/advance/lcm', translationKey: 'menu.lcm', menuKey: 'advanceSetup.lcm' }
     ]
@@ -421,6 +422,7 @@ watch(() => route.path, (newPath) => {
     '/basic/security': ['/advanced/security'],
     '/advance/ssh': ['/advanced/ssh'],
     '/advance/service-control': ['/advanced/service-control'],
+    '/advance/mcl': ['/advanced/mcl'],
     '/advance/qos': ['/advanced/qos'],
     '/advance/lcm': ['/advanced/lcm'],
     '/application/ddns': ['/advanced/ddns'],
