@@ -5,7 +5,6 @@ import type {
   WlanMeshResponse 
 } from '../../types/wireless';
 import type { WlanBasicMultiGetResponse, WlanBasicMultiPostRequest } from '../../types/wlanBasicMulti';
-import { handleApiResponse } from '../../utils/apiUtils';
 import { callApi } from '../apiClient';
 import {
   wlanBasicMockData,
@@ -33,14 +32,10 @@ export async function updateWlanBasic(data: Partial<WlanBasicResponse>): Promise
   if (isDevelopment) {
     return wlanBasicMockData;
   }
-  const response = await fetch(`${API_URL}?list=WlanBasic`, {
+  return callApi<WlanBasicResponse>(`${API_URL}?list=WlanBasic`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return handleApiResponse<WlanBasicResponse>(response);
 }
 
 /**
@@ -79,14 +74,10 @@ export async function updateWlanBasicMulti(data: WlanBasicMultiPostRequest): Pro
   if (isDevelopment) {
     return data;
   }
-  const response = await fetch(`${API_URL}?list=WlanGroup`, {
+  return callApi<unknown>(`${API_URL}?list=WlanGroup`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-  return handleApiResponse(response);
 }
 
 export async function getWlanAdvanced(): Promise<WlanAdvancedResponse> {
@@ -125,14 +116,10 @@ export async function updateWlanAdvanced(data: WlanAdvancedResponse): Promise<Wl
     return wlanAdvancedMockData;
   }
   
-  const response = await fetch(`${API_URL}?list=WlanAdvanced`, {
+  return callApi<WlanAdvancedResponse>(`${API_URL}?list=WlanAdvanced`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return handleApiResponse<WlanAdvancedResponse>(response);
 }
 
 export async function getWlanWps(): Promise<WlanWpsResponse> {
@@ -147,14 +134,10 @@ export async function updateWlanWps(data: { WlanWps: { Enable?: number; Action?:
   if (isDevelopment) {
     return updateWlanWpsMock(data);
   }
-  const response = await fetch(`${API_URL}?list=WlanWps`, {
+  return callApi<WlanWpsResponse>(`${API_URL}?list=WlanWps`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return handleApiResponse<WlanWpsResponse>(response);
 }
 
 export async function getWlanMesh(): Promise<WlanMeshResponse> {
@@ -168,12 +151,8 @@ export async function updateWlanMesh(data: WlanMeshResponse): Promise<WlanMeshRe
   if (isDevelopment) {
     return wlanMeshMockData;
   }
-  const response = await fetch(`${API_URL}?list=WlanMesh`, {
+  return callApi<WlanMeshResponse>(`${API_URL}?list=WlanMesh`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  return handleApiResponse<WlanMeshResponse>(response);
 }

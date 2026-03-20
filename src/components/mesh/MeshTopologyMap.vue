@@ -56,6 +56,22 @@ const getNodeSize = (nodeType: string) => {
   return NODE_SIZES[nodeType as keyof typeof NODE_SIZES] || NODE_SIZES.Client;
 };
 
+const getEdgePoint = (from: D3Node, to: D3Node, offset: number) => {
+  const fromX = from.x ?? 0;
+  const fromY = from.y ?? 0;
+  const toX = to.x ?? 0;
+  const toY = to.y ?? 0;
+
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const length = Math.hypot(dx, dy) || 1;
+
+  return {
+    x: fromX + (dx / length) * offset,
+    y: fromY + (dy / length) * offset
+  };
+};
+
 const formatRssi = (rssi: MeshNode['RSSI']) => {
   if (rssi === undefined || rssi === null || rssi === '') {
     return '-';
@@ -272,10 +288,30 @@ const renderChart = () => {
   // Define update function for positions
   const updatePositions = () => {
     link
-      .attr('x1', d => (d.source as D3Node).x!)
-      .attr('y1', d => (d.source as D3Node).y!)
-      .attr('x2', d => (d.target as D3Node).x!)
-      .attr('y2', d => (d.target as D3Node).y!);
+      .attr('x1', d => {
+        const source = d.source as D3Node;
+        const target = d.target as D3Node;
+        const p = getEdgePoint(source, target, getNodeSize(source.Mode) / 2);
+        return p.x;
+      })
+      .attr('y1', d => {
+        const source = d.source as D3Node;
+        const target = d.target as D3Node;
+        const p = getEdgePoint(source, target, getNodeSize(source.Mode) / 2);
+        return p.y;
+      })
+      .attr('x2', d => {
+        const source = d.source as D3Node;
+        const target = d.target as D3Node;
+        const p = getEdgePoint(target, source, getNodeSize(target.Mode) / 2);
+        return p.x;
+      })
+      .attr('y2', d => {
+        const source = d.source as D3Node;
+        const target = d.target as D3Node;
+        const p = getEdgePoint(target, source, getNodeSize(target.Mode) / 2);
+        return p.y;
+      });
 
     node
       .attr('transform', d => `translate(${d.x},${d.y})`);

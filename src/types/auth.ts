@@ -14,5 +14,7 @@ export interface LoginVerifyResponse {
     failCount?: number;
     error?: string;
     next?: string;
+    opMode?: string;
+    wizardRequired?: number | boolean;
   };
 }

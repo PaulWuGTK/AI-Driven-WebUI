@@ -159,12 +159,16 @@
       </div>
     </div>
 
-    <div v-if="applying" class="apply-loading-overlay" :data-testid="qa('basic-wan-cht-applying-overlay')">
-      <div class="apply-loading-box" :data-testid="qa('basic-wan-cht-applying-box')">
-        <div class="apply-loading-spinner" :data-testid="qa('basic-wan-cht-applying-spinner')"></div>
-        <p :data-testid="qa('basic-wan-cht-applying-text')">{{ $t('common.loading') }}</p>
-      </div>
-    </div>
+    <BlockingOverlay
+      :is-visible="applying"
+      :auto-complete="false"
+      :show-countdown="false"
+      :show-progress="false"
+      :message="`${$t('common.apply')}...`"
+      :description1="$t('common.loading')"
+      :description2="''"
+      :data-testid="qa('basic-wan-cht-applying-overlay')"
+    />
   </div>
 </template>
 
@@ -176,6 +180,7 @@ import type { BasicWanChtConfig, BasicWanChtTableRow } from '../../../types/basi
 import PPPoEEditForm from '../../../components/basicWanCht/PPPoEEditForm.vue';
 import IPoEEditForm from '../../../components/basicWanCht/IPoEEditForm.vue';
 import BridgeEditForm from '../../../components/basicWanCht/BridgeEditForm.vue';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { BaseBadge, ActionButtons, SectionCard } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 
@@ -445,45 +450,6 @@ onMounted(() => {
   border-radius: 4px;
   animation: fadeInOut 3s ease-in-out;
   z-index: 1100;
-}
-
-.apply-loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1200;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.apply-loading-box {
-  min-width: 200px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.apply-loading-spinner {
-  width: 22px;
-  height: 22px;
-  border: 3px solid #e5e7eb;
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes fadeInOut {
