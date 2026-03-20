@@ -485,6 +485,8 @@ const translations = {
     perBandInterfaces: '밴드별 인터페이스',
     mfpConfig: 'MFP 설정',
     applyingBasicSettings: 'Wi-Fi 기본 설정을 적용하는 중입니다...',
+    applyingAdvancedSettings: 'Wi-Fi 고급 설정을 적용하는 중입니다...',
+    applyingMeshSettings: 'Wi-Fi Mesh 설정을 적용하는 중입니다...',
     bandsEnabled: '활성화된 밴드',
     commonSsidShort: '공용 SSID',
     mloShort: 'MLO',
@@ -519,7 +521,8 @@ const translations = {
     leaseTime: '임대 시간',
     seconds: '초',
     hostName: '호스트 이름',
-    macAddress: 'MAC 주소'
+    macAddress: 'MAC 주소',
+    applyingSettings: '게스트 Wi-Fi 설정을 적용하는 중입니다...'
   },
   macfilter: {
     title: '무선 MAC 필터',
@@ -716,7 +719,10 @@ const translations = {
     mode: '모드',
     gateway: '게이트웨이',
     extender: '확장기',
-    bridge: '브리지'
+    bridge: '브리지',
+    applyingModeConfig: '{mode} 모드 설정을 적용하는 중입니다...',
+    applyingDescription: '동작 모드 설정을 적용하고 있습니다. 잠시만 기다려 주세요.',
+    applyingDurationHint: '이 작업은 최대 {seconds}초 정도 소요될 수 있습니다.'
   },
   ssh: {
     title: 'SSH',

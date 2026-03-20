@@ -294,3 +294,42 @@ const handleApply = async () => {
 - [ ] loading 期間是否禁止其他可重複觸發操作。
 - [ ] 錯誤情境是否能正確解除 loading。
 - [ ] 是否補齊對應 `data-testid`。
+
+---
+
+## 11) i18n Safe Editing Rules (Encoding + One-pass)
+
+Use this workflow when adding or updating locale text to avoid mojibake and incomplete locale updates.
+
+### 11.1 File Encoding Safety
+1. Keep locale files as `UTF-8` (no BOM preferred).
+2. Do not copy text through terminals/editors that convert encoding (CP932/Big5/ANSI).
+3. If a locale file already looks corrupted in terminal output, do not mass-reformat it. Apply minimal line edits only.
+
+### 11.2 One-pass Update Order
+1. Add/rename i18n keys in `en.ts` first.
+2. Immediately add the same keys in all required locales:
+   - `zh-TW.ts`, `zh-CN.ts`, `ja.ts`, `ko.ts`, `fr.ts`, `de.ts`
+3. Update all Vue usages from hard-coded text to `t('...')` in the same change.
+4. Run verification before finishing:
+   - `rg` for hard-coded strings in modified feature
+   - `npm run build`
+
+### 11.3 Overlay/Loading Copy Rules
+1. Shared component defaults must be generic (no feature-specific wording).
+2. Feature pages must pass their own feature wording explicitly.
+3. If countdown is not required, pass:
+   - `:description2="''"` or disable countdown/progress props.
+
+### 11.4 Translation Quality Rules
+1. Use product/router terminology consistently (no casual wording).
+2. Keep style parallel across locales for the same key (same intent, same tone).
+3. Prefer existing namespace:
+   - `common.*` for generic actions/loading
+   - `<feature>.*` for feature-specific applying text.
+
+### 11.5 Pre-commit i18n Checklist
+- [ ] No hard-coded UI copy in modified Vue files.
+- [ ] New keys exist in all mandatory locales.
+- [ ] Common vs feature namespaces are used correctly.
+- [ ] Build passes (`npm run build`).

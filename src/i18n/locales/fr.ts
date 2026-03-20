@@ -486,6 +486,8 @@ const translations = {
     perBandInterfaces: 'Interfaces par bande',
     mfpConfig: 'Configuration MFP',
     applyingBasicSettings: 'Application des paramètres Wi-Fi de base...',
+    applyingAdvancedSettings: 'Application des paramètres Wi-Fi avancés...',
+    applyingMeshSettings: 'Application des paramètres Wi-Fi Mesh...',
     bandsEnabled: 'bandes activées',
     commonSsidShort: 'SSID commun',
     mloShort: 'MLO',
@@ -520,7 +522,8 @@ const translations = {
     leaseTime: 'Durée du bail',
     seconds: 'Secondes',
     hostName: 'Nom d’hôte',
-    macAddress: 'Adresse MAC'
+    macAddress: 'Adresse MAC',
+    applyingSettings: 'Application des paramètres Wi-Fi invité...'
   },
   macfilter: {
     title: 'Filtre MAC sans fil',
@@ -717,7 +720,10 @@ const translations = {
     mode: 'Mode',
     gateway: 'Passerelle',
     extender: 'Répéteur',
-    bridge: 'Pont'
+    bridge: 'Pont',
+    applyingModeConfig: 'Application de la configuration du mode {mode}...',
+    applyingDescription: 'Veuillez patienter pendant l’application de la configuration du mode de fonctionnement.',
+    applyingDurationHint: 'Ce processus peut prendre jusqu’à {seconds} secondes.'
   },
   ssh: {
     title: 'SSH',

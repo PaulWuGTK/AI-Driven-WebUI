@@ -85,7 +85,12 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <BlockingOverlay :isVisible="saving" :message="t('common.loading')" />
+    <BlockingOverlay
+      :isVisible="saving"
+      :message="`${t('common.apply')}...`"
+      :description1="t('common.loading')"
+      :description2="''"
+    />
 
     <h1 class="page-title" :data-testid="qa('upnp-title')">{{ t('upnp.title') }}</h1>
 

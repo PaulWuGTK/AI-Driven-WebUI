@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useQA } from '../utils/qa';
 const { isQAMode, qa, slug } = useQA();
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<{
   isVisible: boolean;
@@ -32,8 +34,9 @@ const shouldShowCountdown = computed(() => Boolean(shouldAutoComplete.value && p
 const shouldShowProgress = computed(() => Boolean(shouldAutoComplete.value && props.showProgress));
 const countdown = ref(effectiveDuration.value ?? 0);
 const timer = ref<number | null>(null);
+const resolvedMessage = computed(() => props.message ?? `${t('common.apply')}...`);
 const resolvedDescription1 = computed(() =>
-  props.description1 || 'Please wait while the WiFi configuration is being applied.'
+  props.description1 !== undefined ? props.description1 : t('common.loading')
 );
 const resolvedDescription2 = computed(() => {
   if (props.description2 !== undefined) return props.description2;
@@ -92,7 +95,7 @@ onUnmounted(() => {
   <div v-if="isVisible" class="blocking-overlay" :data-testid="qa('blocking-overlay')">
     <div class="blocking-content" :data-testid="qa('blocking-overlay-content')">
       <div class="spinner" :data-testid="qa('blocking-overlay-spinner')"></div>
-      <h2 :data-testid="qa('blocking-overlay-title')">{{ message || 'Applying WiFi Settings...' }}</h2>
+      <h2 :data-testid="qa('blocking-overlay-title')">{{ resolvedMessage }}</h2>
       <p v-if="resolvedDescription1" :data-testid="qa('blocking-overlay-description-1')">{{ resolvedDescription1 }}</p>
       <p v-if="resolvedDescription2" :data-testid="qa('blocking-overlay-description-2')">{{ resolvedDescription2 }}</p>
       <div v-if="shouldShowCountdown" class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ countdown }}s</div>

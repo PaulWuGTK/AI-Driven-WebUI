@@ -486,6 +486,8 @@ const translations = {
     perBandInterfaces: 'バンド別インターフェース',
     mfpConfig: 'MFP 設定',
     applyingBasicSettings: 'Wi-Fi 基本設定を適用しています…',
+    applyingAdvancedSettings: 'Wi-Fi 詳細設定を適用しています…',
+    applyingMeshSettings: 'Wi-Fi Mesh 設定を適用しています…',
     bandsEnabled: '有効なバンド',
     commonSsidShort: '共通 SSID',
     mloShort: 'MLO',
@@ -520,7 +522,8 @@ const translations = {
     leaseTime: 'リース時間',
     seconds: '秒',
     hostName: 'ホスト名',
-    macAddress: 'MAC アドレス'
+    macAddress: 'MAC アドレス',
+    applyingSettings: 'ゲスト Wi-Fi 設定を適用しています…'
   },
   macfilter: {
     title: '無線 MAC フィルター',
@@ -717,7 +720,10 @@ const translations = {
     mode: 'モード',
     gateway: 'ゲートウェイ',
     extender: 'エクステンダー',
-    bridge: 'ブリッジ'
+    bridge: 'ブリッジ',
+    applyingModeConfig: '「{mode}」モード設定を適用しています...',
+    applyingDescription: '動作モード設定を適用しています。しばらくお待ちください。',
+    applyingDurationHint: 'この処理には最大 {seconds} 秒かかる場合があります。'
   },
   ssh: {
     title: 'SSH',

@@ -204,7 +204,9 @@ onMounted(fetchMeshConfig);
     <BlockingOverlay
       :data-testid="qa('wireless-mesh-config-blocking-overlay')"
       :is-visible="showBlockingOverlay"
-      message="Applying WiFi Mesh Settings..."
+      :message="t('wireless.applyingMeshSettings')"
+      :description1="t('common.loading')"
+      :description2="''"
       :duration="30"
       @complete="handleBlockingComplete"
     />
