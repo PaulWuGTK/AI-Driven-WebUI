@@ -1,4 +1,4 @@
-// ko translations
+﻿// ko translations
 const translations = {
   menu: {
     home: '대시보드',
@@ -282,7 +282,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '(자동)',
     enable: '활성화',
-    disable: '비활성화'
+    disable: '비활성화',
+    associatedDevicesTotal: '연결된 장치 (총 {count}개)',
+    noAssociatedDevices: '연결된 장치가 없습니다',
+    apBssid: 'AP BSSID',
+    connTime: '연결 시간',
+    rssi: 'RSSI',
+    dlUlRate: '다운링크/업링크 속도'
   },
   statistics: {
     title: '통계',
@@ -500,7 +506,10 @@ const translations = {
     ssidTooShort: 'SSID는 최소 {min}바이트 이상이어야 합니다',
     ssidTooLong: 'SSID가 최대 길이를 초과했습니다 ({current}/{max}바이트)',
     ssidBytesInfo: '{bytes} 바이트',
-    ssidInvalidCharacters: 'SSID에 유효하지 않은 문자가 포함되어 있습니다 (영어, 숫자, 기호, 중국어만 사용 가능)'
+    ssidInvalidCharacters: 'SSID에 유효하지 않은 문자가 포함되어 있습니다 (영어, 숫자, 기호, 중국어만 사용 가능)',
+    passwordLeadingSpace: '비밀번호는 공백으로 시작할 수 없습니다',
+    passwordInvalidFormat: '비밀번호는 8~63자 또는 64자리 16진수여야 합니다',
+    passwordInvalidFormatWpa3: '비밀번호는 출력 가능한 ASCII 1~64자여야 합니다'
   },
   guest: {
     title: '게스트 액세스',

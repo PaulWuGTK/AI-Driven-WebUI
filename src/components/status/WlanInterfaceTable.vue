@@ -31,7 +31,7 @@ defineProps<{
         <tr v-for="(iface, index) in interfaces" :key="iface.Name" :data-testid="qa(`wlan-interface-row-${index}`)">
           <td :data-testid="qa(`wlan-interface-name-${index}`)">{{ iface.Name }}</td>
           <td :data-testid="qa(`wlan-interface-alias-${index}`)">{{ iface.Alias }}</td>
-          <td :data-testid="qa(`wlan-interface-status-${index}`)">{{ iface.Enable ? t('wlan.enable') : t('wlan.disable') }}</td>
+          <td :data-testid="qa(`wlan-interface-status-${index}`)">{{ iface.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</td>
           <td :data-testid="qa(`wlan-interface-ssid-${index}`)">{{ iface.SSID }}</td>
           <td :data-testid="qa(`wlan-interface-authentication-${index}`)">{{ iface.Authentication }}</td>
           <td :data-testid="qa(`wlan-interface-encryption-${index}`)">{{ iface.Encryption }}</td>

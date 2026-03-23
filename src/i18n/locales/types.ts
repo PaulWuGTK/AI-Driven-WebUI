@@ -154,6 +154,12 @@ export interface Translations {
     auto: string;
     enable: string;
     disable: string;
+    associatedDevicesTotal: string;
+    noAssociatedDevices: string;
+    apBssid: string;
+    connTime: string;
+    rssi: string;
+    dlUlRate: string;
   };
   statistics: {
     title: string;

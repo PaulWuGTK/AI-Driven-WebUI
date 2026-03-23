@@ -285,7 +285,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '(auto)',
     enable: 'Enable',
-    disable: 'Disable'
+    disable: 'Disable',
+    associatedDevicesTotal: 'Associated Devices (Total: {count})',
+    noAssociatedDevices: 'No associated devices',
+    apBssid: 'AP BSSID',
+    connTime: 'Conn. Time',
+    rssi: 'RSSI',
+    dlUlRate: 'DL/UL Rate'
   },
   statistics: {
     title: 'Statistics',
@@ -504,7 +510,10 @@ const translations = {
     ssidTooShort: 'SSID must be at least {min} byte',
     ssidTooLong: 'SSID exceeds maximum length ({current}/{max} bytes)',
     ssidBytesInfo: '{bytes} bytes',
-    ssidInvalidCharacters: 'SSID contains invalid characters (only English, numbers, symbols, and Chinese allowed)'
+    ssidInvalidCharacters: 'SSID contains invalid characters (only English, numbers, symbols, and Chinese allowed)',
+    passwordLeadingSpace: 'Password cannot start with a space',
+    passwordInvalidFormat: 'Password must be 8-63 characters, or exactly 64 hexadecimal characters',
+    passwordInvalidFormatWpa3: 'Password must be 1-64 printable ASCII characters'
   },
   guest: {
     title: 'Guest Access',
