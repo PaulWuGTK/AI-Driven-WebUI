@@ -1,4 +1,4 @@
-// fr translations
+﻿// fr translations
 const translations = {
   menu: {
     home: 'Dashboard',
@@ -283,7 +283,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '(auto)',
     enable: 'Activer',
-    disable: 'Désactiver'
+    disable: 'Désactiver',
+    associatedDevicesTotal: 'Appareils associés (Total : {count})',
+    noAssociatedDevices: 'Aucun appareil associé',
+    apBssid: 'BSSID AP',
+    connTime: 'Durée de connexion',
+    rssi: 'RSSI',
+    dlUlRate: 'Débit DL/UL'
   },
   statistics: {
     title: 'Statistiques',
@@ -501,7 +507,10 @@ const translations = {
     ssidTooShort: 'Le SSID doit comporter au moins {min} octet',
     ssidTooLong: 'Le SSID dépasse la longueur maximale ({current}/{max} octets)',
     ssidBytesInfo: '{bytes} octets',
-    ssidInvalidCharacters: 'Le SSID contient des caractères non valides (seuls l\'anglais, les chiffres, les symboles et le chinois sont autorisés)'
+    ssidInvalidCharacters: 'Le SSID contient des caractères non valides (seuls l\'anglais, les chiffres, les symboles et le chinois sont autorisés)',
+    passwordLeadingSpace: 'Le mot de passe ne peut pas commencer par un espace',
+    passwordInvalidFormat: 'Le mot de passe doit contenir 8 à 63 caractères, ou exactement 64 caractères hexadécimaux',
+    passwordInvalidFormatWpa3: 'Le mot de passe doit contenir 1 à 64 caractères ASCII imprimables'
   },
   guest: {
     title: 'Accès invité',

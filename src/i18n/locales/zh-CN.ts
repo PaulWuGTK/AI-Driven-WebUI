@@ -1,4 +1,4 @@
-// zh-CN translations
+﻿// zh-CN translations
 const translations = {
   menu: {
     home: '仪表板',
@@ -283,7 +283,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '（自动）',
     enable: '启用',
-    disable: '禁用'
+    disable: '禁用',
+    associatedDevicesTotal: '关联设备（总数：{count}）',
+    noAssociatedDevices: '无关联设备',
+    apBssid: 'AP BSSID',
+    connTime: '连接时长',
+    rssi: 'RSSI',
+    dlUlRate: '下行/上行速率'
   },
   statistics: {
     title: '统计数据',
@@ -501,7 +507,10 @@ const translations = {
     ssidTooShort: 'SSID 长度至少需要 {min} 字节',
     ssidTooLong: 'SSID 超出最大长度 ({current}/{max} 字节)',
     ssidBytesInfo: '{bytes} 字节',
-    ssidInvalidCharacters: 'SSID 包含无效字符（仅允许英文、数字、符号和中文）'
+    ssidInvalidCharacters: 'SSID 包含无效字符（仅允许英文、数字、符号和中文）',
+    passwordLeadingSpace: '密码不能以空格开头',
+    passwordInvalidFormat: '密码需为 8-63 个字符，或 64 个十六进制字符',
+    passwordInvalidFormatWpa3: '密码需为 1-64 个可打印 ASCII 字符'
   },
   guest: {
     title: '访客访问',

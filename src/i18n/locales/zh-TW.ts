@@ -1,4 +1,4 @@
-// zh-TW translations
+﻿// zh-TW translations
 const translations = {
   menu: {
     home: '首頁',
@@ -283,7 +283,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '自動',
     enable: '啟用',
-    disable: '停用'
+    disable: '停用',
+    associatedDevicesTotal: '已連線裝置（總數：{count}）',
+    noAssociatedDevices: '無已連線裝置',
+    apBssid: 'AP BSSID',
+    connTime: '連線時間',
+    rssi: 'RSSI',
+    dlUlRate: '下載/上傳速率'
   },
   statistics: {
     title: '統計資訊',
@@ -501,7 +507,10 @@ const translations = {
     ssidTooShort: 'SSID 長度至少需要 {min} 位元組',
     ssidTooLong: 'SSID 超出最大長度 ({current}/{max} 位元組)',
     ssidBytesInfo: '{bytes} 位元組',
-    ssidInvalidCharacters: 'SSID 包含無效字元（僅允許英文、數字、符號和中文）'
+    ssidInvalidCharacters: 'SSID 包含無效字元（僅允許英文、數字、符號和中文）',
+    passwordLeadingSpace: '密碼不可使用空白開頭',
+    passwordInvalidFormat: '密碼需為 8-63 個字元，或 64 個十六進位字元',
+    passwordInvalidFormatWpa3: '密碼需為 1-64 個可列印 ASCII 字元'
   },
   guest: {
     title: '訪客存取',

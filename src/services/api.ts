@@ -22,6 +22,25 @@ import { callApi } from './apiClient';
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
 
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
+
+const normalizeWlanStatusResponse = (response: WlanStatusResponse): WlanStatusResponse => {
+  return {
+    ...response,
+    StatusWlan: (response.StatusWlan ?? []).map((band) => ({
+      ...band,
+      Enable: toFlag01(band.Enable),
+      AutoChannel: toFlag01(band.AutoChannel),
+      Interface: (band.Interface ?? []).map((iface) => ({
+        ...iface,
+        Enable: toFlag01(iface.Enable)
+      }))
+    }))
+  };
+};
+
 export async function getWanStatus(): Promise<WanStatusResponse> {
   if (isDevelopment) {
     return wanMockData;
@@ -38,9 +57,10 @@ export async function getLanStatus(): Promise<LanStatusResponse> {
 
 export async function getWlanStatus(): Promise<WlanStatusResponse> {
   if (isDevelopment) {
-    return wlanMockData;
+    return normalizeWlanStatusResponse(wlanMockData);
   }
-  return callApi<WlanStatusResponse>(`${API_BASE_URL}/info?list=StatusWlan`);
+  const response = await callApi<WlanStatusResponse>(`${API_BASE_URL}/info?list=StatusWlan`);
+  return normalizeWlanStatusResponse(response);
 }
 
 export async function getStatistics(): Promise<StatisticsResponse> {

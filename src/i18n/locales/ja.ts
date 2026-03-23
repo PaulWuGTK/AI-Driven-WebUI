@@ -1,4 +1,4 @@
-// ja translations
+﻿// ja translations
 const translations = {
   menu: {
     home: 'ダッシュボード',
@@ -283,7 +283,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '（自動）',
     enable: '有効にする',
-    disable: '無効にする'
+    disable: '無効にする',
+    associatedDevicesTotal: '接続中デバイス（合計: {count}）',
+    noAssociatedDevices: '接続中のデバイスはありません',
+    apBssid: 'AP BSSID',
+    connTime: '接続時間',
+    rssi: 'RSSI',
+    dlUlRate: '下り/上りレート'
   },
   statistics: {
     title: '統計',
@@ -501,7 +507,10 @@ const translations = {
     ssidTooShort: 'SSID は最低 {min} バイト必要です',
     ssidTooLong: 'SSID が最大長を超えています ({current}/{max} バイト)',
     ssidBytesInfo: '{bytes} バイト',
-    ssidInvalidCharacters: 'SSID に無効な文字が含まれています（英語、数字、記号、中国語のみ使用可能）'
+    ssidInvalidCharacters: 'SSID に無効な文字が含まれています（英語、数字、記号、中国語のみ使用可能）',
+    passwordLeadingSpace: 'パスワードの先頭にスペースは使用できません',
+    passwordInvalidFormat: 'パスワードは8〜63文字、または16進数64文字で入力してください',
+    passwordInvalidFormatWpa3: 'パスワードは1〜64文字の表示可能なASCII文字で入力してください'
   },
   guest: {
     title: 'ゲストアクセス',

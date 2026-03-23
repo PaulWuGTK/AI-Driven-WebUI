@@ -38,6 +38,7 @@ const lastGetSnapshot = ref<WlanBasicMultiGetResponse | null>(null);
 const editIndex = ref<number | null>(null);
 const draft = ref<WlanGroup | null>(null);
 const ssidErrors = reactive<Record<string, string>>({});
+const passwordErrors = reactive<Record<string, string>>({});
 const ssidByteLengths = reactive<Record<string, number>>({});
 
 // Separate storage for Common SSID configuration
@@ -185,17 +186,24 @@ const enterEdit = (index: number) => {
 
   // Clear SSID errors and initialize byte lengths
   Object.keys(ssidErrors).forEach(key => delete ssidErrors[key]);
+  Object.keys(passwordErrors).forEach(key => delete passwordErrors[key]);
   Object.keys(ssidByteLengths).forEach(key => delete ssidByteLengths[key]);
 
   // Initialize SSID validation for common SSID
   if (commonSsidConfig.value) {
     validateSsidField(commonSsidConfig.value.SSID, 'CommonSSID');
+    validatePasswordField(
+      commonSsidConfig.value.KeyPassPhrase || '',
+      'CommonSSID',
+      commonSsidConfig.value.SecurityMode
+    );
   }
 
   // Initialize SSID validation for per-band interfaces
   if (draft.value?.Interface) {
     draft.value.Interface.forEach((iface) => {
       validateSsidField(iface.SSID || '', iface.Band);
+      validatePasswordField((iface.KeyPassPhrase ?? '').toString(), iface.Band, iface.SecurityMode);
     });
   }
 };
@@ -215,6 +223,7 @@ const updateLocal = () => {
    * without issuing a POST; then exit edit mode.
    */
   if (!data.value || editIndex.value === null || !draft.value) return;
+  if (!validateDraftPasswords()) return;
 
   // Get the edited group from the sorted array
   const editedGroup = groups.value[editIndex.value];
@@ -302,6 +311,76 @@ const handleSsidInput = (value: string, key: string, callback: (val: string) => 
     ssidByteLengths[key] = byteLength;
     ssidErrors[key] = t('wireless.ssidTooLong', { current: byteLength, max: SSID_MAX_BYTES });
   }
+};
+
+const requiresPskValidation = (securityMode: string | undefined): boolean => {
+  const mode = String(securityMode ?? '').toUpperCase();
+  // Buffalo-like behavior: validate passphrase for PSK/Personal modes only.
+  return mode.includes('PSK') || mode.includes('PERSONAL');
+};
+
+const isWpa3OnlyPersonal = (securityMode: string | undefined): boolean => {
+  const mode = String(securityMode ?? '').toUpperCase();
+  return mode.includes('WPA3') && !mode.includes('WPA2');
+};
+
+const isHex64 = (value: string): boolean => /^[0-9a-fA-F]{64}$/.test(value);
+const isPrintableAscii = (value: string): boolean => /^[\x20-\x7E]*$/.test(value);
+
+const validatePasswordField = (password: string, key: string, securityMode?: string) => {
+  // No passphrase rule for non-PSK modes.
+  if (!requiresPskValidation(securityMode)) {
+    delete passwordErrors[key];
+    return true;
+  }
+
+  const value = String(password ?? '');
+  const wpa3Only = isWpa3OnlyPersonal(securityMode);
+  const valid = wpa3Only
+    ? isPrintableAscii(value) && value.length >= 1 && value.length <= 64
+    : isPrintableAscii(value) && ((value.length >= 8 && value.length <= 63) || (value.length === 64 && isHex64(value)));
+
+  if (!valid) {
+    passwordErrors[key] = t(
+      wpa3Only ? 'wireless.passwordInvalidFormatWpa3' : 'wireless.passwordInvalidFormat'
+    );
+    return false;
+  }
+
+  delete passwordErrors[key];
+  return true;
+};
+
+const validateDraftPasswords = () => {
+  let valid = true;
+
+  Object.keys(passwordErrors).forEach((key) => delete passwordErrors[key]);
+
+  if (!draft.value) {
+    return true;
+  }
+
+  if (Number(draft.value.CommonSSIDEnable) === 1 && commonSsidConfig.value && Number(commonSsidConfig.value.Enable) === 1) {
+    valid = validatePasswordField(
+      commonSsidConfig.value.KeyPassPhrase || '',
+      'CommonSSID',
+      commonSsidConfig.value.SecurityMode
+    ) && valid;
+  }
+
+  if (Number(draft.value.CommonSSIDEnable) === 0 && draft.value.Interface) {
+    draft.value.Interface.forEach((iface) => {
+      if (Number(iface.Enable) === 1) {
+        valid = validatePasswordField(
+          (iface.KeyPassPhrase ?? '').toString(),
+          iface.Band,
+          iface.SecurityMode
+        ) && valid;
+      }
+    });
+  }
+
+  return valid;
 };
 
 const onCommonSsidToggle = () => {
@@ -582,17 +661,27 @@ onMounted(fetchConfig);
                   :options="securityModeOptionsForCommonSsid.map((m) => ({ label: m, value: m }))"
                   :disabled="Number(commonSsidConfig.Enable) === 0"
                   :data-testid="qa('wlan-basic-multi-common-ssid-security')"
+                  @update:model-value="() => validatePasswordField(commonSsidConfig!.KeyPassPhrase, 'CommonSSID', commonSsidConfig!.SecurityMode)"
                 />
               </div>
 
               <div class="cell cell-psk">
                 <label class="psk-label">{{ t('wireless.password') }}</label>
                 <BaseSecretInput
-                  v-model="commonSsidConfig.KeyPassPhrase"
+                  :model-value="commonSsidConfig.KeyPassPhrase"
                   :disabled="Number(commonSsidConfig.Enable) === 0"
                   :input-data-testid="qa('wlan-basic-multi-common-ssid-psk')"
                   :toggle-data-testid="qa('wlan-basic-multi-common-ssid-psk-toggle')"
+                  :max-length="64"
+                  @update:model-value="(v) => { commonSsidConfig!.KeyPassPhrase = String(v ?? ''); validatePasswordField(commonSsidConfig!.KeyPassPhrase, 'CommonSSID', commonSsidConfig!.SecurityMode); }"
                 />
+                <div
+                  v-if="passwordErrors['CommonSSID']"
+                  class="field-error"
+                  :data-testid="qa('wlan-basic-multi-common-ssid-psk-error')"
+                >
+                  {{ passwordErrors['CommonSSID'] }}
+                </div>
               </div>
             </div>
 
@@ -664,6 +753,7 @@ onMounted(fetchConfig);
                     :options="securityModeOptionsForInterface(getInterfaceByBand(b)!).map((m) => ({ label: m, value: m }))"
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                     :data-testid="qa(`wlan-basic-multi-iface-security-${slug(b)}`)"
+                    @update:model-value="() => validatePasswordField(String(getInterfaceByBand(b)!.KeyPassPhrase ?? ''), b, getInterfaceByBand(b)!.SecurityMode)"
                   />
                 </div>
 
@@ -674,8 +764,16 @@ onMounted(fetchConfig);
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                     :input-data-testid="qa(`wlan-basic-multi-iface-psk-${slug(b)}`)"
                     :toggle-data-testid="qa(`wlan-basic-multi-iface-psk-toggle-${slug(b)}`)"
-                    @update:model-value="(v) => { getInterfaceByBand(b)!.KeyPassPhrase = String(v ?? ''); }"
+                    :max-length="64"
+                    @update:model-value="(v) => { const p = String(v ?? ''); getInterfaceByBand(b)!.KeyPassPhrase = p; validatePasswordField(p, b, getInterfaceByBand(b)!.SecurityMode); }"
                   />
+                  <div
+                    v-if="passwordErrors[b]"
+                    class="field-error"
+                    :data-testid="qa(`wlan-basic-multi-iface-psk-error-${slug(b)}`)"
+                  >
+                    {{ passwordErrors[b] }}
+                  </div>
                 </div>
               </div>
 
@@ -1022,6 +1120,12 @@ onMounted(fetchConfig);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--text-primary);
+}
+
+.field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #dc3545;
 }
 
 .footer-actions {

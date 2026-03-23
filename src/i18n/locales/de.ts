@@ -1,4 +1,4 @@
-// de translations
+﻿// de translations
 const translations = {
   menu: {
     home: 'Dashboard',
@@ -283,7 +283,13 @@ const translations = {
     bssid: 'BSSID',
     auto: '(automatisch)',
     enable: 'Aktivieren',
-    disable: 'Deaktivieren'
+    disable: 'Deaktivieren',
+    associatedDevicesTotal: 'Zugeordnete Geräte (Gesamt: {count})',
+    noAssociatedDevices: 'Keine zugeordneten Geräte',
+    apBssid: 'AP-BSSID',
+    connTime: 'Verbindungsdauer',
+    rssi: 'RSSI',
+    dlUlRate: 'DL/UL-Rate'
   },
   statistics: {
     title: 'Statistiken',
@@ -501,7 +507,10 @@ const translations = {
     ssidTooShort: 'SSID muss mindestens {min} Byte lang sein',
     ssidTooLong: 'SSID überschreitet die maximale Länge ({current}/{max} Bytes)',
     ssidBytesInfo: '{bytes} Bytes',
-    ssidInvalidCharacters: 'SSID enthält ungültige Zeichen (nur Englisch, Zahlen, Symbole und Chinesisch erlaubt)'
+    ssidInvalidCharacters: 'SSID enthält ungültige Zeichen (nur Englisch, Zahlen, Symbole und Chinesisch erlaubt)',
+    passwordLeadingSpace: 'Das Passwort darf nicht mit einem Leerzeichen beginnen',
+    passwordInvalidFormat: 'Das Passwort muss 8 bis 63 Zeichen lang sein oder genau 64 hexadezimale Zeichen enthalten',
+    passwordInvalidFormatWpa3: 'Das Passwort muss 1 bis 64 druckbare ASCII-Zeichen enthalten'
   },
   guest: {
     title: 'Gastzugang',

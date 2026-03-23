@@ -333,3 +333,41 @@ Use this workflow when adding or updating locale text to avoid mojibake and inco
 - [ ] New keys exist in all mandatory locales.
 - [ ] Common vs feature namespaces are used correctly.
 - [ ] Build passes (`npm run build`).
+
+### 11.6 Safe Editing Commands (Windows/PowerShell)
+Use these defaults when touching locale files to avoid encoding corruption:
+
+1. Always read/write with explicit UTF-8:
+   - `Get-Content -Raw -Encoding UTF8 <file>`
+   - `Set-Content -Encoding UTF8 <file> <content>`
+2. Prefer minimal edits with `apply_patch` for locale updates.
+3. Before batch edits, create a backup copy:
+   - `Copy-Item src/i18n/locales src/i18n/locales.bak -Recurse`
+4. Verify new keys in one command:
+   - `rg -n "<newKey1>|<newKey2>" src/i18n/locales -g "*.ts"`
+5. Final verification must include:
+   - `npm run build`
+
+### 11.7 Recovery Playbook (If Mojibake Happens)
+1. Stop batch replacement immediately.
+2. Restore only affected locale files from backup or Git history.
+3. Re-apply changes with UTF-8 explicit read/write and minimal scope.
+4. Re-run:
+   - `rg` key check for all locales
+   - `npm run build`
+
+---
+
+## 12) Lua Backend Scope (Use Only When Needed)
+
+1. If the task includes creating or modifying Lua files under:
+   - `referfolder/webui-generic/prpl/*.lua`
+   then also follow:
+   - `LUA_SCHEMA_GENERATION_GUIDE.md`
+
+2. If the task is frontend-only (Vue/API adapter/i18n/router), do not force Lua changes.
+
+3. For Lua generation, explicitly require:
+   - payload root check (`M.func(arg)` unwrapped payload rule)
+   - schema strictness decision (schema vs manual validation)
+   - `0/1` vs boolean normalization where needed

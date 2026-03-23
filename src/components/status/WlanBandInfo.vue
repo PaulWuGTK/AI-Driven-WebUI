@@ -15,11 +15,11 @@ defineProps<{
     <div class="info-grid" :data-testid="qa('wlan-band-info-grid')">
       <div class="info-row">
         <span class="info-label" :data-testid="qa('wlan-band-info-status-label')">{{ t('wlan.status') }}</span>
-        <span class="info-value" :data-testid="qa('wlan-band-info-status-value')">{{ band.Enable ? t('wlan.enable') : t('wlan.disable') }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-status-value')">{{ band.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</span>
       </div>
       <div class="info-row">
         <span class="info-label" :data-testid="qa('wlan-band-info-channel-label')">{{ t('wlan.channel') }}</span>
-        <span class="info-value" :data-testid="qa('wlan-band-info-channel-value')">{{ band.Channel }}{{ band.AutoChannel ? t('wlan.auto') : '' }}</span>
+        <span class="info-value" :data-testid="qa('wlan-band-info-channel-value')">{{ band.Channel }}{{ band.AutoChannel === 1 ? t('wlan.auto') : '' }}</span>
       </div>
       <div class="info-row">
         <span class="info-label" :data-testid="qa('wlan-band-info-bandwidth-label')">{{ t('wlan.bandwidth') }}</span>

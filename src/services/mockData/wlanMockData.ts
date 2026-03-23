@@ -30,6 +30,24 @@ export const wlanMockData: WlanStatusResponse = {
           "SSID": "prplOS",
           "Name": "wlan0"
         }
+      ],
+      "AssociatedDevice": [
+        {
+          "MACAddress": "F8:5E:A0:06:B0:FD",
+          "BSSID": "76:e2:f9:a5:5d:7f",
+          "ConnectionDuration": 405,
+          "SignalStrength": -25,
+          "LastDataDownlinkRate": 122500,
+          "LastDataUplinkRate": 1020800
+        },
+        {
+          "MACAddress": "BC:97:E1:22:11:AA",
+          "BSSID": "76:e2:f9:a5:5e:80",
+          "ConnectionDuration": 84,
+          "SignalStrength": -52,
+          "LastDataDownlinkRate": 65000,
+          "LastDataUplinkRate": 144400
+        }
       ]
     },
     {
@@ -60,7 +78,8 @@ export const wlanMockData: WlanStatusResponse = {
           "SSID": "prplOS",
           "Name": "wlan1.1"
         }
-      ]
+      ],
+      "AssociatedDevice": []
     },
     {
       "Enable": 1,
@@ -89,6 +108,16 @@ export const wlanMockData: WlanStatusResponse = {
           "Enable": 0,
           "SSID": "prplOS",
           "Name": "wlan2"
+        }
+      ],
+      "AssociatedDevice": [
+        {
+          "MACAddress": "68:DC:AF:12:34:56",
+          "BSSID": "76:e2:f9:a5:5d:7f",
+          "ConnectionDuration": 122,
+          "SignalStrength": -41,
+          "LastDataDownlinkRate": 1200000,
+          "LastDataUplinkRate": 980000
         }
       ]
     }
