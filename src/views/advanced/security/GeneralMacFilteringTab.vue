@@ -10,6 +10,9 @@ import { useQA } from '../../../utils/qa';
 
 const { isQAMode, qa, slug } = useQA();
 const { t } = useI18n();
+const toFlag01 = (value: unknown): 0 | 1 => (
+  value === 1 || value === '1' || value === true ? 1 : 0
+);
 
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -18,7 +21,7 @@ const errorToastMessage = ref('');
 const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
 const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
-const macFilteringEnabled = ref(false);
+const macFilteringEnabled = ref<0 | 1>(0);
 const filterMode = ref<'blacklist' | 'whitelist'>('blacklist');
 const newMacAddress = ref('');
 const newComment = ref('');
@@ -60,7 +63,7 @@ const fetchMacFiltering = async () => {
       error.value = nokMessage;
       return;
     }
-    macFilteringEnabled.value = response.MACFiltering.Enable;
+    macFilteringEnabled.value = toFlag01(response.MACFiltering.Enable);
     whiteList.value = [...response.MACFiltering.WhiteList];
     blackList.value = [...response.MACFiltering.BlackList];
   } catch (err) {
@@ -155,12 +158,12 @@ onMounted(fetchMacFiltering);
 
 <template>
   <div class="general-mac-filtering" :data-testid="qa('general-mac-filtering')">
-    <div v-if="loading && !macFilteringEnabled" class="loading-state" :data-testid="qa('general-mac-loading')">
+    <div v-if="loading && macFilteringEnabled === 0" class="loading-state" :data-testid="qa('general-mac-loading')">
       <div class="loading-spinner"></div>
       <span>{{ t('common.loading') }}</span>
     </div>
 
-    <div v-else-if="error && !macFilteringEnabled" class="error-state" :data-testid="qa('general-mac-error')">
+    <div v-else-if="error && macFilteringEnabled === 0" class="error-state" :data-testid="qa('general-mac-error')">
       {{ error }}
     </div>
 
@@ -169,12 +172,14 @@ onMounted(fetchMacFiltering);
         <label>{{ t('generalMacFiltering.enableMacFiltering') }}</label>
         <BaseSwitch
           v-model="macFilteringEnabled"
+          :true-value="1"
+          :false-value="0"
           :data-testid="qa('general-mac-enable-checkbox')"
           :slider-data-testid="qa('general-mac-enable-slider')"
         />
       </div>
 
-      <template v-if="macFilteringEnabled">
+      <template v-if="macFilteringEnabled === 1">
         <div class="form-group radio-group" :data-testid="qa('general-mac-filter-mode')">
           <label>{{ t('generalMacFiltering.filterMode') }}</label>
           <div class="radio-options">

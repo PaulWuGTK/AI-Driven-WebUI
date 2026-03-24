@@ -1,13 +1,13 @@
 export interface DmzResponse {
   AdvancedDmz: {
-    Enable: boolean;
+    Enable: 0 | 1;
     IPAddress: string;
   }
 }
 
 export interface DmzUpdateRequest {
   AdvancedDmz: {
-    Enable: boolean;
+    Enable: 0 | 1;
     IPAddress: string;
   }
 }

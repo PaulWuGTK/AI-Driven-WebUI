@@ -224,16 +224,29 @@ export async function getQosBandwidth(): Promise<QosBandwidthResponse> {
   if (isDevelopment) {
     return qosBandwidthMockData;
   }
-  return callApi<QosBandwidthResponse>(`${API_BASE_URL}/info?list=QosBandwidth`);
+  const response = await callApi<QosBandwidthResponse>(`${API_BASE_URL}/info?list=QosBandwidth`);
+  return {
+    ...response,
+    QosBandwidth: {
+      ...response.QosBandwidth,
+      Enable: toFlag01(response.QosBandwidth.Enable),
+    }
+  };
 }
 
 export async function updateQosBandwidth(data: { QosBandwidth: QosBandwidthConfig }): Promise<QosBandwidthResponse> {
+  const normalized = {
+    QosBandwidth: {
+      ...data.QosBandwidth,
+      Enable: toFlag01(data.QosBandwidth.Enable),
+    }
+  };
   if (isDevelopment) {
-    return { ...qosBandwidthMockData, QosBandwidth: data.QosBandwidth };
+    return { ...qosBandwidthMockData, QosBandwidth: normalized.QosBandwidth };
   }
   return callApi<QosBandwidthResponse>(`${API_BASE_URL}/info?list=QosBandwidth`, {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify(normalized),
   });
 }
 

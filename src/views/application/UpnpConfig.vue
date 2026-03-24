@@ -9,11 +9,14 @@ import { useQA } from '../../utils/qa';
 
 const { isQAMode, qa } = useQA();
 const { t } = useI18n();
+const toFlag01 = (value: unknown): 0 | 1 => (
+  value === 1 || value === '1' || value === true ? 1 : 0
+);
 
 const loading = ref(false);
 const saving = ref(false);
 const error = ref<string | null>(null);
-const upnpEnable = ref(false);
+const upnpEnable = ref<0 | 1>(0);
 const selectedInterface = ref('');
 const interfaceOptions = ref<Array<{ value: string; label: string }>>([]);
 const portMappings = ref<PortMapping[]>([]);
@@ -25,7 +28,7 @@ const loadUpnpSettings = async () => {
 
   try {
     const response: UpnpResponse = await getUpnpSettings();
-    upnpEnable.value = response.ApplicationUpnp.Enable;
+    upnpEnable.value = toFlag01(response.ApplicationUpnp.Enable);
     selectedInterface.value = response.ApplicationUpnp.Interface;
 
     if (response.ApplicationUpnp.InterfaceOptions) {
@@ -111,6 +114,8 @@ onMounted(() => {
             <div class="form-control">
               <BaseSwitch
                 v-model="upnpEnable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('upnp-enable-input')"
                 :slider-data-testid="qa('upnp-enable-slider')"
               />

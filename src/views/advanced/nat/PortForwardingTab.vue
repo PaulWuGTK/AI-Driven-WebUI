@@ -183,6 +183,9 @@ const showDeleteDialog = ref(false);
 const ruleToDelete = ref<PortForwardRule | null>(null);
 const loading = ref(true);
 const errorMessage = ref('');
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
 
 const fetchRules = async () => {
   loading.value = true;
@@ -197,7 +200,10 @@ const fetchRules = async () => {
       protoList.value = [];
       return;
     }
-    rules.value = response.PortForwarding.PortForwardList || [];
+    rules.value = (response.PortForwarding.PortForwardList || []).map(rule => ({
+      ...rule,
+      Enable: toFlag01(rule.Enable),
+    }));
     wanList.value = response.PortForwarding.WanList || [];
     protoList.value = response.PortForwarding.ProtoList || [];
   } catch (error) {
@@ -214,7 +220,7 @@ const handleAdd = () => {
 
   editingRule.value = {
     No: maxNo + 1,
-    Enable: true,
+    Enable: 1,
     Description: '',
     Protocol: protoList.value[0] || 'Both',
     Interface: wanList.value[0] || '',

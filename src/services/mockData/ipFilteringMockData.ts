@@ -2,7 +2,7 @@ import type { IpFilteringRequest, IpFilteringResponse } from '../../types/ipFilt
 
 const mockIpFilteringData: IpFilteringResponse = {
   IPFiltering: {
-    Enable: false,
+    Enable: 0,
     ProtoList: ['TCP', 'UDP', 'Both'],
     BlackList: [
       {

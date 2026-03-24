@@ -2,7 +2,7 @@ import type { QosBandwidthResponse, QosRuleResponse } from '../../types/qos';
 
 export const qosBandwidthMockData: QosBandwidthResponse = {
   QosBandwidth: {
-    Enable: true,
+    Enable: 1,
     Bandwidth: {
       Download: 1000,
       Upload: 1000,

@@ -1,5 +1,5 @@
 export interface BasicWanChtPPPoE {
-  Enable: boolean;
+  Enable: 0 | 1;
   Protocol: string;
   UserName: string;
   Password: string;
@@ -7,16 +7,16 @@ export interface BasicWanChtPPPoE {
   ConnectionTrigger: string;
   IdleTime: number;
   MTU: number;
-  DefaultGateway: boolean;
-  PassthroughEnable: boolean;
-  IPv4Enable: boolean;
-  IPv6Enable: boolean;
+  DefaultGateway: 0 | 1;
+  PassthroughEnable: 0 | 1;
+  IPv4Enable: 0 | 1;
+  IPv6Enable: 0 | 1;
   DNSMode: string;
   PrimaryDNS: string;
   SecondaryDNS: string;
-  NATEnable: boolean;
-  IGMPEnable: boolean;
-  VLANEnable: boolean;
+  NATEnable: 0 | 1;
+  IGMPEnable: 0 | 1;
+  VLANEnable: 0 | 1;
   VLANPriority: number;
   VLANID: number;
   ListConnectionTrigger?: string[];
@@ -24,15 +24,15 @@ export interface BasicWanChtPPPoE {
 }
 
 export interface BasicWanChtIPoE {
-  Enable: boolean;
+  Enable: 0 | 1;
   Protocol: string;
   MTU: number;
-  DefaultGateway: boolean;
-  IPv4Enable: boolean;
-  IPv6Enable: boolean;
-  DHCPv4Option60Enable: boolean;
+  DefaultGateway: 0 | 1;
+  IPv4Enable: 0 | 1;
+  IPv6Enable: 0 | 1;
+  DHCPv4Option60Enable: 0 | 1;
   DHCPv4Option60Value: string;
-  DHCPv4Option61Enable: boolean;
+  DHCPv4Option61Enable: 0 | 1;
   IAID: string;
   DUIDType: string;
   EnterpriseNumber: string;
@@ -40,9 +40,9 @@ export interface BasicWanChtIPoE {
   DNSMode: string;
   PrimaryDNS: string;
   SecondaryDNS: string;
-  NATEnable: boolean;
-  IGMPEnable: boolean;
-  VLANEnable: boolean;
+  NATEnable: 0 | 1;
+  IGMPEnable: 0 | 1;
+  VLANEnable: 0 | 1;
   VLANPriority: number;
   VLANID: number;
   IPAddress: string;
@@ -53,10 +53,10 @@ export interface BasicWanChtIPoE {
 }
 
 export interface BasicWanChtBridge {
-  Enable: boolean;
+  Enable: 0 | 1;
   Protocol: string;
   MTU: number;
-  VLANEnable: boolean;
+  VLANEnable: 0 | 1;
   VLANPriority: number;
   VLANID: number;
   ListSupportedLANInterfaces?: string[];
@@ -77,7 +77,7 @@ export interface BasicWanChtTableRow {
   type: 'PPPoE' | 'IPoE' | 'Bridge';
   status: 'Up' | 'Down';
   description: string;
-  defaultGateway: boolean;
+  defaultGateway: 0 | 1;
   vlanType: string;
   vlanId: number | string;
   protocol: string;

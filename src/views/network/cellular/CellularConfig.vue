@@ -12,6 +12,9 @@ import { BaseSwitch } from '../../../components/common';
 
 const { qa } = useQA();
 const { t } = useI18n();
+const toFlag01 = (value: unknown): 0 | 1 => (
+  value === 1 || value === '1' || value === true ? 1 : 0
+);
 
 const loading = ref(false);
 const saving = ref(false);
@@ -19,8 +22,8 @@ const error = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
 
 const formData = ref({
-  roamingEnabled: false,
-  interfaceEnable: true,
+  roamingEnabled: 0 as 0 | 1,
+  interfaceEnable: 1 as 0 | 1,
   ipType: 'ipv4v6',
   apn: 'internet',
   preferredAccessTechnology: '5g'
@@ -46,8 +49,8 @@ const fetchCellularStatus = async () => {
     const response: CellularResponse = await getCellularStatus();
     if (response.Cellular) {
       formData.value = {
-        roamingEnabled: response.Cellular.RoamingEnabled === 1,
-        interfaceEnable: response.Cellular.InterfaceEnable === 1,
+        roamingEnabled: toFlag01(response.Cellular.RoamingEnabled),
+        interfaceEnable: toFlag01(response.Cellular.InterfaceEnable),
         ipType: response.Cellular.X_PRPLWARE_COM_IPType || 'ipv4v6',
         apn: response.Cellular.APN || 'internet',
         preferredAccessTechnology: response.Cellular.PreferredAccessTechnology || '5g'
@@ -126,6 +129,8 @@ onMounted(() => {
                 <span>{{ t('cellular.interfaceEnable') }}</span>
                 <BaseSwitch
                   v-model="formData.interfaceEnable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('cellular-interface-enable')"
                   :slider-data-testid="qa('cellular-interface-enable-slider')"
                 />
@@ -137,6 +142,8 @@ onMounted(() => {
                 <span>{{ t('cellular.roamingEnabled') }}</span>
                 <BaseSwitch
                   v-model="formData.roamingEnabled"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('cellular-roaming-enabled')"
                   :slider-data-testid="qa('cellular-roaming-enabled-slider')"
                 />

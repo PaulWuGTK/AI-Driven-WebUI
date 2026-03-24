@@ -12,6 +12,9 @@ const dmzData = ref<DmzResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
 
 const fetchDmz = async () => {
   loading.value = true;
@@ -53,7 +56,8 @@ const handleSubmit = async () => {
   error.value = null;
   
   // Validate IP address if DMZ is enabled
-  if (dmzData.value.AdvancedDmz.Enable && !isValidIPv4(dmzData.value.AdvancedDmz.IPAddress)) {
+  const enabled = toFlag01(dmzData.value.AdvancedDmz.Enable) === 1;
+  if (enabled && !isValidIPv4(dmzData.value.AdvancedDmz.IPAddress)) {
     error.value = 'Invalid IP address format';
     return;
   }
@@ -62,8 +66,8 @@ const handleSubmit = async () => {
   try {
     await updateDmz({
       AdvancedDmz: {
-        Enable: dmzData.value.AdvancedDmz.Enable,
-        IPAddress: dmzData.value.AdvancedDmz.Enable ? dmzData.value.AdvancedDmz.IPAddress : "0.0.0.0"
+        Enable: toFlag01(dmzData.value.AdvancedDmz.Enable),
+        IPAddress: enabled ? dmzData.value.AdvancedDmz.IPAddress : "0.0.0.0"
       }
     });
     showSuccessMessage();
@@ -100,6 +104,8 @@ onMounted(fetchDmz);
               <span :data-testid="qa('dmz-enable-label')">{{ t('dmz.enable') }}</span>
               <BaseSwitch
                 v-model="dmzData.AdvancedDmz.Enable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('dmz-enable-toggle')"
                 :slider-data-testid="qa('dmz-enable-slider')"
               />

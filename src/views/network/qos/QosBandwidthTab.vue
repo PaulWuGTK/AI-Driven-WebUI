@@ -6,6 +6,8 @@
           <div class="form-label">{{ t('qos.enableQos') }}</div>
           <BaseSwitch
             v-model="formData.Enable"
+            :true-value="1"
+            :false-value="0"
             data-testid="qos-enable-checkbox"
           />
         </div>
@@ -256,9 +258,12 @@ import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import type { QosBandwidthConfig } from '../../../types/qos';
 
 const { t } = useI18n();
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
 
 const formData = ref<QosBandwidthConfig>({
-  Enable: false,
+  Enable: 0,
   Bandwidth: {
     Download: 1000,
     Upload: 1000,
@@ -390,7 +395,12 @@ const handleSave = async () => {
 
   try {
     loading.value = true;
-    await qosApi.updateBandwidth({ QosBandwidth: formData.value });
+    await qosApi.updateBandwidth({
+      QosBandwidth: {
+        ...formData.value,
+        Enable: toFlag01(formData.value.Enable),
+      }
+    });
     originalData.value = JSON.parse(JSON.stringify(formData.value));
     showSuccessMessage(t('common.saveSuccess'));
   } catch (error) {
@@ -411,8 +421,11 @@ const loadData = async () => {
   try {
     loading.value = true;
     const response = await qosApi.getBandwidth();
-    formData.value = response.QosBandwidth;
-    originalData.value = JSON.parse(JSON.stringify(response.QosBandwidth));
+    formData.value = {
+      ...response.QosBandwidth,
+      Enable: toFlag01(response.QosBandwidth.Enable),
+    };
+    originalData.value = JSON.parse(JSON.stringify(formData.value));
   } catch (error) {
     console.error('Failed to load QoS bandwidth:', error);
   } finally {

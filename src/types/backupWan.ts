@@ -14,8 +14,8 @@ export interface BackupWANConfig {
   PhysicalInterface: string;
   SupportedEthernetInterface: string[];
   SupportedCellularInterface: string[];
-  Enable: number | boolean;
-  WHCEnable: number | boolean;
+  Enable: 0 | 1;
+  WHCEnable: 0 | 1;
   PhysicalType: 'Ethernet' | 'Cellular';
   WANHealthCheck: WANHealthCheck[];
 }
@@ -27,10 +27,10 @@ export interface BackupWANResponse {
 
 export interface BackupWANRequest {
   BackupWAN: {
-    Enable: boolean;
+    Enable: 0 | 1;
     PhysicalType: string;
     PhysicalInterface: string;
-    WHCEnable: boolean;
+    WHCEnable: 0 | 1;
     WANHealthCheck: Array<{
       Alias: string;
       CheckMethod: string;

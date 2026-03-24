@@ -13,7 +13,7 @@ export interface PortMapping {
   RemainingLeaseTime: number;
   LeaseDuration: number;
   RemoteHost: string;
-  Enable: boolean;
+  Enable: 0 | 1;
   Interface: string;
   Status: string;
   InternalClient: string;
@@ -26,7 +26,7 @@ export interface PortMappingStats {
 }
 
 export interface ApplicationUpnp {
-  Enable: boolean;
+  Enable: 0 | 1;
   InterfaceOptions?: InterfaceOption[];
   Interface: string;
   PortMappings?: PortMapping[];
@@ -39,7 +39,7 @@ export interface UpnpResponse {
 
 export interface UpnpUpdateRequest {
   ApplicationUpnp: {
-    Enable: boolean;
+    Enable: 0 | 1;
     Interface: string;
   };
 }

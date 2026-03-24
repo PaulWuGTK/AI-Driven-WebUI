@@ -8,6 +8,8 @@
             <span :data-testid="qa('bridge-enable-label')">{{ $t('basicWanCht.enable') }}</span>
             <BaseSwitch
               v-model="localData.Enable"
+              :true-value="1"
+              :false-value="0"
               :data-testid="qa('bridge-enable-toggle')"
               :slider-data-testid="qa('bridge-enable-toggle-slider')"
             />
@@ -44,6 +46,8 @@
             <span :data-testid="qa('bridge-vlan-enable-label')">{{ $t('basicWanCht.vlan') }}</span>
             <BaseSwitch
               v-model="localData.VLANEnable"
+              :true-value="1"
+              :false-value="0"
               :data-testid="qa('bridge-vlan-enable-toggle')"
               :slider-data-testid="qa('bridge-vlan-enable-toggle-slider')"
             />

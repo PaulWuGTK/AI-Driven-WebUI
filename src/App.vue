@@ -7,6 +7,7 @@ import { AuthService } from './services/auth';
 import { AutoLogoutService } from './services/autoLogout';
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
+import Bool01LegacyBanner from './components/common/Bool01LegacyBanner.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -67,6 +68,7 @@ watch(() => route.path, (newPath) => {
     <template v-else>
       <router-view />
     </template>
+    <Bool01LegacyBanner />
   </div>
 </template>
 

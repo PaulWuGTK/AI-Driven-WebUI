@@ -20,8 +20,13 @@ const emit = defineEmits<{
   (e: 'cancel'): void;
 }>();
 
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
+
 const editingRule = ref<ServiceControlRule>({
   ...props.rule,
+  Enable: toFlag01(props.rule.Enable),
   // 兼容舊資料：若沒有 InterfaceOriginal 就用目前的 Interface
   InterfaceOriginal: (props.rule as any).InterfaceOriginal ?? props.rule.Interface,
 });
@@ -164,6 +169,8 @@ watch(() => editingRule.value.Protocol, (newProtocol) => {
               <span :data-testid="qa('service-control-enable-label')">{{ t('common.enable') }}</span>
               <BaseSwitch
                 v-model="editingRule.Enable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('service-control-enable-toggle')"
                 :slider-data-testid="qa('service-control-enable-slider')"
               />

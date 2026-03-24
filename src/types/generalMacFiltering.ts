@@ -5,7 +5,7 @@ export interface GeneralMacFilteringEntry {
 }
 
 export interface GeneralMacFilteringConfig {
-  Enable: boolean;
+  Enable: 0 | 1;
   WhiteList: GeneralMacFilteringEntry[];
   BlackList: GeneralMacFilteringEntry[];
 }

@@ -7,7 +7,7 @@ export interface IpFilterEntry {
 }
 
 export interface IpFilteringConfig {
-  Enable: boolean;
+  Enable: 0 | 1;
   ProtoList: string[];
   BlackList: IpFilterEntry[];
   WhiteList: IpFilterEntry[];
@@ -19,7 +19,7 @@ export interface IpFilteringResponse {
 
 export interface IpFilteringRequest {
   IPFiltering: {
-    Enable: boolean;
+    Enable: 0 | 1;
     BlackList: IpFilterEntry[];
     WhiteList: IpFilterEntry[];
   };

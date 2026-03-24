@@ -43,8 +43,8 @@ export interface CellularResponse {
 }
 
 export interface CellularConfig {
-  RoamingEnabled: boolean;
-  InterfaceEnable: boolean;
+  RoamingEnabled: 0 | 1;
+  InterfaceEnable: 0 | 1;
   X_PRPLWARE_COM_IPType: string;
   APN: string;
   PreferredAccessTechnology: string;

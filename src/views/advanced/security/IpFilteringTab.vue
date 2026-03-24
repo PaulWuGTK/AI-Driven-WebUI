@@ -4,6 +4,8 @@
       <label :data-testid="qa('ip-filtering-enable-label')">{{ $t('ipFiltering.enableIpFiltering') }}</label>
       <BaseSwitch
         v-model="config.Enable"
+        :true-value="1"
+        :false-value="0"
         :data-testid="qa('ip-filtering-enable-toggle')"
         :slider-data-testid="qa('ip-filtering-enable-slider')"
         @update:model-value="onEnableChange"
@@ -188,9 +190,12 @@ import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
 const { t } = useI18n();
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
 
 const config = ref<IpFilteringConfig>({
-  Enable: false,
+  Enable: 0,
   ProtoList: ['TCP', 'UDP', 'Both'],
   BlackList: [],
   WhiteList: []
@@ -235,8 +240,11 @@ const loadConfig = async () => {
       showErrorMessage(nokMessage);
       return;
     }
-    config.value = response.IPFiltering;
-    originalConfig.value = JSON.parse(JSON.stringify(response.IPFiltering));
+    config.value = {
+      ...response.IPFiltering,
+      Enable: toFlag01(response.IPFiltering.Enable),
+    };
+    originalConfig.value = JSON.parse(JSON.stringify(config.value));
   } catch (error) {
     console.error('Failed to load IP filtering config:', error);
     showErrorMessage('Failed to load IP filtering config');
@@ -255,7 +263,7 @@ const isValidIPv6 = (ip: string): boolean => {
 
 const onEnableChange = (value?: string | number | boolean) => {
   if (value !== undefined) {
-    config.value.Enable = value === true || value === 1 || value === '1';
+    config.value.Enable = toFlag01(value);
   }
   if (!config.value.Enable) {
     filterMode.value = 'Blacklist';
@@ -322,7 +330,7 @@ const apply = async () => {
   try {
     const response = await ipFilteringApi.updateConfig({
       IPFiltering: {
-        Enable: config.value.Enable,
+        Enable: toFlag01(config.value.Enable),
         BlackList: config.value.BlackList,
         WhiteList: config.value.WhiteList
       }

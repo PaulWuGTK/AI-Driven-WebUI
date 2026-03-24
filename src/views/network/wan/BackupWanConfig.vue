@@ -24,6 +24,8 @@
                 <span>{{ $t('backupWan.backupWan') }}</span>
                 <BaseSwitch
                   v-model="formData.Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('backup-wan-enable-toggle')"
                   :slider-data-testid="qa('backup-wan-enable-slider')"
                   @update:model-value="handleBackupWanToggle"
@@ -56,6 +58,8 @@
                 <span>{{ $t('backupWan.wanHealthCheck') }}</span>
                 <BaseSwitch
                   v-model="formData.WHCEnable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('backup-wan-health-check-toggle')"
                   :slider-data-testid="qa('backup-wan-health-check-slider')"
                 />
@@ -184,6 +188,10 @@ const showErrorMessage = (message: string) => {
   triggerErrorToast();
 };
 
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
+
 const showSuccessMessage = () => {
   showSuccess.value = true;
   setTimeout(() => {
@@ -195,8 +203,8 @@ const formData = ref<BackupWANConfig>({
   PhysicalInterface: 'lan1',
   SupportedEthernetInterface: ['lan1','eth0'],
   SupportedCellularInterface: ['eth1'],
-  Enable: false,
-  WHCEnable: false,
+  Enable: 0,
+  WHCEnable: 0,
   PhysicalType: 'Ethernet',
   WANHealthCheck: [
     {
@@ -247,9 +255,9 @@ const interfaceOptions = computed(() => {
 });
 
 const handleBackupWanToggle = (value: string | number | boolean) => {
-  const enabled = value === true || value === 1 || value === '1';
+  const enabled = toFlag01(value) === 1;
   if (!enabled) {
-    formData.value.WHCEnable = false;
+    formData.value.WHCEnable = 0;
   }
 };
 
@@ -278,8 +286,8 @@ const loadConfig = async () => {
       const config = response.BackupWAN;
       formData.value = {
         ...config,
-        Enable: Boolean(config.Enable),
-        WHCEnable: Boolean(config.WHCEnable)
+        Enable: toFlag01(config.Enable),
+        WHCEnable: toFlag01(config.WHCEnable)
       };
       originalData.value = JSON.parse(JSON.stringify(formData.value));
     }
@@ -295,10 +303,10 @@ const handleSubmit = async () => {
   try {
     const requestData: BackupWANRequest = {
       BackupWAN: {
-        Enable: Boolean(formData.value.Enable),
+        Enable: toFlag01(formData.value.Enable),
         PhysicalType: formData.value.PhysicalType,
         PhysicalInterface: formData.value.PhysicalInterface,
-        WHCEnable: Boolean(formData.value.Enable),
+        WHCEnable: toFlag01(formData.value.WHCEnable),
         WANHealthCheck: formData.value.WANHealthCheck.map(hc => ({
           Alias: hc.Alias,
           CheckMethod: hc.CheckMethod,

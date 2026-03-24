@@ -7,7 +7,7 @@ export const portForwardingMockData: PortForwardingResponse = {
     PortForwardList: [
       {
         No: 1,
-        Enable: true,
+        Enable: 1,
         Description: "Web Server",
         Protocol: "Both",
         Interface: "eth0",
@@ -17,7 +17,7 @@ export const portForwardingMockData: PortForwardingResponse = {
       },
       {
         No: 2,
-        Enable: true,
+        Enable: 1,
         Description: "FTP Server",
         Protocol: "TCP",
         Interface: "eth0",
@@ -27,7 +27,7 @@ export const portForwardingMockData: PortForwardingResponse = {
       },
       {
         No: 3,
-        Enable: false,
+        Enable: 0,
         Description: "Game Server",
         Protocol: "UDP",
         Interface: "eth0",
@@ -37,7 +37,7 @@ export const portForwardingMockData: PortForwardingResponse = {
       },
       {
         No: 4,
-        Enable: true,
+        Enable: 1,
         Description: "Remote Desktop",
         Protocol: "TCP",
         Interface: "eth1",
@@ -47,7 +47,7 @@ export const portForwardingMockData: PortForwardingResponse = {
       },
       {
         No: 5,
-        Enable: true,
+        Enable: 1,
         Description: "SSH Access",
         Protocol: "TCP",
         Interface: "eth0",
