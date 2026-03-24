@@ -5,7 +5,7 @@ import type {
 
 const mockGeneralMacFilteringData: GeneralMacFilteringResponse = {
   MACFiltering: {
-    Enable: true,
+    Enable: 1,
     WhiteList: [
       {
         No: 1,

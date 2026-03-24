@@ -4,21 +4,43 @@ import { getUpnpMockData, updateUpnpMockData } from '../mockData/upnpMockData';
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
+const toFlag01 = (value: unknown): 0 | 1 => (
+  value === 1 || value === '1' || value === true ? 1 : 0
+);
+
+const normalizeResponse = (response: UpnpResponse): UpnpResponse => ({
+  ApplicationUpnp: {
+    ...response.ApplicationUpnp,
+    Enable: toFlag01(response.ApplicationUpnp.Enable),
+    PortMappings: response.ApplicationUpnp.PortMappings?.map((mapping) => ({
+      ...mapping,
+      Enable: toFlag01(mapping.Enable)
+    }))
+  }
+});
 
 export async function getUpnpSettings(): Promise<UpnpResponse> {
   if (isDevelopment) {
-    return getUpnpMockData();
+    return normalizeResponse(getUpnpMockData());
   }
-  return callApi<UpnpResponse>(`${API_BASE_URL}/info?list=ApplicationUpnp`);
+  const response = await callApi<UpnpResponse>(`${API_BASE_URL}/info?list=ApplicationUpnp`);
+  return normalizeResponse(response);
 }
 
 export async function updateUpnpSettings(data: UpnpUpdateRequest): Promise<UpnpUpdateResponse> {
+  const normalizedData: UpnpUpdateRequest = {
+    ApplicationUpnp: {
+      Enable: toFlag01(data.ApplicationUpnp.Enable),
+      Interface: data.ApplicationUpnp.Interface
+    }
+  };
+
   if (isDevelopment) {
-    return updateUpnpMockData(data);
+    return updateUpnpMockData(normalizedData);
   }
 
   return callApi<UpnpUpdateResponse>(`${API_BASE_URL}/info?list=ApplicationUpnp`, {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(normalizedData)
   });
 }

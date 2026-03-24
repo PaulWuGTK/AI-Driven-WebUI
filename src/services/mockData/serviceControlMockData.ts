@@ -11,7 +11,7 @@ const mockServiceControlData: ServiceControlResponse = {
         DestPort: '80',
         Protocol: '6',
         Action: 'Accept',
-        Enable: true,
+        Enable: 1,
         Service: 'HTTP',
         Interface: 'Device.IP.Interface.3.',
         IPVersion: 6
@@ -20,7 +20,7 @@ const mockServiceControlData: ServiceControlResponse = {
         DestPort: '443',
         Protocol: '6',
         Action: 'Accept',
-        Enable: true,
+        Enable: 1,
         Service: 'HTTPS',
         Interface: 'Device.IP.Interface.3.',
         IPVersion: 4
@@ -29,7 +29,7 @@ const mockServiceControlData: ServiceControlResponse = {
         DestPort: '53',
         Protocol: '17',
         Action: 'Accept',
-        Enable: true,
+        Enable: 1,
         Service: 'DNS',
         Interface: 'Device.IP.Interface.3.',
         IPVersion: 0

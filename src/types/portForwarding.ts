@@ -1,6 +1,6 @@
 export interface PortForwardRule {
   No: number;
-  Enable: boolean;
+  Enable: 0 | 1;
   Description: string;
   Protocol: string;
   Interface: string;

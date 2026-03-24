@@ -17,7 +17,7 @@ export interface QosBandwidthData {
 }
 
 export interface QosBandwidthConfig {
-  Enable: boolean;
+  Enable: 0 | 1;
   Bandwidth: QosBandwidthData;
 }
 

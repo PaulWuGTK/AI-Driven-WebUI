@@ -14,12 +14,16 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const showSuccess = ref(false);
 
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
+
 const formData = ref({
-  IPv4Enable: true,
+  IPv4Enable: 1 as 0 | 1,
   IPv4Protocol: 'DHCP',
   IPv4Address: '',
   SubnetMask: '',
-  IPv6Enable: true,
+  IPv6Enable: 1 as 0 | 1,
   IPv6Protocol: 'AutoConfigured',
   IPv6Address: '',
   IPv6Prefix: ''
@@ -41,11 +45,11 @@ const fetchLanChtSettings = async () => {
     if (lanChtData.value) {
       const config = lanChtData.value.BasicBridgeLan;
       formData.value = {
-        IPv4Enable: config.IPv4Enable,
+        IPv4Enable: toFlag01(config.IPv4Enable),
         IPv4Protocol: config.IPv4Protocol,
         IPv4Address: config.IPv4Address,
         SubnetMask: config.SubnetMask,
-        IPv6Enable: config.IPv6Enable,
+        IPv6Enable: toFlag01(config.IPv6Enable),
         IPv6Protocol: config.IPv6Protocol,
         IPv6Address: config.IPv6Address,
         IPv6Prefix: config.IPv6Prefix
@@ -76,11 +80,11 @@ const handleSubmit = async () => {
   try {
     const updateData: BasicBridgeLanUpdateRequest = {
       BasicBridgeLan: {
-        IPv4Enable: formData.value.IPv4Enable,
+        IPv4Enable: toFlag01(formData.value.IPv4Enable),
         IPv4Protocol: formData.value.IPv4Protocol,
         IPv4Address: formData.value.IPv4Address,
         SubnetMask: formData.value.SubnetMask,
-        IPv6Enable: formData.value.IPv6Enable,
+        IPv6Enable: toFlag01(formData.value.IPv6Enable),
         IPv6Protocol: formData.value.IPv6Protocol,
         IPv6Address: formData.value.IPv6Address,
         IPv6Prefix: formData.value.IPv6Prefix
@@ -129,6 +133,8 @@ onMounted(fetchLanChtSettings);
                 <span :data-testid="qa('lan-cht-ipv4-enable-label')">{{ t('basicBridgeLan.ipv4Enable') }}</span>
                 <BaseSwitch
                   v-model="formData.IPv4Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('lan-cht-ipv4-enable-toggle')"
                   :slider-data-testid="qa('lan-cht-ipv4-enable-slider')"
                 />
@@ -187,6 +193,8 @@ onMounted(fetchLanChtSettings);
                 <span :data-testid="qa('lan-cht-ipv6-enable-label')">{{ t('basicBridgeLan.ipv6Enable') }}</span>
                 <BaseSwitch
                   v-model="formData.IPv6Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :data-testid="qa('lan-cht-ipv6-enable-toggle')"
                   :slider-data-testid="qa('lan-cht-ipv6-enable-slider')"
                 />

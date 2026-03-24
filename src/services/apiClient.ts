@@ -1,4 +1,5 @@
 import { AuthService } from './auth';
+import { reportLegacyBooleanFields } from './bool01MigrationGuard';
 
 type Headers = Record<string, string>;
 
@@ -31,7 +32,9 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
       throw new Error(`API call failed: ${response.status}`);
     }
 
-    return response.json() as Promise<T>;
+    const payload = await response.json() as T;
+    reportLegacyBooleanFields(url, payload);
+    return payload;
   } catch (err) {
     // Check if error message contains 401 or 403
     if (err instanceof Error && (err.message.includes('401') || err.message.includes('403'))) {

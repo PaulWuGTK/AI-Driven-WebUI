@@ -122,17 +122,21 @@ const { qa } = useQA();
               </span>
             </div>
 
-            <div v-if="config.wifi.bands['2g'].enabled" class="band-info">
-              <h4>2.4GHz Band</h4>
-              <div class="review-item">
+            <div
+              v-if="config.wifi.bands['2g'].enabled"
+              class="band-info"
+              :data-testid="qa('wizard-review-band-2g-section')"
+            >
+              <h4 :data-testid="qa('wizard-review-band-2g-title')">2.4GHz Band</h4>
+              <div class="review-item" :data-testid="qa('wizard-review-band-2g-ssid-item')">
                 <span class="label">SSID:</span>
-                <span class="value">{{ config.wifi.bands['2g'].ssid }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-2g-ssid-value')">{{ config.wifi.bands['2g'].ssid }}</span>
               </div>
-              <div class="review-item">
+              <div class="review-item" :data-testid="qa('wizard-review-band-2g-security-item')">
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
-                <span class="value">{{ config.wifi.bands['2g'].security }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-2g-security-value')">{{ config.wifi.bands['2g'].security }}</span>
               </div>
-                            <div class="review-item password-row">
+                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-2g-password-item')">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"
@@ -145,17 +149,21 @@ const { qa } = useQA();
               </div>
             </div>
 
-            <div v-if="config.wifi.bands['5g'].enabled" class="band-info">
-              <h4>5GHz Band</h4>
-              <div class="review-item">
+            <div
+              v-if="config.wifi.bands['5g'].enabled"
+              class="band-info"
+              :data-testid="qa('wizard-review-band-5g-section')"
+            >
+              <h4 :data-testid="qa('wizard-review-band-5g-title')">5GHz Band</h4>
+              <div class="review-item" :data-testid="qa('wizard-review-band-5g-ssid-item')">
                 <span class="label">SSID:</span>
-                <span class="value">{{ config.wifi.bands['5g'].ssid }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-5g-ssid-value')">{{ config.wifi.bands['5g'].ssid }}</span>
               </div>
-              <div class="review-item">
+              <div class="review-item" :data-testid="qa('wizard-review-band-5g-security-item')">
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
-                <span class="value">{{ config.wifi.bands['5g'].security }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-5g-security-value')">{{ config.wifi.bands['5g'].security }}</span>
               </div>
-                            <div class="review-item password-row">
+                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-5g-password-item')">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"
@@ -168,17 +176,21 @@ const { qa } = useQA();
               </div>
             </div>
 
-            <div v-if="config.wifi.bands['6g'].enabled" class="band-info">
-              <h4>6GHz Band</h4>
-              <div class="review-item">
+            <div
+              v-if="config.wifi.bands['6g'].enabled"
+              class="band-info"
+              :data-testid="qa('wizard-review-band-6g-section')"
+            >
+              <h4 :data-testid="qa('wizard-review-band-6g-title')">6GHz Band</h4>
+              <div class="review-item" :data-testid="qa('wizard-review-band-6g-ssid-item')">
                 <span class="label">SSID:</span>
-                <span class="value">{{ config.wifi.bands['6g'].ssid }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-6g-ssid-value')">{{ config.wifi.bands['6g'].ssid }}</span>
               </div>
-              <div class="review-item">
+              <div class="review-item" :data-testid="qa('wizard-review-band-6g-security-item')">
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
-                <span class="value">{{ config.wifi.bands['6g'].security }}</span>
+                <span class="value" :data-testid="qa('wizard-review-band-6g-security-value')">{{ config.wifi.bands['6g'].security }}</span>
               </div>
-                            <div class="review-item password-row">
+                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-6g-password-item')">
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"

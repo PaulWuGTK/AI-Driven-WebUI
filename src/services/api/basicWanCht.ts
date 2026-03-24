@@ -4,22 +4,20 @@ import { basicWanChtMockData } from '../mockData/basicWanChtMockData';
 
 const isDevelopment = import.meta.env.DEV;
 
-const toBoolean = (value: unknown, fallback = false): boolean => {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'number') return value !== 0;
+const toFlag01 = (value: unknown, fallback: 0 | 1 = 0): 0 | 1 => {
+  if (typeof value === 'number') return value === 1 ? 1 : 0;
+  if (typeof value === 'boolean') return value ? 1 : 0;
   if (typeof value === 'string') {
     const normalized = value.trim().toLowerCase();
-    if (normalized === '1' || normalized === 'true') return true;
-    if (normalized === '0' || normalized === 'false') return false;
+    if (normalized === '1' || normalized === 'true') return 1;
+    if (normalized === '0' || normalized === 'false') return 0;
   }
   return fallback;
 };
 
-const toNumberFlag = (value: boolean): 0 | 1 => (value ? 1 : 0);
-
 const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfig => ({
   PPPoE: {
-    Enable: toBoolean(config.PPPoE.Enable),
+    Enable: toFlag01(config.PPPoE.Enable),
     Protocol: config.PPPoE.Protocol,
     UserName: config.PPPoE.UserName,
     Password: config.PPPoE.Password,
@@ -27,31 +25,31 @@ const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfi
     ConnectionTrigger: config.PPPoE.ConnectionTrigger,
     IdleTime: config.PPPoE.IdleTime,
     MTU: config.PPPoE.MTU,
-    DefaultGateway: toBoolean(config.PPPoE.DefaultGateway),
-    PassthroughEnable: toBoolean(config.PPPoE.PassthroughEnable),
-    IPv4Enable: toBoolean(config.PPPoE.IPv4Enable),
-    IPv6Enable: toBoolean(config.PPPoE.IPv6Enable),
+    DefaultGateway: toFlag01(config.PPPoE.DefaultGateway),
+    PassthroughEnable: toFlag01(config.PPPoE.PassthroughEnable),
+    IPv4Enable: toFlag01(config.PPPoE.IPv4Enable),
+    IPv6Enable: toFlag01(config.PPPoE.IPv6Enable),
     DNSMode: config.PPPoE.DNSMode,
     PrimaryDNS: config.PPPoE.PrimaryDNS,
     SecondaryDNS: config.PPPoE.SecondaryDNS,
-    NATEnable: toBoolean(config.PPPoE.NATEnable),
-    IGMPEnable: toBoolean(config.PPPoE.IGMPEnable),
-    VLANEnable: toBoolean(config.PPPoE.VLANEnable),
+    NATEnable: toFlag01(config.PPPoE.NATEnable),
+    IGMPEnable: toFlag01(config.PPPoE.IGMPEnable),
+    VLANEnable: toFlag01(config.PPPoE.VLANEnable),
     VLANPriority: config.PPPoE.VLANPriority,
     VLANID: config.PPPoE.VLANID,
     ListConnectionTrigger: config.PPPoE.ListConnectionTrigger,
     ListDNSMode: config.PPPoE.ListDNSMode
   },
   IPoE: {
-    Enable: toBoolean(config.IPoE.Enable),
+    Enable: toFlag01(config.IPoE.Enable),
     Protocol: config.IPoE.Protocol,
     MTU: config.IPoE.MTU,
-    DefaultGateway: toBoolean(config.IPoE.DefaultGateway),
-    IPv4Enable: toBoolean(config.IPoE.IPv4Enable),
-    IPv6Enable: toBoolean(config.IPoE.IPv6Enable),
-    DHCPv4Option60Enable: toBoolean(config.IPoE.DHCPv4Option60Enable),
+    DefaultGateway: toFlag01(config.IPoE.DefaultGateway),
+    IPv4Enable: toFlag01(config.IPoE.IPv4Enable),
+    IPv6Enable: toFlag01(config.IPoE.IPv6Enable),
+    DHCPv4Option60Enable: toFlag01(config.IPoE.DHCPv4Option60Enable),
     DHCPv4Option60Value: config.IPoE.DHCPv4Option60Value,
-    DHCPv4Option61Enable: toBoolean(config.IPoE.DHCPv4Option61Enable),
+    DHCPv4Option61Enable: toFlag01(config.IPoE.DHCPv4Option61Enable),
     IAID: config.IPoE.IAID,
     DUIDType: config.IPoE.DUIDType,
     EnterpriseNumber: config.IPoE.EnterpriseNumber,
@@ -59,9 +57,9 @@ const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfi
     DNSMode: config.IPoE.DNSMode,
     PrimaryDNS: config.IPoE.PrimaryDNS,
     SecondaryDNS: config.IPoE.SecondaryDNS,
-    NATEnable: toBoolean(config.IPoE.NATEnable),
-    IGMPEnable: toBoolean(config.IPoE.IGMPEnable),
-    VLANEnable: toBoolean(config.IPoE.VLANEnable),
+    NATEnable: toFlag01(config.IPoE.NATEnable),
+    IGMPEnable: toFlag01(config.IPoE.IGMPEnable),
+    VLANEnable: toFlag01(config.IPoE.VLANEnable),
     VLANPriority: config.IPoE.VLANPriority,
     VLANID: config.IPoE.VLANID,
     IPAddress: config.IPoE.IPAddress,
@@ -71,10 +69,10 @@ const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfi
     ListDNSMode: config.IPoE.ListDNSMode
   },
   Bridge: {
-    Enable: toBoolean(config.Bridge.Enable),
+    Enable: toFlag01(config.Bridge.Enable),
     Protocol: config.Bridge.Protocol,
     MTU: config.Bridge.MTU,
-    VLANEnable: toBoolean(config.Bridge.VLANEnable),
+    VLANEnable: toFlag01(config.Bridge.VLANEnable),
     VLANPriority: config.Bridge.VLANPriority,
     VLANID: config.Bridge.VLANID,
     ListSupportedLANInterfaces: config.Bridge.ListSupportedLANInterfaces,
@@ -99,7 +97,7 @@ export const basicWanChtApi = {
 
     const postData = {
       PPPoE: {
-        Enable: toNumberFlag(config.PPPoE.Enable),
+        Enable: toFlag01(config.PPPoE.Enable),
         Protocol: config.PPPoE.Protocol,
         UserName: config.PPPoE.UserName,
         Password: config.PPPoE.Password,
@@ -107,29 +105,29 @@ export const basicWanChtApi = {
         ConnectionTrigger: config.PPPoE.ConnectionTrigger,
         IdleTime: config.PPPoE.IdleTime,
         MTU: config.PPPoE.MTU,
-        DefaultGateway: toNumberFlag(config.PPPoE.DefaultGateway),
-        PassthroughEnable: toNumberFlag(config.PPPoE.PassthroughEnable),
-        IPv4Enable: toNumberFlag(config.PPPoE.IPv4Enable),
-        IPv6Enable: toNumberFlag(config.PPPoE.IPv6Enable),
+        DefaultGateway: toFlag01(config.PPPoE.DefaultGateway),
+        PassthroughEnable: toFlag01(config.PPPoE.PassthroughEnable),
+        IPv4Enable: toFlag01(config.PPPoE.IPv4Enable),
+        IPv6Enable: toFlag01(config.PPPoE.IPv6Enable),
         DNSMode: config.PPPoE.DNSMode,
         PrimaryDNS: config.PPPoE.PrimaryDNS,
         SecondaryDNS: config.PPPoE.SecondaryDNS,
-        NATEnable: toNumberFlag(config.PPPoE.NATEnable),
-        IGMPEnable: toNumberFlag(config.PPPoE.IGMPEnable),
-        VLANEnable: toNumberFlag(config.PPPoE.VLANEnable),
+        NATEnable: toFlag01(config.PPPoE.NATEnable),
+        IGMPEnable: toFlag01(config.PPPoE.IGMPEnable),
+        VLANEnable: toFlag01(config.PPPoE.VLANEnable),
         VLANPriority: config.PPPoE.VLANPriority,
         VLANID: config.PPPoE.VLANID
       },
       IPoE: {
-        Enable: toNumberFlag(config.IPoE.Enable),
+        Enable: toFlag01(config.IPoE.Enable),
         Protocol: config.IPoE.Protocol,
         MTU: config.IPoE.MTU,
-        DefaultGateway: toNumberFlag(config.IPoE.DefaultGateway),
-        IPv4Enable: toNumberFlag(config.IPoE.IPv4Enable),
-        IPv6Enable: toNumberFlag(config.IPoE.IPv6Enable),
-        DHCPv4Option60Enable: toNumberFlag(config.IPoE.DHCPv4Option60Enable),
+        DefaultGateway: toFlag01(config.IPoE.DefaultGateway),
+        IPv4Enable: toFlag01(config.IPoE.IPv4Enable),
+        IPv6Enable: toFlag01(config.IPoE.IPv6Enable),
+        DHCPv4Option60Enable: toFlag01(config.IPoE.DHCPv4Option60Enable),
         DHCPv4Option60Value: config.IPoE.DHCPv4Option60Value,
-        DHCPv4Option61Enable: toNumberFlag(config.IPoE.DHCPv4Option61Enable),
+        DHCPv4Option61Enable: toFlag01(config.IPoE.DHCPv4Option61Enable),
         IAID: config.IPoE.IAID,
         DUIDType: config.IPoE.DUIDType,
         EnterpriseNumber: config.IPoE.EnterpriseNumber,
@@ -137,9 +135,9 @@ export const basicWanChtApi = {
         DNSMode: config.IPoE.DNSMode,
         PrimaryDNS: config.IPoE.PrimaryDNS,
         SecondaryDNS: config.IPoE.SecondaryDNS,
-        NATEnable: toNumberFlag(config.IPoE.NATEnable),
-        IGMPEnable: toNumberFlag(config.IPoE.IGMPEnable),
-        VLANEnable: toNumberFlag(config.IPoE.VLANEnable),
+        NATEnable: toFlag01(config.IPoE.NATEnable),
+        IGMPEnable: toFlag01(config.IPoE.IGMPEnable),
+        VLANEnable: toFlag01(config.IPoE.VLANEnable),
         VLANPriority: config.IPoE.VLANPriority,
         VLANID: config.IPoE.VLANID,
         IPAddress: config.IPoE.IPAddress,
@@ -147,10 +145,10 @@ export const basicWanChtApi = {
         Gateway: config.IPoE.Gateway
       },
       Bridge: {
-        Enable: toNumberFlag(config.Bridge.Enable),
+        Enable: toFlag01(config.Bridge.Enable),
         Protocol: config.Bridge.Protocol,
         MTU: config.Bridge.MTU,
-        VLANEnable: toNumberFlag(config.Bridge.VLANEnable),
+        VLANEnable: toFlag01(config.Bridge.VLANEnable),
         VLANPriority: config.Bridge.VLANPriority,
         VLANID: config.Bridge.VLANID,
         ListLANInterfaces: config.Bridge.ListLANInterfaces

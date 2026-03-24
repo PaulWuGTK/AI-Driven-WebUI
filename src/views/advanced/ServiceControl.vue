@@ -106,7 +106,7 @@ const handleAddRule = () => {
     DestPort: "",
     Protocol: defaultProtocol,
     Action: "Accept",
-    Enable: true,
+    Enable: 1,
     Service: "",
     Interface: defaultInterface,
     InterfaceOriginal: defaultInterface,

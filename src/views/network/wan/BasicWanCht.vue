@@ -39,7 +39,7 @@
                     </BaseBadge>
                   </td>
                   <td :data-testid="qa(`basic-wan-cht-description-${row.type.toLowerCase()}`)">{{ row.description }}</td>
-                  <td :data-testid="qa(`basic-wan-cht-gateway-${row.type.toLowerCase()}`)">{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</td>
+                  <td :data-testid="qa(`basic-wan-cht-gateway-${row.type.toLowerCase()}`)">{{ row.defaultGateway === 1 ? $t('common.yes') : $t('common.no') }}</td>
                   <td :data-testid="qa(`basic-wan-cht-vlan-type-${row.type.toLowerCase()}`)">{{ row.vlanType }}</td>
                   <td :data-testid="qa(`basic-wan-cht-vlan-id-${row.type.toLowerCase()}`)">{{ row.vlanId }}</td>
                   <td :data-testid="qa(`basic-wan-cht-protocol-${row.type.toLowerCase()}`)">{{ row.protocol }}</td>
@@ -78,7 +78,7 @@
 
               <div class="card-row">
                 <span class="card-label">{{ $t('basicWanCht.defaultGateway') }}</span>
-                <span class="card-value">{{ row.defaultGateway ? $t('common.yes') : $t('common.no') }}</span>
+                <span class="card-value">{{ row.defaultGateway === 1 ? $t('common.yes') : $t('common.no') }}</span>
               </div>
 
               <div class="card-row">
@@ -204,33 +204,33 @@ const tableData = computed<BasicWanChtTableRow[]>(() => {
   const pppoe = config.value.PPPoE;
   rows.push({
     type: 'PPPoE',
-    status: pppoe.Enable ? 'Up' : 'Down',
+    status: pppoe.Enable === 1 ? 'Up' : 'Down',
     description: 'PPPoE',
     defaultGateway: pppoe.DefaultGateway,
-    vlanType: pppoe.VLANEnable ? 'VLAN' : 'Untagged',
-    vlanId: pppoe.VLANEnable ? pppoe.VLANID : '-',
+    vlanType: pppoe.VLANEnable === 1 ? 'VLAN' : 'Untagged',
+    vlanId: pppoe.VLANEnable === 1 ? pppoe.VLANID : '-',
     protocol: pppoe.Protocol
   });
 
   const ipoe = config.value.IPoE;
   rows.push({
     type: 'IPoE',
-    status: ipoe.Enable ? 'Up' : 'Down',
+    status: ipoe.Enable === 1 ? 'Up' : 'Down',
     description: 'IPoE',
     defaultGateway: ipoe.DefaultGateway,
-    vlanType: ipoe.VLANEnable ? 'VLAN' : 'Untagged',
-    vlanId: ipoe.VLANEnable ? ipoe.VLANID : '-',
+    vlanType: ipoe.VLANEnable === 1 ? 'VLAN' : 'Untagged',
+    vlanId: ipoe.VLANEnable === 1 ? ipoe.VLANID : '-',
     protocol: ipoe.Protocol
   });
 
   const bridge = config.value.Bridge;
   rows.push({
     type: 'Bridge',
-    status: bridge.Enable ? 'Up' : 'Down',
+    status: bridge.Enable === 1 ? 'Up' : 'Down',
     description: 'Bridge',
-    defaultGateway: false,
-    vlanType: bridge.VLANEnable ? 'VLAN' : 'Untagged',
-    vlanId: bridge.VLANEnable ? bridge.VLANID : '-',
+    defaultGateway: 0,
+    vlanType: bridge.VLANEnable === 1 ? 'VLAN' : 'Untagged',
+    vlanId: bridge.VLANEnable === 1 ? bridge.VLANID : '-',
     protocol: bridge.Protocol
   });
 
@@ -263,7 +263,7 @@ const showValidationMessage = (message: string) => {
 };
 
 const hasAtLeastOneWanModeEnabled = (wanConfig: BasicWanChtConfig) => (
-  wanConfig.PPPoE.Enable || wanConfig.IPoE.Enable || wanConfig.Bridge.Enable
+  wanConfig.PPPoE.Enable === 1 || wanConfig.IPoE.Enable === 1 || wanConfig.Bridge.Enable === 1
 );
 
 const loadConfig = async () => {

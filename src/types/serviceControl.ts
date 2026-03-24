@@ -2,7 +2,7 @@ export interface ServiceControlRule {
   DestPort: string;
   Protocol: string;
   Action: string;
-  Enable: boolean;
+  Enable: 0 | 1;
   Service: string;
   Interface: string;
   InterfaceOriginal?: string;

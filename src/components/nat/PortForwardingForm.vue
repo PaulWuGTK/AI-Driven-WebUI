@@ -14,6 +14,8 @@
             <span :data-testid="qa('port-forward-enable-label')">{{ $t('portForwarding.enablePortForwarding') }}</span>
             <BaseSwitch
               v-model="formData.Enable"
+              :true-value="1"
+              :false-value="0"
               :data-testid="qa('port-forward-enable-toggle')"
               :slider-data-testid="qa('port-forward-enable-toggle-slider')"
             />
@@ -143,6 +145,9 @@ const emit = defineEmits<Emits>();
 const isEdit = computed(() => (
   typeof props.isEdit === 'boolean' ? props.isEdit : !!props.rule.No
 ));
+const toFlag01 = (value: unknown): 0 | 1 => {
+  return value === 1 || value === '1' || value === true ? 1 : 0;
+};
 
 const formData = ref<PortForwardRule>({ ...props.rule });
 
@@ -159,7 +164,10 @@ function parsePortRange(range: string) {
 }
 
 watch(() => props.rule, (newRule) => {
-  formData.value = { ...newRule };
+  formData.value = {
+    ...newRule,
+    Enable: toFlag01(newRule.Enable),
+  };
 
   const externalPorts = parsePortRange(newRule.ExternalPortRange);
   externalPortStart.value = externalPorts.start;
@@ -179,6 +187,7 @@ function handleSubmit() {
 
   formData.value.ExternalPortRange = externalRange;
   formData.value.InternalPort = internalPort.value === '' ? '' : String(internalPort.value);
+  formData.value.Enable = toFlag01(formData.value.Enable);
 
   emit('update:rule', formData.value);
   emit('save');

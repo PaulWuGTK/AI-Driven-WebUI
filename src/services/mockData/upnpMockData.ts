@@ -2,7 +2,7 @@ import type { UpnpResponse, UpnpUpdateRequest, UpnpUpdateResponse } from '../../
 
 const mockUpnpData: UpnpResponse = {
   ApplicationUpnp: {
-    Enable: true,
+    Enable: 1,
     InterfaceOptions: [
       { value: 'Device.Logical.Interface.1.', label: 'wan' },
       { value: 'Device.Logical.Interface.3.', label: 'guest' },
@@ -25,7 +25,7 @@ const mockUpnpData: UpnpResponse = {
         RemainingLeaseTime: 604199,
         LeaseDuration: 604800,
         RemoteHost: '',
-        Enable: true,
+        Enable: 1,
         Interface: 'Device.Logical.Interface.1',
         Status: 'Enabled',
         InternalClient: '192.168.101.168',
@@ -60,4 +60,3 @@ export const updateUpnpMockData = (data: UpnpUpdateRequest): UpnpUpdateResponse 
     }
   };
 };
-
