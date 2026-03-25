@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import type {
   AdvancedMclMGMT,
   AdvancedMclMGMTUpdateRequest,
@@ -17,22 +18,33 @@ import {
 import { ActionButtons, BaseCheckbox, BaseInput, BaseModal, BaseTable, BaseToast, SectionCard } from '../../components/common';
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue';
 import { useAutoDismiss } from '../../composables/useAutoDismiss';
+import { useMenuVisibilityContext } from '../../composables/useMenuVisibilityContext';
 import { extractNokMessage } from '../../utils/apiUtils';
 import { useQA } from '../../utils/qa';
 
 const { t } = useI18n();
 const { qa } = useQA();
+const route = useRoute();
+const router = useRouter();
+const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
 type TabId = 'mgmt' | 'trust';
+type Tab = { id: TabId; label: string; menuKey: string };
 
-const loading = ref(false);
+const loadingMgmt = ref(false);
+const loadingTrust = ref(false);
+const mgmtLoaded = ref(false);
+const trustLoaded = ref(false);
 const error = ref<string | null>(null);
 
 const activeTab = ref<TabId>('mgmt');
-const tabs = computed<Array<{ id: TabId; label: string }>>(() => [
-  { id: 'mgmt', label: t('mcl.mgmtServices') },
-  { id: 'trust', label: t('mcl.trustDomain') },
-]);
+const tabs = computed<Tab[]>(() => {
+  const allTabs: Tab[] = [
+    { id: 'mgmt', label: t('mcl.mgmtServices'), menuKey: 'advanceSetup.mcl.mgmt' },
+    { id: 'trust', label: t('mcl.trustDomain'), menuKey: 'advanceSetup.mcl.trustDomain' },
+  ];
+  return allTabs.filter(tab => canShowMenu(tab.menuKey));
+});
 
 const mgmtOriginal = ref<AdvancedMclMGMT | null>(null);
 const mgmtDraft = ref<AdvancedMclMGMT | null>(null);
@@ -176,17 +188,35 @@ const setServicePort = (serviceName: AdvancedMclServiceName, value: string | num
   mgmtDraft.value.Services[serviceName].Port = String(value);
 };
 
-const refreshAll = async () => {
-  loading.value = true;
+const ensureActiveTab = () => {
+  const tabFromQuery = typeof route.query.tab === 'string' ? route.query.tab : '';
+  const exists = tabFromQuery && tabs.value.some(tab => tab.id === tabFromQuery);
+  const nextTab = (exists ? tabFromQuery : (tabs.value[0]?.id || 'mgmt')) as TabId;
+
+  if (activeTab.value !== nextTab) {
+    activeTab.value = nextTab;
+  }
+
+  if (!exists) {
+    router.replace({ path: route.path, query: { ...route.query, tab: nextTab } });
+  }
+};
+
+const selectTab = (tabId: TabId) => {
+  if (activeTab.value !== tabId) {
+    activeTab.value = tabId;
+  }
+  router.replace({ path: route.path, query: { ...route.query, tab: tabId } });
+};
+
+const loadMgmt = async (force = false) => {
+  if (!force && mgmtLoaded.value) return;
+
+  loadingMgmt.value = true;
   error.value = null;
-
   try {
-    const [mgmtResponse, trustResponse] = await Promise.all([
-      getAdvancedMclMGMT(),
-      getAdvancedMclTrustDomain(),
-    ]);
-
-    const nokMessage = extractNokMessage(mgmtResponse) || extractNokMessage(trustResponse);
+    const mgmtResponse = await getAdvancedMclMGMT();
+    const nokMessage = extractNokMessage(mgmtResponse);
     if (nokMessage) {
       error.value = nokMessage;
       return;
@@ -194,12 +224,43 @@ const refreshAll = async () => {
 
     mgmtOriginal.value = deepClone(mgmtResponse.AdvancedMclMGMT);
     mgmtDraft.value = deepClone(mgmtResponse.AdvancedMclMGMT);
-    trustDomains.value = [...trustResponse.AdvancedMclTrustDomain];
+    mgmtLoaded.value = true;
   } catch (err) {
-    console.error('Error fetching MCL settings:', err);
+    console.error('Error fetching MCL MGMT settings:', err);
     error.value = t('mcl.errorFetch');
   } finally {
-    loading.value = false;
+    loadingMgmt.value = false;
+  }
+};
+
+const loadTrustDomain = async (force = false) => {
+  if (!force && trustLoaded.value) return;
+
+  loadingTrust.value = true;
+  error.value = null;
+  try {
+    const trustResponse = await getAdvancedMclTrustDomain();
+    const nokMessage = extractNokMessage(trustResponse);
+    if (nokMessage) {
+      error.value = nokMessage;
+      return;
+    }
+
+    trustDomains.value = [...trustResponse.AdvancedMclTrustDomain];
+    trustLoaded.value = true;
+  } catch (err) {
+    console.error('Error fetching MCL trust domain settings:', err);
+    error.value = t('mcl.errorFetch');
+  } finally {
+    loadingTrust.value = false;
+  }
+};
+
+const loadActiveTabData = async (tabId: TabId) => {
+  if (tabId === 'mgmt') {
+    await loadMgmt();
+  } else {
+    await loadTrustDomain();
   }
 };
 
@@ -354,7 +415,31 @@ const deleteTrustDomainMessage = computed(() =>
   t('mcl.confirmDeleteTrustDomainMessage', { cidr: deleteTrustDomainTarget.value })
 );
 
-onMounted(refreshAll);
+const isInitialLoading = computed(() => {
+  if (activeTab.value === 'mgmt') {
+    return loadingMgmt.value && !mgmtLoaded.value;
+  }
+  return loadingTrust.value && !trustLoaded.value;
+});
+
+const shouldShowErrorState = computed(() => {
+  if (!error.value) return false;
+  if (activeTab.value === 'mgmt') {
+    return !mgmtLoaded.value;
+  }
+  return !trustLoaded.value;
+});
+
+watch([() => route.query.tab, tabs], ensureActiveTab, { immediate: true });
+watch([activeTab, tabs], ([tabId, currentTabs]) => {
+  const isVisibleTab = currentTabs.some(tab => tab.id === tabId);
+  if (!isVisibleTab) return;
+  loadActiveTabData(tabId);
+}, { immediate: true });
+
+onMounted(async () => {
+  await fetchMenuContext();
+});
 </script>
 
 <template>
@@ -362,16 +447,17 @@ onMounted(refreshAll);
     <h1 class="page-title" :data-testid="qa('mcl-title')">{{ t('mcl.title') }}</h1>
 
     <div class="status-content" :data-testid="qa('mcl-content')">
-      <div v-if="loading && !mgmtDraft" class="loading-state" :data-testid="qa('mcl-loading')">
+      <div v-if="isInitialLoading" class="loading-state" :data-testid="qa('mcl-loading')">
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
 
-      <div v-else-if="error" class="error-state" :data-testid="qa('mcl-error')">
+      <div v-else-if="shouldShowErrorState" class="error-state" :data-testid="qa('mcl-error')">
         {{ error }}
       </div>
 
       <SectionCard
+        class="mcl-outer-card"
         v-else
         :content-data-testid="qa('mcl-panel')"
       >
@@ -382,7 +468,7 @@ onMounted(refreshAll);
             class="tab-button"
             :class="{ active: activeTab === tab.id }"
             :data-testid="qa(`mcl-tab-${tab.id === 'mgmt' ? 'mgmt' : 'trust-domain'}`)"
-            @click="activeTab = tab.id"
+            @click="selectTab(tab.id)"
           >
             {{ tab.label }}
           </button>
@@ -612,6 +698,10 @@ onMounted(refreshAll);
 </template>
 
 <style scoped>
+.mcl-outer-card > :deep(.card-content) {
+  padding: 0;
+}
+
 .wan-access-row {
   display: flex;
   flex-wrap: wrap;

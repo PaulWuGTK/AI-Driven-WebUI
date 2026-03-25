@@ -223,6 +223,14 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     netLayoutTypes: { prpl: false, genix: false, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
+  'advanceSetup.mcl.mgmt': {
+    netLayoutTypes: { prpl: false, genix: false, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
+  'advanceSetup.mcl.trustDomain': {
+    netLayoutTypes: { prpl: false, genix: false, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
   'advanceSetup.qos': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
@@ -332,6 +340,8 @@ export const menuRoleVisibilityRules: Record<string, RoleVisibilityRule> = {
   'advanceSetup.sshService': { super: true, normal: false },
   'advanceSetup.serviceControl': { super: true, normal: false },
   'advanceSetup.mcl': { super: true, normal: false },
+  'advanceSetup.mcl.mgmt': { super: true, normal: false },
+  'advanceSetup.mcl.trustDomain': { super: true, normal: false },
   'advanceSetup.qos': { super: true, normal: false },
   'advanceSetup.lcm': { super: true, normal: false },
   'application': { super: true, normal: false },
