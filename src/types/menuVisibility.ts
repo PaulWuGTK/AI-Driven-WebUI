@@ -136,11 +136,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'basicSetup.wlan.basicConfig': {
-    netLayoutTypes: { prpl: true, genix: false, cht: true },
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.basicConfigMulti': {
-    netLayoutTypes: { prpl: false, genix: true, cht: false },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
   },
   'basicSetup.wlan.advancedConfig': {
