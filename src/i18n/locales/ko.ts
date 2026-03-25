@@ -1339,6 +1339,7 @@ const translations = {
     users: 'Users',
     passwordSectionTitle: 'Password',
     addUserSectionTitle: 'Add User',
+    role: '역할',
     webViewer: 'WebViewer',
     webAdmin: 'WebAdmin',
     confirmDeleteUser: 'Are you sure you want to delete user "{username}"?',

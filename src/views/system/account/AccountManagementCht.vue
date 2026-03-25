@@ -49,7 +49,7 @@ const userColumns = computed(() => [
   },
   {
     key: 'RoleAlias',
-    label: t('upnp.role'),
+    label: t('account.role'),
     headerDataTestid: qa('account-cht-header-role')
   },
   {
@@ -474,15 +474,15 @@ onMounted(fetchAccountSettings);
             </div>
 
             <div class="form-group">
-              <label :data-testid="qa('account-cht-add-role-label')">{{ t('upnp.role') }}</label>
+              <label :data-testid="qa('account-cht-add-role-label')">{{ t('account.role') }}</label>
               <select
                 v-model="addUserType"
                 class="input-select"
                 :data-testid="qa('account-cht-add-role-select')"
                 :disabled="loading"
               >
-                <option value="normal">{{ t('account.webViewer') }}</option>
-                <option value="super">{{ t('account.webAdmin') }}</option>
+                <option value="normal">guest-role</option>
+                <option value="super">admin-role</option>
               </select>
             </div>
 
