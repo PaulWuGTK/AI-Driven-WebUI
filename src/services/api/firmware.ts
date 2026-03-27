@@ -1,7 +1,72 @@
 import type { FirmwareResponse, FirmwareUpgradeRequest } from '../../types/firmware';
 import { AuthService } from '../auth';
+import { extractNokMessage } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
+
+interface FirmwareUpgradeCommandResult {
+  outputArgs?: {
+    Status?: string;
+    [key: string]: unknown;
+  };
+  failure?: {
+    errcode?: unknown;
+    errmsg?: unknown;
+  };
+  [key: string]: unknown;
+}
+
+function extractCommandResult(payload: unknown): FirmwareUpgradeCommandResult | null {
+  if (Array.isArray(payload)) {
+    const first = payload[0];
+    return first && typeof first === 'object'
+      ? (first as FirmwareUpgradeCommandResult)
+      : null;
+  }
+
+  if (payload && typeof payload === 'object') {
+    return payload as FirmwareUpgradeCommandResult;
+  }
+
+  return null;
+}
+
+function hasErrorStatus(status: string): boolean {
+  const normalized = status.trim().toUpperCase();
+  return (
+    normalized.includes('NOK') ||
+    normalized.includes('FAIL') ||
+    normalized.includes('ERROR')
+  );
+}
+
+function normalizeErrorValue(value: unknown): string | null {
+  if (value == null) return null;
+  if (typeof value === 'string') {
+    const message = value.trim();
+    return message ? message : null;
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+
+  return null;
+}
+
+function isAsyncDownloadTimeout(failureCode: string | null, failureMessage: string | null): boolean {
+  // Some targets return errcode 27 while firmware validation/upgrade keeps running asynchronously.
+  return failureCode === '27' && !failureMessage;
+}
+
+function sanitizeFirmwareFileName(fileName: string): string {
+  return fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+function buildRemoteFirmwareFileName(file: File): string {
+  const safeName = sanitizeFirmwareFileName(file.name);
+  return `${Date.now()}_${safeName}`;
+}
 
 export async function getFirmwareStatus(): Promise<FirmwareResponse> {
   if (isDevelopment) {
@@ -61,9 +126,11 @@ export async function getFirmwareStatus(): Promise<FirmwareResponse> {
 }
 
 export async function uploadFirmware(file: File): Promise<string> {
+  const remoteFileName = buildRemoteFirmwareFileName(file);
+
   if (isDevelopment) {
-    console.log('Mock firmware upload:', file.name);
-    return file.name;
+    console.log('Mock firmware upload:', remoteFileName);
+    return remoteFileName;
   }
 
   const auth = AuthService.getInstance();
@@ -72,7 +139,7 @@ export async function uploadFirmware(file: File): Promise<string> {
     throw new Error('No active session');
   }
 
-  const url = `/upload/${file.name}`;
+  const url = `/upload/${encodeURIComponent(remoteFileName)}`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -87,7 +154,7 @@ export async function uploadFirmware(file: File): Promise<string> {
     throw new Error(`Firmware upload failed (Status: ${response.status})`);
   }
 
-  return file.name;
+  return remoteFileName;
 }
 
 export async function activateFirmware(bankNumber: number): Promise<void> {
@@ -137,7 +204,7 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     sendresp: true,
     inputArgs: {
       URL: `file:///tmp/upload/${firmwareFile}`,
-      AutoActivate: true
+      AutoActivate: autoActivate
     }
   };
 
@@ -150,12 +217,52 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     body: JSON.stringify(payload)
   });
 
-  // if (!response.ok) {
-  //   throw new Error('Firmware upgrade failed');
-  // }
+  const rawBody = await response.text();
+  let resultPayload: unknown = null;
+  if (rawBody.trim()) {
+    try {
+      resultPayload = JSON.parse(rawBody);
+    } catch {
+      resultPayload = null;
+    }
+  }
 
-  // const result = await response.json();
-  // if (result[0]?.failure?.errcode) {
-  //   throw new Error(`Firmware upgrade failed: ${result[0].failure.errcode}`);
-  // }
+  const commandResult = extractCommandResult(resultPayload);
+  const nokMessage = extractNokMessage(resultPayload);
+  const failureCode = normalizeErrorValue(commandResult?.failure?.errcode);
+  const failureMessage = normalizeErrorValue(commandResult?.failure?.errmsg);
+  const isTimeoutInProgress = isAsyncDownloadTimeout(failureCode, failureMessage);
+  const status = commandResult?.outputArgs?.Status;
+  const statusMessage = typeof status === 'string' ? status.trim() : '';
+  const fallbackBodyMessage = rawBody.trim();
+
+  if (!response.ok) {
+    throw new Error(
+      failureMessage ||
+      failureCode ||
+      nokMessage ||
+      (fallbackBodyMessage
+        ? `Firmware upgrade failed (${response.status}): ${fallbackBodyMessage}`
+        : `Firmware upgrade failed (${response.status})`)
+    );
+  }
+
+  if (failureMessage || (failureCode && !isTimeoutInProgress)) {
+    throw new Error(
+      failureMessage ||
+      (failureCode ? `Firmware upgrade failed (errcode: ${failureCode})` : 'Firmware upgrade failed')
+    );
+  }
+
+  if (nokMessage) {
+    throw new Error(nokMessage);
+  }
+
+  if (statusMessage && hasErrorStatus(statusMessage)) {
+    throw new Error(statusMessage);
+  }
+
+  if (resultPayload == null) {
+    throw new Error('Firmware upgrade failed: empty response from device');
+  }
 }

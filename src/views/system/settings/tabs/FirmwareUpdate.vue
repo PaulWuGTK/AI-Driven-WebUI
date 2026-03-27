@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeUnmount, onDeactivated, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../../types/firmware';
@@ -19,6 +19,7 @@ const uploadedFileName = ref<string | null>(null);
 const isUpgrading = ref(false);
 const countdown = ref(60);
 const countdownTimer = ref<number | null>(null);
+const statusPollTimer = ref<number | null>(null);
 const isActivating = ref(false);
 const isRebootPhase = ref(false);
 const upgradeError = ref<string | null>(null);
@@ -49,38 +50,83 @@ const getStatusDisplay = (bank: FirmwareBank): string => {
   return bank.Status;
 };
 
-// Check if there's an upgrade error to display
-const checkUpgradeError = async () => {
+const isNonErrorFwUpgradeStatus = (status: string): boolean => {
+  const normalized = status.trim().toUpperCase();
+  return ['AVAILABLE', 'UPGRADING', 'SUCCESS', 'VALIDATING'].includes(normalized);
+};
+
+const isNonErrorBankStatus = (status: string): boolean => {
+  const normalized = status.trim().toUpperCase();
+  return ['ACTIVE', 'AVAILABLE', 'VALIDATING', 'UPGRADING', 'DOWNLOADING'].includes(normalized);
+};
+
+const getBankUpgradeError = (bank: FirmwareBank): string | null => {
+  const bootFailureLog = (bank.BootFailureLog || '').trim();
+  if (bootFailureLog) return bootFailureLog;
+
+  const fwUpgradeStatus = (bank.FW_UG_Status || '').trim();
+  if (fwUpgradeStatus && !isNonErrorFwUpgradeStatus(fwUpgradeStatus)) {
+    return fwUpgradeStatus;
+  }
+
+  const bankStatus = (bank.Status || '').trim();
+  if (bankStatus && !isNonErrorBankStatus(bankStatus)) {
+    return bankStatus;
+  }
+
+  return null;
+};
+
+const stopUpgradeStatusPolling = () => {
+  if (statusPollTimer.value) {
+    clearInterval(statusPollTimer.value);
+    statusPollTimer.value = null;
+  }
+};
+
+const stopUpgradeTimers = () => {
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value);
+    countdownTimer.value = null;
+  }
+  stopUpgradeStatusPolling();
+};
+
+const startUpgradeStatusPolling = () => {
+  if (statusPollTimer.value) {
+    clearInterval(statusPollTimer.value);
+  }
+
+  statusPollTimer.value = window.setInterval(async () => {
+    await checkUpgradeError();
+  }, 3000);
+};
+
+const checkUpgradeError = async (): Promise<boolean> => {
   try {
     const response = await getFirmwareStatus();
-    const banks = Object.values(response.UpgradeFw.UpgradeFw);
-    
-    // Check if any bank has FW_UG_Status indicating an error (not Available or Upgrading)
-    const errorBank = banks.find(bank => 
-      bank.FW_UG_Status && 
-      bank.FW_UG_Status !== 'Available' && 
-      bank.FW_UG_Status !== 'Upgrading' &&
-      bank.FW_UG_Status !== 'Success'
-    );
-    
-    if (errorBank && errorBank.FW_UG_Status) {
-//      console.log('Upgrade error detected:', errorBank.FW_UG_Status);
-      upgradeError.value = errorBank.FW_UG_Status;
+    const banks = Object.values(response.UpgradeFw.UpgradeFw) as FirmwareBank[];
+    firmwareBanks.value = banks;
+
+    const errorBank = banks.find((bank) => getBankUpgradeError(bank));
+
+    if (errorBank) {
+      upgradeError.value = getBankUpgradeError(errorBank) || 'Firmware upgrade failed';
       showUpgradeError.value = true;
-      // Don't call clearUpgradeState here as it will reset showUpgradeError
-      // Just ensure we're not in upgrading state
       isUpgrading.value = false;
       isActivating.value = false;
       isRebootPhase.value = false;
-      if (countdownTimer.value) {
-        clearInterval(countdownTimer.value);
-        countdownTimer.value = null;
-      }
-    } else {
-//      console.log('No upgrade error found, banks:', banks.map(b => ({ alias: b.Alias, fwStatus: b.FW_UG_Status })));
+      stopUpgradeTimers();
+      return true;
     }
+
+    return false;
   } catch (err) {
 //    console.error('Error checking upgrade status:', err);
+    if (isUpgrading.value) {
+      stopUpgradeStatusPolling();
+    }
+    return false;
   }
 };
 
@@ -137,16 +183,19 @@ const startUpgradeCountdown = () => {
       if (!isRebootPhase.value) {
         // 第一段結束 → 進入「重開機」第二段 100 秒
         isRebootPhase.value = true;
+        stopUpgradeStatusPolling();
         countdown.value = 100;
         countdownTimer.value = window.setInterval(tick, 1000);
       } else {
         // 第二段結束 → 導回登入（或你要的頁面）
+        stopUpgradeTimers();
         router.push(`/login?t=${Date.now()}`);
       }
     }
   };
 
   countdownTimer.value = window.setInterval(tick, 1000);
+  startUpgradeStatusPolling();
 };
 
 const clearUpgradeState = () => {
@@ -155,10 +204,7 @@ const clearUpgradeState = () => {
   isRebootPhase.value = false;
   upgradeError.value = null;
   showUpgradeError.value = false;
-  if (countdownTimer.value) {
-    clearInterval(countdownTimer.value);
-    countdownTimer.value = null;
-  }
+  stopUpgradeTimers();
 };
 
 const handleActivate = async (bank: FirmwareBank) => {
@@ -244,6 +290,8 @@ const handleUpgrade = async () => {
 };
 
 onMounted(fetchFirmwareStatus);
+onBeforeUnmount(stopUpgradeTimers);
+onDeactivated(stopUpgradeTimers);
 </script>
 
 <template>
