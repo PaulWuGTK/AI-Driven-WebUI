@@ -47,8 +47,24 @@ const toBoolean = (value: unknown): boolean => {
 const normalizeWanAccessMode = (value: unknown): AdvancedMclWanAccessMode =>
   value === 'AnyWAN' ? 'AnyWAN' : 'MultipleWAN';
 
+const unwrapMgmtSource = (raw: unknown): Partial<AdvancedMclMGMTResponse['AdvancedMclMGMT']> => {
+  if (!raw || typeof raw !== 'object') return {};
+
+  const top = raw as { AdvancedMclMGMT?: unknown };
+  const firstLevel = top.AdvancedMclMGMT;
+  if (!firstLevel || typeof firstLevel !== 'object') return {};
+
+  // Some backends return { AdvancedMclMGMT: { AdvancedMclMGMT: { ... } } } after POST.
+  const nested = (firstLevel as { AdvancedMclMGMT?: unknown }).AdvancedMclMGMT;
+  if (nested && typeof nested === 'object') {
+    return nested as Partial<AdvancedMclMGMTResponse['AdvancedMclMGMT']>;
+  }
+
+  return firstLevel as Partial<AdvancedMclMGMTResponse['AdvancedMclMGMT']>;
+};
+
 const normalizeMgmtResponse = (raw: AdvancedMclMGMTResponse): AdvancedMclMGMTResponse => {
-  const source = raw.AdvancedMclMGMT;
+  const source = unwrapMgmtSource(raw);
 
   const normalizedServices = {} as AdvancedMclServiceMap;
   for (const serviceName of SERVICE_ORDER) {

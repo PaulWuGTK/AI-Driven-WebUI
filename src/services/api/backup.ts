@@ -1,5 +1,6 @@
 import { AuthService } from '../auth';
 import { ChecksumService } from '../../utils/checksum';
+import { extractNokMessage } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -13,10 +14,11 @@ export interface BackupResponse {
 }
 
 export interface RestoreResponse {
-  outputArgs: {
-    Status: string;
+  outputArgs?: {
+    Status?: string;
   };
-  executed: string;
+  executed?: string;
+  [key: string]: unknown;
 }
 
 export const backupConfiguration = async (): Promise<BackupResponse[]> => {
@@ -163,6 +165,52 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
     throw new Error('Failed to upload backup file');
   }
 
+  const uploadData = await uploadResponse.json().catch(() => null);
+  const uploadedPath =
+    Array.isArray(uploadData)
+      ? uploadData[0]?.file_path
+      : (uploadData as { file_path?: unknown } | null)?.file_path;
+
+  if (typeof uploadedPath === 'string' && !uploadedPath.includes(remoteFileName)) {
+    throw new Error(`Upload result mismatch: ${uploadedPath}`);
+  }
+
+  const verifyUrls = [
+    `/download/${remoteFileName}`,
+    `/download/${encodeURIComponent(remoteFileName)}`,
+  ];
+
+  let uploadAccessible = false;
+  for (const verifyUrl of verifyUrls) {
+    let verifyResponse = await fetch(verifyUrl, {
+      method: 'HEAD',
+      headers: {
+        Authorization: `bearer ${sessionId}`,
+      },
+    });
+
+    if (!verifyResponse.ok || verifyResponse.status === 405 || verifyResponse.status === 501) {
+      verifyResponse = await fetch(verifyUrl, {
+        headers: {
+          Authorization: `bearer ${sessionId}`,
+        },
+      });
+    }
+
+    if (verifyResponse.ok) {
+      uploadAccessible = true;
+      break;
+    }
+  }
+
+  if (!uploadAccessible) {
+    if (typeof uploadedPath === 'string' && uploadedPath.includes(remoteFileName)) {
+      console.warn('Upload verification via /download failed, but upload path exists:', uploadedPath);
+    } else {
+      throw new Error(`Uploaded backup file is not accessible: ${remoteFileName}`);
+    }
+  }
+
   const restoreResponse = await fetch('/commands', {
     method: 'POST',
     headers: {
@@ -184,10 +232,47 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
     throw new Error('Failed to restore configuration');
   }
 
-  setTimeout(() => {
-    auth.clearSession();
-    window.location.href = `/login?t=${Date.now()}`;
-  }, 1000);
+  const restoreData = await restoreResponse.json();
+  const nokMessage = extractNokMessage(restoreData);
+  if (nokMessage) {
+    throw new Error(nokMessage);
+  }
 
-  return restoreResponse.json();
+  const outputArgs = Array.isArray(restoreData)
+    ? restoreData[0]?.outputArgs
+    : restoreData?.outputArgs;
+
+  const status = outputArgs?.Status;
+  const restoreResult = outputArgs?.Restore;
+
+  if (typeof status === 'string') {
+    const normalizedStatus = status.toUpperCase();
+    if (
+      normalizedStatus.includes('NOK') ||
+      normalizedStatus.includes('FAIL') ||
+      normalizedStatus.includes('ERROR')
+    ) {
+      throw new Error(status);
+    }
+  }
+
+  if (typeof restoreResult === 'string') {
+    const normalizedRestoreResult = restoreResult.trim().toUpperCase();
+    if (!normalizedRestoreResult) {
+      throw new Error('Restore failed: empty restore result from device');
+    }
+    if (
+      normalizedRestoreResult.includes('NOK') ||
+      normalizedRestoreResult.includes('FAIL') ||
+      normalizedRestoreResult.includes('ERROR')
+    ) {
+      throw new Error(restoreResult);
+    }
+  }
+
+  if (Array.isArray(restoreData)) {
+    return (restoreData[0] ?? {}) as RestoreResponse;
+  }
+
+  return restoreData as RestoreResponse;
 };

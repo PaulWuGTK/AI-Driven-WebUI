@@ -1,19 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 import { backupConfiguration, restoreConfiguration } from '../../../services/api/backup';
 import { SectionCard } from '../../../components/common';
+import { AuthService } from '../../../services/auth';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
-const router = useRouter();
 const selectedFile = ref<File | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
+const showRestoreCountdown = ref(false);
+const restoreCountdown = ref(5);
+const restoreCountdownTimer = ref<number | null>(null);
+
+const redirectToLogin = () => {
+  const auth = AuthService.getInstance();
+  auth.clearSession();
+  window.location.href = `/login?t=${Date.now()}`;
+};
+
+const startRestoreCountdown = () => {
+  showRestoreCountdown.value = true;
+  restoreCountdown.value = 5;
+
+  if (restoreCountdownTimer.value) {
+    clearInterval(restoreCountdownTimer.value);
+  }
+
+  restoreCountdownTimer.value = window.setInterval(() => {
+    restoreCountdown.value--;
+    if (restoreCountdown.value <= 0) {
+      if (restoreCountdownTimer.value) {
+        clearInterval(restoreCountdownTimer.value);
+      }
+      redirectToLogin();
+    }
+  }, 1000);
+};
 
 const handleBackup = async () => {
   loading.value = true;
@@ -61,6 +88,7 @@ const handleRestore = async () => {
   try {
     await restoreConfiguration(selectedFile.value);
     selectedFile.value = null;
+    startRestoreCountdown();
   } catch (err) {
     console.error('Error restoring configuration:', err);
     error.value = err instanceof Error ? err.message : 'Failed to restore configuration';
@@ -68,6 +96,12 @@ const handleRestore = async () => {
     loading.value = false;
   }
 };
+
+onUnmounted(() => {
+  if (restoreCountdownTimer.value) {
+    clearInterval(restoreCountdownTimer.value);
+  }
+});
 </script>
 
 <template>
@@ -166,6 +200,14 @@ const handleRestore = async () => {
           </button>
         </div>
       </SectionCard>
+    </div>
+
+    <div v-if="showRestoreCountdown" class="countdown-overlay" :data-testid="qa('restore-countdown-overlay')">
+      <div class="countdown-content" :data-testid="qa('restore-countdown-content')">
+        <div class="spinner"></div>
+        <p :data-testid="qa('restore-countdown-processing')">{{ t('backup.processing') }}</p>
+        <p :data-testid="qa('restore-countdown-text')">{{ t('reset.countdown', { seconds: restoreCountdown }) }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -270,6 +312,42 @@ const handleRestore = async () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.countdown-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
