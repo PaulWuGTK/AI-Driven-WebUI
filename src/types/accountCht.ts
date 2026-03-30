@@ -4,11 +4,11 @@ export interface ManagementAccountChtUser {
   UserPath: string;
   Username: string;
   Enable: 0 | 1;
-  StaticUser: boolean;
+  StaticUser: 0 | 1;
   UserType: ManagementAccountChtUserType;
   RoleAlias: string;
-  Editable: boolean;
-  Deletable: boolean;
+  Editable: 0 | 1;
+  Deletable: 0 | 1;
 }
 
 export interface ManagementAccountChtCurrentUser {
@@ -22,9 +22,9 @@ export interface ManagementAccountCht {
   CurrentUser: ManagementAccountChtCurrentUser;
   Users: ManagementAccountChtUser[];
   MaxLength: number;
-  NoSpace: boolean;
-  DMWritable: boolean;
-  DMReadable: boolean;
+  NoSpace: 0 | 1;
+  DMWritable: 0 | 1;
+  DMReadable: 0 | 1;
 }
 
 export interface ManagementAccountChtResponse {

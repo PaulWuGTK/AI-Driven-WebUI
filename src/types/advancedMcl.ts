@@ -12,9 +12,9 @@ export type AdvancedMclServiceName =
 export type AdvancedMclServiceField = 'LAN' | 'WAN' | 'TrustDomain' | 'Port';
 
 export interface AdvancedMclServiceConfig {
-  LAN: boolean;
-  WAN: boolean;
-  TrustDomain: boolean;
+  LAN: 0 | 1;
+  WAN: 0 | 1;
+  TrustDomain: 0 | 1;
   Port: string;
 }
 

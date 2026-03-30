@@ -8,6 +8,7 @@ import type {
   AdvancedMclTrustDomainUpdateRequest,
   AdvancedMclWanAccessMode,
 } from '../../types/advancedMcl';
+import { toFlag01 } from '../flag01';
 import {
   getAdvancedMclMGMTMockData,
   getAdvancedMclTrustDomainMockData,
@@ -17,6 +18,7 @@ import {
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
+const MGMT_ENDPOINT = `${API_BASE_URL}/info?list=AdvancedMclMGMT`;
 
 const SERVICE_ORDER: AdvancedMclServiceName[] = [
   'HTTP',
@@ -36,12 +38,6 @@ const DEFAULT_READ_ONLY = {
   SSH: [],
   PING: [],
   TFTP: [],
-};
-
-const toBoolean = (value: unknown): boolean => {
-  if (value === true || value === 1 || value === '1') return true;
-  if (value === false || value === 0 || value === '0') return false;
-  return false;
 };
 
 const normalizeWanAccessMode = (value: unknown): AdvancedMclWanAccessMode =>
@@ -70,9 +66,18 @@ const normalizeMgmtResponse = (raw: AdvancedMclMGMTResponse): AdvancedMclMGMTRes
   for (const serviceName of SERVICE_ORDER) {
     const service = source.Services?.[serviceName];
     normalizedServices[serviceName] = {
-      LAN: toBoolean(service?.LAN),
-      WAN: toBoolean(service?.WAN),
-      TrustDomain: toBoolean(service?.TrustDomain),
+      LAN: toFlag01(service?.LAN, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.LAN`,
+      }),
+      WAN: toFlag01(service?.WAN, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.WAN`,
+      }),
+      TrustDomain: toFlag01(service?.TrustDomain, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.TrustDomain`,
+      }),
       Port: String(service?.Port ?? ''),
     };
   }
@@ -92,6 +97,41 @@ const normalizeMgmtResponse = (raw: AdvancedMclMGMTResponse): AdvancedMclMGMTRes
   };
 };
 
+const normalizeMgmtPayload = (payload: AdvancedMclMGMTUpdateRequest): AdvancedMclMGMTUpdateRequest => {
+  const normalizedServices = {} as AdvancedMclServiceMap;
+  for (const serviceName of SERVICE_ORDER) {
+    const service = payload.AdvancedMclMGMT.Services?.[serviceName];
+    normalizedServices[serviceName] = {
+      LAN: toFlag01(service?.LAN, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.LAN`,
+        reportBoolean: false,
+      }),
+      WAN: toFlag01(service?.WAN, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.WAN`,
+        reportBoolean: false,
+      }),
+      TrustDomain: toFlag01(service?.TrustDomain, 0, {
+        endpoint: MGMT_ENDPOINT,
+        path: `AdvancedMclMGMT.Services.${serviceName}.TrustDomain`,
+        reportBoolean: false,
+      }),
+      Port: String(service?.Port ?? ''),
+    };
+  }
+
+  return {
+    AdvancedMclMGMT: {
+      WanAccessMode: normalizeWanAccessMode(payload.AdvancedMclMGMT.WanAccessMode),
+      WanAccessInterfaces: Array.isArray(payload.AdvancedMclMGMT.WanAccessInterfaces)
+        ? payload.AdvancedMclMGMT.WanAccessInterfaces.map((entry) => String(entry))
+        : [],
+      Services: normalizedServices,
+    },
+  };
+};
+
 export const getAdvancedMclMGMT = async (): Promise<AdvancedMclMGMTResponse> => {
   if (isDevelopment) {
     return normalizeMgmtResponse(getAdvancedMclMGMTMockData());
@@ -104,13 +144,15 @@ export const getAdvancedMclMGMT = async (): Promise<AdvancedMclMGMTResponse> => 
 export const updateAdvancedMclMGMT = async (
   payload: AdvancedMclMGMTUpdateRequest
 ): Promise<AdvancedMclMGMTResponse> => {
+  const normalizedPayload = normalizeMgmtPayload(payload);
+
   if (isDevelopment) {
-    return normalizeMgmtResponse(updateAdvancedMclMGMTMockData(payload));
+    return normalizeMgmtResponse(updateAdvancedMclMGMTMockData(normalizedPayload));
   }
 
-  const response = await callApi<AdvancedMclMGMTResponse>(`${API_BASE_URL}/info?list=AdvancedMclMGMT`, {
+  const response = await callApi<AdvancedMclMGMTResponse>(MGMT_ENDPOINT, {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(normalizedPayload),
   });
   return normalizeMgmtResponse(response);
 };

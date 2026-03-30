@@ -15,7 +15,12 @@ const normalizeResponse = (data: StaticRouteResponse): StaticRouteResponse => ({
         route.Enable,
         0,
         { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv4.[${index}].Enable` }
-      )
+      ),
+      UsedGWIp: toFlag01(
+        route.UsedGWIp,
+        0,
+        { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv4.[${index}].UsedGWIp` }
+      ),
     })),
     IPv6: (data.StaticRoute.IPv6 || []).map((route, index) => ({
       ...route,
@@ -23,7 +28,12 @@ const normalizeResponse = (data: StaticRouteResponse): StaticRouteResponse => ({
         route.Enable,
         0,
         { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv6.[${index}].Enable` }
-      )
+      ),
+      UsedGWIp: toFlag01(
+        route.UsedGWIp,
+        0,
+        { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv6.[${index}].UsedGWIp` }
+      ),
     }))
   }
 });
@@ -37,7 +47,16 @@ const normalizePayload = (data: StaticRouteUpdateRequest): StaticRouteUpdateRequ
         route.Enable,
         0,
         { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv4.[${index}].Enable` }
-      )
+      ),
+      UsedGWIp: toFlag01(
+        route.UsedGWIp,
+        0,
+        {
+          endpoint: `${API_BASE_URL}/info?list=StaticRoute`,
+          path: `StaticRoute.IPv4.[${index}].UsedGWIp`,
+          reportBoolean: false
+        }
+      ),
     })),
     IPv6: (data.StaticRoute.IPv6 || []).map((route, index) => ({
       ...route,
@@ -45,7 +64,16 @@ const normalizePayload = (data: StaticRouteUpdateRequest): StaticRouteUpdateRequ
         route.Enable,
         0,
         { endpoint: `${API_BASE_URL}/info?list=StaticRoute`, path: `StaticRoute.IPv6.[${index}].Enable` }
-      )
+      ),
+      UsedGWIp: toFlag01(
+        route.UsedGWIp,
+        0,
+        {
+          endpoint: `${API_BASE_URL}/info?list=StaticRoute`,
+          path: `StaticRoute.IPv6.[${index}].UsedGWIp`,
+          reportBoolean: false
+        }
+      ),
     }))
   }
 });

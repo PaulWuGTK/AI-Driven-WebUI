@@ -34,7 +34,7 @@ const users = computed(() => accountData.value?.ManagementAccountCht.Users ?? []
 const currentUser = computed(() => accountData.value?.ManagementAccountCht.CurrentUser ?? null);
 const isSuper = computed(() => currentUser.value?.UserType === 'super');
 const maxLength = computed(() => accountData.value?.ManagementAccountCht.MaxLength ?? 15);
-const noSpace = computed(() => accountData.value?.ManagementAccountCht.NoSpace ?? true);
+const noSpace = computed(() => accountData.value?.ManagementAccountCht.NoSpace ?? 1);
 const requiresOldPassword = computed(() => true);
 const showPasswordPanel = computed(() => panelMode.value === 'password');
 const showAddPanel = computed(() => panelMode.value === 'add');
@@ -139,7 +139,7 @@ const validatePasswordForm = (): string | null => {
   }
 
   if (
-    noSpace.value &&
+    noSpace.value === 1 &&
     (newPassword.value.includes(' ') || (requiresOldPassword.value && oldPassword.value.includes(' ')))
   ) {
     return t('account.errorPasswordSpace');
@@ -165,7 +165,7 @@ const validateAddForm = (): string | null => {
     return t('account.errorPasswordLength', { maxLength: maxLength.value });
   }
 
-  if (noSpace.value && addPassword.value.includes(' ')) {
+  if (noSpace.value === 1 && addPassword.value.includes(' ')) {
     return t('account.errorPasswordSpace');
   }
 
@@ -373,7 +373,7 @@ onMounted(fetchAccountSettings);
                   <span class="material-icons">edit</span>
                 </button>
                 <button
-                  v-if="isSuper && row.Deletable"
+                  v-if="isSuper && row.Deletable === 1"
                   class="btn-action"
                   :data-testid="qa(mobile ? `account-cht-card-delete-${row.Username}` : `account-cht-delete-${row.Username}`)"
                   :disabled="loading"
