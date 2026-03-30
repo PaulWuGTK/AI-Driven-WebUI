@@ -20,8 +20,38 @@ const normalizeResponse = (
       Enable: toFlag01(user.Enable, 0, {
         endpoint: ACCOUNT_CHT_ENDPOINT,
         path: `ManagementAccountCht.Users[${user.Username || user.UserPath || 'unknown'}].Enable`
+      }),
+      StaticUser: toFlag01(user.StaticUser, 0, {
+        endpoint: ACCOUNT_CHT_ENDPOINT,
+        path: `ManagementAccountCht.Users[${user.Username || user.UserPath || 'unknown'}].StaticUser`,
+        reportBoolean: false
+      }),
+      Editable: toFlag01(user.Editable, 1, {
+        endpoint: ACCOUNT_CHT_ENDPOINT,
+        path: `ManagementAccountCht.Users[${user.Username || user.UserPath || 'unknown'}].Editable`,
+        reportBoolean: false
+      }),
+      Deletable: toFlag01(user.Deletable, 0, {
+        endpoint: ACCOUNT_CHT_ENDPOINT,
+        path: `ManagementAccountCht.Users[${user.Username || user.UserPath || 'unknown'}].Deletable`,
+        reportBoolean: false
       })
-    }))
+    })),
+    NoSpace: toFlag01(response.ManagementAccountCht.NoSpace, 1, {
+      endpoint: ACCOUNT_CHT_ENDPOINT,
+      path: 'ManagementAccountCht.NoSpace',
+      reportBoolean: false
+    }),
+    DMWritable: toFlag01(response.ManagementAccountCht.DMWritable, 1, {
+      endpoint: ACCOUNT_CHT_ENDPOINT,
+      path: 'ManagementAccountCht.DMWritable',
+      reportBoolean: false
+    }),
+    DMReadable: toFlag01(response.ManagementAccountCht.DMReadable, 1, {
+      endpoint: ACCOUNT_CHT_ENDPOINT,
+      path: 'ManagementAccountCht.DMReadable',
+      reportBoolean: false
+    })
   }
 });
 
@@ -56,27 +86,27 @@ export async function getAccountChtSettings(): Promise<ManagementAccountChtRespo
             UserPath: 'Users.User.1.',
             Username: 'admin',
             Enable: 1,
-            StaticUser: true,
+            StaticUser: 1,
             UserType: 'super',
             RoleAlias: 'WebAdmin',
-            Editable: true,
-            Deletable: false
+            Editable: 1,
+            Deletable: 0
           },
           {
             UserPath: 'Users.User.2.',
             Username: 'user',
             Enable: 1,
-            StaticUser: false,
+            StaticUser: 0,
             UserType: 'normal',
             RoleAlias: 'WebViewer',
-            Editable: true,
-            Deletable: true
+            Editable: 1,
+            Deletable: 1
           }
         ],
         MaxLength: 15,
-        NoSpace: true,
-        DMWritable: true,
-        DMReadable: true
+        NoSpace: 1,
+        DMWritable: 1,
+        DMReadable: 1
       }
     });
   }

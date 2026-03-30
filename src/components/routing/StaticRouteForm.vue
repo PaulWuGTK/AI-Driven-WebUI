@@ -29,7 +29,7 @@ const formData = ref<{
   DestMask: string;
   PrefixLen: number | null;
   GatewayIp: string;
-  UsedGWIp: boolean;
+  UsedGWIp: 0 | 1;
   WanIf: string;
 }>({
   Enable: 1,
@@ -39,7 +39,7 @@ const formData = ref<{
   DestMask: '',
   PrefixLen: null,
   GatewayIp: '',
-  UsedGWIp: true,
+  UsedGWIp: 1,
   WanIf: props.wanIfList.length > 0 ? props.wanIfList[0] : ''
 });
 
@@ -71,7 +71,7 @@ if (props.editingItem) {
 }
 
 watch(() => formData.value.UsedGWIp, (newVal) => {
-  if (!newVal) {
+  if (newVal === 0) {
     formData.value.GatewayIp = '';
   }
 });
@@ -159,7 +159,7 @@ const validateForm = (): boolean => {
     }
   }
 
-  if (formData.value.UsedGWIp && formData.value.GatewayIp.trim()) {
+  if (formData.value.UsedGWIp === 1 && formData.value.GatewayIp.trim()) {
     if (formData.value.IpType === 'IPv4') {
       if (!validateIPv4(formData.value.GatewayIp)) {
         formErrors.value.GatewayIp = t('routing.invalidGatewayIPv4');
@@ -322,13 +322,15 @@ const handleClose = () => {
               {{ t('routing.useGatewayIpAddress') }}
               <BaseSwitch
                 v-model="formData.UsedGWIp"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('static-route-form-use-gw-ip')"
                 :slider-data-testid="qa('static-route-form-use-gw-ip-slider')"
               />
             </label>
           </div>
 
-          <div class="form-group" v-if="formData.UsedGWIp">
+          <div class="form-group" v-if="formData.UsedGWIp === 1">
             <label>
               {{ t('routing.gatewayIpAddress') }}
             </label>

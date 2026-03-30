@@ -177,10 +177,10 @@ const toggleWanInterface = (interfaceName: string, enabled: boolean) => {
 const setServiceBooleanField = (
   serviceName: AdvancedMclServiceName,
   field: Exclude<AdvancedMclServiceField, 'Port'>,
-  value: boolean
+  value: boolean | 0 | 1
 ) => {
   if (!mgmtDraft.value || isReadOnlyField(serviceName, field) || savingMgmt.value) return;
-  mgmtDraft.value.Services[serviceName][field] = value;
+  mgmtDraft.value.Services[serviceName][field] = value === true || value === 1 ? 1 : 0;
 };
 
 const setServicePort = (serviceName: AdvancedMclServiceName, value: string | number) => {
@@ -528,7 +528,7 @@ onMounted(async () => {
             <template #cell-lan="{ row }">
               <div class="cell-checkbox">
                 <BaseCheckbox
-                  :model-value="row.config.LAN"
+                  :model-value="row.config.LAN === 1"
                   :disabled="isReadOnlyField(row.service, 'LAN') || savingMgmt"
                   :data-testid="qa(`mcl-lan-${row.service.toLowerCase()}`)"
                   @update:model-value="(checked) => setServiceBooleanField(row.service, 'LAN', checked)"
@@ -539,7 +539,7 @@ onMounted(async () => {
             <template #cell-wan="{ row }">
               <div class="cell-checkbox">
                 <BaseCheckbox
-                  :model-value="row.config.WAN"
+                  :model-value="row.config.WAN === 1"
                   :disabled="isReadOnlyField(row.service, 'WAN') || savingMgmt"
                   :data-testid="qa(`mcl-wan-${row.service.toLowerCase()}`)"
                   @update:model-value="(checked) => setServiceBooleanField(row.service, 'WAN', checked)"
@@ -550,7 +550,7 @@ onMounted(async () => {
             <template #cell-trustdomain="{ row }">
               <div class="cell-checkbox">
                 <BaseCheckbox
-                  :model-value="row.config.TrustDomain"
+                  :model-value="row.config.TrustDomain === 1"
                   :disabled="isReadOnlyField(row.service, 'TrustDomain') || savingMgmt"
                   :data-testid="qa(`mcl-trust-domain-${row.service.toLowerCase()}`)"
                   @update:model-value="(checked) => setServiceBooleanField(row.service, 'TrustDomain', checked)"

@@ -4,7 +4,7 @@ export interface StaticRouteIPv4 {
   DestIp: string;
   DestMask: string;
   GatewayIp: string;
-  UsedGWIp: boolean;
+  UsedGWIp: 0 | 1;
   WanIf: string;
 }
 
@@ -14,7 +14,7 @@ export interface StaticRouteIPv6 {
   DestIp: string;
   PrefixLen: number;
   GatewayIp: string;
-  UsedGWIp: boolean;
+  UsedGWIp: 0 | 1;
   WanIf: string;
 }
 
