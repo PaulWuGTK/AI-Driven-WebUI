@@ -343,9 +343,11 @@ Use these defaults when touching locale files to avoid encoding corruption:
 2. Prefer minimal edits with `apply_patch` for locale updates.
 3. Before batch edits, create a backup copy:
    - `Copy-Item src/i18n/locales src/i18n/locales.bak -Recurse`
-4. Verify new keys in one command:
+4. After changes are validated (`rg` key check + `npm run build`), remove backup:
+   - `Remove-Item -Recurse -Force src/i18n/locales.bak`
+5. Verify new keys in one command:
    - `rg -n "<newKey1>|<newKey2>" src/i18n/locales -g "*.ts"`
-5. Final verification must include:
+6. Final verification must include:
    - `npm run build`
 
 ### 11.7 Recovery Playbook (If Mojibake Happens)
@@ -371,3 +373,40 @@ Use these defaults when touching locale files to avoid encoding corruption:
    - payload root check (`M.func(arg)` unwrapped payload rule)
    - schema strictness decision (schema vs manual validation)
    - `0/1` vs boolean normalization where needed
+
+---
+
+## 13) Vue Safe Editing Rules (Backup + Validate + Cleanup)
+
+Use this workflow when editing `.vue` files to reduce accidental breakage.
+
+### 13.1 Before Editing
+1. If touching a few files, back up only those files:
+   - `Copy-Item src/views/advanced/lcm/ExecEnvTab.vue src/views/advanced/lcm/ExecEnvTab.vue.bak`
+2. If touching many files in one feature, back up the feature folder:
+   - `Copy-Item src/views/advanced/lcm src/views/advanced/lcm.bak -Recurse`
+3. Prefer small incremental edits instead of large one-shot replacements.
+
+### 13.2 During Editing
+1. Keep one concern per change (UI, logic, i18n, API adapter).
+2. Prefer `apply_patch` for minimal and auditable diffs.
+3. Avoid broad regex replacement across `.vue` files unless absolutely needed.
+
+### 13.3 Validation
+1. Type/build check:
+   - `npm run build`
+2. Quick search for likely regressions (example):
+   - `rg -n "TODO|FIXME|hard-coded|console\\.log" src/views src/components`
+3. Run a page-level smoke test in browser (load page, trigger save/apply, verify no console errors).
+
+### 13.4 Cleanup
+1. Only after validation passes, remove backups:
+   - `Remove-Item src/views/advanced/lcm/ExecEnvTab.vue.bak -Force`
+   - `Remove-Item src/views/advanced/lcm.bak -Recurse -Force`
+
+### 13.5 Recovery (If Vue Page Breaks)
+1. Restore backup immediately:
+   - `Copy-Item src/views/advanced/lcm/ExecEnvTab.vue.bak src/views/advanced/lcm/ExecEnvTab.vue -Force`
+2. Re-apply changes in smaller chunks.
+3. Re-run:
+   - `npm run build`

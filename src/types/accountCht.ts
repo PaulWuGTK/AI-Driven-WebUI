@@ -3,7 +3,7 @@ export type ManagementAccountChtUserType = 'super' | 'normal';
 export interface ManagementAccountChtUser {
   UserPath: string;
   Username: string;
-  Enable: boolean;
+  Enable: 0 | 1;
   StaticUser: boolean;
   UserType: ManagementAccountChtUserType;
   RoleAlias: string;
@@ -39,7 +39,7 @@ export interface ManagementAccountChtUpdateRequest {
     OldPassword?: string;
     NewPassword?: string;
     UserType?: ManagementAccountChtUserType;
-    Enable?: boolean;
+    Enable?: 0 | 1;
   };
 }
 

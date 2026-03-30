@@ -194,9 +194,7 @@ const handleDelete = async (name: string) => {
 
 const handleToggleEnable = async (item: ExecEnvItem) => {
   const originalEnable = item.Enable;
-  const nextEnable = !originalEnable;
-
-  // 讓 UI 先變化（CSS transition 才會順）
+  const nextEnable: 0 | 1 = originalEnable === 1 ? 0 : 1;
   item.Enable = nextEnable;
 
   togglingName.value = item.Name;
@@ -281,6 +279,8 @@ onMounted(fetchConfig);
                   <td :data-testid="qa(`lcm-execenv-enabled-${index}`)">
                     <BaseSwitch
                       :model-value="item.Enable"
+                      :true-value="1"
+                      :false-value="0"
                       :disabled="togglingName === item.Name"
                       :data-testid="qa(`lcm-execenv-enable-toggle-table-${index}`)"
                       :slider-data-testid="qa(`lcm-execenv-enable-toggle-slider-table-${index}`)"
@@ -331,6 +331,8 @@ onMounted(fetchConfig);
                 <span class="card-label">{{ t('lcm.enabled') }}</span>
                 <BaseSwitch
                   :model-value="item.Enable"
+                  :true-value="1"
+                  :false-value="0"
                   :disabled="togglingName === item.Name"
                   :data-testid="qa(`lcm-execenv-enable-toggle-card-${index}`)"
                   :slider-data-testid="qa(`lcm-execenv-enable-toggle-slider-card-${index}`)"
@@ -742,3 +744,4 @@ onMounted(fetchConfig);
   }
 }
 </style>
+

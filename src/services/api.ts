@@ -18,13 +18,10 @@ import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/s
 import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { handleApiResponse } from '../utils/apiUtils';
 import { callApi } from './apiClient';
+import { toFlag01 } from './flag01';
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
-
-const toFlag01 = (value: unknown): 0 | 1 => {
-  return value === 1 || value === '1' || value === true ? 1 : 0;
-};
 
 const normalizeWlanStatusResponse = (response: WlanStatusResponse): WlanStatusResponse => {
   return {

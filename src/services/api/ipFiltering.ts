@@ -1,10 +1,9 @@
 import apiClient from '../apiClient';
 import type { IpFilteringResponse, IpFilteringRequest } from '../../types/ipFiltering';
 import { getIpFilteringMockData, updateIpFilteringMockData } from '../mockData/ipFilteringMockData';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
-const toFlag01 = (value: unknown): 0 | 1 =>
-  value === 1 || value === '1' || value === true ? 1 : 0;
 
 export const ipFilteringApi = {
   getConfig: async (): Promise<IpFilteringResponse> => {
@@ -16,7 +15,11 @@ export const ipFilteringApi = {
       ...response,
       IPFiltering: {
         ...response.IPFiltering,
-        Enable: toFlag01(response.IPFiltering.Enable),
+        Enable: toFlag01(
+          response.IPFiltering.Enable,
+          0,
+          { endpoint: '/API/info?list=IPFiltering', path: 'IPFiltering.Enable' }
+        ),
       }
     };
   },
@@ -25,7 +28,11 @@ export const ipFilteringApi = {
     const normalized: IpFilteringRequest = {
       IPFiltering: {
         ...config.IPFiltering,
-        Enable: toFlag01(config.IPFiltering.Enable),
+        Enable: toFlag01(
+          config.IPFiltering.Enable,
+          0,
+          { endpoint: '/API/info?list=IPFiltering', path: 'IPFiltering.Enable' }
+        ),
       }
     };
     if (isDevelopment) {

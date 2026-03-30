@@ -245,7 +245,7 @@ const handleAddApply = async () => {
         Username: addUsername.value,
         NewPassword: addPassword.value,
         UserType: addUserType.value,
-        Enable: true
+        Enable: 1
       }
     });
 
@@ -358,7 +358,7 @@ onMounted(fetchAccountSettings);
             </template>
 
             <template #cell-Enable="{ row }">
-              {{ row.Enable ? t('common.yes') : t('common.no') }}
+              {{ row.Enable === 1 ? t('common.yes') : t('common.no') }}
             </template>
 
             <template #cell-actions="{ row, mobile }">

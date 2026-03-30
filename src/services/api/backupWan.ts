@@ -1,8 +1,6 @@
 import { apiClient } from '../apiClient';
 import type { BackupWANResponse, BackupWANRequest } from '../../types/backupWan';
-
-const toFlag01 = (value: unknown): 0 | 1 =>
-  value === 1 || value === '1' || value === true ? 1 : 0;
+import { toFlag01 } from '../flag01';
 
 export const backupWanApi = {
   getConfig: async () => {

@@ -4,10 +4,9 @@ import {
   getServiceControlMockData,
   updateServiceControlMockData
 } from '../mockData/serviceControlMockData';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
-const toFlag01 = (value: unknown): 0 | 1 =>
-  value === 1 || value === '1' || value === true ? 1 : 0;
 
 export const getServiceControl = async (): Promise<ServiceControlResponse> => {
   if (isDevelopment) {

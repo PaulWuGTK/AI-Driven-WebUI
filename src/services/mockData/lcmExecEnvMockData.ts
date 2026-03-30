@@ -8,7 +8,7 @@ const mockLcmExecEnvData: LcmExecEnvResponse = {
       {
         Name: 'generic',
         Status: 'Up',
-        Enable: true,
+        Enable: 1,
         AllocatedCpu: 100,
         AllocatedMem: 1,
         AllocatedDisk: 1
@@ -16,7 +16,7 @@ const mockLcmExecEnvData: LcmExecEnvResponse = {
       {
         Name: 'test-1',
         Status: 'Error',
-        Enable: true,
+        Enable: 1,
         AllocatedCpu: 50,
         AllocatedMem: 10,
         AllocatedDisk: 2
@@ -24,7 +24,7 @@ const mockLcmExecEnvData: LcmExecEnvResponse = {
       {
         Name: 'test-2',
         Status: 'Restarting',
-        Enable: true,
+        Enable: 1,
         AllocatedCpu: 75,
         AllocatedMem: 512,
         AllocatedDisk: 100
@@ -32,7 +32,7 @@ const mockLcmExecEnvData: LcmExecEnvResponse = {
       {
         Name: 'test-3',
         Status: 'Disabled',
-        Enable: false,
+        Enable: 0,
         AllocatedCpu: 60,
         AllocatedMem: 256,
         AllocatedDisk: 50
@@ -51,7 +51,7 @@ export const updateLcmExecEnvMockData = (data: LcmExecEnvRequest): LcmExecEnvRes
     mockLcmExecEnvData.AdvancedLcmExecEnv.ExecEnvList.push({
       Name: name,
       Status: 'Up',
-      Enable: true,
+      Enable: 1,
       AllocatedCpu: data.AdvancedLcmExecEnv.AllocatedCpu || 100,
       AllocatedMem: data.AdvancedLcmExecEnv.AllocatedMem || 1,
       AllocatedDisk: data.AdvancedLcmExecEnv.AllocatedDisk || 1
