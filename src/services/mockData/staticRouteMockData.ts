@@ -4,7 +4,7 @@ export const staticRouteMockData: StaticRouteResponse = {
   StaticRoute: {
     IPv4: [
       {
-        Enable: true,
+        Enable: 1,
         Alias: "RULE1",
         DestIp: "10.10.10.100",
         DestMask: "255.255.255.0",
@@ -13,7 +13,7 @@ export const staticRouteMockData: StaticRouteResponse = {
         WanIf: "IPoE"
       },
       {
-        Enable: false,
+        Enable: 0,
         Alias: "RULE2",
         DestIp: "20.20.20.100",
         DestMask: "255.255.255.0",
@@ -24,7 +24,7 @@ export const staticRouteMockData: StaticRouteResponse = {
     ],
     IPv6: [
       {
-        Enable: true,
+        Enable: 1,
         Alias: "RULE6_1",
         DestIp: "2001:db8:100::",
         PrefixLen: 64,

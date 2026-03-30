@@ -6,7 +6,7 @@ export interface PortForwarding {
 }
 
 export interface NetworkConfig {
-  ShareParentNetwork: boolean;
+  ShareParentNetwork: 0 | 1;
   AccessInterfaces: string[];
   PortForwarding: PortForwarding[];
 }
@@ -18,7 +18,7 @@ export interface HostObject {
 }
 
 export interface AutoRestart {
-  Enable: boolean;
+  Enable: 0 | 1;
   MaxRetryCount: number;
 }
 
@@ -31,7 +31,7 @@ export interface DeploymentUnitItem {
   Description: string;
   InstalledEE: string;
   URL: string;
-  Privileged: boolean;
+  Privileged: 0 | 1;
   NetworkConfig: NetworkConfig;
   HostObject: HostObject[];
   AutoRestart: AutoRestart;
@@ -61,7 +61,7 @@ export interface LcmDeploymentUnitInstallRequest {
     Username: string;
     Password: string;
     InstalledEE: string;
-    Privileged: boolean;
+    Privileged: 0 | 1;
     NetworkConfig: NetworkConfig;
     HostObject: HostObject[];
     AutoRestart: AutoRestart;
@@ -77,7 +77,7 @@ export interface LcmDeploymentUnitUpdateRequest {
     Username: string;
     Password: string;
     InstalledEE: string;
-    Privileged: boolean;
+    Privileged: 0 | 1;
     NetworkConfig: NetworkConfig;
     HostObject: HostObject[];
     AutoRestart: AutoRestart;

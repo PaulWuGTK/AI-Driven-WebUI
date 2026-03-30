@@ -1,7 +1,7 @@
 export interface ExecEnvItem {
   Name: string;
   Status: string;
-  Enable: boolean;
+  Enable: 0 | 1;
   AllocatedCpu: number;
   AllocatedMem: number;
   AllocatedDisk: number;
@@ -21,7 +21,7 @@ export interface LcmExecEnvRequest {
   AdvancedLcmExecEnv: {
     Action: 'Add' | 'Update' | 'Delete';
     Name: string;
-    Enable?: boolean;
+    Enable?: 0 | 1;
     AllocatedCpu?: number;
     AllocatedMem?: number;
     AllocatedDisk?: number;

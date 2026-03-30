@@ -19,6 +19,7 @@ const toPathString = (segments: string[]): string => {
 };
 
 const shouldTrackKey = (key: string): boolean => KEY_PATTERN.test(key);
+const LAST_SEGMENT_PATTERN = /([^.[\]]+)(?:\[\d+\])?$/;
 
 const recordIssue = (endpoint: string, path: string, key: string, sample: boolean): Bool01LegacyIssue => {
   const mapKey = `${endpoint}|${path}`;
@@ -80,6 +81,23 @@ export const reportLegacyBooleanFields = (endpoint: string, payload: unknown): B
   }
 
   return newlyFound;
+};
+
+export const reportLegacyBooleanField = (
+  endpoint: string,
+  path: string,
+  sample: boolean,
+): Bool01LegacyIssue => {
+  const segmentMatch = path.match(LAST_SEGMENT_PATTERN);
+  const key = segmentMatch?.[1] ?? 'Enable';
+  const issue = recordIssue(endpoint, path, key, sample);
+
+  if (issue.hitCount === 1) {
+    console.warn('[bool01-migration] Legacy boolean field detected:', issue);
+    window.dispatchEvent(new CustomEvent(LEGACY_EVENT, { detail: { issues: [issue] } }));
+  }
+
+  return issue;
 };
 
 export const getLegacyBooleanIssues = (): Bool01LegacyIssue[] =>

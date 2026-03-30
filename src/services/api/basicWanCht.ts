@@ -1,19 +1,9 @@
 import apiClient from '../apiClient';
 import type { BasicWanChtResponse, BasicWanChtConfig } from '../../types/basicWanCht';
 import { basicWanChtMockData } from '../mockData/basicWanChtMockData';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
-
-const toFlag01 = (value: unknown, fallback: 0 | 1 = 0): 0 | 1 => {
-  if (typeof value === 'number') return value === 1 ? 1 : 0;
-  if (typeof value === 'boolean') return value ? 1 : 0;
-  if (typeof value === 'string') {
-    const normalized = value.trim().toLowerCase();
-    if (normalized === '1' || normalized === 'true') return 1;
-    if (normalized === '0' || normalized === 'false') return 0;
-  }
-  return fallback;
-};
 
 const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfig => ({
   PPPoE: {

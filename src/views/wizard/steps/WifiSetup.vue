@@ -21,6 +21,34 @@ const savedBandPasswords = ref({
   '6g': ''
 });
 
+const SECURITY_FALLBACK_PRIORITY = [
+  'WPA3-Personal',
+  'WPA2-WPA3-Personal',
+  'WPA2/WPA3-Personal',
+  'WPA2-Personal',
+  'OWE',
+  'None'
+];
+
+const pickValidSecurityMode = (requested: string, options: string[]): string => {
+  if (!options || options.length === 0) {
+    return requested;
+  }
+
+  if (options.includes(requested)) {
+    return requested;
+  }
+
+  const priorityMatch = SECURITY_FALLBACK_PRIORITY.find((mode) => options.includes(mode));
+  return priorityMatch ?? options[0];
+};
+
+const syncBandSecurityFromCommon = (commonSecurity: string) => {
+  props.config.wifi.bands['2g'].security = pickValidSecurityMode(commonSecurity, props.config.wifi.bands['2g'].securityOptions);
+  props.config.wifi.bands['5g'].security = pickValidSecurityMode(commonSecurity, props.config.wifi.bands['5g'].securityOptions);
+  props.config.wifi.bands['6g'].security = pickValidSecurityMode(commonSecurity, props.config.wifi.bands['6g'].securityOptions);
+};
+
 const commonSecurityOptions = computed(() => {
   if (props.config.wifi.common.securityOptions.length > 0) {
     return props.config.wifi.common.securityOptions.map(opt => ({ value: opt, label: opt }));
@@ -28,7 +56,7 @@ const commonSecurityOptions = computed(() => {
   return [
     { value: 'WPA3-Personal', label: 'WPA3-Personal' },
     { value: 'WPA2-Personal', label: 'WPA2-Personal' },
-    { value: 'WPA2/WPA3-Personal', label: 'WPA2/WPA3-Personal' }
+    { value: 'WPA2-WPA3-Personal', label: 'WPA2-WPA3-Personal' }
   ];
 });
 
@@ -62,9 +90,7 @@ watch(() => props.config.wifi.smartConnect, (isEnabled) => {
     props.config.wifi.bands['2g'].ssid = props.config.wifi.common.ssid;
     props.config.wifi.bands['5g'].ssid = props.config.wifi.common.ssid;
     props.config.wifi.bands['6g'].ssid = props.config.wifi.common.ssid;
-    props.config.wifi.bands['2g'].security = props.config.wifi.common.security;
-    props.config.wifi.bands['5g'].security = props.config.wifi.common.security;
-    props.config.wifi.bands['6g'].security = props.config.wifi.common.security;
+    syncBandSecurityFromCommon(props.config.wifi.common.security);
     props.config.wifi.bands['2g'].password = savedBandPasswords.value['2g'];
     props.config.wifi.bands['5g'].password = savedBandPasswords.value['5g'];
     props.config.wifi.bands['6g'].password = savedBandPasswords.value['6g'];
@@ -93,9 +119,7 @@ watch(() => props.config.wifi.common.ssid, (newSsid) => {
 
 watch(() => props.config.wifi.common.security, (newSecurity) => {
   if (props.config.wifi.smartConnect) {
-    props.config.wifi.bands['2g'].security = newSecurity;
-    props.config.wifi.bands['5g'].security = newSecurity;
-    props.config.wifi.bands['6g'].security = newSecurity;
+    syncBandSecurityFromCommon(newSecurity);
   }
 });
 

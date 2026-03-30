@@ -164,13 +164,13 @@ const openEditModal = (item: DeploymentUnitItem) => {
     Username: '',
     Password: '',
     InstalledEE: item.InstalledEE,
-    Privileged: item.Privileged,
+    Privileged: item.Privileged === 1,
     NetworkMode: item.NetworkConfig?.ShareParentNetwork
       ? 'ShareParentNetwork'
       : ((item.NetworkConfig?.PortForwarding?.length || 0) > 0 ? 'PortForwarding' : ''),
     PortForwarding: [...(item.NetworkConfig?.PortForwarding || [])],
     HostObject: [...item.HostObject],
-    AutoRestartEnable: item.AutoRestart.Enable,
+    AutoRestartEnable: item.AutoRestart.Enable === 1,
     MaxRetryCount: item.AutoRestart.MaxRetryCount
   };
   formErrors.value = {

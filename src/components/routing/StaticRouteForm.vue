@@ -22,7 +22,7 @@ const { qa } = useQA();
 const { t } = useI18n();
 
 const formData = ref<{
-  Enable: boolean;
+  Enable: 0 | 1;
   Alias: string;
   IpType: 'IPv4' | 'IPv6';
   DestIp: string;
@@ -32,7 +32,7 @@ const formData = ref<{
   UsedGWIp: boolean;
   WanIf: string;
 }>({
-  Enable: true,
+  Enable: 1,
   Alias: '',
   IpType: 'IPv4',
   DestIp: '',
@@ -233,6 +233,8 @@ const handleClose = () => {
               {{ t('routing.enable') }}
               <BaseSwitch
                 v-model="formData.Enable"
+                :true-value="1"
+                :false-value="0"
                 :data-testid="qa('static-route-form-enable')"
                 :slider-data-testid="qa('static-route-form-enable-slider')"
               />

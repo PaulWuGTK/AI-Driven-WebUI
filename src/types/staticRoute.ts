@@ -1,5 +1,5 @@
 export interface StaticRouteIPv4 {
-  Enable: boolean;
+  Enable: 0 | 1;
   Alias: string;
   DestIp: string;
   DestMask: string;
@@ -9,7 +9,7 @@ export interface StaticRouteIPv4 {
 }
 
 export interface StaticRouteIPv6 {
-  Enable: boolean;
+  Enable: 0 | 1;
   Alias: string;
   DestIp: string;
   PrefixLen: number;

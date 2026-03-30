@@ -4,15 +4,17 @@ import {
   getGeneralMacFilteringMockData,
   updateGeneralMacFilteringMockData
 } from '../mockData/generalMacFilteringMockData';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
-const toFlag01 = (value: unknown): 0 | 1 => (
-  value === 1 || value === '1' || value === true ? 1 : 0
-);
 
 const normalizeResponse = (data: GeneralMacFilteringResponse): GeneralMacFilteringResponse => ({
   MACFiltering: {
-    Enable: toFlag01(data.MACFiltering.Enable),
+    Enable: toFlag01(
+      data.MACFiltering.Enable,
+      0,
+      { endpoint: '/API/info?list=MACFiltering', path: 'MACFiltering.Enable' }
+    ),
     WhiteList: data.MACFiltering.WhiteList,
     BlackList: data.MACFiltering.BlackList
   }
@@ -30,7 +32,11 @@ export const getGeneralMacFiltering = async (): Promise<GeneralMacFilteringRespo
 export const updateGeneralMacFiltering = async (data: GeneralMacFilteringUpdateRequest): Promise<GeneralMacFilteringResponse> => {
   const normalizedData: GeneralMacFilteringUpdateRequest = {
     MACFiltering: {
-      Enable: toFlag01(data.MACFiltering.Enable),
+      Enable: toFlag01(
+        data.MACFiltering.Enable,
+        0,
+        { endpoint: '/API/info?list=MACFiltering', path: 'MACFiltering.Enable' }
+      ),
       WhiteList: data.MACFiltering.WhiteList,
       BlackList: data.MACFiltering.BlackList
     }

@@ -1,9 +1,8 @@
 import type { DmzResponse, DmzUpdateRequest } from '../../types/dmz';
 import { callApi } from '../apiClient';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
-const toFlag01 = (value: unknown): 0 | 1 =>
-  value === 1 || value === '1' || value === true ? 1 : 0;
 
 export const getDmz = async (): Promise<DmzResponse> => {
   if (isDevelopment) {

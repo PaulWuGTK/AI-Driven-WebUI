@@ -1,12 +1,10 @@
 import type { UpnpResponse, UpnpUpdateRequest, UpnpUpdateResponse } from '../../types/upnp';
 import { callApi } from '../apiClient';
 import { getUpnpMockData, updateUpnpMockData } from '../mockData/upnpMockData';
+import { toFlag01 } from '../flag01';
 
 const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
-const toFlag01 = (value: unknown): 0 | 1 => (
-  value === 1 || value === '1' || value === true ? 1 : 0
-);
 
 const normalizeResponse = (response: UpnpResponse): UpnpResponse => ({
   ApplicationUpnp: {

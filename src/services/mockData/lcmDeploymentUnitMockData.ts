@@ -15,9 +15,9 @@ const mockLcmDeploymentUnitData: LcmDeploymentUnitResponse = {
         Description: 'Real-time System Monitor FastCGI App.',
         InstalledEE: 'generic',
         URL: 'docker://10.5.163.2:5000/arm64v8/sys-monitor:1.0.0',
-        Privileged: true,
+        Privileged: 1,
         NetworkConfig: {
-          ShareParentNetwork: false,
+          ShareParentNetwork: 0,
           AccessInterfaces: [],
           PortForwarding: [
             {
@@ -30,7 +30,7 @@ const mockLcmDeploymentUnitData: LcmDeploymentUnitResponse = {
         },
         HostObject: [],
         AutoRestart: {
-          Enable: true,
+          Enable: 1,
           MaxRetryCount: 10
         }
       },
@@ -43,15 +43,15 @@ const mockLcmDeploymentUnitData: LcmDeploymentUnitResponse = {
         Description: 'Real-time System Monitor FastCGI App.',
         InstalledEE: 'generic',
         URL: 'docker://10.5.163.2:5000/arm64v8/lcm-netdata:1.22.1',
-        Privileged: true,
+        Privileged: 1,
         NetworkConfig: {
-          ShareParentNetwork: true,
+          ShareParentNetwork: 1,
           AccessInterfaces: [],
           PortForwarding: []
         },
         HostObject: [],
         AutoRestart: {
-          Enable: false,
+          Enable: 0,
           MaxRetryCount: 10
         }
       }

@@ -13,10 +13,31 @@ import type {
 import { wizardMockData } from '../mockData/authMockData';
 
 const isDevelopment = import.meta.env.DEV;
+const SECURITY_FALLBACK_PRIORITY = [
+  'WPA3-Personal',
+  'WPA2-WPA3-Personal',
+  'WPA2/WPA3-Personal',
+  'WPA2-Personal',
+  'OWE',
+  'None'
+];
 
 function parseSecurityOptions(optionsString: string): string[] {
   if (!optionsString) return [];
   return optionsString.split(',').map(opt => opt.trim()).filter(opt => opt.length > 0);
+}
+
+function pickSupportedSecurityMode(requested: string, options: string[]): string {
+  if (!options || options.length === 0) {
+    return requested;
+  }
+
+  if (options.includes(requested)) {
+    return requested;
+  }
+
+  const priorityMatch = SECURITY_FALLBACK_PRIORITY.find((mode) => options.includes(mode));
+  return priorityMatch ?? options[0];
 }
 
 function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
@@ -71,6 +92,24 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
 }
 
 function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
+  const requestedCommonSecurity = config.wifi.common.security;
+  const commonSecurity = pickSupportedSecurityMode(
+    requestedCommonSecurity,
+    config.wifi.common.securityOptions
+  );
+  const security2g = pickSupportedSecurityMode(
+    config.wifi.smartConnect ? requestedCommonSecurity : config.wifi.bands['2g'].security,
+    config.wifi.bands['2g'].securityOptions
+  );
+  const security5g = pickSupportedSecurityMode(
+    config.wifi.smartConnect ? requestedCommonSecurity : config.wifi.bands['5g'].security,
+    config.wifi.bands['5g'].securityOptions
+  );
+  const security6g = pickSupportedSecurityMode(
+    config.wifi.smartConnect ? requestedCommonSecurity : config.wifi.bands['6g'].security,
+    config.wifi.bands['6g'].securityOptions
+  );
+
   return {
     WizardRouter: {
       Action: 'Config',
@@ -86,25 +125,25 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
         wificommon: {
           Enable: config.wifi.smartConnect ? 1 : 0,
           SSID: config.wifi.common.ssid,
-          SecurityMode: config.wifi.common.security,
+          SecurityMode: commonSecurity,
           Password: config.wifi.common.password
         },
         wifi2g: {
           Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
           SSID: config.wifi.bands['2g'].ssid,
-          SecurityMode: config.wifi.bands['2g'].security,
+          SecurityMode: security2g,
           Password: config.wifi.bands['2g'].password
         },
         wifi5g: {
           Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
           SSID: config.wifi.bands['5g'].ssid,
-          SecurityMode: config.wifi.bands['5g'].security,
+          SecurityMode: security5g,
           Password: config.wifi.bands['5g'].password
         },
         wifi6g: {
           Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
           SSID: config.wifi.bands['6g'].ssid,
-          SecurityMode: config.wifi.bands['6g'].security,
+          SecurityMode: security6g,
           Password: config.wifi.bands['6g'].password
         }
       },
