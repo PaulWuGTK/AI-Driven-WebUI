@@ -380,6 +380,7 @@ const translations = {
     memRange: 'Memory must be between 1 and {max}',
     diskRange: 'Disk must be between 1 and {max}',
     confirmDelete: 'Are you sure you want to delete this execution environment?',
+    confirmDeleteDeployment: 'Are you sure you want to delete this deployment unit?',
     deploymentUnit: 'Deployment Unit',
     addDU: 'Add DU',
     updateDU: 'Update DU',

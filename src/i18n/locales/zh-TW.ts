@@ -47,9 +47,11 @@ const translations = {
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',
     ddns: 'DDNS',
+    storageService: '儲存服務',
     management: '管理',
     reboot: '重新啟動',
     account: '帳戶管理',
+    language: '語言',
     ntp: 'NTP',
     device: '裝置管理',
     settings: '設定',
@@ -442,6 +444,8 @@ const translations = {
     advancedConfig: '進階設定',
     wpsConfig: 'WPS設定',
     meshNetwork: 'Mesh 網路',
+    wlanExtender: '無線延伸器',
+    wifiZones: 'WiFi 區域',
     settings: '設定',
     ssid: 'SSID',
     password: 'WPA金鑰',
@@ -694,6 +698,7 @@ const translations = {
     title: 'DMZ 設定',
     enable: '啟用 DMZ',
     ipAddress: 'IP 位址',
+    ipAddressHint: '請輸入 DMZ 主機的 IP 位址',
     description: 'DMZ（非軍事區）可將您區域網路中的某台電腦完整暴露於 Internet。當線上遊戲或視訊會議應用程式因 NAT 而無法正常運作時，可使用此功能。'
   },
   ddns: {

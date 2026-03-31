@@ -226,6 +226,8 @@ export interface Translations {
     uuid: string;
     vendor: string;
     version: string;
+    confirmDelete: string;
+    confirmDeleteDeployment: string;
   };
   systemStats: {
     title: string;
