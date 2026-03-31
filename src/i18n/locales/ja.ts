@@ -47,9 +47,11 @@ const translations = {
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',
     ddns: 'DDNS',
+    storageService: 'ストレージサービス',
     management: '管理',
     reboot: '再起動',
     account: 'アカウント管理',
+    language: '言語',
     ntp: 'NTP',
     device: 'デバイス管理',
     settings: '設定',
@@ -442,6 +444,8 @@ const translations = {
     advancedConfig: '詳細設定',
     wpsConfig: 'WPS設定',
     meshNetwork: 'メッシュネットワーク',
+    wlanExtender: '無線中継機',
+    wifiZones: 'WiFiゾーン',
     settings: '設定',
     ssid: 'SSID',
     password: 'WPAキー',
@@ -694,6 +698,7 @@ const translations = {
     title: 'DMZ 設定',
     enable: 'DMZ を有効化',
     ipAddress: 'IP アドレス',
+    ipAddressHint: 'DMZホストのIPアドレスを入力してください',
     description: 'DMZ（非武装地帯）を有効にすると、ローカルネットワーク上のコンピューターをインターネットに完全公開できます。NAT を介すると動作しにくいオンラインゲームやビデオ会議アプリに便利です。'
   },
   ddns: {

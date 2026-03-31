@@ -256,6 +256,25 @@ const loadTrustDomain = async (force = false) => {
   }
 };
 
+const refreshTrustDomainAfterUpdate = async (): Promise<boolean> => {
+  try {
+    const trustResponse = await getAdvancedMclTrustDomain();
+    const nokMessage = extractNokMessage(trustResponse);
+    if (nokMessage) {
+      showErrorMessage(nokMessage);
+      return false;
+    }
+
+    trustDomains.value = [...trustResponse.AdvancedMclTrustDomain];
+    trustLoaded.value = true;
+    return true;
+  } catch (err) {
+    console.error('Error refreshing MCL trust domain settings:', err);
+    showErrorMessage(t('mcl.errorFetch'));
+    return false;
+  }
+};
+
 const loadActiveTabData = async (tabId: TabId) => {
   if (tabId === 'mgmt') {
     await loadMgmt();
@@ -363,7 +382,9 @@ const handleAddTrustDomain = async () => {
       return;
     }
 
-    trustDomains.value = [...response.AdvancedMclTrustDomain];
+    const refreshed = await refreshTrustDomainAfterUpdate();
+    if (!refreshed) return;
+
     closeAddTrustDomainModal();
     showSuccessMessage(t('mcl.addTrustDomainSuccess'));
   } catch (err) {
@@ -400,7 +421,9 @@ const handleDeleteTrustDomain = async () => {
       return;
     }
 
-    trustDomains.value = [...response.AdvancedMclTrustDomain];
+    const refreshed = await refreshTrustDomainAfterUpdate();
+    if (!refreshed) return;
+
     closeDeleteTrustDomainDialog();
     showSuccessMessage(t('mcl.deleteTrustDomainSuccess'));
   } catch (err) {

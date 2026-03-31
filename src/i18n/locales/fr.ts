@@ -47,9 +47,11 @@ const translations = {
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',
     ddns: 'DDNS',
+    storageService: 'Service de stockage',
     management: 'Gestion',
     reboot: 'Redémarrer',
     account: 'Gestion du compte',
+    language: 'Langue',
     ntp: 'NTP',
     device: 'Gestion des appareils',
     settings: 'Paramètres',
@@ -442,6 +444,8 @@ const translations = {
     advancedConfig: 'Configuration avancée',
     wpsConfig: 'Configuration WPS',
     meshNetwork: 'Réseau Mesh',
+    wlanExtender: 'Répéteur sans fil',
+    wifiZones: 'Zones WiFi',
     settings: 'Paramètres',
     ssid: 'SSID',
     password: 'Clé WPA',
@@ -694,6 +698,7 @@ const translations = {
     title: 'Paramètres DMZ',
     enable: 'Activer la DMZ',
     ipAddress: 'Adresse IP',
+    ipAddressHint: 'Saisissez l’adresse IP de l’hôte DMZ',
     description: 'La DMZ (zone démilitarisée) permet d’exposer totalement un ordinateur de votre réseau local à Internet. Utile pour les jeux en ligne ou les applications de visioconférence qui rencontrent des problèmes avec le NAT.'
   },
   ddns: {

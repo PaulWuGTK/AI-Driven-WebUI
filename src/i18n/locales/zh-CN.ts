@@ -47,9 +47,11 @@ const translations = {
     xperienceControl: 'XperienceControl',
     upnp: 'UPnP IGD',
     ddns: 'DDNS',
+    storageService: '存储服务',
     management: '管理',
     reboot: '重新启动',
     account: '账户管理',
+    language: '语言',
     ntp: 'NTP',
     device: '设备管理',
     settings: '设置',
@@ -442,6 +444,8 @@ const translations = {
     advancedConfig: '高级配置',
     wpsConfig: 'WPS配置',
     meshNetwork: '网格网络',
+    wlanExtender: '无线扩展器',
+    wifiZones: 'WiFi 区域',
     settings: '设置',
     ssid: 'SSID',
     password: 'WPA密钥',
@@ -694,6 +698,7 @@ const translations = {
     title: 'DMZ 设置',
     enable: '启用 DMZ',
     ipAddress: 'IP 地址',
+    ipAddressHint: '请输入 DMZ 主机的 IP 地址',
     description: 'DMZ（隔离区）可让本地网络中的一台计算机完全暴露在 Internet 中。当在线游戏或视频会议由于 NAT 无法正常工作时，此功能非常有用。'
   },
   ddns: {
