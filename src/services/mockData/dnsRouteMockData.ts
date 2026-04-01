@@ -6,8 +6,6 @@ const mockDnsRouteData: DnsRouteResponse = {
       Enable: 1,
       Alias: 'dnsroute1',
       DomainName: 'ims1.cht.com.tw',
-      ResolvIP: '',
-      ResolvIPv6: '',
       SubMask: '255.255.0.0',
       WanIf: 'IPoE'
     },
@@ -15,8 +13,6 @@ const mockDnsRouteData: DnsRouteResponse = {
       Enable: 1,
       Alias: 'dnsroute2',
       DomainName: 'chtmod.intra',
-      ResolvIP: '',
-      ResolvIPv6: '',
       SubMask: '255.255.255.255',
       WanIf: 'IPoE'
     }

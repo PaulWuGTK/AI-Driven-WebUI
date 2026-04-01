@@ -11,8 +11,6 @@ interface DnsRouteFormData {
   DomainName: string;
   SubMask: string;
   WanIf: string;
-  ResolvIP: string;
-  ResolvIPv6: string;
 }
 
 const { qa } = useQA();
@@ -32,16 +30,12 @@ const formData = ref<DnsRouteFormData>({
   Enable: 1,
   DomainName: '',
   SubMask: '255.255.255.255',
-  WanIf: '',
-  ResolvIP: '',
-  ResolvIPv6: ''
+  WanIf: ''
 });
 const formErrors = ref({
   DomainName: '',
   SubMask: '',
-  WanIf: '',
-  ResolvIP: '',
-  ResolvIPv6: ''
+  WanIf: ''
 });
 
 const routeColumns = computed(() => [
@@ -93,9 +87,7 @@ const resetFormErrors = () => {
   formErrors.value = {
     DomainName: '',
     SubMask: '',
-    WanIf: '',
-    ResolvIP: '',
-    ResolvIPv6: ''
+    WanIf: ''
   };
 };
 
@@ -106,9 +98,7 @@ const openAddModal = () => {
     Enable: 1,
     DomainName: '',
     SubMask: '255.255.255.255',
-    WanIf: wanIfList.value[0] || '',
-    ResolvIP: '',
-    ResolvIPv6: ''
+    WanIf: wanIfList.value[0] || ''
   };
   showModal.value = true;
 };
@@ -123,9 +113,7 @@ const openEditModal = (index: number) => {
     Enable: route.Enable,
     DomainName: route.DomainName,
     SubMask: route.SubMask,
-    WanIf: route.WanIf,
-    ResolvIP: route.ResolvIP || '',
-    ResolvIPv6: route.ResolvIPv6 || ''
+    WanIf: route.WanIf
   };
   showModal.value = true;
 };
@@ -141,11 +129,6 @@ const validateIPv4 = (ip: string): boolean => {
   return ipv4Regex.test(ip);
 };
 
-const validateIPv6 = (ip: string): boolean => {
-  const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$/;
-  return ipv6Regex.test(ip);
-};
-
 const validateDomainName = (domainName: string): boolean => {
   const domainRegex = /^(?:\*\.)?[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*$/;
   return domainRegex.test(domainName);
@@ -157,8 +140,6 @@ const validateForm = (): boolean => {
 
   const domainName = formData.value.DomainName.trim();
   const subnetMask = formData.value.SubMask.trim();
-  const resolvIP = formData.value.ResolvIP.trim();
-  const resolvIPv6 = formData.value.ResolvIPv6.trim();
 
   if (!domainName) {
     formErrors.value.DomainName = t('routing.domainNameRequired');
@@ -188,16 +169,6 @@ const validateForm = (): boolean => {
 
   if (!formData.value.WanIf) {
     formErrors.value.WanIf = t('routing.wanInterfaceRequired');
-    isValid = false;
-  }
-
-  if (resolvIP && !validateIPv4(resolvIP)) {
-    formErrors.value.ResolvIP = t('routing.invalidResolverIPv4');
-    isValid = false;
-  }
-
-  if (resolvIPv6 && !validateIPv6(resolvIPv6)) {
-    formErrors.value.ResolvIPv6 = t('routing.invalidResolverIPv6');
     isValid = false;
   }
 
@@ -244,8 +215,6 @@ const handleSave = async () => {
       Enable: formData.value.Enable,
       Alias: currentRoute?.Alias || createAlias(),
       DomainName: formData.value.DomainName.trim(),
-      ResolvIP: formData.value.ResolvIP.trim(),
-      ResolvIPv6: formData.value.ResolvIPv6.trim(),
       SubMask: formData.value.SubMask.trim(),
       WanIf: formData.value.WanIf
     };
@@ -485,31 +454,6 @@ onMounted(() => {
           <span v-if="formErrors.SubMask" class="error-message">{{ formErrors.SubMask }}</span>
         </div>
 
-        <div class="form-group">
-          <label>{{ t('routing.resolverIpv4') }}</label>
-          <input
-            v-model="formData.ResolvIP"
-            type="text"
-            :disabled="processing"
-            :class="{ error: formErrors.ResolvIP }"
-            :placeholder="t('routing.resolverIpv4Placeholder')"
-            :data-testid="qa('dns-route-form-resolv-ipv4')"
-          />
-          <span v-if="formErrors.ResolvIP" class="error-message">{{ formErrors.ResolvIP }}</span>
-        </div>
-
-        <div class="form-group">
-          <label>{{ t('routing.resolverIpv6') }}</label>
-          <input
-            v-model="formData.ResolvIPv6"
-            type="text"
-            :disabled="processing"
-            :class="{ error: formErrors.ResolvIPv6 }"
-            :placeholder="t('routing.resolverIpv6Placeholder')"
-            :data-testid="qa('dns-route-form-resolv-ipv6')"
-          />
-          <span v-if="formErrors.ResolvIPv6" class="error-message">{{ formErrors.ResolvIPv6 }}</span>
-        </div>
       </div>
 
       <template #footer>
