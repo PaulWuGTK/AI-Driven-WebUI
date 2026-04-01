@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: 'La longueur du préfixe est requise',
     duplicateAlias: 'Le nom de route existe déjà. Veuillez utiliser un nom différent',
     comingSoon: 'Bientôt disponible',
-    featureInDevelopment: 'Cette fonctionnalité est actuellement en cours de développement'
+    featureInDevelopment: 'Cette fonctionnalité est actuellement en cours de développement',
+    addDnsRoute: 'Ajouter une route DNS',
+    editDnsRoute: 'Modifier la route DNS',
+    noDnsRoutes: 'Aucune route DNS configurée',
+    domainName: 'Nom de domaine',
+    wanInterface: 'Interface WAN',
+    domainNamePlaceholder: 'Saisissez un nom de domaine, par exemple ims1.cht.com.tw',
+    selectWanInterface: 'Sélectionnez une interface WAN',
+    resolverIpv4: 'Serveur DNS IPv4 (optionnel)',
+    resolverIpv4Placeholder: 'Par exemple 8.8.8.8',
+    resolverIpv6: 'Serveur DNS IPv6 (optionnel)',
+    resolverIpv6Placeholder: 'Par exemple 2001:4860:4860::8888',
+    domainNameRequired: 'Le nom de domaine est obligatoire',
+    domainNameInvalid: 'Format de nom de domaine invalide',
+    duplicateDomainName: 'Le nom de domaine existe déjà. Veuillez en utiliser un autre',
+    wanInterfaceRequired: 'L’interface WAN est obligatoire',
+    invalidResolverIPv4: 'Adresse IPv4 du serveur DNS invalide',
+    invalidResolverIPv6: 'Adresse IPv6 du serveur DNS invalide',
+    maxDnsRoutesNote: 'Remarque : un maximum de 20 entrées peut être ajouté.',
+    maxDnsRoutesReached: 'Un maximum de 20 routes DNS est autorisé',
+    confirmDeleteDnsRoute: 'Voulez-vous vraiment supprimer cette route DNS ?',
+    loadDnsRoutesFailed: 'Échec du chargement des routes DNS.',
+    saveDnsRoutesFailed: 'Échec de l’enregistrement des routes DNS.'
   }
 };
 

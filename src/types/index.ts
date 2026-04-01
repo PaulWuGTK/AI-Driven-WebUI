@@ -4,6 +4,7 @@ export * from './backupWan';
 export * from './cellular';
 export * from './dashboard';
 export * from './ddns';
+export * from './dnsRoute';
 export * from './dualImage';
 export * from './ipFiltering';
 export * from './lan';

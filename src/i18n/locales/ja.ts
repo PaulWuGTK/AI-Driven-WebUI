@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: 'プレフィックス長は必須です',
     duplicateAlias: 'ルート名は既に存在します。別の名前を使用してください',
     comingSoon: '近日公開',
-    featureInDevelopment: 'この機能は現在開発中です'
+    featureInDevelopment: 'この機能は現在開発中です',
+    addDnsRoute: 'DNS ルートを追加',
+    editDnsRoute: 'DNS ルートを編集',
+    noDnsRoutes: 'DNS ルートは設定されていません',
+    domainName: 'ドメイン名',
+    wanInterface: 'WAN インターフェース',
+    domainNamePlaceholder: 'ドメイン名を入力してください（例: ims1.cht.com.tw）',
+    selectWanInterface: 'WAN インターフェースを選択',
+    resolverIpv4: 'DNS サーバー IPv4（任意）',
+    resolverIpv4Placeholder: '例: 8.8.8.8',
+    resolverIpv6: 'DNS サーバー IPv6（任意）',
+    resolverIpv6Placeholder: '例: 2001:4860:4860::8888',
+    domainNameRequired: 'ドメイン名は必須です',
+    domainNameInvalid: '無効なドメイン名形式です',
+    duplicateDomainName: 'ドメイン名は既に存在します。別のドメインを使用してください',
+    wanInterfaceRequired: 'WAN インターフェースは必須です',
+    invalidResolverIPv4: '無効な DNS サーバー IPv4 アドレスです',
+    invalidResolverIPv6: '無効な DNS サーバー IPv6 アドレスです',
+    maxDnsRoutesNote: '注意: 最大 20 件まで追加できます。',
+    maxDnsRoutesReached: 'DNS ルートは最大 20 件までです',
+    confirmDeleteDnsRoute: 'この DNS ルートを削除してもよろしいですか？',
+    loadDnsRoutesFailed: 'DNS ルートの読み込みに失敗しました。',
+    saveDnsRoutesFailed: 'DNS ルートの保存に失敗しました。'
   }
 };
 

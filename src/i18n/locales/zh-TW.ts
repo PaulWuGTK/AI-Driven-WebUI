@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: '必須輸入前綴長度',
     duplicateAlias: '路由名稱已存在，請使用其他名稱',
     comingSoon: '即將推出',
-    featureInDevelopment: '此功能目前正在開發中'
+    featureInDevelopment: '此功能目前正在開發中',
+    addDnsRoute: '新增 DNS 路由',
+    editDnsRoute: '編輯 DNS 路由',
+    noDnsRoutes: '尚未設定任何 DNS 路由',
+    domainName: '網域名稱',
+    wanInterface: 'WAN 介面',
+    domainNamePlaceholder: '請輸入網域名稱，例如 ims1.cht.com.tw',
+    selectWanInterface: '請選擇 WAN 介面',
+    resolverIpv4: 'DNS 伺服器 IPv4（選填）',
+    resolverIpv4Placeholder: '例如 8.8.8.8',
+    resolverIpv6: 'DNS 伺服器 IPv6（選填）',
+    resolverIpv6Placeholder: '例如 2001:4860:4860::8888',
+    domainNameRequired: '網域名稱為必填',
+    domainNameInvalid: '網域名稱格式錯誤',
+    duplicateDomainName: '網域名稱已存在，請使用其他網域',
+    wanInterfaceRequired: 'WAN 介面為必填',
+    invalidResolverIPv4: '無效的 DNS 伺服器 IPv4 位址',
+    invalidResolverIPv6: '無效的 DNS 伺服器 IPv6 位址',
+    maxDnsRoutesNote: '注意：最多可新增 20 筆條目。',
+    maxDnsRoutesReached: 'DNS 路由最多只能新增 20 筆',
+    confirmDeleteDnsRoute: '確定要刪除此 DNS 路由嗎？',
+    loadDnsRoutesFailed: '載入 DNS 路由失敗。',
+    saveDnsRoutesFailed: '儲存 DNS 路由失敗。'
   }
 };
 
