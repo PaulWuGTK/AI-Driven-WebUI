@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: 'Prefix length is required',
     duplicateAlias: 'Route name already exists. Please use a different name',
     comingSoon: 'Coming Soon',
-    featureInDevelopment: 'This feature is currently under development'
+    featureInDevelopment: 'This feature is currently under development',
+    addDnsRoute: 'Add DNS Route',
+    editDnsRoute: 'Edit DNS Route',
+    noDnsRoutes: 'No DNS routes configured',
+    domainName: 'Domain Name',
+    wanInterface: 'WAN Interface',
+    domainNamePlaceholder: 'Enter domain name, for example ims1.cht.com.tw',
+    selectWanInterface: 'Select WAN interface',
+    resolverIpv4: 'DNS Server IPv4 (Optional)',
+    resolverIpv4Placeholder: 'For example 8.8.8.8',
+    resolverIpv6: 'DNS Server IPv6 (Optional)',
+    resolverIpv6Placeholder: 'For example 2001:4860:4860::8888',
+    domainNameRequired: 'Domain name is required',
+    domainNameInvalid: 'Invalid domain name format',
+    duplicateDomainName: 'Domain name already exists. Please use a different domain',
+    wanInterfaceRequired: 'WAN interface is required',
+    invalidResolverIPv4: 'Invalid DNS server IPv4 address',
+    invalidResolverIPv6: 'Invalid DNS server IPv6 address',
+    maxDnsRoutesNote: 'Note: Maximum of 20 entries can be added.',
+    maxDnsRoutesReached: 'A maximum of 20 DNS routes is allowed',
+    confirmDeleteDnsRoute: 'Are you sure you want to delete this DNS route?',
+    loadDnsRoutesFailed: 'Failed to load DNS routes.',
+    saveDnsRoutesFailed: 'Failed to save DNS routes.'
   }
 };
 

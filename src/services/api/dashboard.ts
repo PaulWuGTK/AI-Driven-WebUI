@@ -157,5 +157,16 @@ export const getDashboardData = async (): Promise<DashboardResponse> => {
     return generateMockData();
   }
 
-  return callApi<DashboardResponse>('/API/info?list=Dashboard');
+  const response = await callApi<Record<string, unknown>>('/API/info?list=Dashboard');
+
+  if (typeof response?.NOK === 'string' && response.NOK.trim() !== '') {
+    throw new Error(response.NOK);
+  }
+
+  const dashboard = response?.Dashboard;
+  if (!dashboard || typeof dashboard !== 'object') {
+    throw new Error('Invalid dashboard response: missing Dashboard object');
+  }
+
+  return response as unknown as DashboardResponse;
 };

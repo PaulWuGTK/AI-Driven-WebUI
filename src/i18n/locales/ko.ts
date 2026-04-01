@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: '프리픽스 길이는 필수 항목입니다',
     duplicateAlias: '경로 이름이 이미 존재합니다. 다른 이름을 사용해 주세요',
     comingSoon: '곧 제공 예정',
-    featureInDevelopment: '이 기능은 현재 개발 중입니다'
+    featureInDevelopment: '이 기능은 현재 개발 중입니다',
+    addDnsRoute: 'DNS 라우트 추가',
+    editDnsRoute: 'DNS 라우트 편집',
+    noDnsRoutes: '구성된 DNS 라우트가 없습니다',
+    domainName: '도메인 이름',
+    wanInterface: 'WAN 인터페이스',
+    domainNamePlaceholder: '도메인 이름을 입력하세요. 예: ims1.cht.com.tw',
+    selectWanInterface: 'WAN 인터페이스를 선택하세요',
+    resolverIpv4: 'DNS 서버 IPv4 (선택)',
+    resolverIpv4Placeholder: '예: 8.8.8.8',
+    resolverIpv6: 'DNS 서버 IPv6 (선택)',
+    resolverIpv6Placeholder: '예: 2001:4860:4860::8888',
+    domainNameRequired: '도메인 이름은 필수 항목입니다',
+    domainNameInvalid: '도메인 이름 형식이 올바르지 않습니다',
+    duplicateDomainName: '도메인 이름이 이미 존재합니다. 다른 도메인을 사용하세요',
+    wanInterfaceRequired: 'WAN 인터페이스는 필수 항목입니다',
+    invalidResolverIPv4: '유효하지 않은 DNS 서버 IPv4 주소입니다',
+    invalidResolverIPv6: '유효하지 않은 DNS 서버 IPv6 주소입니다',
+    maxDnsRoutesNote: '안내: 최대 20개 항목까지 추가할 수 있습니다.',
+    maxDnsRoutesReached: 'DNS 라우트는 최대 20개까지만 추가할 수 있습니다',
+    confirmDeleteDnsRoute: '이 DNS 라우트를 삭제하시겠습니까?',
+    loadDnsRoutesFailed: 'DNS 라우트를 불러오지 못했습니다.',
+    saveDnsRoutesFailed: 'DNS 라우트를 저장하지 못했습니다.'
   }
 };
 

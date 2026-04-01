@@ -1637,7 +1637,29 @@ const translations = {
     prefixLengthRequired: '前缀长度为必填项',
     duplicateAlias: '路由名称已存在，请使用其他名称',
     comingSoon: '即将推出',
-    featureInDevelopment: '该功能目前正在开发中'
+    featureInDevelopment: '该功能目前正在开发中',
+    addDnsRoute: '新增 DNS 路由',
+    editDnsRoute: '编辑 DNS 路由',
+    noDnsRoutes: '尚未配置任何 DNS 路由',
+    domainName: '域名',
+    wanInterface: 'WAN 接口',
+    domainNamePlaceholder: '请输入域名，例如 ims1.cht.com.tw',
+    selectWanInterface: '请选择 WAN 接口',
+    resolverIpv4: 'DNS 服务器 IPv4（可选）',
+    resolverIpv4Placeholder: '例如 8.8.8.8',
+    resolverIpv6: 'DNS 服务器 IPv6（可选）',
+    resolverIpv6Placeholder: '例如 2001:4860:4860::8888',
+    domainNameRequired: '域名为必填项',
+    domainNameInvalid: '域名格式无效',
+    duplicateDomainName: '域名已存在，请使用其他域名',
+    wanInterfaceRequired: 'WAN 接口为必填项',
+    invalidResolverIPv4: 'DNS 服务器 IPv4 地址无效',
+    invalidResolverIPv6: 'DNS 服务器 IPv6 地址无效',
+    maxDnsRoutesNote: '注意：最多可新增 20 条记录。',
+    maxDnsRoutesReached: 'DNS 路由最多只能新增 20 条',
+    confirmDeleteDnsRoute: '确定要删除此 DNS 路由吗？',
+    loadDnsRoutesFailed: '加载 DNS 路由失败。',
+    saveDnsRoutesFailed: '保存 DNS 路由失败。'
   }
 };
 
