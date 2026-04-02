@@ -120,10 +120,9 @@ const trustDomainRows = computed(() =>
 );
 
 const availableWanInterfaces = computed(() => {
-  const fromBackend = mgmtDraft.value?.WanAccessInterfaces ?? [];
-  const ordered = WAN_INTERFACE_ORDER.filter((item) => fromBackend.includes(item));
-  const remaining = fromBackend.filter((item) => !WAN_INTERFACE_ORDER.includes(item));
-  return [...ordered, ...remaining];
+  const selected = mgmtDraft.value?.WanAccessInterfaces ?? [];
+  const extraFromBackend = selected.filter((item) => !WAN_INTERFACE_ORDER.includes(item));
+  return [...WAN_INTERFACE_ORDER, ...extraFromBackend];
 });
 
 const isMultipleWanMode = computed(() => mgmtDraft.value?.WanAccessMode === 'MultipleWAN');
