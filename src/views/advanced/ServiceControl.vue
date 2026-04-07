@@ -38,15 +38,9 @@ const showErrorMessage = (message: string) => {
 // Computed properties for display
 const protocolMap = computed(() => {
   if (!serviceControlData.value) return {};
-  const map: Record<string, string> = Object.fromEntries(
+  return Object.fromEntries(
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.Protocols.map(p => [p.value, p.label])
   );
-  // Add support for combined protocols
-  map['17,6'] = 'UDP/TCP';
-  map['6,17'] = 'TCP/UDP';
-  map['1,58'] = 'ICMP (v4/v6)';
-  map['2'] = 'IGMP';
-  return map;
 });
 
 const interfaceMap = computed(() => {
@@ -59,12 +53,9 @@ const interfaceMap = computed(() => {
 
 const ipVersionMap = computed(() => {
   if (!serviceControlData.value) return {};
-  const map: Record<string, string> = Object.fromEntries(
+  return Object.fromEntries(
     serviceControlData.value.AdvancedServiceControl.ACLAvailableOptions.IPVersions.map(i => [i.value, i.label])
   );
-  // Handle special cases for "Both" IP versions
-  map['0'] = 'Both IPv4 & IPv6';
-  return map;
 });
 
 // Fetch service control data
