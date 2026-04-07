@@ -54,7 +54,13 @@ const loading = ref(true);
 const isApplying = ref(false);
 const isComplete = ref(false);
 const isAgentComplete = ref(false);
-const etaSeconds = ref(120);
+const WIZARD_APPLY_ETA_SECONDS = 30;
+const normalizeWizardEta = (eta: unknown): number => {
+  const parsed = Number(eta);
+  if (!Number.isFinite(parsed) || parsed <= 0) return WIZARD_APPLY_ETA_SECONDS;
+  return Math.min(Math.floor(parsed), WIZARD_APPLY_ETA_SECONDS);
+};
+const etaSeconds = ref(WIZARD_APPLY_ETA_SECONDS);
 const errorToastMessage = ref('');
 const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
@@ -161,7 +167,7 @@ const submitWizard = async () => {
     const response = await wizardApi.submitWizardConfig(config.value);
 
     if (response.WizardRouter.ok) {
-      etaSeconds.value = response.WizardRouter.eta_seconds;
+      etaSeconds.value = normalizeWizardEta(response.WizardRouter.eta_seconds);
     } else {
       isApplying.value = false;
       throw new Error(response.WizardRouter.message);
@@ -191,7 +197,7 @@ const handleSkipWizard = async () => {
     const response = await wizardApi.skipWizard();
 
     if (response.WizardRouter.ok) {
-      etaSeconds.value = response.WizardRouter.eta_seconds;
+      etaSeconds.value = normalizeWizardEta(response.WizardRouter.eta_seconds);
     } else {
       isApplying.value = false;
       throw new Error(response.WizardRouter.message);

@@ -148,7 +148,7 @@ onMounted(fetchAdvancedConfig);
       :message="t('wireless.applyingAdvancedSettings')"
       :description1="t('wireless.applyingDescription')"
       :description2="''"
-      :duration="30"
+      :duration="60"
       @complete="handleBlockingComplete"
     />
   </div>
