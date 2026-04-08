@@ -1028,7 +1028,8 @@ const translations = {
     chooseFile: 'Choose File',
     noFileSelected: 'No file selected',
     restoreButton: 'Restore',
-    processing: 'Processing...'
+    processing: 'Processing...',
+    restoreRequestAccepted: 'Restore request accepted. Device will apply configuration and redirect to login shortly.'
   },
   xperienceControl: {
     title: 'XperienceControl',

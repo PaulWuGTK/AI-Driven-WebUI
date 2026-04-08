@@ -969,7 +969,8 @@ const translations = {
     chooseFile: 'Datei auswählen',
     noFileSelected: 'Keine Datei ausgewählt',
     restoreButton: 'Wiederherstellen',
-    processing: 'Verarbeitung läuft...'
+    processing: 'Verarbeitung läuft...',
+    restoreRequestAccepted: 'Wiederherstellungsanfrage akzeptiert. Das Gerät übernimmt die Konfiguration und leitet in Kürze zur Anmeldung weiter.'
   },
   xperienceControl: {
     title: 'XperienceControl',

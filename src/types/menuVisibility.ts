@@ -188,7 +188,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.nat.alg': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.security': {
@@ -232,7 +232,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'advanceSetup.qos': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'advanceSetup.lcm': {
@@ -308,7 +308,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'management.tools.dnsDiagnosis': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'speedtest': {
@@ -316,11 +316,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'speedtest.xperienceControl': {
-    netLayoutTypes: { prpl: false, genix: true, cht: false },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'speedtest.tr471': {
-    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   }
 };

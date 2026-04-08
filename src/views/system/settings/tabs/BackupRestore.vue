@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { backupConfiguration, restoreConfiguration } from '../../../../services/api/backup';
+import { AuthService } from '../../../../services/auth';
+import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -9,12 +11,47 @@ const { t } = useI18n();
 const selectedFile = ref<File | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const success = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
+const showRestoreCountdown = ref(false);
+const restoreOverlayDuration = ref(5);
+const RESTORE_REDIRECT_AT_KEY = 'restoreRedirectAtMs';
+
+const debugRestore = (stage: string, extra?: unknown) => {
+  if (extra !== undefined) {
+    console.info(`[restore-debug] ${stage}`, extra);
+    return;
+  }
+  console.info(`[restore-debug] ${stage}`);
+};
+
+const redirectToLogin = () => {
+  sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
+  const auth = AuthService.getInstance();
+  auth.clearSession();
+  const target = `/login?t=${Date.now()}`;
+  debugRestore('redirect_to_login', { target });
+  window.location.href = target;
+};
+
+const startRestoreCountdown = (redirectAtMs?: number) => {
+  showRestoreCountdown.value = true;
+  const finalRedirectAt = redirectAtMs ?? (Date.now() + 5000);
+  sessionStorage.setItem(RESTORE_REDIRECT_AT_KEY, String(finalRedirectAt));
+  restoreOverlayDuration.value = Math.max(1, Math.ceil((finalRedirectAt - Date.now()) / 1000));
+
+  debugRestore('countdown_started', { finalRedirectAt, now: Date.now() });
+};
+
+const handleRestoreCountdownComplete = () => {
+  redirectToLogin();
+};
 
 const handleBackup = async () => {
   loading.value = true;
   error.value = null;
+  success.value = null;
   try {
     await backupConfiguration();
   } catch (err) {
@@ -55,16 +92,45 @@ const handleRestore = async () => {
 
   loading.value = true;
   error.value = null;
+  success.value = null;
+  debugRestore('restore_clicked', {
+    fileName: selectedFile.value.name,
+    fileSize: selectedFile.value.size,
+  });
   try {
     await restoreConfiguration(selectedFile.value);
     selectedFile.value = null;
+    success.value = t('backup.restoreRequestAccepted');
+    debugRestore('restore_api_success');
+    startRestoreCountdown();
   } catch (err) {
     console.error('Error restoring configuration:', err);
     error.value = err instanceof Error ? err.message : 'Failed to restore configuration';
+    debugRestore('restore_api_failed', err instanceof Error ? err.message : err);
   } finally {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  const restoreRedirectAtRaw = sessionStorage.getItem(RESTORE_REDIRECT_AT_KEY);
+  if (!restoreRedirectAtRaw) return;
+
+  const restoreRedirectAt = Number(restoreRedirectAtRaw);
+  if (!Number.isFinite(restoreRedirectAt)) {
+    sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
+    return;
+  }
+
+  if (restoreRedirectAt <= Date.now()) {
+    sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
+    return;
+  }
+
+  success.value = t('backup.restoreRequestAccepted');
+  debugRestore('restore_resume_from_session', { restoreRedirectAt });
+  startRestoreCountdown(restoreRedirectAt);
+});
 </script>
 
 <template>
@@ -145,6 +211,10 @@ const handleRestore = async () => {
           {{ error }}
         </div>
 
+        <div v-if="success" class="success-message" :data-testid="qa('restore-success-message')">
+          {{ success }}
+        </div>
+
         <div class="button-container">
           <button
             class="btn btn-primary"
@@ -158,6 +228,16 @@ const handleRestore = async () => {
         </div>
       </div>
     </div>
+
+    <BlockingOverlay
+      :is-visible="showRestoreCountdown"
+      :duration="restoreOverlayDuration"
+      :message="t('backup.restoreRequestAccepted')"
+      :description1="t('backup.processing')"
+      :description2="''"
+      :data-testid="qa('restore-countdown-overlay')"
+      @complete="handleRestoreCountdownComplete"
+    />
   </div>
 </template>
 
@@ -253,6 +333,15 @@ const handleRestore = async () => {
   margin: 1rem 0;
   padding: 0.75rem;
   background-color: rgba(220, 53, 69, 0.1);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.success-message {
+  color: #198754;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: rgba(25, 135, 84, 0.1);
   border-radius: 4px;
   text-align: center;
 }

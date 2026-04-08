@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { backupConfiguration, restoreConfiguration } from '../../../services/api/backup';
 import { SectionCard } from '../../../components/common';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { AuthService } from '../../../services/auth';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -11,40 +12,35 @@ const { t } = useI18n();
 const selectedFile = ref<File | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const success = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 const showRestoreCountdown = ref(false);
-const restoreCountdown = ref(5);
-const restoreCountdownTimer = ref<number | null>(null);
+const restoreOverlayDuration = ref(5);
+const RESTORE_REDIRECT_AT_KEY = 'restoreRedirectAtMs';
 
 const redirectToLogin = () => {
+  sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
   const auth = AuthService.getInstance();
   auth.clearSession();
   window.location.href = `/login?t=${Date.now()}`;
 };
 
-const startRestoreCountdown = () => {
+const startRestoreCountdown = (redirectAtMs?: number) => {
   showRestoreCountdown.value = true;
-  restoreCountdown.value = 5;
+  const finalRedirectAt = redirectAtMs ?? (Date.now() + 5000);
+  sessionStorage.setItem(RESTORE_REDIRECT_AT_KEY, String(finalRedirectAt));
+  restoreOverlayDuration.value = Math.max(1, Math.ceil((finalRedirectAt - Date.now()) / 1000));
+};
 
-  if (restoreCountdownTimer.value) {
-    clearInterval(restoreCountdownTimer.value);
-  }
-
-  restoreCountdownTimer.value = window.setInterval(() => {
-    restoreCountdown.value--;
-    if (restoreCountdown.value <= 0) {
-      if (restoreCountdownTimer.value) {
-        clearInterval(restoreCountdownTimer.value);
-      }
-      redirectToLogin();
-    }
-  }, 1000);
+const handleRestoreCountdownComplete = () => {
+  redirectToLogin();
 };
 
 const handleBackup = async () => {
   loading.value = true;
   error.value = null;
+  success.value = null;
   try {
     await backupConfiguration();
   } catch (err) {
@@ -85,9 +81,11 @@ const handleRestore = async () => {
   
   loading.value = true;
   error.value = null;
+  success.value = null;
   try {
     await restoreConfiguration(selectedFile.value);
     selectedFile.value = null;
+    success.value = t('backup.restoreRequestAccepted');
     startRestoreCountdown();
   } catch (err) {
     console.error('Error restoring configuration:', err);
@@ -97,10 +95,23 @@ const handleRestore = async () => {
   }
 };
 
-onUnmounted(() => {
-  if (restoreCountdownTimer.value) {
-    clearInterval(restoreCountdownTimer.value);
+onMounted(() => {
+  const restoreRedirectAtRaw = sessionStorage.getItem(RESTORE_REDIRECT_AT_KEY);
+  if (!restoreRedirectAtRaw) return;
+
+  const restoreRedirectAt = Number(restoreRedirectAtRaw);
+  if (!Number.isFinite(restoreRedirectAt)) {
+    sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
+    return;
   }
+
+  if (restoreRedirectAt <= Date.now()) {
+    sessionStorage.removeItem(RESTORE_REDIRECT_AT_KEY);
+    return;
+  }
+
+  success.value = t('backup.restoreRequestAccepted');
+  startRestoreCountdown(restoreRedirectAt);
 });
 </script>
 
@@ -188,6 +199,10 @@ onUnmounted(() => {
           {{ error }}
         </div>
 
+        <div v-if="success" class="success-message" :data-testid="qa('restore-success-message')">
+          {{ success }}
+        </div>
+
         <div class="button-container">
           <button 
             class="btn btn-primary"
@@ -202,13 +217,15 @@ onUnmounted(() => {
       </SectionCard>
     </div>
 
-    <div v-if="showRestoreCountdown" class="countdown-overlay" :data-testid="qa('restore-countdown-overlay')">
-      <div class="countdown-content" :data-testid="qa('restore-countdown-content')">
-        <div class="spinner"></div>
-        <p :data-testid="qa('restore-countdown-processing')">{{ t('backup.processing') }}</p>
-        <p :data-testid="qa('restore-countdown-text')">{{ t('reset.countdown', { seconds: restoreCountdown }) }}</p>
-      </div>
-    </div>
+    <BlockingOverlay
+      :is-visible="showRestoreCountdown"
+      :duration="restoreOverlayDuration"
+      :message="t('backup.restoreRequestAccepted')"
+      :description1="t('backup.processing')"
+      :description2="''"
+      :data-testid="qa('restore-countdown-overlay')"
+      @complete="handleRestoreCountdownComplete"
+    />
   </div>
 </template>
 
@@ -308,46 +325,19 @@ onUnmounted(() => {
   text-align: center;
 }
 
+.success-message {
+  color: #198754;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: rgba(25, 135, 84, 0.1);
+  border-radius: 4px;
+  text-align: center;
+}
+
 .btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.countdown-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.countdown-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  margin: 0 auto 1rem;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {

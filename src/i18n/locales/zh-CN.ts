@@ -969,7 +969,8 @@ const translations = {
     chooseFile: '选择文件',
     noFileSelected: '未选择文件',
     restoreButton: '还原',
-    processing: '处理中...'
+    processing: '处理中...',
+    restoreRequestAccepted: '还原请求已受理。设备将应用配置，并在短时间内跳转到登录页面。'
   },
   xperienceControl: {
     title: 'XperienceControl',

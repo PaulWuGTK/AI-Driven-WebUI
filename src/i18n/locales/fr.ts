@@ -969,7 +969,8 @@ const translations = {
     chooseFile: 'Choisir un fichier',
     noFileSelected: 'Aucun fichier sélectionné',
     restoreButton: 'Restaurer',
-    processing: 'Traitement en cours...'
+    processing: 'Traitement en cours...',
+    restoreRequestAccepted: 'Demande de restauration acceptée. L’appareil appliquera la configuration et redirigera bientôt vers la page de connexion.'
   },
   xperienceControl: {
     title: 'XperienceControl',

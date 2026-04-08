@@ -969,7 +969,8 @@ const translations = {
     chooseFile: '選擇檔案',
     noFileSelected: '尚未選擇檔案',
     restoreButton: '還原',
-    processing: '處理中...'
+    processing: '處理中...',
+    restoreRequestAccepted: '還原請求已送出。裝置將套用設定，並於短時間內導回登入頁面。'
   },
   xperienceControl: {
     title: 'XperienceControl',

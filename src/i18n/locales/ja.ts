@@ -969,7 +969,8 @@ const translations = {
     chooseFile: 'ファイルを選択',
     noFileSelected: 'ファイルが選択されていません',
     restoreButton: '復元',
-    processing: '処理中...'
+    processing: '処理中...',
+    restoreRequestAccepted: '復元リクエストを受け付けました。設定を適用後、まもなくログイン画面へ遷移します。'
   },
   xperienceControl: {
     title: 'XperienceControl',
