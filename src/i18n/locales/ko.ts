@@ -969,7 +969,8 @@ const translations = {
     chooseFile: '파일 선택',
     noFileSelected: '선택된 파일 없음',
     restoreButton: '복원',
-    processing: '처리 중...'
+    processing: '처리 중...',
+    restoreRequestAccepted: '복원 요청이 접수되었습니다. 장치가 설정을 적용한 뒤 곧 로그인 페이지로 이동합니다.'
   },
   xperienceControl: {
     title: 'XperienceControl',

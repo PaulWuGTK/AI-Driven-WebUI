@@ -182,20 +182,11 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
 
   let uploadAccessible = false;
   for (const verifyUrl of verifyUrls) {
-    let verifyResponse = await fetch(verifyUrl, {
-      method: 'HEAD',
+    const verifyResponse = await fetch(verifyUrl, {
       headers: {
         Authorization: `bearer ${sessionId}`,
       },
     });
-
-    if (!verifyResponse.ok || verifyResponse.status === 405 || verifyResponse.status === 501) {
-      verifyResponse = await fetch(verifyUrl, {
-        headers: {
-          Authorization: `bearer ${sessionId}`,
-        },
-      });
-    }
 
     if (verifyResponse.ok) {
       uploadAccessible = true;
@@ -258,13 +249,13 @@ export const restoreConfiguration = async (file: File): Promise<RestoreResponse>
 
   if (typeof restoreResult === 'string') {
     const normalizedRestoreResult = restoreResult.trim().toUpperCase();
-    if (!normalizedRestoreResult) {
-      throw new Error('Restore failed: empty restore result from device');
-    }
     if (
-      normalizedRestoreResult.includes('NOK') ||
-      normalizedRestoreResult.includes('FAIL') ||
-      normalizedRestoreResult.includes('ERROR')
+      normalizedRestoreResult &&
+      (
+        normalizedRestoreResult.includes('NOK') ||
+        normalizedRestoreResult.includes('FAIL') ||
+        normalizedRestoreResult.includes('ERROR')
+      )
     ) {
       throw new Error(restoreResult);
     }
