@@ -84,8 +84,46 @@ export class AuthService {
       this.setSessionId(mockData.sessionID);
       this.setIdleTimeoutSeconds(mockData.idleTimeout);
       localStorage.setItem('username', username);
-      localStorage.removeItem('wizardRequired');
-      return { success: true, needsWizard: null };
+
+      // Import wizard mock data to get OpMode for testing
+      const { wizardMockData } = await import('./mockData/authMockData');
+      const opMode = wizardMockData.WizardRouter.OpMode;
+      const wizardRequired = opMode === 'Init' ? 1 : 0;
+
+      // Simulate backend login response with opMode validation
+      const opModeFromLogin = opMode;
+      const wizardFromLoginRaw = wizardRequired;
+      let needsWizardFromLogin: boolean | null = null;
+
+      const isOpModeValid = opModeFromLogin !== null &&
+                            opModeFromLogin !== undefined &&
+                            opModeFromLogin !== '';
+
+      console.log('[Auth] Development mode - simulated login response:', {
+        wizardRequired: wizardFromLoginRaw,
+        opMode: opModeFromLogin,
+        isOpModeValid,
+        willRetry: !isOpModeValid
+      });
+
+      if (isOpModeValid) {
+        if (typeof wizardFromLoginRaw === 'boolean') {
+          needsWizardFromLogin = wizardFromLoginRaw;
+        } else if (wizardFromLoginRaw === 1 || wizardFromLoginRaw === 0) {
+          needsWizardFromLogin = wizardFromLoginRaw === 1;
+        }
+
+        if (needsWizardFromLogin) {
+          localStorage.setItem('wizardRequired', 'true');
+        } else {
+          localStorage.removeItem('wizardRequired');
+        }
+      } else {
+        // OpMode not valid - will trigger retry mechanism
+        localStorage.removeItem('wizardRequired');
+      }
+
+      return { success: true, needsWizard: needsWizardFromLogin };
     }
 
     // A-1) verify captcha (Lua)
@@ -124,12 +162,31 @@ export class AuthService {
 
     // A-2) create session (must be browser to receive Set-Cookie)
     const wizardFromLoginRaw = verify.Login.wizardRequired;
+    const opModeFromLogin = verify.Login.opMode;
     let needsWizardFromLogin: boolean | null = null;
-    if (typeof wizardFromLoginRaw === 'boolean') {
-      needsWizardFromLogin = wizardFromLoginRaw;
-    } else if (wizardFromLoginRaw === 1 || wizardFromLoginRaw === 0) {
-      needsWizardFromLogin = wizardFromLoginRaw === 1;
+
+    // Only trust wizardRequired if OpMode is valid (not empty/null/undefined)
+    // This ensures we retry when backend hasn't initialized OpMode yet
+    const isOpModeValid = opModeFromLogin !== null &&
+                          opModeFromLogin !== undefined &&
+                          opModeFromLogin !== '';
+
+    console.log('[Auth] Login response:', {
+      wizardRequired: wizardFromLoginRaw,
+      opMode: opModeFromLogin,
+      isOpModeValid,
+      willRetry: !isOpModeValid
+    });
+
+    if (isOpModeValid) {
+      if (typeof wizardFromLoginRaw === 'boolean') {
+        needsWizardFromLogin = wizardFromLoginRaw;
+      } else if (wizardFromLoginRaw === 1 || wizardFromLoginRaw === 0) {
+        needsWizardFromLogin = wizardFromLoginRaw === 1;
+      }
     }
+    // If OpMode is invalid, needsWizardFromLogin remains null,
+    // triggering the retry mechanism in Login.vue
 
     const sessionResp = await fetch('/session', {
       method: 'POST',
@@ -169,12 +226,12 @@ export class AuthService {
     }
 
     if (!wizardData || typeof wizardData !== 'object' || !('OpMode' in wizardData)) {
-      throw new Error('Invalid WizardRouter response');
+      throw new Error('OpMode not ready: Invalid WizardRouter response');
     }
 
     const opMode = (wizardData as { OpMode?: string }).OpMode;
     if (!opMode) {
-      throw new Error('Missing WizardRouter OpMode');
+      throw new Error('OpMode not ready: Waiting for system initialization');
     }
 
     const needsWizard = opMode === 'Init';
@@ -201,8 +258,8 @@ export class AuthService {
       try {
         return await this.resolveWizardRequirementOnce();
       } catch (err) {
-        lastError = err instanceof Error ? err : new Error('Failed to resolve wizard status');
-        console.warn(`Failed to check wizard status (attempt ${attempt}/${maxAttempts}):`, lastError);
+        lastError = err instanceof Error ? err : new Error('Failed to resolve operation mode status');
+        console.warn(`Failed to check operation mode status (attempt ${attempt}/${maxAttempts}):`, lastError);
 
         if (attempt >= maxAttempts) {
           break;
@@ -214,7 +271,7 @@ export class AuthService {
     }
 
     const finalError = new Error(
-      `Wizard status check failed: ${lastError?.message || 'Unknown error'}`
+      `Operation mode check failed: ${lastError?.message || 'Unknown error'}`
     );
     throw finalError;
   }
@@ -227,4 +284,3 @@ export class AuthService {
     localStorage.removeItem('wizardRequired');
   }
 }
-
