@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: 'Das Passwort darf nicht länger als {maxLength} Zeichen sein',
     errorPasswordMismatch: 'Neues Passwort und Bestätigung stimmen nicht überein',
     errorUpdateFailed: 'Fehler beim Aktualisieren des Passworts',
-    successUpdate: 'Passwort erfolgreich aktualisiert'
+    successUpdate: 'Passwort erfolgreich aktualisiert',
+    retryCount: 'Wiederholungsanzahl',
+    retryCountLabel: 'Maximale Anmeldeversuche',
+    retryCountHint: 'Maximale Anzahl fehlgeschlagener Anmeldeversuche vor Kontosperrung (0-5, 0 = unbegrenzt)',
+    idleTimeoutMin: 'Leerlauf-Timeout',
+    idleTimeoutLabel: 'Sitzungs-Leerlauf-Timeout (Minuten)',
+    idleTimeoutHint: 'Sitzung läuft nach dieser Anzahl von Minuten Inaktivität ab (1-60)',
+    lockTimeMin: 'Sperrdauer',
+    lockTimeMinLabel: 'Kontosperrdauer (Minuten)',
+    lockTimeMinHint: 'Kontosperrdauer nach Überschreitung der Wiederholungsanzahl (0-90, 0 = keine Sperrung)',
+    editPolicy: 'Richtlinie bearbeiten',
+    confirmSetPolicy: 'Möchten Sie die Richtlinie für Benutzer "{username}" wirklich aktualisieren?',
+    setPolicySuccess: 'Benutzerrichtlinie erfolgreich aktualisiert',
+    setPolicyFailed: 'Fehler beim Aktualisieren der Benutzerrichtlinie'
   },
   dualImage: {
     title: 'Dual Image',

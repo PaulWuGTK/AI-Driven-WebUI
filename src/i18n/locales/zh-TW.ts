@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: '密碼不能超過{maxLength}個字元',
     errorPasswordMismatch: '新密碼與確認密碼不相符',
     errorUpdateFailed: '更新密碼失敗',
-    successUpdate: '密碼更新成功'
+    successUpdate: '密碼更新成功',
+    retryCount: '重試次數',
+    retryCountLabel: '最大登入嘗試次數',
+    retryCountHint: '帳號鎖定前的最大登入失敗次數 (0-5, 0 = 無限制)',
+    idleTimeoutMin: '閒置逾時',
+    idleTimeoutLabel: '工作階段閒置逾時 (分鐘)',
+    idleTimeoutHint: '無活動超過此分鐘數後將自動登出 (1-60)',
+    lockTimeMin: '鎖定時間',
+    lockTimeMinLabel: '帳號鎖定時間 (分鐘)',
+    lockTimeMinHint: '超過重試次數後的帳號鎖定時間 (0-90, 0 = 不鎖定)',
+    editPolicy: '編輯政策',
+    confirmSetPolicy: '確定要更新使用者 "{username}" 的政策嗎？',
+    setPolicySuccess: '使用者政策更新成功',
+    setPolicyFailed: '更新使用者政策失敗'
   },
   dualImage: {
     title: '雙韌體',

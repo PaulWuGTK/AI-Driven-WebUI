@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { ActionButtons, BaseSecretInput, BaseTable, SectionCard } from '../../../components/common';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 import { useQA } from '../../../utils/qa';
-import { getAccountChtSettings, updateAccountCht } from '../../../services/api/accountCht';
+import { getAccountChtSettings, updateAccountCht, setAccountChtPolicy } from '../../../services/api/accountCht';
 import type { ManagementAccountChtResponse, ManagementAccountChtUserType } from '../../../types/accountCht';
 
 const { t } = useI18n();
@@ -29,6 +29,11 @@ const addUsername = ref('');
 const addPassword = ref('');
 const addConfirmPassword = ref('');
 const addUserType = ref<ManagementAccountChtUserType>('normal');
+
+// Policy fields for password panel (will be loaded when editing user)
+const editRetryCount = ref(3);
+const editIdleTimeoutMin = ref(10);
+const editLockTimeMin = ref(3);
 
 const users = computed(() => accountData.value?.ManagementAccountCht.Users ?? []);
 const currentUser = computed(() => accountData.value?.ManagementAccountCht.CurrentUser ?? null);
@@ -72,18 +77,21 @@ const hideSuccessLater = () => {
   }, 3000);
 };
 
-const clearPasswordForm = () => {
-  oldPassword.value = '';
-  newPassword.value = '';
-  confirmPassword.value = '';
-  error.value = null;
-};
-
 const clearAddForm = () => {
   addUsername.value = '';
   addPassword.value = '';
   addConfirmPassword.value = '';
   addUserType.value = 'normal';
+  error.value = null;
+};
+
+const clearPasswordForm = () => {
+  oldPassword.value = '';
+  newPassword.value = '';
+  confirmPassword.value = '';
+  editRetryCount.value = 3;
+  editIdleTimeoutMin.value = 10;
+  editLockTimeMin.value = 3;
   error.value = null;
 };
 
@@ -175,6 +183,15 @@ const validateAddForm = (): string | null => {
 const openPasswordPanel = (username: string) => {
   selectedUsername.value = username;
   clearPasswordForm();
+
+  // Load user's current policy values
+  const user = users.value.find(u => u.Username === username);
+  if (user) {
+    editRetryCount.value = user.RetryCount ?? 3;
+    editIdleTimeoutMin.value = user.IdleTimeoutMin ?? 10;
+    editLockTimeMin.value = user.LockTimeMin ?? 3;
+  }
+
   panelMode.value = 'password';
 };
 
@@ -201,6 +218,7 @@ const handlePasswordApply = async () => {
 
   loading.value = true;
   try {
+    // Step 1: Update password
     const response = await updateAccountCht({
       ManagementAccountCht: {
         Action: 'SetPassword',
@@ -210,15 +228,33 @@ const handlePasswordApply = async () => {
       }
     });
 
-    if (response.ManagementAccountCht.result === 'Success') {
-      hideSuccessLater();
-      closePanel();
-      await fetchAccountSettings();
-    } else {
+    if (response.ManagementAccountCht.result !== 'Success') {
       error.value = response.ManagementAccountCht.reason || t('account.errorUpdateFailed');
+      return;
     }
+
+    // Step 2: Update policy (only for super users)
+    if (isSuper.value) {
+      const policyResponse = await setAccountChtPolicy(
+        selectedUsername.value,
+        editRetryCount.value,
+        editIdleTimeoutMin.value,
+        editLockTimeMin.value
+      );
+
+      if (policyResponse.ManagementAccountCht.result !== 'Success') {
+        error.value = policyResponse.ManagementAccountCht.reason || t('account.setPolicyFailed');
+        await fetchAccountSettings(); // Still refresh to show password change
+        return;
+      }
+    }
+
+    // Success: both password and policy updated
+    hideSuccessLater();
+    closePanel();
+    await fetchAccountSettings();
   } catch (err) {
-    console.error('Error updating CHT account password:', err);
+    console.error('Error updating CHT account:', err);
     error.value = t('account.errorUpdateFailed');
   } finally {
     loading.value = false;
@@ -263,6 +299,7 @@ const handleAddApply = async () => {
     loading.value = false;
   }
 };
+
 
 const handleDelete = (username: string) => {
   if (!isSuper.value) {
@@ -365,7 +402,7 @@ onMounted(fetchAccountSettings);
               <div class="action-buttons" :data-testid="qa(mobile ? `account-cht-card-actions-${row.Username}` : `account-cht-actions-${row.Username}`)">
                 <button
                   class="btn-action"
-                  :data-testid="qa(mobile ? `account-cht-card-view-${row.Username}` : `account-cht-view-${row.Username}`)"
+                  :data-testid="qa(mobile ? `account-cht-card-edit-${row.Username}` : `account-cht-edit-${row.Username}`)"
                   :disabled="loading"
                   :title="t('common.edit')"
                   @click="openPasswordPanel(row.Username)"
@@ -439,6 +476,48 @@ onMounted(fetchAccountSettings);
                 :max-length="maxLength"
                 :disabled="loading"
               />
+            </div>
+
+            <div v-if="isSuper" class="form-group">
+              <label :data-testid="qa('account-cht-retry-count-label')">{{ t('account.retryCountLabel') }}</label>
+              <input
+                v-model.number="editRetryCount"
+                type="number"
+                min="0"
+                max="5"
+                class="input-select"
+                :data-testid="qa('account-cht-retry-count-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.retryCountHint') }}</p>
+            </div>
+
+            <div v-if="isSuper" class="form-group">
+              <label :data-testid="qa('account-cht-idle-timeout-label')">{{ t('account.idleTimeoutLabel') }}</label>
+              <input
+                v-model.number="editIdleTimeoutMin"
+                type="number"
+                min="1"
+                max="60"
+                class="input-select"
+                :data-testid="qa('account-cht-idle-timeout-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.idleTimeoutHint') }}</p>
+            </div>
+
+            <div v-if="isSuper" class="form-group">
+              <label :data-testid="qa('account-cht-lock-time-label')">{{ t('account.lockTimeMinLabel') }}</label>
+              <input
+                v-model.number="editLockTimeMin"
+                type="number"
+                min="0"
+                max="90"
+                class="input-select"
+                :data-testid="qa('account-cht-lock-time-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.lockTimeMinHint') }}</p>
             </div>
 
             <div class="button-group">
@@ -522,6 +601,7 @@ onMounted(fetchAccountSettings);
             </div>
           </div>
         </div>
+
       </template>
 
       <div v-if="success" class="success-message" :data-testid="qa('account-cht-success')">
@@ -646,6 +726,14 @@ onMounted(fetchAccountSettings);
   margin-bottom: 0.5rem;
   color: var(--text-primary);
   font-weight: 500;
+}
+
+.form-group .hint {
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
 }
 
 .button-group {

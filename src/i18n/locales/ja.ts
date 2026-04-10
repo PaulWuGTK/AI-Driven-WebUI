@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: 'パスワードは{maxLength}文字を超えることはできません',
     errorPasswordMismatch: '新しいパスワードと確認パスワードが一致しません',
     errorUpdateFailed: 'パスワードの更新に失敗しました',
-    successUpdate: 'パスワードが正常に更新されました'
+    successUpdate: 'パスワードが正常に更新されました',
+    retryCount: 'リトライ回数',
+    retryCountLabel: '最大ログイン試行回数',
+    retryCountHint: 'アカウントロック前の最大ログイン失敗回数 (0-5, 0 = 無制限)',
+    idleTimeoutMin: 'アイドルタイムアウト',
+    idleTimeoutLabel: 'セッションアイドルタイムアウト (分)',
+    idleTimeoutHint: '非アクティブ状態がこの分数を超えると自動ログアウトします (1-60)',
+    lockTimeMin: 'ロック時間',
+    lockTimeMinLabel: 'アカウントロック時間 (分)',
+    lockTimeMinHint: 'リトライ回数超過後のアカウントロック時間 (0-90, 0 = ロックなし)',
+    editPolicy: 'ポリシー編集',
+    confirmSetPolicy: 'ユーザー "{username}" のポリシーを更新してもよろしいですか？',
+    setPolicySuccess: 'ユーザーポリシーが正常に更新されました',
+    setPolicyFailed: 'ユーザーポリシーの更新に失敗しました'
   },
   dualImage: {
     title: 'デュアルイメージ',

@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: 'Le mot de passe ne peut pas dépasser {maxLength} caractères',
     errorPasswordMismatch: 'Le nouveau mot de passe et la confirmation ne correspondent pas',
     errorUpdateFailed: 'Échec de la mise à jour du mot de passe',
-    successUpdate: 'Mot de passe mis à jour avec succès'
+    successUpdate: 'Mot de passe mis à jour avec succès',
+    retryCount: 'Nombre de tentatives',
+    retryCountLabel: 'Tentatives de connexion maximales',
+    retryCountHint: 'Nombre maximum d\'échecs de connexion avant verrouillage du compte (0-5, 0 = illimité)',
+    idleTimeoutMin: 'Délai d\'inactivité',
+    idleTimeoutLabel: 'Délai d\'inactivité de session (minutes)',
+    idleTimeoutHint: 'La session expirera après ce nombre de minutes d\'inactivité (1-60)',
+    lockTimeMin: 'Durée de verrouillage',
+    lockTimeMinLabel: 'Durée de verrouillage du compte (minutes)',
+    lockTimeMinHint: 'Durée de verrouillage du compte après dépassement du nombre de tentatives (0-90, 0 = pas de verrouillage)',
+    editPolicy: 'Modifier la politique',
+    confirmSetPolicy: 'Voulez-vous vraiment mettre à jour la politique pour l\'utilisateur "{username}" ?',
+    setPolicySuccess: 'Politique utilisateur mise à jour avec succès',
+    setPolicyFailed: 'Échec de la mise à jour de la politique utilisateur'
   },
   dualImage: {
     title: 'Image Duale',

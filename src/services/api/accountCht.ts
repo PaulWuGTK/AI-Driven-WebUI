@@ -90,7 +90,10 @@ export async function getAccountChtSettings(): Promise<ManagementAccountChtRespo
             UserType: 'super',
             RoleAlias: 'WebAdmin',
             Editable: 1,
-            Deletable: 0
+            Deletable: 0,
+            RetryCount: 3,
+            IdleTimeoutMin: 10,
+            LockTimeMin: 3
           },
           {
             UserPath: 'Users.User.2.',
@@ -100,7 +103,10 @@ export async function getAccountChtSettings(): Promise<ManagementAccountChtRespo
             UserType: 'normal',
             RoleAlias: 'WebViewer',
             Editable: 1,
-            Deletable: 1
+            Deletable: 1,
+            RetryCount: 3,
+            IdleTimeoutMin: 10,
+            LockTimeMin: 3
           }
         ],
         MaxLength: 15,
@@ -139,4 +145,36 @@ export async function updateAccountCht(
   data: ManagementAccountChtUpdateRequest
 ): Promise<ManagementAccountChtUpdateResponse> {
   return updateAccountChtPassword(data);
+}
+
+export async function setAccountChtPolicy(
+  targetUsername: string,
+  retryCount: number,
+  idleTimeoutMin: number,
+  lockTimeMin: number
+): Promise<ManagementAccountChtUpdateResponse> {
+  const data: ManagementAccountChtUpdateRequest = {
+    ManagementAccountCht: {
+      Action: 'SetPolicy',
+      TargetUsername: targetUsername,
+      RetryCount: retryCount,
+      IdleTimeoutMin: idleTimeoutMin,
+      LockTimeMin: lockTimeMin
+    }
+  };
+
+  if (isDevelopment) {
+    console.log('[Account CHT] SetPolicy (dev mode):', data);
+    return {
+      ManagementAccountCht: {
+        result: 'Success',
+        reason: ''
+      }
+    };
+  }
+
+  return callApi<ManagementAccountChtUpdateResponse>(ACCOUNT_CHT_ENDPOINT, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
 }

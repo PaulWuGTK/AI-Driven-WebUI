@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: '密码不能超过{maxLength}个字符',
     errorPasswordMismatch: '新密码和确认密码不匹配',
     errorUpdateFailed: '更新密码失败',
-    successUpdate: '密码更新成功'
+    successUpdate: '密码更新成功',
+    retryCount: '重试次数',
+    retryCountLabel: '最大登录尝试次数',
+    retryCountHint: '账号锁定前的最大登录失败次数 (0-5, 0 = 无限制)',
+    idleTimeoutMin: '空闲超时',
+    idleTimeoutLabel: '会话空闲超时 (分钟)',
+    idleTimeoutHint: '无活动超过此分钟数后将自动登出 (1-60)',
+    lockTimeMin: '锁定时间',
+    lockTimeMinLabel: '账号锁定时间 (分钟)',
+    lockTimeMinHint: '超过重试次数后的账号锁定时间 (0-90, 0 = 不锁定)',
+    editPolicy: '编辑策略',
+    confirmSetPolicy: '确定要更新用户 "{username}" 的策略吗？',
+    setPolicySuccess: '用户策略更新成功',
+    setPolicyFailed: '更新用户策略失败'
   },
   dualImage: {
     title: '双镜像',
