@@ -72,7 +72,7 @@ const wizardScenarios = {
   opmode_not_ready: {
     WizardRouter: {
       ModelName: "WREQ-130BE-PRPL",
-      OpMode: "",  // �� 空字串 - 模擬未 ready
+      OpMode: "",  // 👈 空字串 - 模擬未 ready
       Wan: {
         WANMode: "demo_wanmode",
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]
@@ -117,7 +117,7 @@ const wizardScenarios = {
   opmode_init: {
     WizardRouter: {
       ModelName: "WREQ-130BE-PRPL",
-      OpMode: "Init",  // �� Init - 導向 wizard
+      OpMode: "Init",  // 👈 Init - 導向 wizard
       Wan: {
         WANMode: "demo_wanmode",
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]
@@ -162,7 +162,7 @@ const wizardScenarios = {
   opmode_normal: {
     WizardRouter: {
       ModelName: "WREQ-130BE-PRPL",
-      OpMode: "Gateway",  // �� Gateway/Normal - 導向 dashboard
+      OpMode: "Gateway",  // 👈 Gateway/Normal - 導向 dashboard
       Wan: {
         WANMode: "demo_wanmode",
         WANModeList: ["Cellular", "Ethernet_DHCP", "GPON_DHCP", "demo_wanmode"]
@@ -207,7 +207,7 @@ const wizardScenarios = {
   opmode_missing: {
     WizardRouter: {
       ModelName: "WREQ-130BE-PRPL",
-      OpMode: undefined as any,  // �� 完全不包含 OpMode - 應該重試
+      OpMode: undefined as any,  // 👈 完全不包含 OpMode - 應該重試
       Wan: {
         WANMode: "demo_wanmode",
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]

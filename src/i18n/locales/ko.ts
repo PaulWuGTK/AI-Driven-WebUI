@@ -1362,7 +1362,20 @@ const translations = {
     errorPasswordLength: '비밀번호는 {maxLength}자를 초과할 수 없습니다',
     errorPasswordMismatch: '새 비밀번호와 확인 비밀번호가 일치하지 않습니다',
     errorUpdateFailed: '비밀번호 업데이트에 실패했습니다',
-    successUpdate: '비밀번호가 성공적으로 업데이트되었습니다'
+    successUpdate: '비밀번호가 성공적으로 업데이트되었습니다',
+    retryCount: '재시도 횟수',
+    retryCountLabel: '최대 로그인 시도 횟수',
+    retryCountHint: '계정 잠금 전 최대 로그인 실패 횟수 (0-5, 0 = 무제한)',
+    idleTimeoutMin: '유휴 시간 초과',
+    idleTimeoutLabel: '세션 유휴 시간 초과 (분)',
+    idleTimeoutHint: '비활성 상태가 이 시간(분)을 초과하면 자동 로그아웃됩니다 (1-60)',
+    lockTimeMin: '잠금 시간',
+    lockTimeMinLabel: '계정 잠금 시간 (분)',
+    lockTimeMinHint: '재시도 횟수 초과 후 계정 잠금 시간 (0-90, 0 = 잠금 없음)',
+    editPolicy: '정책 편집',
+    confirmSetPolicy: '사용자 "{username}"의 정책을 업데이트하시겠습니까?',
+    setPolicySuccess: '사용자 정책이 성공적으로 업데이트되었습니다',
+    setPolicyFailed: '사용자 정책 업데이트에 실패했습니다'
   },
   dualImage: {
     title: '듀얼 이미지',

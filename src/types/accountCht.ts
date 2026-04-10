@@ -9,6 +9,10 @@ export interface ManagementAccountChtUser {
   RoleAlias: string;
   Editable: 0 | 1;
   Deletable: 0 | 1;
+  // User policy fields (from X_GEMTEK-COM_ ODL extension)
+  RetryCount?: number;      // 0-5, default 3
+  IdleTimeoutMin?: number;  // 1-60, default 10
+  LockTimeMin?: number;     // 0-90, default 3
 }
 
 export interface ManagementAccountChtCurrentUser {
@@ -33,13 +37,17 @@ export interface ManagementAccountChtResponse {
 
 export interface ManagementAccountChtUpdateRequest {
   ManagementAccountCht: {
-    Action?: 'SetPassword' | 'AddUser' | 'DeleteUser';
+    Action?: 'SetPassword' | 'AddUser' | 'DeleteUser' | 'SetPolicy';
     TargetUsername?: string;
     Username?: string;
     OldPassword?: string;
     NewPassword?: string;
     UserType?: ManagementAccountChtUserType;
     Enable?: 0 | 1;
+    // Policy fields (for SetPolicy action)
+    RetryCount?: number;      // 0-5
+    IdleTimeoutMin?: number;  // 1-60
+    LockTimeMin?: number;     // 0-90
   };
 }
 

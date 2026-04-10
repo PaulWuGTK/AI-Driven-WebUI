@@ -284,3 +284,4 @@ export class AuthService {
     localStorage.removeItem('wizardRequired');
   }
 }
+

@@ -1421,7 +1421,20 @@ const translations = {
     errorPasswordLength: 'Password cannot exceed {maxLength} characters',
     errorPasswordMismatch: 'New password and confirm password do not match',
     errorUpdateFailed: 'Failed to update password',
-    successUpdate: 'Password updated successfully'
+    successUpdate: 'Password updated successfully',
+    retryCount: 'Retry Count',
+    retryCountLabel: 'Max Login Attempts',
+    retryCountHint: 'Maximum failed login attempts before account lockout (0-5, 0 = no limit)',
+    idleTimeoutMin: 'Idle Timeout',
+    idleTimeoutLabel: 'Session Idle Timeout (minutes)',
+    idleTimeoutHint: 'Session will expire after this many minutes of inactivity (1-60)',
+    lockTimeMin: 'Lock Duration',
+    lockTimeMinLabel: 'Account Lock Duration (minutes)',
+    lockTimeMinHint: 'Account lockout duration after exceeding retry count (0-90, 0 = no lockout)',
+    editPolicy: 'Edit Policy',
+    confirmSetPolicy: 'Are you sure you want to update policy for user "{username}"?',
+    setPolicySuccess: 'User policy updated successfully',
+    setPolicyFailed: 'Failed to update user policy'
   },
   dualImage: {
     title: 'Dual Image',

@@ -348,7 +348,7 @@ export const menuRoleVisibilityRules: Record<string, RoleVisibilityRule> = {
   'application.upnp': { super: true, normal: false },
   'application.ddns': { super: true, normal: false },
   'management.account': { super: true, normal: false },
-  'management.accountCht': { super: true, normal: false },
+  'management.accountCht': { super: true, normal: true },
   'management.device': { super: true, normal: false }
 };
 
