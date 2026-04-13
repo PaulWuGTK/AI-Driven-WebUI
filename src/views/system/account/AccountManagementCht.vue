@@ -29,6 +29,9 @@ const addUsername = ref('');
 const addPassword = ref('');
 const addConfirmPassword = ref('');
 const addUserType = ref<ManagementAccountChtUserType>('normal');
+const addRetryCount = ref(3);
+const addIdleTimeoutMin = ref(10);
+const addLockTimeMin = ref(3);
 
 // Policy fields for password panel (will be loaded when editing user)
 const editRetryCount = ref(3);
@@ -82,6 +85,9 @@ const clearAddForm = () => {
   addPassword.value = '';
   addConfirmPassword.value = '';
   addUserType.value = 'normal';
+  addRetryCount.value = 3;
+  addIdleTimeoutMin.value = 10;
+  addLockTimeMin.value = 3;
   error.value = null;
 };
 
@@ -281,7 +287,10 @@ const handleAddApply = async () => {
         Username: addUsername.value,
         NewPassword: addPassword.value,
         UserType: addUserType.value,
-        Enable: 1
+        Enable: 1,
+        RetryCount: addRetryCount.value,
+        IdleTimeoutMin: addIdleTimeoutMin.value,
+        LockTimeMin: addLockTimeMin.value
       }
     });
 
@@ -587,6 +596,48 @@ onMounted(fetchAccountSettings);
                 :max-length="maxLength"
                 :disabled="loading"
               />
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa('account-cht-add-retry-count-label')">{{ t('account.retryCountLabel') }}</label>
+              <input
+                v-model.number="addRetryCount"
+                type="number"
+                min="0"
+                max="5"
+                class="input-select"
+                :data-testid="qa('account-cht-add-retry-count-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.retryCountHint') }}</p>
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa('account-cht-add-idle-timeout-label')">{{ t('account.idleTimeoutLabel') }}</label>
+              <input
+                v-model.number="addIdleTimeoutMin"
+                type="number"
+                min="1"
+                max="60"
+                class="input-select"
+                :data-testid="qa('account-cht-add-idle-timeout-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.idleTimeoutHint') }}</p>
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa('account-cht-add-lock-time-label')">{{ t('account.lockTimeMinLabel') }}</label>
+              <input
+                v-model.number="addLockTimeMin"
+                type="number"
+                min="0"
+                max="90"
+                class="input-select"
+                :data-testid="qa('account-cht-add-lock-time-input')"
+                :disabled="loading"
+              />
+              <p class="hint">{{ t('account.lockTimeMinHint') }}</p>
             </div>
 
             <div class="button-group">

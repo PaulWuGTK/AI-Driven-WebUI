@@ -44,7 +44,7 @@ export interface ManagementAccountChtUpdateRequest {
     NewPassword?: string;
     UserType?: ManagementAccountChtUserType;
     Enable?: 0 | 1;
-    // Policy fields (for SetPolicy action)
+    // Policy fields (for SetPolicy action and optional AddUser inline policy setup)
     RetryCount?: number;      // 0-5
     IdleTimeoutMin?: number;  // 1-60
     LockTimeMin?: number;     // 0-90
