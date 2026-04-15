@@ -506,6 +506,7 @@ const translations = {
     show: '显示',
     hide: '隐藏',
     hideSsid: '隐藏 SSID',
+    clientIsolation: '客户端隔离',
     ssidGroupEnable: '启用 SSID 组',
     ssidRequired: 'SSID 不能为空',
     ssidTooShort: 'SSID 长度至少需要 {min} 字节',

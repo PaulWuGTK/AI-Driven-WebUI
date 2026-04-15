@@ -506,6 +506,7 @@ const translations = {
     show: 'Show',
     hide: 'Hide',
     hideSsid: 'Hide SSID',
+    clientIsolation: 'Client Isolation',
     ssidGroupEnable: 'SSID Group Enable',
     ssidRequired: 'SSID is required',
     ssidTooShort: 'SSID must be at least {min} byte',
