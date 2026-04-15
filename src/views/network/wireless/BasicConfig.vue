@@ -50,15 +50,24 @@ const commonSsidConfig = ref<{
   KeyPassPhrase: string;
   SecurityModeAvailable: string;
   SSIDAdvertisementEnabled: number;
+  IsolationEnable: number;
 } | null>(null);
 
 const bands = ['2.4GHz', '5GHz', '6GHz'] as const;
 
 const normalizeGroup = (group: WlanGroup): WlanGroup => {
   const copy: WlanGroup = JSON.parse(JSON.stringify(group));
+  if (copy.IsolationEnable === undefined) {
+    copy.IsolationEnable = 0;
+  }
 
   // Ensure Interface array has per-band entries
   if (!copy.Interface) copy.Interface = [];
+  copy.Interface = copy.Interface.map((i) => ({
+    ...i,
+    SSIDAdvertisementEnabled: i.SSIDAdvertisementEnabled ?? 1,
+    IsolationEnable: i.IsolationEnable ?? 0
+  }));
   for (const b of bands) {
     if (!copy.Interface.some((i) => i.Band === b)) {
       const groupSSID = (copy as any).SSID || copy.Alias || '';
@@ -74,7 +83,8 @@ const normalizeGroup = (group: WlanGroup): WlanGroup => {
         SecurityModeAvailable: groupSecurityModeAvailable,
         KeyPassPhrase: groupKeyPassphrase,
         MFPConfig: '',
-        SSIDAdvertisementEnabled: 1
+        SSIDAdvertisementEnabled: 1,
+        IsolationEnable: 0
       });
     }
   }
@@ -117,7 +127,8 @@ const fetchConfig = async () => {
                   SecurityMode: legacy?.WlanBasic?.wifi2g?.SecurityMode ?? '',
                   SecurityModeAvailable: modes2g,
                   KeyPassPhrase: legacy?.WlanBasic?.wifi2g?.Password ?? '',
-                  MFPConfig: ''
+                  MFPConfig: '',
+                  IsolationEnable: 0
                 },
                 {
                   Band: '5GHz',
@@ -126,7 +137,8 @@ const fetchConfig = async () => {
                   SecurityMode: legacy?.WlanBasic?.wifi5g?.SecurityMode ?? '',
                   SecurityModeAvailable: modes5g,
                   KeyPassPhrase: legacy?.WlanBasic?.wifi5g?.Password ?? '',
-                  MFPConfig: ''
+                  MFPConfig: '',
+                  IsolationEnable: 0
                 },
                 {
                   Band: '6GHz',
@@ -135,7 +147,8 @@ const fetchConfig = async () => {
                   SecurityMode: legacy?.WlanBasic?.wifi6g?.SecurityMode ?? '',
                   SecurityModeAvailable: modes6g,
                   KeyPassPhrase: legacy?.WlanBasic?.wifi6g?.Password ?? '',
-                  MFPConfig: ''
+                  MFPConfig: '',
+                  IsolationEnable: 0
                 }
               ]
             }
@@ -180,7 +193,8 @@ const enterEdit = (index: number) => {
       SecurityMode: (group as any).SecurityMode ?? '',
       KeyPassPhrase: (group as any).KeyPassPhrase ?? '',
       SecurityModeAvailable: (group as any).SecurityModeAvailable ?? firstInterface?.SecurityModeAvailable ?? '',
-      SSIDAdvertisementEnabled: (group as any).SSIDAdvertisementEnabled ?? 1
+      SSIDAdvertisementEnabled: (group as any).SSIDAdvertisementEnabled ?? 1,
+      IsolationEnable: (group as any).IsolationEnable ?? 0
     };
   }
 
@@ -247,6 +261,7 @@ const updateLocal = () => {
     (normalized as any).KeyPassPhrase = commonSsidConfig.value.KeyPassPhrase;
     (normalized as any).Enable = commonSsidConfig.value.Enable;
     (normalized as any).SSIDAdvertisementEnabled = commonSsidConfig.value.SSIDAdvertisementEnabled;
+    (normalized as any).IsolationEnable = commonSsidConfig.value.IsolationEnable;
   }
 
   data.value.WlanBasic.WlanGroup[originalIdx] = normalized;
@@ -423,6 +438,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
       BridgeInterface: (g as any).BridgeInterface,
       MFPConfig: (g as any).MFPConfig,
       SSIDAdvertisementEnabled: (g as any).SSIDAdvertisementEnabled,
+      IsolationEnable: (g as any).IsolationEnable,
       Interface: norm.Interface.map((i) => ({
         Enable: i.Enable,
         Band: i.Band,
@@ -433,7 +449,8 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
         MFPConfig: i.MFPConfig,
         AccessPointReference: (i as any).AccessPointReference,
         SSIDReference: (i as any).SSIDReference,
-        SSIDAdvertisementEnabled: i.SSIDAdvertisementEnabled
+        SSIDAdvertisementEnabled: i.SSIDAdvertisementEnabled,
+        IsolationEnable: i.IsolationEnable
       }))
     };
   });
@@ -702,6 +719,24 @@ onMounted(fetchConfig);
                 </div>
               </div>
             </div>
+
+            <div class="row row-hide-ssid">
+              <div class="field">
+                <div class="switch-label" :data-testid="qa('wlan-basic-multi-common-client-isolation')">
+                  <span>{{ t('wireless.clientIsolation') }}</span>
+                  <BaseSwitch
+                    v-model="commonSsidConfig.IsolationEnable"
+                    class="switch-toggle"
+                    :class="{ 'is-disabled': Number(commonSsidConfig.Enable) === 0 }"
+                    :true-value="1"
+                    :false-value="0"
+                    :disabled="Number(commonSsidConfig.Enable) === 0"
+                    :data-testid="qa('wlan-basic-multi-common-client-isolation-toggle')"
+                    :slider-data-testid="qa('wlan-basic-multi-common-client-isolation-toggle-slider')"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -791,6 +826,25 @@ onMounted(fetchConfig);
                       :data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-${slug(b)}`)"
                       :slider-data-testid="qa(`wlan-basic-multi-iface-hide-ssid-toggle-slider-${slug(b)}`)"
                       @update:model-value="(value) => { getInterfaceByBand(b)!.SSIDAdvertisementEnabled = value === 1 || value === '1' || value === true ? 1 : 0; }"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row row-hide-ssid">
+                <div class="field">
+                  <div class="switch-label" :data-testid="qa(`wlan-basic-multi-iface-client-isolation-${slug(b)}`)">
+                    <span>{{ t('wireless.clientIsolation') }}</span>
+                    <BaseSwitch
+                      :model-value="Number(getInterfaceByBand(b)!.IsolationEnable ?? 0)"
+                      class="switch-toggle"
+                      :class="{ 'is-disabled': Number(getInterfaceByBand(b)!.Enable) === 0 }"
+                      :true-value="1"
+                      :false-value="0"
+                      :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
+                      :data-testid="qa(`wlan-basic-multi-iface-client-isolation-toggle-${slug(b)}`)"
+                      :slider-data-testid="qa(`wlan-basic-multi-iface-client-isolation-toggle-slider-${slug(b)}`)"
+                      @update:model-value="(value) => { getInterfaceByBand(b)!.IsolationEnable = value === 1 || value === '1' || value === true ? 1 : 0; }"
                     />
                   </div>
                 </div>

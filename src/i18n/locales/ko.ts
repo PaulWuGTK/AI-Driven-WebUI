@@ -506,6 +506,7 @@ const translations = {
     show: '표시',
     hide: '숨기기',
     hideSsid: 'SSID 숨기기',
+    clientIsolation: '클라이언트 격리',
     ssidGroupEnable: 'SSID 그룹 사용',
     ssidRequired: 'SSID는 필수입니다',
     ssidTooShort: 'SSID는 최소 {min}바이트 이상이어야 합니다',

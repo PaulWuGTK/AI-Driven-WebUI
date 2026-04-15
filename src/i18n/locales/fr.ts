@@ -506,6 +506,7 @@ const translations = {
     show: 'Afficher',
     hide: 'Masquer',
     hideSsid: 'Masquer le SSID',
+    clientIsolation: 'Isolation des clients',
     ssidGroupEnable: 'Activer le groupe SSID',
     ssidRequired: 'Le SSID est requis',
     ssidTooShort: 'Le SSID doit comporter au moins {min} octet',

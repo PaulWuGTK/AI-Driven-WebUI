@@ -54,6 +54,9 @@ export interface WlanGroupInterface {
 
   /** SSID Advertisement flag: 1 = show SSID (Hide SSID off), 0 = hide SSID (Hide SSID on) */
   SSIDAdvertisementEnabled?: BooleanInt;
+
+  /** Client Isolation flag: 1 = enabled, 0 = disabled */
+  IsolationEnable?: BooleanInt;
 }
 
 export interface WlanGroup {
@@ -95,6 +98,9 @@ export interface WlanGroup {
 
   /** SSID Advertisement flag: 1 = show SSID (Hide SSID off), 0 = hide SSID (Hide SSID on) */
   SSIDAdvertisementEnabled?: BooleanInt;
+
+  /** Client Isolation flag: 1 = enabled, 0 = disabled */
+  IsolationEnable?: BooleanInt;
 }
 
 export interface WlanBasicMultiGetResponse {
@@ -120,6 +126,7 @@ export interface WlanBasicMultiPostRequest {
     BridgeInterface?: string;
     MFPConfig?: string | number;
     SSIDAdvertisementEnabled?: BooleanInt;
+    IsolationEnable?: BooleanInt;
     Interface: Array<{
       Enable: BooleanInt;
       Band: string;
@@ -131,6 +138,7 @@ export interface WlanBasicMultiPostRequest {
       AccessPointReference?: string;
       SSIDReference?: string;
       SSIDAdvertisementEnabled?: BooleanInt;
+      IsolationEnable?: BooleanInt;
     }>;
   }>;
 }

@@ -506,6 +506,7 @@ const translations = {
     show: '表示',
     hide: '非表示',
     hideSsid: 'SSID を隠す',
+    clientIsolation: 'クライアント分離',
     ssidGroupEnable: 'SSID グループを有効にする',
     ssidRequired: 'SSID は必須です',
     ssidTooShort: 'SSID は最低 {min} バイト必要です',
