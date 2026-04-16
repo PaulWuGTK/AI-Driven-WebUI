@@ -127,7 +127,7 @@ export class AuthService {
     }
 
     // A-1) verify captcha (Lua)
-    const verifyBody = { Login: { username, captchaId, captcha } };
+    const verifyBody = { Login: { username, password, captchaId, captcha } };
     const verify = await callApi<LoginVerifyResponse>(
       '/API/info?list=Login',
       {
@@ -151,6 +151,13 @@ export class AuthService {
       if (loginResponse?.status === 'captcha_invalid') {
         const error: any = new Error('Invalid captcha');
         error.status = 'captcha_invalid';
+        error.failCount = loginResponse.failCount || 0;
+        throw error;
+      }
+
+      if (loginResponse?.status === 'credentials_invalid') {
+        const error: any = new Error('Session login failed: invalid username or password');
+        error.status = 'credentials_invalid';
         error.failCount = loginResponse.failCount || 0;
         throw error;
       }
@@ -284,4 +291,3 @@ export class AuthService {
     localStorage.removeItem('wizardRequired');
   }
 }
-
