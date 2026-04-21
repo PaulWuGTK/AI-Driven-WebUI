@@ -266,6 +266,13 @@ const hasAtLeastOneWanModeEnabled = (wanConfig: BasicWanChtConfig) => (
   wanConfig.PPPoE.Enable === 1 || wanConfig.IPoE.Enable === 1 || wanConfig.Bridge.Enable === 1
 );
 
+const hasConflictingDefaultGateway = (wanConfig: BasicWanChtConfig) => (
+  wanConfig.PPPoE.Enable === 1 &&
+  wanConfig.IPoE.Enable === 1 &&
+  wanConfig.PPPoE.DefaultGateway === 1 &&
+  wanConfig.IPoE.DefaultGateway === 1
+);
+
 const loadConfig = async () => {
   try {
     config.value = await basicWanChtApi.getConfig();
@@ -308,6 +315,10 @@ const handleApply = async () => {
   if (!config.value || applying.value) return;
   if (!hasAtLeastOneWanModeEnabled(config.value)) {
     showValidationMessage(t('basicWanCht.atLeastOneWanModeRequired'));
+    return;
+  }
+  if (hasConflictingDefaultGateway(config.value)) {
+    showValidationMessage(t('basicWanCht.defaultGatewayConflict'));
     return;
   }
 

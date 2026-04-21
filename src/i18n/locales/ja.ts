@@ -1187,6 +1187,9 @@ const translations = {
     connectionFailed: '接続に失敗しました。再試行中...',
     timeoutMessage: '120 秒以内にセットアップが完了しない場合、セットアップページにリダイレクトされます。',
     timeoutIn: 'タイムアウトまで：',
+    statusInProgress: '進行中',
+    statusSuccess: '成功',
+    statusFailed: '失敗',
     applyingTitle: '設定を適用中...',
     applyingMessage: 'ルーターを再起動して設定を適用しています。',
     applyingWarning: '電源を切ったり、プラグを抜いたりしないでください。',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: 'WAN 設定の読み込みに失敗しました。',
     saveSuccess: 'WAN 設定を正常に保存しました。',
     saveError: 'WAN 設定の保存に失敗しました。',
-    atLeastOneWanModeRequired: '少なくとも 1 つの WAN モードを有効のままにする必要があります'
+    atLeastOneWanModeRequired: '少なくとも 1 つの WAN モードを有効のままにする必要があります',
+    defaultGatewayConflict: 'PPPoE と IPoE でデフォルトゲートウェイを同時に有効化することはできません'
   },
   routing: {
     title: 'ルーティング',

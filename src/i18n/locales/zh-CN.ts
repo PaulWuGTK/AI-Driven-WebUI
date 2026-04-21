@@ -1187,6 +1187,9 @@ const translations = {
     connectionFailed: '连接失败，正在重试...',
     timeoutMessage: '如果在 120 秒内未完成设置，系统将自动跳转回设置页面。',
     timeoutIn: '剩余时间：',
+    statusInProgress: '进行中',
+    statusSuccess: '成功',
+    statusFailed: '失败',
     applyingTitle: '正在应用设置...',
     applyingMessage: '正在重启路由器并应用您的设置。',
     applyingWarning: '请不要关闭电源或拔掉电源线。',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: '加载 WAN 配置失败。',
     saveSuccess: 'WAN 配置已成功保存。',
     saveError: '保存 WAN 配置失败。',
-    atLeastOneWanModeRequired: '至少必须保留一个启用中的 WAN 模式'
+    atLeastOneWanModeRequired: '至少必须保留一个启用中的 WAN 模式',
+    defaultGatewayConflict: 'PPPoE 与 IPoE 不能同时启用默认网关'
   },
   routing: {
     title: '路由',

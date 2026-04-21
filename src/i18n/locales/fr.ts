@@ -1187,6 +1187,9 @@ const translations = {
     connectionFailed: 'Échec de la connexion. Nouvelle tentative...',
     timeoutMessage: 'Si la configuration n\'est pas terminée dans les 120 secondes, vous serez redirigé vers la page de configuration.',
     timeoutIn: 'Expiration dans :',
+    statusInProgress: 'En cours',
+    statusSuccess: 'Réussi',
+    statusFailed: 'Échoué',
     applyingTitle: 'Application des paramètres...',
     applyingMessage: 'Nous redémarrons votre routeur et appliquons vos paramètres.',
     applyingWarning: 'Veuillez ne pas l\'éteindre ou le débrancher.',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: 'Échec du chargement de la configuration WAN.',
     saveSuccess: 'Configuration WAN enregistrée avec succès.',
     saveError: 'Échec de l’enregistrement de la configuration WAN.',
-    atLeastOneWanModeRequired: 'Au moins un mode WAN doit rester activé'
+    atLeastOneWanModeRequired: 'Au moins un mode WAN doit rester activé',
+    defaultGatewayConflict: 'PPPoE et IPoE ne peuvent pas activer la passerelle par defaut en meme temps'
   },
   routing: {
     title: 'Routage',

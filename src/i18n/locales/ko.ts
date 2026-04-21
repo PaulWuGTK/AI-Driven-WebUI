@@ -1187,6 +1187,9 @@ const translations = {
     connectionFailed: '연결에 실패했습니다. 다시 시도하는 중입니다...',
     timeoutMessage: '120초 이내에 설정이 완료되지 않으면 설정 페이지로 다시 이동합니다.',
     timeoutIn: '남은 시간:',
+    statusInProgress: '진행 중',
+    statusSuccess: '성공',
+    statusFailed: '실패',
     applyingTitle: '설정을 적용하는 중...',
     applyingMessage: '공유기를 다시 시작하고 설정을 적용하는 중입니다.',
     applyingWarning: '전원을 끄거나 플러그를 뽑지 마십시오.',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: 'WAN 구성을 불러오지 못했습니다.',
     saveSuccess: 'WAN 구성이 성공적으로 저장되었습니다.',
     saveError: 'WAN 구성을 저장하지 못했습니다.',
-    atLeastOneWanModeRequired: '최소 하나의 WAN 모드는 활성화된 상태로 유지되어야 합니다'
+    atLeastOneWanModeRequired: '최소 하나의 WAN 모드는 활성화된 상태로 유지되어야 합니다',
+    defaultGatewayConflict: 'PPPoE와 IPoE에서 기본 게이트웨이를 동시에 활성화할 수 없습니다'
   },
   routing: {
     title: '라우팅',
