@@ -1187,6 +1187,9 @@ const translations = {
     connectionFailed: 'Verbindung fehlgeschlagen. Erneuter Versuch...',
     timeoutMessage: 'Wenn die Einrichtung nicht innerhalb von 120 Sekunden abgeschlossen ist, werden Sie zur Einrichtungsseite zurückgeleitet.',
     timeoutIn: 'Zeitüberschreitung in:',
+    statusInProgress: 'In Bearbeitung',
+    statusSuccess: 'Erfolgreich',
+    statusFailed: 'Fehlgeschlagen',
     applyingTitle: 'Einstellungen werden angewendet...',
     applyingMessage: 'Wir starten Ihren Router neu und wenden Ihre Einstellungen an.',
     applyingWarning: 'Bitte schalten Sie ihn nicht aus oder ziehen Sie den Stecker nicht.',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: 'WAN-Konfiguration konnte nicht geladen werden.',
     saveSuccess: 'WAN-Konfiguration wurde erfolgreich gespeichert.',
     saveError: 'WAN-Konfiguration konnte nicht gespeichert werden.',
-    atLeastOneWanModeRequired: 'Mindestens ein WAN-Modus muss aktiviert bleiben'
+    atLeastOneWanModeRequired: 'Mindestens ein WAN-Modus muss aktiviert bleiben',
+    defaultGatewayConflict: 'PPPoE und IPoE duerfen das Standard-Gateway nicht gleichzeitig aktivieren'
   },
   routing: {
     title: 'Routing',

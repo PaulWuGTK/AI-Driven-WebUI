@@ -1246,6 +1246,9 @@ const translations = {
     connectionFailed: 'Connection failed. Retrying...',
     timeoutMessage: 'If the setup is not completed within 120 seconds, you will be redirected back to the setup page.',
     timeoutIn: 'Timeout in:',
+    statusInProgress: 'In Progress',
+    statusSuccess: 'Success',
+    statusFailed: 'Failed',
     applyingTitle: 'Applying Settings...',
     applyingMessage: 'We\'re rebooting your router and applying your settings.',
     applyingWarning: 'Please don\'t turn off or unplug it.',
@@ -1607,7 +1610,8 @@ const translations = {
     loadError: 'Failed to load WAN configuration',
     saveSuccess: 'WAN configuration saved successfully',
     saveError: 'Failed to save WAN configuration',
-    atLeastOneWanModeRequired: 'At least one WAN mode must remain enabled'
+    atLeastOneWanModeRequired: 'At least one WAN mode must remain enabled',
+    defaultGatewayConflict: 'PPPoE and IPoE cannot both enable Default Gateway at the same time'
   },
   routing: {
     title: 'Routing',
