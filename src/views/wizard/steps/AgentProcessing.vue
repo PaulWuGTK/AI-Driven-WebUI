@@ -16,7 +16,7 @@ const { qa } = useQA();
 
 const countdown = ref(120);
 const linkStatus = ref<'Down' | 'Up' | undefined>(undefined);
-const onboardingStatus = ref<'Success' | 'Inprogress'>('Inprogress');
+const onboardingStatus = ref('Inprogress');
 const statusMessage = ref('');
 
 let countdownTimer: number | null = null;
@@ -107,6 +107,23 @@ const formatTime = (seconds: number) => {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
+
+const displayOnboardingStatus = () => {
+  const raw = onboardingStatus.value;
+  const normalized = raw.toLowerCase().replace(/[\s_-]/g, '');
+
+  if (normalized === 'inprogress' || normalized === 'inprogres') {
+    return t('wizard.statusInProgress');
+  }
+  if (normalized === 'success' || normalized === 'done' || normalized === 'complete' || normalized === 'completed' || normalized === 'ok') {
+    return t('wizard.statusSuccess');
+  }
+  if (normalized === 'failed' || normalized === 'fail' || normalized === 'error' || normalized === 'nok') {
+    return t('wizard.statusFailed');
+  }
+
+  return raw;
+};
 </script>
 
 <template>
@@ -127,7 +144,7 @@ const formatTime = (seconds: number) => {
         <h3 :data-testid="qa('wizard-agent-processing-message')">{{ statusMessage }}</h3>
         <p class="status-info" :data-testid="qa('wizard-agent-processing-info')">
           Link: <strong :data-testid="qa('wizard-agent-processing-link-status')">{{ linkStatus }}</strong> |
-          Status: <strong :data-testid="qa('wizard-agent-processing-onboarding-status')">{{ onboardingStatus }}</strong>
+          Status: <strong :data-testid="qa('wizard-agent-processing-onboarding-status')">{{ displayOnboardingStatus() }}</strong>
         </p>
         <div class="countdown" :data-testid="qa('wizard-agent-processing-countdown')">
           <p>{{ t('wizard.timeoutIn') }} <strong :data-testid="qa('wizard-agent-processing-countdown-value')">{{ formatTime(countdown) }}</strong></p>

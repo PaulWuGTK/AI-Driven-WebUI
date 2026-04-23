@@ -33,6 +33,32 @@ const reservationColumns = computed(() => [
   { key: 'actions', label: t('lanBasic.action'), headerDataTestid: qa('ipv4-configuration-reservation-header-action') },
 ]);
 
+const showIPv4Settings = computed(() => lanData.value?.LanBasic.LANIPSetting.IPv4Enable === 1);
+const showIPv4StaticFields = computed(() =>
+  showIPv4Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv4Protocol === 'Static'
+);
+const ipv4ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv4Protocol ?? ['DHCP', 'Static']);
+const showIPv6Settings = computed(() => lanData.value?.LanBasic.LANIPSetting.IPv6Enable === 1);
+const showIPv6AddressField = computed(() =>
+  showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv6Protocol === 'Static'
+);
+const showIPv6PrefixField = computed(() =>
+  showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv6PrefixProtocol === 'Static'
+);
+const ipv6ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6Protocol ?? ['AutoConfigured', 'Static']);
+const ipv6PrefixProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6PrefixProtocol ?? ['AutoConfigured', 'Static']);
+const protocolLabelMap: Record<string, string> = {
+  DHCP: 'lanBasic.protocolDhcp',
+  Static: 'lanBasic.protocolStatic',
+  AutoConfigured: 'lanBasic.protocolAutoConfigured',
+  DHCPv6: 'lanBasic.protocolDhcpv6',
+};
+
+const getProtocolLabel = (protocol: string): string => {
+  const key = protocolLabelMap[protocol];
+  return key ? t(key) : protocol;
+};
+
 // Validation functions
 const isValidIPv4 = (ip: string): boolean => {
   const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
@@ -98,7 +124,7 @@ const fetchLanBasic = async () => {
     const response = await getLanBasic();
     lanData.value = response;
     reservations.value = [...response.LanBasic.IPAddressReservation];
-    originalIPAddress.value = response.LanBasic.LANIPSetting.IPAddress;
+    originalIPAddress.value = response.LanBasic.LANIPSetting.IPv4IPAddress;
   } catch (err) {
     console.error('Error fetching LAN basic:', err);
     error.value = 'Failed to fetch LAN settings';
@@ -169,14 +195,15 @@ const validateLANSettings = (): boolean => {
   if (!lanData.value) return false;
 
   const { LANIPSetting, DHCPv4Setting } = lanData.value.LanBasic;
+  const isIPv4Static = LANIPSetting.IPv4Enable === 1 && LANIPSetting.IPv4Protocol === 'Static';
 
   // Validate LAN IP
-  if (!isValidIPv4(LANIPSetting.IPAddress)) {
+  if (isIPv4Static && !isValidIPv4(LANIPSetting.IPv4IPAddress)) {
     error.value = 'Invalid LAN IP address format';
     return false;
   }
 
-  if (!isValidSubnetMask(LANIPSetting.SubnetMask)) {
+  if (isIPv4Static && !isValidSubnetMask(LANIPSetting.SubnetMask)) {
     error.value = 'Invalid subnet mask format';
     return false;
   }
@@ -198,37 +225,39 @@ const validateLANSettings = (): boolean => {
       return false;
     }
 
-    // Validate DHCP range is within LAN subnet
-    const ipToNumber = (ip: string): number => {
-      const parts = ip.split('.').map(part => parseInt(part, 10));
-      return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
-    };
+    if (isIPv4Static) {
+      // Validate DHCP range is within LAN subnet for static IPv4 mode
+      const ipToNumber = (ip: string): number => {
+        const parts = ip.split('.').map(part => parseInt(part, 10));
+        return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+      };
 
-    const maskToNumber = (mask: string): number => {
-      const parts = mask.split('.').map(part => parseInt(part, 10));
-      return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
-    };
+      const maskToNumber = (mask: string): number => {
+        const parts = mask.split('.').map(part => parseInt(part, 10));
+        return (parts[0] << 24) + (parts[1] << 16) + (parts[2] << 8) + parts[3];
+      };
 
-    const lanIp = ipToNumber(LANIPSetting.IPAddress);
-    const lanMask = maskToNumber(LANIPSetting.SubnetMask);
-    const beginIp = ipToNumber(DHCPv4Setting.BeginAddress);
-    const endIp = ipToNumber(DHCPv4Setting.EndAddress);
-    const networkAddr = lanIp & lanMask;
-    const broadcastAddr = networkAddr | (~lanMask >>> 0);
+      const lanIp = ipToNumber(LANIPSetting.IPv4IPAddress);
+      const lanMask = maskToNumber(LANIPSetting.SubnetMask);
+      const beginIp = ipToNumber(DHCPv4Setting.BeginAddress);
+      const endIp = ipToNumber(DHCPv4Setting.EndAddress);
+      const networkAddr = lanIp & lanMask;
+      const broadcastAddr = networkAddr | (~lanMask >>> 0);
 
-    if (beginIp < networkAddr || beginIp > broadcastAddr) {
-      error.value = 'DHCP start address must be within LAN subnet';
-      return false;
-    }
+      if (beginIp < networkAddr || beginIp > broadcastAddr) {
+        error.value = 'DHCP start address must be within LAN subnet';
+        return false;
+      }
 
-    if (endIp < networkAddr || endIp > broadcastAddr) {
-      error.value = 'DHCP end address must be within LAN subnet';
-      return false;
-    }
+      if (endIp < networkAddr || endIp > broadcastAddr) {
+        error.value = 'DHCP end address must be within LAN subnet';
+        return false;
+      }
 
-    if (beginIp >= endIp) {
-      error.value = 'DHCP start address must be lower than end address';
-      return false;
+      if (beginIp >= endIp) {
+        error.value = 'DHCP start address must be lower than end address';
+        return false;
+      }
     }
 
     // Validate DNS server if provided
@@ -249,7 +278,7 @@ const handleApply = async () => {
     return;
   }
 
-  const currentIP = lanData.value.LanBasic.LANIPSetting.IPAddress;
+  const currentIP = lanData.value.LanBasic.LANIPSetting.IPv4IPAddress;
   const ipChanged = currentIP !== originalIPAddress.value;
 
   if (ipChanged) {
@@ -298,7 +327,7 @@ const handleIPInput = (event: Event, field: string) => {
   const validatedIP = validateIPInput(input.value);
   
   if (field === 'lanIP') {
-    lanData.value.LanBasic.LANIPSetting.IPAddress = validatedIP;
+    lanData.value.LanBasic.LANIPSetting.IPv4IPAddress = validatedIP;
   } else if (field === 'dnsServer') {
     lanData.value.LanBasic.DHCPv4Setting.DNSServers = validatedIP;
   } else if (field === 'beginAddress') {
@@ -329,9 +358,9 @@ onMounted(fetchLanBasic);
         <div class="card-content" :data-testid="qa('ipv4-configuration-lan-ip-content')">
           <div class="form-group">
             <div class="switch-label">
-              <span :data-testid="qa('ipv4-configuration-lan-ip-enable-label')">{{ t('lanBasic.enable') }}</span>
+              <span :data-testid="qa('ipv4-configuration-lan-ip-enable-label')">{{ t('lanBasic.ipv4Enable') }}</span>
               <BaseSwitch
-                v-model="lanData.LanBasic.LANIPSetting.Enable"
+                v-model="lanData.LanBasic.LANIPSetting.IPv4Enable"
                 :true-value="1"
                 :false-value="0"
                 :data-testid="qa('ipv4-configuration-lan-ip-enable-toggle')"
@@ -340,28 +369,119 @@ onMounted(fetchLanBasic);
             </div>
           </div>
 
-          <div class="form-group">
-            <label :data-testid="qa('ipv4-configuration-lan-ip-address-label')">{{ t('lanBasic.ipAddress') }}</label>
-            <input
-              type="text"
-              :data-testid="qa('ipv4-configuration-lan-ip-address-input')"
-              :value="lanData.LanBasic.LANIPSetting.IPAddress"
-              @input="handleIPInput($event, 'lanIP')"
-              :disabled="!lanData.LanBasic.LANIPSetting.Enable"
-              placeholder="192.168.1.1"
-            />
-          </div>
+          <template v-if="showIPv4Settings">
+            <div class="form-group">
+              <label :data-testid="qa('ipv4-configuration-lan-ipv4-protocol-label')">{{ t('lanBasic.ipv4Protocol') }}</label>
+              <select
+                v-model="lanData.LanBasic.LANIPSetting.IPv4Protocol"
+                :data-testid="qa('ipv4-configuration-lan-ipv4-protocol-select')"
+                class="form-select"
+              >
+                <option
+                  v-for="protocol in ipv4ProtocolOptions"
+                  :key="protocol"
+                  :value="protocol"
+                  :data-testid="qa(`ipv4-configuration-lan-ipv4-protocol-option-${protocol.toLowerCase()}`)"
+                >
+                  {{ getProtocolLabel(protocol) }}
+                </option>
+              </select>
+            </div>
+
+            <template v-if="showIPv4StaticFields">
+              <div class="form-group">
+                <label :data-testid="qa('ipv4-configuration-lan-ip-address-label')">{{ t('lanBasic.ipv4Address') }}</label>
+                <input
+                  type="text"
+                  :data-testid="qa('ipv4-configuration-lan-ip-address-input')"
+                  :value="lanData.LanBasic.LANIPSetting.IPv4IPAddress"
+                  @input="handleIPInput($event, 'lanIP')"
+                  placeholder="192.168.1.1"
+                />
+              </div>
+
+              <div class="form-group">
+                <label :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-label')">{{ t('lanBasic.subnetMask') }}</label>
+                <input
+                  type="text"
+                  :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-input')"
+                  v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
+                  placeholder="255.255.255.0"
+                />
+              </div>
+            </template>
+          </template>
 
           <div class="form-group">
-            <label :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-label')">{{ t('lanBasic.subnetMask') }}</label>
-            <input
-              type="text"
-              :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-input')"
-              v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
-              :disabled="!lanData.LanBasic.LANIPSetting.Enable"
-              placeholder="255.255.255.0"
-            />
+            <div class="switch-label">
+              <span :data-testid="qa('ipv4-configuration-lan-ipv6-enable-label')">{{ t('lanBasic.ipv6Enable') }}</span>
+              <BaseSwitch
+                v-model="lanData.LanBasic.LANIPSetting.IPv6Enable"
+                :true-value="1"
+                :false-value="0"
+                :data-testid="qa('ipv4-configuration-lan-ipv6-enable-toggle')"
+                :slider-data-testid="qa('ipv4-configuration-lan-ipv6-enable-slider')"
+              />
+            </div>
           </div>
+
+          <template v-if="showIPv6Settings">
+            <div class="form-group">
+              <label :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-label')">{{ t('lanBasic.ipv6Protocol') }}</label>
+              <select
+                v-model="lanData.LanBasic.LANIPSetting.IPv6Protocol"
+                :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-select')"
+                class="form-select"
+              >
+                <option
+                  v-for="protocol in ipv6ProtocolOptions"
+                  :key="protocol"
+                  :value="protocol"
+                  :data-testid="qa(`ipv4-configuration-lan-ipv6-protocol-option-${protocol.toLowerCase()}`)"
+                >
+                  {{ getProtocolLabel(protocol) }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="showIPv6AddressField" class="form-group">
+              <label :data-testid="qa('ipv4-configuration-lan-ipv6-address-label')">{{ t('lanBasic.ipv6Address') }}</label>
+              <input
+                type="text"
+                :data-testid="qa('ipv4-configuration-lan-ipv6-address-input')"
+                v-model="lanData.LanBasic.LANIPSetting.IPv6Address"
+                placeholder=""
+              />
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-protocol-label')">{{ t('lanBasic.ipv6PrefixProtocol') }}</label>
+              <select
+                v-model="lanData.LanBasic.LANIPSetting.IPv6PrefixProtocol"
+                :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-protocol-select')"
+                class="form-select"
+              >
+                <option
+                  v-for="protocol in ipv6PrefixProtocolOptions"
+                  :key="protocol"
+                  :value="protocol"
+                  :data-testid="qa(`ipv4-configuration-lan-ipv6-prefix-protocol-option-${protocol.toLowerCase()}`)"
+                >
+                  {{ getProtocolLabel(protocol) }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="showIPv6PrefixField" class="form-group">
+              <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-label')">{{ t('lanBasic.ipv6Prefix') }}</label>
+              <input
+                type="text"
+                :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-input')"
+                v-model="lanData.LanBasic.LANIPSetting.IPv6Prefix"
+                placeholder=""
+              />
+            </div>
+          </template>
         </div>
       </div>
 
@@ -609,7 +729,21 @@ input {
   font-size: 0.9rem;
 }
 
+.form-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: white;
+}
+
 input:disabled {
+  background-color: var(--bg-secondary);
+  cursor: not-allowed;
+}
+
+.form-select:disabled {
   background-color: var(--bg-secondary);
   cursor: not-allowed;
 }
