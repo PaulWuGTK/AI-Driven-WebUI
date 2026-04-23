@@ -1,11 +1,20 @@
 export interface LANIPSetting {
-  Enable: number;
-  IPAddress: string;
+  IPv4Enable: 0 | 1;
+  IPv4Protocol: string;
+  IPv4IPAddress: string;
   SubnetMask: string;
+  IPv6Enable: 0 | 1;
+  IPv6Protocol: string;
+  IPv6Address: string;
+  IPv6PrefixProtocol: string;
+  IPv6Prefix: string;
+  ListIPv4Protocol?: string[];
+  ListIPv6Protocol?: string[];
+  ListIPv6PrefixProtocol?: string[];
 }
 
 export interface DHCPv4Setting {
-  Enable: number;
+  Enable: 0 | 1;
   DNSServers: string;
   BeginAddress: string;
   EndAddress: string;
@@ -16,7 +25,7 @@ export interface DHCPv4Setting {
 export interface IPAddressReservation {
   MACAddress: string;
   IPAddress: string;
-  Enable: number;
+  Enable: 0 | 1;
 }
 
 export interface DeviceConnected {
