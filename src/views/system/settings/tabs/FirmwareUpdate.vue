@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount, onDeactivated, onMounted } from 'vue';
+import { computed, ref, onBeforeUnmount, onDeactivated, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../../types/firmware';
 import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } from '../../../../services/api/firmware';
+import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -24,6 +25,11 @@ const isActivating = ref(false);
 const isRebootPhase = ref(false);
 const upgradeError = ref<string | null>(null);
 const showUpgradeError = ref(false);
+const currentPhaseDuration = computed(() => (isRebootPhase.value ? 100 : 60));
+const progressPercent = computed(() => {
+  const total = currentPhaseDuration.value;
+  return Math.min(100, Math.max(0, ((total - countdown.value) / total) * 100));
+});
 
 const fetchFirmwareStatus = async () => {
   try {
@@ -448,16 +454,17 @@ onDeactivated(stopUpgradeTimers);
       </div>
     </div>
 
-    <!-- Upgrade/Activation Overlay -->
-    <div v-if="isUpgrading" class="upgrade-overlay" :data-testid="qa('firmware-upgrade-overlay')">
-      <div class="upgrade-content" :data-testid="qa('firmware-upgrade-content')">
-        <div class="spinner"></div>
-        <h2 :data-testid="qa('firmware-upgrade-status-text')">{{ isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading')) }}</h2>
-        <p :data-testid="qa('firmware-upgrade-warning-text')">{{ t('firmware.powerOffWarning') }}</p>
-        <p v-if="isRebootPhase" :data-testid="qa('firmware-upgrade-reboot-warning')">{{ t('firmware.rebootWarning') }}</p>
-        <div class="countdown" :data-testid="qa('firmware-upgrade-countdown')">{{ countdown }}s</div>
-      </div>
-    </div>
+    <BlockingOverlay
+      :is-visible="isUpgrading"
+      :message="isRebootPhase ? t('firmware.rebooting') : (isActivating ? t('firmware.activating') : t('firmware.upgrading'))"
+      :description1="t('firmware.powerOffWarning')"
+      :description2="isRebootPhase ? t('firmware.rebootWarning') : ''"
+      :auto-complete="false"
+      :show-countdown="false"
+      :show-progress="true"
+      :progress-value="progressPercent"
+      :data-testid="qa('firmware-upgrade-overlay')"
+    />
 
     <!-- Upgrade Error Overlay -->
     <div v-if="showUpgradeError" class="error-overlay" :data-testid="qa('firmware-upgrade-error-overlay')">
@@ -607,29 +614,6 @@ onDeactivated(stopUpgradeTimers);
   background-color: #ccc;
 }
 
-/* Upgrade Overlay Styles */
-.upgrade-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.upgrade-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-
 /* Error Overlay Styles */
 .error-overlay {
   position: fixed;
@@ -675,27 +659,6 @@ onDeactivated(stopUpgradeTimers);
   color: var(--text-secondary);
   margin: 0;
   word-break: break-word;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  margin: 0 auto 1rem;
-  animation: spin 1s linear infinite;
-}
-
-.countdown {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  margin-top: 1rem;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {

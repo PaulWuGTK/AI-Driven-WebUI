@@ -877,6 +877,9 @@ export interface Translations {
     connectionFailed: string;
     timeoutMessage: string;
     timeoutIn: string;
+    statusInProgress: string;
+    statusSuccess: string;
+    statusFailed: string;
     applyingTitle: string;
     applyingMessage: string;
     applyingWarning: string;
