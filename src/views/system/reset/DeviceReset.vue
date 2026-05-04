@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue';
+import { computed, ref, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { restartDevice, factoryResetDevice } from '../../../services/api/reset';
 import { BaseToast, SectionCard } from '../../../components/common';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
@@ -18,6 +19,13 @@ const loading = ref({
 const showCountdown = ref(false);
 const countdown = ref(100);
 const countdownTimer = ref<number | null>(null);
+const countdownAction = ref<'restart' | 'factory'>('restart');
+const progressPercent = computed(() => Math.min(100, Math.max(0, ((100 - countdown.value) / 100) * 100)));
+const countdownHint = computed(() => (
+  countdownAction.value === 'factory'
+    ? t('reset.factoryDescription')
+    : t('reset.restartDescription')
+));
 const successMessage = ref('');
 const errorToastMessage = ref('');
 const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
@@ -46,7 +54,7 @@ const handleRestart = async () => {
       return;
     }
     showSuccessMessage(t('reset.success'));
-    startCountdown();
+    startCountdown('restart');
   } catch (error) {
     console.error('Error restarting device:', error);
     showErrorMessage('Failed to restart device');
@@ -68,7 +76,7 @@ const handleFactoryReset = async () => {
       return;
     }
     showSuccessMessage(t('reset.success'));
-    startCountdown();
+    startCountdown('factory');
   } catch (error) {
     console.error('Error factory resetting device:', error);
     showErrorMessage('Failed to factory reset device');
@@ -77,8 +85,9 @@ const handleFactoryReset = async () => {
   }
 };
 
-const startCountdown = () => {
+const startCountdown = (action: 'restart' | 'factory') => {
   showCountdown.value = true;
+  countdownAction.value = action;
   countdown.value = 100;
   
   if (countdownTimer.value) {
@@ -154,12 +163,17 @@ onUnmounted(() => {
     </div>
 
     <!-- Countdown Overlay -->
-    <div v-if="showCountdown" class="countdown-overlay" :data-testid="qa('device-reset-countdown-overlay')">
-      <div class="countdown-content" :data-testid="qa('device-reset-countdown-content')">
-        <div class="spinner"></div>
-        <p :data-testid="qa('device-reset-countdown-text')">{{ t('reset.countdown', { seconds: countdown }) }}</p>
-      </div>
-    </div>
+    <BlockingOverlay
+      :is-visible="showCountdown"
+      :message="countdownAction === 'factory' ? t('reset.factoryTitle') : t('reset.restartTitle')"
+      :description1="t('diagnostics.processing')"
+      :description2="countdownHint"
+      :auto-complete="false"
+      :show-countdown="false"
+      :show-progress="true"
+      :progress-value="progressPercent"
+      :data-testid="qa('device-reset-countdown-overlay')"
+    />
 
     <BaseToast
       v-model="showSuccessToast"
@@ -215,42 +229,6 @@ onUnmounted(() => {
 .btn-danger:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.countdown-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.countdown-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  margin: 0 auto 1rem;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
