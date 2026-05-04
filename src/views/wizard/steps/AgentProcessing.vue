@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQA } from '../../../utils/qa';
 import { wizardApi } from '../../../services/api/wizard';
 import type { AgentSetupMode } from '../../../types/wizard';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 interface Props {
   agentSetupMode: AgentSetupMode;
@@ -15,12 +16,20 @@ const { t } = useI18n();
 const { qa } = useQA();
 
 const countdown = ref(120);
+const TOTAL_SECONDS = 120;
 const linkStatus = ref<'Down' | 'Up' | undefined>(undefined);
 const onboardingStatus = ref('Inprogress');
 const statusMessage = ref('');
 
 let countdownTimer: number | null = null;
 let statusPollTimer: number | null = null;
+const progressPercent = computed(() =>
+  Math.min(100, Math.max(0, ((TOTAL_SECONDS - countdown.value) / TOTAL_SECONDS) * 100))
+);
+const statusDescription = computed(() => {
+  const link = linkStatus.value ?? '-';
+  return `Link: ${link} | Status: ${displayOnboardingStatus()}`;
+});
 
 const startOnboarding = async () => {
   try {
@@ -102,12 +111,6 @@ onUnmounted(() => {
   stopPolling();
 });
 
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
-
 const displayOnboardingStatus = () => {
   const raw = onboardingStatus.value;
   const normalized = raw.toLowerCase().replace(/[\s_-]/g, '');
@@ -139,22 +142,23 @@ const displayOnboardingStatus = () => {
         <div class="progress-step active"></div>
       </div>
 
-      <div class="processing-container" :data-testid="qa('wizard-agent-processing-status')">
-        <div class="spinner" :data-testid="qa('wizard-agent-processing-spinner')"></div>
-        <h3 :data-testid="qa('wizard-agent-processing-message')">{{ statusMessage }}</h3>
-        <p class="status-info" :data-testid="qa('wizard-agent-processing-info')">
-          Link: <strong :data-testid="qa('wizard-agent-processing-link-status')">{{ linkStatus }}</strong> |
-          Status: <strong :data-testid="qa('wizard-agent-processing-onboarding-status')">{{ displayOnboardingStatus() }}</strong>
-        </p>
-        <div class="countdown" :data-testid="qa('wizard-agent-processing-countdown')">
-          <p>{{ t('wizard.timeoutIn') }} <strong :data-testid="qa('wizard-agent-processing-countdown-value')">{{ formatTime(countdown) }}</strong></p>
-        </div>
-      </div>
-
       <div class="info-box" :data-testid="qa('wizard-agent-processing-timeout-message')">
         <p>{{ t('wizard.timeoutMessage') }}</p>
       </div>
     </div>
+
+    <BlockingOverlay
+      :is-visible="true"
+      :message="t('wizard.processingTitle')"
+      :description1="statusMessage"
+      :description2="statusDescription"
+      :auto-complete="false"
+      :show-countdown="true"
+      :show-progress="true"
+      :countdown-value="countdown"
+      :progress-value="progressPercent"
+      :data-testid="qa('wizard-agent-processing-overlay')"
+    />
   </div>
 </template>
 
@@ -200,72 +204,6 @@ const displayOnboardingStatus = () => {
 
 .progress-step.active {
   background: #0078d4;
-}
-
-.processing-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 3rem 0;
-}
-
-.spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid #e0e0e0;
-  border-top-color: #0078d4;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.processing-container h3 {
-  color: #333;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.processing-container p {
-  color: #666;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.countdown {
-  margin-top: 1rem;
-  padding: 1rem 2rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.countdown p {
-  color: #333;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.countdown strong {
-  color: #0078d4;
-  font-size: 1.25rem;
-}
-
-.status-info {
-  padding: 0.5rem 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-.status-info strong {
-  color: #0078d4;
-  font-weight: 600;
 }
 
 .info-box {
