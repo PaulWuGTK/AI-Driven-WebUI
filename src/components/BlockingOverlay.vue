@@ -14,10 +14,14 @@ const props = withDefaults(defineProps<{
   autoComplete?: boolean;
   showCountdown?: boolean;
   showProgress?: boolean;
+  progressValue?: number;
+  countdownValue?: number;
+  iconType?: 'spinner' | 'success';
 }>(), {
   autoComplete: true,
   showCountdown: true,
-  showProgress: true
+  showProgress: true,
+  iconType: 'spinner'
 });
 
 const emit = defineEmits<{
@@ -29,9 +33,11 @@ const effectiveDuration = computed(() => {
   if (!Number.isFinite(props.duration) || props.duration <= 0) return null;
   return Math.floor(props.duration);
 });
-const shouldAutoComplete = computed(() => Boolean(props.autoComplete && effectiveDuration.value));
-const shouldShowCountdown = computed(() => Boolean(shouldAutoComplete.value && props.showCountdown));
-const shouldShowProgress = computed(() => Boolean(shouldAutoComplete.value && props.showProgress));
+const hasExternalCountdown = computed(() => typeof props.countdownValue === 'number' && Number.isFinite(props.countdownValue));
+const hasExternalProgress = computed(() => typeof props.progressValue === 'number' && Number.isFinite(props.progressValue));
+const shouldAutoComplete = computed(() => Boolean(props.autoComplete && effectiveDuration.value && !hasExternalCountdown.value));
+const shouldShowCountdown = computed(() => Boolean(props.showCountdown && (shouldAutoComplete.value || hasExternalCountdown.value)));
+const shouldShowProgress = computed(() => Boolean(props.showProgress && (shouldAutoComplete.value || hasExternalProgress.value)));
 const countdown = ref(effectiveDuration.value ?? 0);
 const timer = ref<number | null>(null);
 const resolvedMessage = computed(() => props.message ?? `${t('common.apply')}...`);
@@ -44,9 +50,20 @@ const resolvedDescription2 = computed(() => {
   return `This process may take up to ${effectiveDuration.value} seconds.`;
 });
 const progressPercent = computed(() => {
+  if (hasExternalProgress.value) {
+    return Math.max(0, Math.min(100, props.progressValue as number));
+  }
   if (!effectiveDuration.value) return 0;
   return ((effectiveDuration.value - countdown.value) / effectiveDuration.value) * 100;
 });
+const displayCountdown = computed(() => {
+  if (hasExternalCountdown.value) {
+    return Math.max(0, Math.floor(props.countdownValue as number));
+  }
+  return countdown.value;
+});
+const showSpinner = computed(() => props.iconType !== 'success');
+const showSuccessIcon = computed(() => props.iconType === 'success');
 
 const startCountdown = () => {
   if (!effectiveDuration.value) return;
@@ -94,17 +111,21 @@ onUnmounted(() => {
 <template>
   <div v-if="isVisible" class="blocking-overlay" :data-testid="qa('blocking-overlay')">
     <div class="blocking-content" :data-testid="qa('blocking-overlay-content')">
-      <div class="spinner" :data-testid="qa('blocking-overlay-spinner')"></div>
+      <div v-if="showSpinner" class="spinner" :data-testid="qa('blocking-overlay-spinner')"></div>
+      <span v-if="showSuccessIcon" class="material-icons success-icon" :data-testid="qa('blocking-overlay-success-icon')">check_circle</span>
       <h2 :data-testid="qa('blocking-overlay-title')">{{ resolvedMessage }}</h2>
       <p v-if="resolvedDescription1" :data-testid="qa('blocking-overlay-description-1')">{{ resolvedDescription1 }}</p>
       <p v-if="resolvedDescription2" :data-testid="qa('blocking-overlay-description-2')">{{ resolvedDescription2 }}</p>
-      <div v-if="shouldShowCountdown" class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ countdown }}s</div>
+      <div v-if="shouldShowCountdown" class="countdown" :data-testid="qa('blocking-overlay-countdown')">{{ displayCountdown }}s</div>
       <div v-if="shouldShowProgress" class="progress-bar" :data-testid="qa('blocking-overlay-progress-bar')">
         <div 
           class="progress-fill" 
           :data-testid="qa('blocking-overlay-progress-fill')"
           :style="{ width: `${progressPercent}%` }"
         ></div>
+      </div>
+      <div class="actions" :data-testid="qa('blocking-overlay-actions')">
+        <slot name="actions"></slot>
       </div>
     </div>
   </div>
@@ -144,6 +165,13 @@ onUnmounted(() => {
   animation: spin 1s linear infinite;
 }
 
+.success-icon {
+  display: block;
+  font-size: 60px;
+  color: #4caf50;
+  margin: 0 auto 2rem;
+}
+
 h2 {
   margin: 0 0 1rem 0;
   color: var(--text-primary);
@@ -177,6 +205,10 @@ p {
   background-color: var(--primary-color);
   transition: width 1s linear;
   border-radius: 4px;
+}
+
+.actions {
+  margin-top: 1rem;
 }
 
 @keyframes spin {

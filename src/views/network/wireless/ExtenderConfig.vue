@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -23,6 +24,11 @@ const successMessage = ref('');
 const redirectCountdown = ref<number | null>(null);
 const redirectTimer = ref<number | null>(null);
 const redirectUrl = ref<string | null>(null);
+const redirectDuration = 10;
+const redirectProgress = computed(() => {
+  if (redirectCountdown.value === null) return 0;
+  return Math.min(100, Math.max(0, ((redirectDuration - redirectCountdown.value) / redirectDuration) * 100));
+});
 
 // Computed properties
 const isExtenderEnabled = computed(() => 
@@ -87,7 +93,9 @@ const applyConfigChanges = async () => {
     // Check if we need to redirect (mode switch)
     if (response.Extender && 'ip_address' in response.Extender && response.Extender.ip_address) {
       redirectUrl.value = `http://${response.Extender.ip_address}`;
-      redirectCountdown.value = 10;
+      redirectCountdown.value = redirectDuration;
+      successMessage.value = response.Extender.message || '';
+      showSuccess.value = false;
       
       // Start countdown for redirect
       if (redirectTimer.value) {
@@ -104,7 +112,6 @@ const applyConfigChanges = async () => {
         }
       }, 1000);
       
-      showSuccessNotification(`${response.Extender.message}. Redirecting in ${redirectCountdown.value} seconds...`);
     } else {
       await fetchExtenderStatus();
       showSuccessNotification('Configuration updated successfully');
@@ -587,11 +594,23 @@ onMounted(() => {
       <!-- Success notification -->
       <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-extender-success-message')">
         {{ successMessage }}
-        <div v-if="redirectCountdown !== null" class="redirect-info">
-          <div>Redirecting in {{ redirectCountdown }} seconds...</div>
-          <button @click="cancelRedirect" class="btn-cancel-redirect" :data-testid="qa('wireless-extender-cancel-redirect-button')">Cancel</button>
-        </div>
       </div>
+
+      <BlockingOverlay
+        :is-visible="redirectCountdown !== null"
+        :message="t('wirelessExtender.configuration')"
+        :description1="successMessage || t('common.loading')"
+        :description2="redirectUrl ? `${redirectUrl}` : ''"
+        :auto-complete="false"
+        :show-countdown="false"
+        :show-progress="true"
+        :progress-value="redirectProgress"
+        :data-testid="qa('wireless-extender-redirect-overlay')"
+      >
+        <template #actions>
+          <button @click="cancelRedirect" class="btn-cancel-redirect" :data-testid="qa('wireless-extender-cancel-redirect-button')">Cancel</button>
+        </template>
+      </BlockingOverlay>
     </div>
   </div>
 </template>
