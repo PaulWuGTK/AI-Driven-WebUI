@@ -9,7 +9,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Warning',
       raw: '2025 Oct 7 10:15:23 prplOS tr181-dhcpv6client: nm_popu - [!]Waiting for app:start - (_mod_netmodel_main@mod_netmodel.c:538)',
       message: 'nm_popu - [!]Waiting for app:start - (_mod_netmodel_main@mod_netmodel.c:538)',
-      module: 'nm_popu'
+      module: 'nm_popu',
+      account: '-',
+      interface: 'lan',
+      ip: '192.168.1.105'
     },
     {
       host: 'prplOS',
@@ -18,7 +21,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:14:18 prplOS dnsmasq-dhcp[1234]: DHCPACK(br-lan) 192.168.1.105 aa:bb:cc:dd:ee:ff',
       message: 'DHCPACK(br-lan) 192.168.1.105 aa:bb:cc:dd:ee:ff',
-      module: 'dnsmasq-dhcp'
+      module: 'dnsmasq-dhcp',
+      account: '-',
+      interface: 'br-lan',
+      ip: '192.168.1.105'
     },
     {
       host: 'prplOS',
@@ -27,7 +33,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Error',
       raw: '2025 Oct 7 10:13:45 prplOS kernel: [Firewall] [DROP] IN=eth0 OUT= MAC=00:11:22:33:44:55',
       message: '[Firewall] [DROP] IN=eth0 OUT= MAC=00:11:22:33:44:55',
-      module: 'kernel'
+      module: 'kernel',
+      account: '-',
+      interface: 'eth0',
+      ip: '-'
     },
     {
       host: 'prplOS',
@@ -36,7 +45,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:12:30 prplOS wlan-manager: Client connected: MAC=11:22:33:44:55:66 SSID=MyNetwork',
       message: 'Client connected: MAC=11:22:33:44:55:66 SSID=MyNetwork',
-      module: 'wlan-manager'
+      module: 'wlan-manager',
+      account: '-',
+      interface: 'wifi',
+      ip: '-'
     },
     {
       host: 'prplOS',
@@ -45,7 +57,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:11:15 prplOS lcm: System status update completed',
       message: 'System status update completed',
-      module: 'lcm'
+      module: 'lcm',
+      account: 'admin',
+      interface: 'WebUI',
+      ip: '192.168.1.2'
     },
     {
       host: 'prplOS',
@@ -54,7 +69,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:10:05 prplOS dnsmasq-dhcp[1234]: DHCPDISCOVER(br-lan) 192.168.1.106',
       message: 'DHCPDISCOVER(br-lan) 192.168.1.106',
-      module: 'dnsmasq-dhcp'
+      module: 'dnsmasq-dhcp',
+      account: '-',
+      interface: 'br-lan',
+      ip: '192.168.1.106'
     },
     {
       host: 'prplOS',
@@ -63,7 +81,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Warning',
       raw: '2025 Oct 7 10:09:42 prplOS wld: WiFi channel changed to 36',
       message: 'WiFi channel changed to 36',
-      module: 'wld'
+      module: 'wld',
+      account: 'admin',
+      interface: 'WebUI',
+      ip: '192.168.1.2'
     },
     {
       host: 'prplOS',
@@ -72,7 +93,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Warning',
       raw: '2025 Oct 7 10:08:20 prplOS kernel: [Firewall] [ACCEPT] IN=br-lan OUT=eth0',
       message: '[Firewall] [ACCEPT] IN=br-lan OUT=eth0',
-      module: 'kernel'
+      module: 'kernel',
+      account: '-',
+      interface: 'eth0',
+      ip: '-'
     },
     {
       host: 'prplOS',
@@ -81,7 +105,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:07:33 prplOS tr181-dhcpv6client: DHCPv6 lease renewed',
       message: 'DHCPv6 lease renewed',
-      module: 'tr181-dhcpv6client'
+      module: 'tr181-dhcpv6client',
+      account: '-',
+      interface: 'wan',
+      ip: '-'
     },
     {
       host: 'prplOS',
@@ -90,7 +117,10 @@ const generateLogEntries = (): LogEntry[] => {
       severity: 'Info',
       raw: '2025 Oct 7 10:06:18 prplOS wlan-manager: Client disconnected: MAC=11:22:33:44:55:66',
       message: 'Client disconnected: MAC=11:22:33:44:55:66',
-      module: 'wlan-manager'
+      module: 'wlan-manager',
+      account: '-',
+      interface: 'wifi',
+      ip: '-'
     }
   ];
 

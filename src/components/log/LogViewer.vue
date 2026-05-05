@@ -53,6 +53,9 @@ const formatTimestamp = (ts: string): string => {
             <tr>
               <th class="col-timestamp">Timestamp</th>
               <th class="col-severity">Severity</th>
+              <th class="col-account">Account</th>
+              <th class="col-interface">Interface</th>
+              <th class="col-ip">IP</th>
               <th class="col-module">Module</th>
               <th class="col-process">Process</th>
               <th class="col-message">Message</th>
@@ -70,6 +73,9 @@ const formatTimestamp = (ts: string): string => {
                   {{ entry.severity }}
                 </span>
               </td>
+              <td class="col-account">{{ entry.account || '-' }}</td>
+              <td class="col-interface">{{ entry.interface || '-' }}</td>
+              <td class="col-ip">{{ entry.ip || '-' }}</td>
               <td class="col-module">{{ entry.module || '-' }}</td>
               <td class="col-process">{{ entry.program }}</td>
               <td class="col-message">{{ entry.message }}</td>
@@ -206,20 +212,36 @@ const formatTimestamp = (ts: string): string => {
 }
 
 .col-module {
-  width: 120px;
+  width: 110px;
   color: #495057;
 }
 
 .col-process {
-  width: 150px;
+  width: 130px;
   color: #495057;
   font-family: 'Courier New', monospace;
 }
 
 .col-message {
-  min-width: 300px;
+  min-width: 260px;
   color: #212529;
   word-break: break-word;
+}
+
+.col-account {
+  width: 110px;
+  color: #495057;
+}
+
+.col-interface {
+  width: 90px;
+  color: #495057;
+}
+
+.col-ip {
+  width: 150px;
+  color: #495057;
+  font-family: 'Courier New', monospace;
 }
 
 .severity-badge {
@@ -271,10 +293,22 @@ const formatTimestamp = (ts: string): string => {
   }
 
   .col-module {
-    width: 100px;
+    width: 90px;
   }
 
   .col-process {
+    width: 110px;
+  }
+
+  .col-account {
+    width: 100px;
+  }
+
+  .col-interface {
+    width: 80px;
+  }
+
+  .col-ip {
     width: 130px;
   }
 }
@@ -341,6 +375,18 @@ const formatTimestamp = (ts: string): string => {
 
   .col-process::before {
     content: 'Process: ';
+  }
+
+  .col-account::before {
+    content: 'Account: ';
+  }
+
+  .col-interface::before {
+    content: 'Interface: ';
+  }
+
+  .col-ip::before {
+    content: 'IP: ';
   }
 
   .col-message::before {
