@@ -6,6 +6,9 @@ export interface LogEntry {
   raw: string;
   message: string;
   module: string;
+  account?: string;
+  interface?: string;
+  ip?: string;
 }
 
 export interface LogResponse {
