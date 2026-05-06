@@ -153,7 +153,7 @@ const displayOnboardingStatus = () => {
       :description1="statusMessage"
       :description2="statusDescription"
       :auto-complete="false"
-      :show-countdown="true"
+      :show-countdown="false"
       :show-progress="true"
       :countdown-value="countdown"
       :progress-value="progressPercent"

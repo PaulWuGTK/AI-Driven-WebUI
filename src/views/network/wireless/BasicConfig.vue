@@ -334,6 +334,10 @@ const requiresPskValidation = (securityMode: string | undefined): boolean => {
   return mode.includes('PSK') || mode.includes('PERSONAL');
 };
 
+const shouldShowPasswordField = (securityMode: string | undefined): boolean => {
+  return requiresPskValidation(securityMode);
+};
+
 const isWpa3OnlyPersonal = (securityMode: string | undefined): boolean => {
   const mode = String(securityMode ?? '').toUpperCase();
   return mode.includes('WPA3') && !mode.includes('WPA2');
@@ -657,7 +661,10 @@ onMounted(fetchConfig);
                 </div>
               </div>
             </div>
-            <div class="row row-3">
+            <div
+              class="row"
+              :class="shouldShowPasswordField(commonSsidConfig.SecurityMode) ? 'row-3' : 'row-2'"
+            >
               <div class="cell cell-ssid">
                 <BaseInput
                   :modelValue="commonSsidConfig.SSID"
@@ -682,7 +689,7 @@ onMounted(fetchConfig);
                 />
               </div>
 
-              <div class="cell cell-psk">
+              <div v-if="shouldShowPasswordField(commonSsidConfig.SecurityMode)" class="cell cell-psk">
                 <label class="psk-label">{{ t('wireless.password') }}</label>
                 <BaseSecretInput
                   :model-value="commonSsidConfig.KeyPassPhrase"
@@ -767,7 +774,10 @@ onMounted(fetchConfig);
                 </div>
               </div>
 
-              <div class="row row-3">
+              <div
+                class="row"
+                :class="shouldShowPasswordField(getInterfaceByBand(b)!.SecurityMode) ? 'row-3' : 'row-2'"
+              >
                 <div class="cell cell-ssid">
                   <BaseInput
                     :modelValue="getInterfaceByBand(b)!.SSID"
@@ -792,8 +802,8 @@ onMounted(fetchConfig);
                   />
                 </div>
 
-                <div class="cell cell-psk">
-                  <label class="psk-label">{{ t('wireless.wpaPreshareKey') }}</label>
+                <div v-if="shouldShowPasswordField(getInterfaceByBand(b)!.SecurityMode)" class="cell cell-psk">
+                  <label class="psk-label">{{ t('wireless.password') }}</label>
                   <BaseSecretInput
                     :model-value="getInterfaceByBand(b)!.KeyPassPhrase ?? ''"
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
@@ -873,6 +883,7 @@ onMounted(fetchConfig);
       :message="t('wireless.applyingBasicSettings')"
       :description1="t('wireless.applyingDescription')"
       :description2="''"
+      :show-countdown="false"
       :duration="30"
       @complete="handleBlockingComplete"
     />
@@ -1157,6 +1168,10 @@ onMounted(fetchConfig);
 
 .row-3 {
   grid-template-columns: 1.6fr 1fr 1.1fr;
+}
+
+.row-2 {
+  grid-template-columns: 1.6fr 1fr;
 }
 
 .cell {
