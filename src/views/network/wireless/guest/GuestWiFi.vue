@@ -217,6 +217,7 @@ onMounted(fetchGuestWiFi);
       :message="t('guest.applyingSettings')"
       :description1="t('wireless.applyingDescription')"
       :description2="''"
+      :show-countdown="false"
       :duration="30"
       @complete="handleBlockingComplete"
     />

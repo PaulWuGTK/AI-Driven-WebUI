@@ -152,6 +152,11 @@ const showWpa3Warning = computed(() => {
          props.config.wifi.common.security &&
          (props.config.wifi.common.security.indexOf('WPA2') !== -1);
 });
+
+const securityRequiresPassword = (securityMode?: string): boolean => {
+  const normalized = String(securityMode || '').trim().toLowerCase();
+  return normalized !== 'none' && normalized !== 'open' && normalized !== 'owe';
+};
 </script>
 
 <template>
@@ -231,7 +236,10 @@ const showWpa3Warning = computed(() => {
           <p v-if="showWpa3Warning" class="warning-text">{{ t('wizard.wpa3Warning') }}</p>
         </div>
 
-        <div class="form-group">
+        <div
+          v-if="securityRequiresPassword(config.wifi.common.security)"
+          class="form-group"
+        >
           <label>{{ t('wizard.passwordLabel') }} <span class="required">*</span></label>
           <BaseSecretInput
             v-model="config.wifi.common.password"
@@ -270,7 +278,10 @@ const showWpa3Warning = computed(() => {
                   </option>
                 </select>
               </div>
-              <div class="form-group">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['2g'].security)"
+                class="form-group"
+              >
                 <label>{{ t('wizard.passwordLabel') }}</label>
                 <BaseSecretInput
                   v-model="config.wifi.bands['2g'].password"
@@ -308,7 +319,10 @@ const showWpa3Warning = computed(() => {
                   </option>
                 </select>
               </div>
-              <div class="form-group">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['5g'].security)"
+                class="form-group"
+              >
                 <label>{{ t('wizard.passwordLabel') }}</label>
                 <BaseSecretInput
                   v-model="config.wifi.bands['5g'].password"
@@ -346,7 +360,10 @@ const showWpa3Warning = computed(() => {
                   </option>
                 </select>
               </div>
-              <div class="form-group">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['6g'].security)"
+                class="form-group"
+              >
                 <label>{{ t('wizard.passwordLabel') }}</label>
                 <BaseSecretInput
                   v-model="config.wifi.bands['6g'].password"

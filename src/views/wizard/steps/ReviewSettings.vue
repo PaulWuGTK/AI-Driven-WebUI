@@ -13,6 +13,11 @@ defineEmits(['prev', 'submit']);
 const { t } = useI18n();
 const { qa } = useQA();
 
+const securityRequiresPassword = (securityMode?: string): boolean => {
+  const normalized = String(securityMode || '').trim().toLowerCase();
+  return normalized !== 'none' && normalized !== 'open' && normalized !== 'owe';
+};
+
 </script>
 
 <template>
@@ -89,7 +94,10 @@ const { qa } = useQA();
               <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
               <span class="value">{{ config.wifi.common.security }}</span>
             </div>
-                        <div class="review-item password-row">
+            <div
+              v-if="securityRequiresPassword(config.wifi.common.security)"
+              class="review-item password-row"
+            >
               <span class="label">{{ t('wizard.reviewPassword') }}</span>
               <BaseSecretInput
                 mode="display"
@@ -136,7 +144,11 @@ const { qa } = useQA();
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value" :data-testid="qa('wizard-review-band-2g-security-value')">{{ config.wifi.bands['2g'].security }}</span>
               </div>
-                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-2g-password-item')">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['2g'].security)"
+                class="review-item password-row"
+                :data-testid="qa('wizard-review-band-2g-password-item')"
+              >
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"
@@ -163,7 +175,11 @@ const { qa } = useQA();
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value" :data-testid="qa('wizard-review-band-5g-security-value')">{{ config.wifi.bands['5g'].security }}</span>
               </div>
-                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-5g-password-item')">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['5g'].security)"
+                class="review-item password-row"
+                :data-testid="qa('wizard-review-band-5g-password-item')"
+              >
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"
@@ -190,7 +206,11 @@ const { qa } = useQA();
                 <span class="label">{{ t('wizard.reviewSecurityType') }}</span>
                 <span class="value" :data-testid="qa('wizard-review-band-6g-security-value')">{{ config.wifi.bands['6g'].security }}</span>
               </div>
-                            <div class="review-item password-row" :data-testid="qa('wizard-review-band-6g-password-item')">
+              <div
+                v-if="securityRequiresPassword(config.wifi.bands['6g'].security)"
+                class="review-item password-row"
+                :data-testid="qa('wizard-review-band-6g-password-item')"
+              >
                 <span class="label">{{ t('wizard.reviewPassword') }}</span>
                 <BaseSecretInput
                   mode="display"

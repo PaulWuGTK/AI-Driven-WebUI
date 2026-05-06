@@ -207,6 +207,7 @@ onMounted(fetchMeshConfig);
       :message="t('wireless.applyingMeshSettings')"
       :description1="t('wireless.applyingDescription')"
       :description2="''"
+      :show-countdown="false"
       :duration="30"
       @complete="handleBlockingComplete"
     />
