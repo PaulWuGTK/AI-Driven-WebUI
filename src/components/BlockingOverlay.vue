@@ -62,7 +62,7 @@ const displayCountdown = computed(() => {
   }
   return countdown.value;
 });
-const showSpinner = computed(() => props.iconType !== 'success');
+const showSpinner = computed(() => props.iconType !== 'success' && !shouldShowProgress.value);
 const showSuccessIcon = computed(() => props.iconType === 'success');
 
 const startCountdown = () => {
