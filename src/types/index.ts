@@ -27,3 +27,7 @@ export * from './wan';
 export * from './wifiNeighbor';
 export * from './wireless';
 export * from './wlan';
+
+export * from './openwrtHome';
+export * from './openwrtWifi';
+

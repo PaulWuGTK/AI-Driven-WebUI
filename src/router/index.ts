@@ -171,6 +171,16 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/openwrt/home',
+      name: 'OpenWrtHomeSummary',
+      component: () => import('../views/openwrt/HomeSummary.vue')
+    },
+    {
+      path: '/openwrt/wifi',
+      name: 'OpenWrtWifiBasic',
+      component: () => import('../views/openwrt/WifiBasic.vue')
+    },
+    {
       path: '/status',
       redirect: '/dashboard',
       beforeEnter: requireAuth
