@@ -1,5 +1,6 @@
 import { AuthService } from './auth';
 import { reportLegacyBooleanFields } from './bool01MigrationGuard';
+import { isOpenWrtWifiLogoMode } from '../config/runtimeMode';
 
 type Headers = Record<string, string>;
 
@@ -23,8 +24,10 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
 
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
       throw new Error(`Authentication error: ${response.status}`);
     }
 
@@ -38,9 +41,11 @@ export async function callApi<T>(url: string, options: RequestInit = {}): Promis
   } catch (err) {
     // Check if error message contains 401 or 403
     if (err instanceof Error && (err.message.includes('401') || err.message.includes('403'))) {
-      const auth = AuthService.getInstance();
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        const auth = AuthService.getInstance();
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
     }
     throw err;
   }

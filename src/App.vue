@@ -8,6 +8,7 @@ import { AutoLogoutService } from './services/autoLogout';
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
 import Bool01LegacyBanner from './components/common/Bool01LegacyBanner.vue';
+import { isOpenWrtWifiLogoMode } from './config/runtimeMode';
 
 const route = useRoute();
 const router = useRouter();
@@ -25,6 +26,10 @@ const fetchWanStatus = async () => {
 onMounted(() => {
   fetchWanStatus();
 
+  if (isOpenWrtWifiLogoMode) {
+    return;
+  }
+
   // Initialize auto logout service with router
   autoLogout.init(router);
 
@@ -36,6 +41,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (isOpenWrtWifiLogoMode) {
+    return;
+  }
   autoLogout.stop();
 });
 
@@ -45,6 +53,10 @@ const isOpenWrtStandalonePage = computed(() => route.path.startsWith('/openwrt/'
 
 // Watch route changes to manage auto logout
 watch(() => route.path, (newPath) => {
+  if (isOpenWrtWifiLogoMode) {
+    return;
+  }
+
   const auth = AuthService.getInstance();
 
   if (newPath === '/login' || newPath === '/wizard' || newPath.startsWith('/openwrt/')) {

@@ -6,6 +6,7 @@ import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sidebarMenu';
+import { isOpenWrtWifiLogoMode } from '../config/runtimeMode';
 
 const router = useRouter();
 const { t, locale } = useI18n();
@@ -54,9 +55,11 @@ const handleLanguageChange = async (event: Event) => {
     if (error instanceof Error && 
         (error.message.includes('401') || 
          error.message.includes('403'))) {
-      // Clear session and redirect to login
-      AuthService.getInstance().clearSession();
-      router.push(`/login?t=${Date.now()}`);
+      if (!isOpenWrtWifiLogoMode) {
+        // Clear session and redirect to login
+        AuthService.getInstance().clearSession();
+        router.push(`/login?t=${Date.now()}`);
+      }
     }
   }
 };
@@ -86,9 +89,11 @@ const fetchAvailableLanguages = async () => {
         (error.message.includes('401') || 
          error.message.includes('403') ||
          error.message.includes('Failed to fetch sidebar menu'))) {
-      // Clear session and redirect to login
-      auth.clearSession();
-      router.push(`/login?t=${Date.now()}`);
+      if (!isOpenWrtWifiLogoMode) {
+        // Clear session and redirect to login
+        auth.clearSession();
+        router.push(`/login?t=${Date.now()}`);
+      }
     }
   }
 };

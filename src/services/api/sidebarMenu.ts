@@ -1,4 +1,5 @@
 import { AuthService } from '../auth';
+import { defaultNetLayoutType, isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
 const isDevelopment = import.meta.env.DEV;
 const SIDEBAR_MENU_CACHE_TTL_MS = 800;
@@ -44,9 +45,11 @@ export interface SidebarMenuUpdateRequest {
 }
 
 const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMenu']['NetLayoutType'] => {
-  if (typeof value !== 'string') return 'prpl';
+  if (typeof value !== 'string') return defaultNetLayoutType;
   const normalized = value.trim().toLowerCase();
-  return normalized === 'prpl' || normalized === 'genix' || normalized === 'cht' ? normalized : 'prpl';
+  return normalized === 'prpl' || normalized === 'genix' || normalized === 'cht'
+    ? normalized
+    : defaultNetLayoutType;
 };
 
 const normalizeUserRole = (value: unknown): UserRole => {
@@ -88,7 +91,7 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
           }
         ],
         mode: "Gateway",
-        NetLayoutType: "cht",
+        NetLayoutType: defaultNetLayoutType,
         user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
@@ -131,8 +134,10 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
 
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
       throw new Error(`Failed to fetch sidebar menu: ${response.status}`);
     }
 
@@ -160,10 +165,11 @@ export const getSidebarMenu = async (): Promise<SidebarMenuResponse> => {
         (err.message.includes('403') || 
          err.message.includes('401') ||
          err.message.includes('Failed to fetch sidebar menu'))) {
-      // Clear session and redirect to login
-      auth.clearSession();
-      
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        // Clear session and redirect to login
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
     }
     
     throw err;
@@ -185,7 +191,7 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
           }
         ],
         mode: "Gateway",
-        NetLayoutType: "prpl",
+        NetLayoutType: defaultNetLayoutType,
         user: "super",
         language: {
           available: ["en", "fr", "ja", "de", "zh-TW", "zh-CN", "ko"],
@@ -224,8 +230,10 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
 
     if (response.status === 401 || response.status === 403) {
       // Authentication error - redirect to login
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
       throw new Error(`Failed to update sidebar menu language: ${response.status}`);
     }
 
@@ -248,9 +256,11 @@ export const updateSidebarMenuLanguage = async (language: string): Promise<Sideb
     if (err instanceof Error && 
         (err.message.includes('403') || 
          err.message.includes('401'))) {
-      // Clear session and redirect to login
-      auth.clearSession();
-      window.location.href = `/login?t=${Date.now()}`;
+      if (!isOpenWrtWifiLogoMode) {
+        // Clear session and redirect to login
+        auth.clearSession();
+        window.location.href = `/login?t=${Date.now()}`;
+      }
     }
     
     throw err;

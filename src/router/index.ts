@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { AuthService } from '../services/auth';
 import { getSidebarMenu } from '../services/api/sidebarMenu';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
+import { defaultNetLayoutType, isOpenWrtWifiLogoMode } from '../config/runtimeMode';
 
 interface SidebarAccessContext {
   operationMode: OperationMode;
@@ -94,7 +95,7 @@ const fetchSidebarAccessContext = async (auth: AuthService): Promise<SidebarAcce
 
     const context: SidebarAccessContext = {
       operationMode: modeMapping[response.SidebarMenu.mode] || 'Gateway',
-      netLayoutType: response.SidebarMenu.NetLayoutType || 'prpl',
+      netLayoutType: response.SidebarMenu.NetLayoutType || defaultNetLayoutType,
       features: response.SidebarMenu.features || {},
       userRole: response.SidebarMenu.user || 'super'
     };
@@ -129,6 +130,17 @@ const canAccessRouteByVisibility = async (path: string, auth: AuthService): Prom
 };
 
 const requireAuth = async (to: any, from: any, next: any) => {
+  if (isOpenWrtWifiLogoMode) {
+    const auth = AuthService.getInstance();
+    const canAccess = await canAccessRouteByVisibility(to.path, auth);
+    if (!canAccess) {
+      next('/dashboard');
+      return;
+    }
+    next();
+    return;
+  }
+
   const auth = AuthService.getInstance();
   if (!auth.isAuthenticated() && to.path !== '/login') {
     cachedSidebarAccess = null;
@@ -161,7 +173,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: isOpenWrtWifiLogoMode ? '/openwrt/home' : '/dashboard',
       beforeEnter: requireAuth
     },
     {
@@ -662,6 +674,10 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       redirect: (to) => {
+        if (isOpenWrtWifiLogoMode) {
+          return { path: '/openwrt/home' };
+        }
+
         const auth = AuthService.getInstance();
 
         if (!auth.isAuthenticated()) {

@@ -6,6 +6,7 @@ import { getSidebarMenu, updateSidebarMenuLanguage } from '../services/api/sideb
 import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
+import { defaultNetLayoutType, isOpenWrtWifiLogoMode } from '../config/runtimeMode';
 
 const { qa, slug } = useQA();
 
@@ -17,7 +18,7 @@ const activeSubItem = ref('');
 const expandedMenus = ref<string[]>([]);
 const isMobileMenuOpen = ref(false);
 const operationMode = ref<OperationMode>('Gateway');
-const netLayoutType = ref<NetLayoutType>('prpl');
+const netLayoutType = ref<NetLayoutType>(defaultNetLayoutType);
 const userRole = ref<UserRole>('super');
 const hasStreambow = ref(false);
 const features = ref<Record<string, boolean>>({});
@@ -354,7 +355,7 @@ const fetchSidebarMenu = async () => {
     };
 
     operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
-    netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
+    netLayoutType.value = response.SidebarMenu.NetLayoutType || defaultNetLayoutType;
     userRole.value = response.SidebarMenu.user || 'super';
     features.value = response.SidebarMenu.features || {};
 
@@ -380,8 +381,10 @@ const fetchSidebarMenu = async () => {
         (err.message.includes('403') ||
          err.message.includes('401') ||
          err.message.includes('Failed to fetch sidebar menu'))) {
-      auth.clearSession();
-      router.push(`/login?t=${Date.now()}`);
+      if (!isOpenWrtWifiLogoMode) {
+        auth.clearSession();
+        router.push(`/login?t=${Date.now()}`);
+      }
     }
   }
 };
@@ -395,9 +398,11 @@ watch(() => locale.value, async (newLocale) => {
     if (error instanceof Error &&
         (error.message.includes('403') ||
          error.message.includes('401'))) {
-      const auth = AuthService.getInstance();
-      auth.clearSession();
-      router.push(`/login?t=${Date.now()}`);
+      if (!isOpenWrtWifiLogoMode) {
+        const auth = AuthService.getInstance();
+        auth.clearSession();
+        router.push(`/login?t=${Date.now()}`);
+      }
     }
   }
 });

@@ -2,11 +2,12 @@ import { ref } from 'vue';
 import { getSidebarMenu } from '../services/api/sidebarMenu';
 import { AuthService } from '../services/auth';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
+import { defaultNetLayoutType } from '../config/runtimeMode';
 
 export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
   const isDevelopment = import.meta.env.DEV;
   const operationMode = ref<OperationMode>('Gateway');
-  const netLayoutType = ref<NetLayoutType>('prpl');
+  const netLayoutType = ref<NetLayoutType>(defaultNetLayoutType);
   const userRole = ref<UserRole>(defaultRole);
   const features = ref<Record<string, boolean>>({});
 
@@ -26,7 +27,7 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
       };
 
       operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
-      netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
+      netLayoutType.value = response.SidebarMenu.NetLayoutType || defaultNetLayoutType;
       userRole.value = response.SidebarMenu.user || defaultRole;
       features.value = response.SidebarMenu.features || {};
     } catch (error) {
