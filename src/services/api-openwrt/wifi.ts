@@ -8,7 +8,7 @@
 } from '../../types/openwrtWifi';
 import { callApi } from '../apiClient';
 
-const API_BASE = '/api/openwrt/v1';
+const API_BASE = import.meta.env.VITE_OPENWRT_API_BASE || '/cgi-bin/api/openwrt/v1';
 const isDevelopment = import.meta.env.DEV;
 
 const wifiBasicMock: OpenWrtWifiBasicResponse = {
