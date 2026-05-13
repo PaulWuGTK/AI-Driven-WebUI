@@ -1,4 +1,5 @@
-import type { 
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
+import type {
   DiagnosticsResponse,
   PingRequest,
   TraceRouteRequest,
@@ -7,7 +8,7 @@ import type {
 import { diagnosticsMockData } from '../mockData/diagnosticsMockData';
 import { AuthService } from '../auth';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getDiagnostics = async (): Promise<DiagnosticsResponse> => {
   if (isDevelopment) {

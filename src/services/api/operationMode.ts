@@ -1,11 +1,12 @@
 import { callApi } from '../apiClient';
 import type { OperationModeResponse, OperationModeUpdateRequest } from '../../types/operationMode';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import {
   getOperationModeMockData,
   updateOperationModeMockData
 } from '../mockData/operationModeMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 export const getOperationMode = async (): Promise<OperationModeResponse> => {

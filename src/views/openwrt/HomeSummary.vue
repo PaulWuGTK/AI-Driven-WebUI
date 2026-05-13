@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useQA } from '../../utils/qa';
 import type { OpenWrtHomeSummaryResponse } from '../../types/openwrtHome';
@@ -9,6 +9,14 @@ const { qa } = useQA();
 const loading = ref(false);
 const error = ref<string | null>(null);
 const payload = ref<OpenWrtHomeSummaryResponse | null>(null);
+const normalizeBoardName = (value?: string): string => {
+  if (!value) return '-';
+  const trimmed = value.trim();
+  if (!trimmed) return '-';
+
+  const boardPart = trimmed.includes(',') ? trimmed.split(',').slice(-1)[0] : trimmed;
+  return boardPart.replace(/[_-]+/g, ' ').toUpperCase();
+};
 
 const loadSummary = async () => {
   loading.value = true;
@@ -59,8 +67,8 @@ onMounted(loadSummary);
                 <span class="kv-value">{{ payload.HomeSummary.ModelName || '-' }}</span>
               </div>
               <div class="kv-item">
-                <span class="kv-label">Board</span>
-                <span class="kv-value">{{ payload.HomeSummary.BoardName || '-' }}</span>
+                <span class="kv-label">Board Number</span>
+                <span class="kv-value">{{ normalizeBoardName(payload.HomeSummary.BoardName) }}</span>
               </div>
               <div class="kv-item">
                 <span class="kv-label">LAN IPv4</span>

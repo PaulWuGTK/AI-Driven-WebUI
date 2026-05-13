@@ -1,7 +1,8 @@
 import type { SystemStatsResponse } from '../../types/systemStats';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 // Generate mock data with realistic fluctuations
 const generateMockData = (): SystemStatsResponse => {

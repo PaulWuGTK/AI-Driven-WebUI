@@ -2,8 +2,9 @@ import apiClient from '../apiClient';
 import type { CellularResponse, CellularConfigRequest } from '../../types/cellular';
 import { cellularMockData } from '../mockData/cellularMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const normalizeResponse = (response: CellularResponse): CellularResponse => ({
   Cellular: {

@@ -1,19 +1,20 @@
 import type { ServiceControlResponse, ServiceControlUpdateRequest } from '../../types/serviceControl';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import {
   getServiceControlMockData,
   updateServiceControlMockData
 } from '../mockData/serviceControlMockData';
 import { toFlag01 } from '../flag01';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getServiceControl = async (): Promise<ServiceControlResponse> => {
   if (isDevelopment) {
     return getServiceControlMockData();
   }
   const data = await callApi<ServiceControlResponse>('/API/info?list=AdvancedServiceControl');
-  // 保險：確保每筆規則有 InterfaceOriginal（舊資料或舊後端時）
+  // 保險：確保�?筆�??��? InterfaceOriginal（�?資�??��?後端?��?
   data.AdvancedServiceControl.Rules =
     (data.AdvancedServiceControl.Rules || []).map(r => ({
       ...r,

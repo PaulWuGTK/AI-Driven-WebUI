@@ -1,12 +1,13 @@
 import { callApi } from '../apiClient';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import type {
   ManagementAccountChtResponse,
   ManagementAccountChtUpdateRequest,
   ManagementAccountChtUpdateResponse
 } from '../../types/accountCht';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 const ACCOUNT_CHT_ENDPOINT = `${API_BASE_URL}/info?list=ManagementAccountCht`;
 

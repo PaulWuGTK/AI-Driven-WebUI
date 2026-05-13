@@ -1,4 +1,5 @@
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import type {
   AdvancedMclMGMTResponse,
   AdvancedMclMGMTUpdateRequest,
@@ -16,7 +17,7 @@ import {
   updateAdvancedMclTrustDomainMockData,
 } from '../mockData/advancedMclMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 const MGMT_ENDPOINT = `${API_BASE_URL}/info?list=AdvancedMclMGMT`;
 

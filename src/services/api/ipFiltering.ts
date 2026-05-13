@@ -2,8 +2,9 @@ import apiClient from '../apiClient';
 import type { IpFilteringResponse, IpFilteringRequest } from '../../types/ipFiltering';
 import { getIpFilteringMockData, updateIpFilteringMockData } from '../mockData/ipFilteringMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const ipFilteringApi = {
   getConfig: async (): Promise<IpFilteringResponse> => {

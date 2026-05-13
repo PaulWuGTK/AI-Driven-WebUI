@@ -1,4 +1,5 @@
-import type { 
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
+import type {
   ThreadStatusResponse, 
   ThreadConfigurationResponse, 
   ThreadConfigurationUpdateRequest,
@@ -22,7 +23,7 @@ import {
 } from '../mockData/threadMockData';
 
 const API_URL = '/API/info';
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 // Thread Status API
 export const getThreadStatus = async (): Promise<ThreadStatusResponse> => {

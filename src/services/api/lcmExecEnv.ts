@@ -2,8 +2,9 @@ import type { LcmExecEnvResponse, LcmExecEnvRequest } from '../../types/lcmExecE
 import { callApi } from '../apiClient';
 import { getLcmExecEnvMockData, updateLcmExecEnvMockData } from '../mockData/lcmExecEnvMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const normalizeResponse = (response: LcmExecEnvResponse): LcmExecEnvResponse => ({
   AdvancedLcmExecEnv: {

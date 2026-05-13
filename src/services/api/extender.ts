@@ -1,5 +1,6 @@
 import type { ExtenderResponse, ExtenderScanResponse, ExtenderUpdateRequest, ExtenderConnectRequest } from '../../types/extender';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import {
   connectExtenderMockData,
   getExtenderMockData,
@@ -8,7 +9,7 @@ import {
   updateExtenderMockData
 } from '../mockData/extenderMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getExtenderStatus = async (): Promise<ExtenderResponse> => {
   if (isDevelopment) {

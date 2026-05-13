@@ -1,8 +1,9 @@
 import { AuthService } from '../auth';
 import { ChecksumService } from '../../utils/checksum';
 import { extractNokMessage } from '../../utils/apiUtils';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export interface BackupResponse {
   outputArgs: {

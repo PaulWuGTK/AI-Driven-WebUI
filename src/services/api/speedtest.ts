@@ -1,7 +1,8 @@
 import type { SpeedTestResponse } from '../../types/speedtest';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const runSpeedTest = async (): Promise<SpeedTestResponse> => {
   if (isDevelopment) {

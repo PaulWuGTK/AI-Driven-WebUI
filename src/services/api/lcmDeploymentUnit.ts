@@ -1,3 +1,4 @@
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import type {
   LcmDeploymentUnitResponse,
   LcmDeploymentUnitRequest,
@@ -12,7 +13,7 @@ import {
   updateLcmDeploymentUnitMockData
 } from '../mockData/lcmDeploymentUnitMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const LCM_DU_ENDPOINT = '/API/info?list=AdvancedLcmDeploymentUnit';
 
 const normalizeResponse = (response: LcmDeploymentUnitResponse): LcmDeploymentUnitResponse => ({

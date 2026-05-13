@@ -1,8 +1,9 @@
 import type { LanBasicResponse, LanBasicUpdateRequest, DeviceConnectedResponse } from '../../types/lanBasic';
 import { callApi } from '../apiClient';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const DEFAULT_IPV4_PROTOCOL_LIST = ['DHCP', 'Static'];
 const DEFAULT_IPV6_PROTOCOL_LIST = ['AutoConfigured', 'Static'];

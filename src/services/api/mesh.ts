@@ -1,8 +1,9 @@
 import type { MeshMapResponse, SteeringControlData } from '../../types/mesh';
 import { callApi } from '../apiClient';
 import { getMeshMapMockData } from '../mockData/meshMockData';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export async function getMeshMap(): Promise<MeshMapResponse | { NOK: string }> {
   if (isDevelopment) {

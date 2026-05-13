@@ -1,8 +1,9 @@
 import type { WanModeManagementResponse, WanModeManagementUpdateRequest } from '../../types/wanManagement';
 import { wanManagementMockData } from '../mockData/wanManagementMockData';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export async function getWanModeManagement(): Promise<WanModeManagementResponse> {
   if (isDevelopment) {

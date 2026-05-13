@@ -2,8 +2,9 @@ import apiClient from '../apiClient';
 import type { PortForwardingResponse, PortForwardingUpdateRequest, PortForwardingApiResponse } from '../../types/portForwarding';
 import { portForwardingMockData } from '../mockData/portForwardingMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const portForwardingApi = {
   async getConfig(): Promise<PortForwardingResponse> {

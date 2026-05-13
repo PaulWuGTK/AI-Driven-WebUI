@@ -1,4 +1,5 @@
 import apiClient from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import type {
   WizardData,
   WizardConfig,
@@ -12,7 +13,7 @@ import type {
 } from '../../types/wizard';
 import { wizardMockData } from '../mockData/authMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const SECURITY_FALLBACK_PRIORITY = [
   'WPA3-Personal',
   'WPA2-WPA3-Personal',

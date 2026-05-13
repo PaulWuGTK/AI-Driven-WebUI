@@ -340,7 +340,7 @@ const STREAMBOW_KEYWORDS = ['streambow'];
 
 const fetchSidebarMenu = async () => {
   const auth = AuthService.getInstance();
-  if (!auth.isAuthenticated()) {
+  if (!auth.isAuthenticated() && !isOpenWrtWifiLogoMode) {
     return;
   }
 

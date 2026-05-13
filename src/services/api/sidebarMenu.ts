@@ -1,7 +1,7 @@
 import { AuthService } from '../auth';
 import { defaultNetLayoutType, isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const SIDEBAR_MENU_CACHE_TTL_MS = 800;
 
 let sidebarMenuInFlight: Promise<SidebarMenuResponse> | null = null;

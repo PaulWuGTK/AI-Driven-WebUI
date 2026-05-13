@@ -1,11 +1,12 @@
 import type { MACFilteringResponse, MACFilteringUpdateRequest } from '../../types/macFiltering';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import {
   getMACFilteringMockData,
   updateMACFilteringMockData
 } from '../mockData/macFilteringMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getMACFiltering = async (): Promise<MACFilteringResponse> => {
   if (isDevelopment) {

@@ -1,8 +1,9 @@
 import type { WanModeSetupResponse, WanModeSetupUpdateRequest } from '../../types/wanSetup';
 import { callApi } from '../apiClient';
 import { wanModeSetupMockData } from '../mockData/wanSetupMockData';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export async function getWanModeSetup(): Promise<WanModeSetupResponse> {
   if (isDevelopment) {

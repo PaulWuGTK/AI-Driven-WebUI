@@ -1,8 +1,9 @@
 import type { TR471Response, TR471Config } from '../../types/tr471';
 import { callApi } from '../apiClient';
 import { getTR471MockConfig, runTR471MockTest } from '../mockData/tr471MockData';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getTR471Config = async (): Promise<TR471Response> => {
   if (isDevelopment) {

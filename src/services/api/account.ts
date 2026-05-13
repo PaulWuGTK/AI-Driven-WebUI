@@ -1,7 +1,8 @@
 import type { ManagementAccountResponse, ManagementAccountUpdateRequest, ManagementAccountUpdateResponse } from '../../types/account';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 export async function getAccountSettings(): Promise<ManagementAccountResponse> {

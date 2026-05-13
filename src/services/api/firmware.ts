@@ -1,8 +1,9 @@
 import type { FirmwareResponse, FirmwareUpgradeRequest } from '../../types/firmware';
 import { AuthService } from '../auth';
 import { extractNokMessage } from '../../utils/apiUtils';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 interface FirmwareUpgradeCommandResult {
   outputArgs?: {

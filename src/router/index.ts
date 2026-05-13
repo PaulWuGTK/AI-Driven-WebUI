@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+﻿import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
 import { AuthService } from '../services/auth';
 import { getSidebarMenu } from '../services/api/sidebarMenu';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
@@ -158,8 +158,12 @@ const requireAuth = async (to: any, from: any, next: any) => {
   }
 };
 
+const resolveWirelessRootComponent = () => import('../views/network/wireless/WirelessConfig.vue');
+
+const resolveWirelessBasicComponent = () => import('../views/network/wireless/BasicConfig.vue');
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: isOpenWrtWifiLogoMode ? createWebHashHistory() : createWebHistory(),
   routes: [
     {
       path: '/login',
@@ -173,7 +177,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: isOpenWrtWifiLogoMode ? '/openwrt/home' : '/dashboard',
+      redirect: '/dashboard',
       beforeEnter: requireAuth
     },
     {
@@ -184,13 +188,11 @@ const router = createRouter({
     },
     {
       path: '/openwrt/home',
-      name: 'OpenWrtHomeSummary',
-      component: () => import('../views/openwrt/HomeSummary.vue')
+      redirect: '/dashboard'
     },
     {
       path: '/openwrt/wifi',
-      name: 'OpenWrtWifiBasic',
-      component: () => import('../views/openwrt/WifiBasic.vue')
+      redirect: '/network/wireless/basic'
     },
     {
       path: '/status',
@@ -337,7 +339,7 @@ const router = createRouter({
     {
       path: '/network/wireless',
       name: 'NetworkWireless',
-      component: () => import('../views/network/wireless/WirelessConfig.vue'),
+      component: resolveWirelessRootComponent,
       beforeEnter: requireAuth
     },
     {
@@ -347,7 +349,7 @@ const router = createRouter({
     {
       path: '/network/wireless/basic',
       name: 'NetworkWirelessBasic',
-      component: () => import('../views/network/wireless/BasicConfig.vue'),
+      component: resolveWirelessBasicComponent,
       beforeEnter: requireAuth
     },
     {
@@ -675,7 +677,7 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       redirect: (to) => {
         if (isOpenWrtWifiLogoMode) {
-          return { path: '/openwrt/home' };
+          return { path: '/dashboard' };
         }
 
         const auth = AuthService.getInstance();
@@ -695,3 +697,4 @@ const router = createRouter({
 });
 
 export default router;
+

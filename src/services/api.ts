@@ -19,8 +19,9 @@ import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
 import { handleApiResponse } from '../utils/apiUtils';
 import { callApi } from './apiClient';
 import { toFlag01 } from './flag01';
+import { isOpenWrtWifiLogoMode } from '../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 const normalizeWlanStatusResponse = (response: WlanStatusResponse): WlanStatusResponse => {

@@ -1,8 +1,9 @@
 import { callApi } from '../apiClient';
 import type { LogResponse, LogRequest } from '../../types/log';
 import { generateMockLogs } from '../mockData/logMockData';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export async function getSystemLog(request?: LogRequest): Promise<LogResponse> {
   if (isDevelopment) {

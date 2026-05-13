@@ -1,5 +1,7 @@
-import { callApi } from '../apiClient';
+﻿import { callApi } from '../apiClient';
 import type { DashboardResponse } from '../../types/dashboard';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
+import { getOpenWrtHomeSummary } from '../api-openwrt/home';
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -21,6 +23,13 @@ const getFluctuation = (min: number, max: number) => {
 // Helper function to ensure value stays within bounds
 const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
+};
+const normalizeBoardName = (value?: string): string => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  const boardPart = trimmed.includes(',') ? trimmed.split(',').slice(-1)[0] : trimmed;
+  return boardPart.replace(/[_-]+/g, ' ').toUpperCase();
 };
 
 // Generate mock data with realistic variations
@@ -152,7 +161,51 @@ const generateMockData = (): DashboardResponse => {
   };
 };
 
+const applyOpenWrtSummaryToDashboard = async (dashboard: DashboardResponse): Promise<DashboardResponse> => {
+  const result = { ...dashboard };
+  try {
+    const summaryResponse = await getOpenWrtHomeSummary();
+    const summary = summaryResponse.HomeSummary;
+
+    result.Dashboard.System.SoftwareVersion =
+      summary.FirmwareVersion || result.Dashboard.System.SoftwareVersion;
+    result.Dashboard.System.HardwareVersion =
+      normalizeBoardName(summary.BoardName) || summary.FirmwareRevision || result.Dashboard.System.HardwareVersion;
+    result.Dashboard.System.ModelName =
+      summary.ModelName || result.Dashboard.System.ModelName;
+
+    const bandMap: Record<string, 'wifi2g' | 'wifi5g' | 'wifi6g'> = {
+      '2.4GHz': 'wifi2g',
+      '5GHz': 'wifi5g',
+      '6GHz': 'wifi6g'
+    };
+
+    for (const band of summary.WifiStatus || []) {
+      const key = bandMap[band.Band];
+      if (!key || !result.Dashboard.WiFi[key]) continue;
+      result.Dashboard.WiFi[key] = {
+        ...result.Dashboard.WiFi[key],
+        Enable: Number(band.Enable) ? 1 : 0,
+        SSID: band.SSID || result.Dashboard.WiFi[key].SSID,
+        SecurityMode: band.Encryption || result.Dashboard.WiFi[key].SecurityMode,
+        Password: (band.Encryption === 'none' || band.Encryption === 'owe')
+          ? ''
+          : result.Dashboard.WiFi[key].Password
+      };
+    }
+  } catch (error) {
+    console.warn('Failed to enrich dashboard with OpenWrt summary:', error);
+  }
+
+  return result;
+};
+
 export const getDashboardData = async (): Promise<DashboardResponse> => {
+  if (isOpenWrtWifiLogoMode) {
+    const mock = generateMockData();
+    return applyOpenWrtSummaryToDashboard(mock);
+  }
+
   if (isDevelopment) {
     return generateMockData();
   }

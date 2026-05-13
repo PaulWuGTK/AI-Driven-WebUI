@@ -1,4 +1,5 @@
-import type { 
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
+import type {
   SshServerResponse, 
   SshAuthorizedKeyResponse, 
   SshSessionResponse,
@@ -8,7 +9,7 @@ import type {
 import { callApi } from '../apiClient';
 import { sshServerData, sshAuthorizedKeyData, sshSessionData } from '../mockData/sshData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export async function getSshServers(): Promise<SshServerResponse> {
   if (isDevelopment) {

@@ -1,3 +1,4 @@
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import type {
   ExecutionUnitResponse,
   ExecutionUnitActionRequest
@@ -8,7 +9,7 @@ import {
   getLcmExecutionUnitMockData
 } from '../mockData/lcmExecutionUnitMockData';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getLcmExecutionUnitConfig = async (): Promise<ExecutionUnitResponse> => {
   if (isDevelopment) {

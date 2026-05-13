@@ -3,8 +3,9 @@ import type { StaticRouteData, StaticRouteResponse, StaticRouteUpdateRequest } f
 import { getStaticRouteMockData, updateStaticRouteMockData } from '../mockData/staticRouteMockData';
 import { toFlag01 } from '../flag01';
 import { extractNokMessage } from '../../utils/apiUtils';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => (

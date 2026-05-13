@@ -1,6 +1,7 @@
 import { AuthService } from '../auth';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export interface ResetResponse {
   ManagementDeviceReset: string;

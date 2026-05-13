@@ -1,8 +1,9 @@
 import type { TR069Config } from '../../types/device';
 import { tr069MockData } from '../mockData/deviceMockData';
 import { AuthService } from '../auth';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const getAuthHeaders = (): Record<string, string> => {
   const sessionId = AuthService.getInstance().getSessionId();

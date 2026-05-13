@@ -2,8 +2,9 @@ import type { UpnpResponse, UpnpUpdateRequest, UpnpUpdateResponse } from '../../
 import { callApi } from '../apiClient';
 import { getUpnpMockData, updateUpnpMockData } from '../mockData/upnpMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 const normalizeResponse = (response: UpnpResponse): UpnpResponse => ({

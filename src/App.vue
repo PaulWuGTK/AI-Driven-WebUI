@@ -49,7 +49,6 @@ onUnmounted(() => {
 
 const isLoginPage = computed(() => route.path === '/login');
 const isWizardPage = computed(() => route.path === '/wizard');
-const isOpenWrtStandalonePage = computed(() => route.path.startsWith('/openwrt/'));
 
 // Watch route changes to manage auto logout
 watch(() => route.path, (newPath) => {
@@ -59,7 +58,7 @@ watch(() => route.path, (newPath) => {
 
   const auth = AuthService.getInstance();
 
-  if (newPath === '/login' || newPath === '/wizard' || newPath.startsWith('/openwrt/')) {
+  if (newPath === '/login' || newPath === '/wizard') {
     // Stop auto logout on login and wizard pages
     autoLogout.stop();
   } else if (auth.isAuthenticated()) {
@@ -71,7 +70,7 @@ watch(() => route.path, (newPath) => {
 
 <template>
   <div class="app-container">
-    <template v-if="!isLoginPage && !isWizardPage && !isOpenWrtStandalonePage">
+    <template v-if="!isLoginPage && !isWizardPage">
       <Sidebar />
       <div class="main-content">
         <Header />

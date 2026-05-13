@@ -1,8 +1,9 @@
 import type { DmzResponse, DmzUpdateRequest } from '../../types/dmz';
 import { callApi } from '../apiClient';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getDmz = async (): Promise<DmzResponse> => {
   if (isDevelopment) {

@@ -2,8 +2,9 @@ import apiClient from '../apiClient';
 import type { BasicWanChtResponse, BasicWanChtConfig } from '../../types/basicWanCht';
 import { basicWanChtMockData } from '../mockData/basicWanChtMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const normalizeBasicWanChtConfig = (config: BasicWanChtConfig): BasicWanChtConfig => ({
   PPPoE: {

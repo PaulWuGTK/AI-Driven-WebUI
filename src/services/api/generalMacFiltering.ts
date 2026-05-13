@@ -1,12 +1,13 @@
 import type { GeneralMacFilteringResponse, GeneralMacFilteringUpdateRequest } from '../../types/generalMacFiltering';
 import { callApi } from '../apiClient';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 import {
   getGeneralMacFilteringMockData,
   updateGeneralMacFilteringMockData
 } from '../mockData/generalMacFilteringMockData';
 import { toFlag01 } from '../flag01';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 const normalizeResponse = (data: GeneralMacFilteringResponse): GeneralMacFilteringResponse => ({
   MACFiltering: {

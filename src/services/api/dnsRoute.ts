@@ -3,8 +3,9 @@ import type { DnsRouteResponse, DnsRouteRule, DnsRouteUpdateRequest } from '../.
 import { getDnsRouteMockData, updateDnsRouteMockData } from '../mockData/dnsRouteMockData';
 import { toFlag01 } from '../flag01';
 import { extractNokMessage } from '../../utils/apiUtils';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 const API_BASE_URL = '/API';
 
 const normalizeRule = (rule: DnsRouteRule, index: number, reportBoolean = true): DnsRouteRule => ({

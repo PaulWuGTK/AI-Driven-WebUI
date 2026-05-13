@@ -2,8 +2,9 @@ import { callApi } from '../apiClient';
 import type { BasicBridgeLanResponse, BasicBridgeLanUpdateRequest } from '../../types/basicBridgeLan';
 import { basicBridgeLanMockData } from '../mockData/basicBridgeLanMockData';
 import { toFlag01 } from '../flag01';
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 export const getBasicBridgeLan = async (): Promise<BasicBridgeLanResponse> => {
   if (isDevelopment) {

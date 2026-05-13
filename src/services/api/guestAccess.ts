@@ -1,4 +1,5 @@
-import type { 
+import { isOpenWrtWifiLogoMode } from '../../config/runtimeMode';
+import type {
   GuestWiFiResponse, 
   GuestWiFiUpdateRequest, 
   GuestLANResponse, 
@@ -7,7 +8,7 @@ import type {
 } from '../../types/guest';
 import { callApi } from '../apiClient';
 
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = import.meta.env.DEV || isOpenWrtWifiLogoMode;
 
 // Guest WiFi API
 export const getGuestWiFi = async (): Promise<GuestWiFiResponse> => {
