@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TR069Config from './TR069Config.vue';
+import TR069Log from './TR069Log.vue';
 import TR369Config from './TR369Config.vue';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -12,6 +13,7 @@ const activeTab = ref('tr069');
 // Use computed to dynamically generate tabs
 const tabs = computed(() => [
   { id: 'tr069', label: t('device.tr069Config') },
+  { id: 'tr069-log', label: t('device.tr069Log') },
   { id: 'tr369', label: t('device.tr369Config') }
 ]);
 </script>
@@ -37,6 +39,7 @@ const tabs = computed(() => [
 
         <div class="tab-content" :data-testid="qa('device-management-tab-content')">
           <TR069Config v-if="activeTab === 'tr069'" :data-testid="qa('device-tr069-config')" />
+          <TR069Log v-if="activeTab === 'tr069-log'" :data-testid="qa('device-tr069-log')" />
           <TR369Config v-if="activeTab === 'tr369'" :data-testid="qa('device-tr369-config')" />
         </div>
       </div>

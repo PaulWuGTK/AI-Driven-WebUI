@@ -2,11 +2,16 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { TR069Config } from '../../../types/device';
-import { getTR069Config, updateTR069Config, sendInformToACS } from '../../../services/api/device';
+import {
+  getTR069Config,
+  updateTR069Config,
+  sendInformToACS,
+  sendBootstrapToACS
+} from '../../../services/api/device';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
-const { isQAMode, qa, slug } = useQA();
 
+const { qa } = useQA();
 const { t } = useI18n();
 const config = ref<TR069Config | null>(null);
 const loading = ref(false);
@@ -28,7 +33,6 @@ const fetchConfig = async () => {
 
 const handleApply = async () => {
   if (!config.value) return;
-  
   loading.value = true;
   error.value = null;
   try {
@@ -62,6 +66,22 @@ const handleSendInform = async () => {
   }
 };
 
+const handleSendBootstrap = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const response = await sendBootstrapToACS();
+    if (!response.ManagementServer?.OK) {
+      throw new Error('Failed to send bootstrap message');
+    }
+  } catch (err) {
+    console.error('Error sending bootstrap:', err);
+    error.value = 'Failed to send bootstrap to ACS server';
+  } finally {
+    loading.value = false;
+  }
+};
+
 onMounted(fetchConfig);
 </script>
 
@@ -90,67 +110,64 @@ onMounted(fetchConfig);
         </div>
       </div>
 
-      <div class="form-group">
-        <label :data-testid="qa('tr069-config-acs-url-label')">{{ t('device.acsUrl') }}</label>
-        <input
-          type="text"
-          :data-testid="qa('tr069-config-acs-url-input')"
-          v-model="config.URL"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label :data-testid="qa('tr069-config-connection-request-url-label')">{{ t('device.connectionRequestUrl') }}</label>
-        <input
-          type="text"
-          :data-testid="qa('tr069-config-connection-request-url-input')"
-          v-model="config.ConnectionRequestURL"
-          disabled
-        />
-      </div>
-
-      <div class="credentials-section" :data-testid="qa('tr069-config-acs-credentials-section')">
-        <h3 :data-testid="qa('tr069-config-acs-credentials-title')">{{ t('device.acsCredentials') }}</h3>
-        <div class="form-group">
-          <label :data-testid="qa('tr069-config-acs-username-label')">{{ t('device.username') }}</label>
-          <input
-            type="text"
-            :data-testid="qa('tr069-config-acs-username-input')"
-            v-model="config.Username"
-            required
-          />
+      <div class="readonly-section">
+        <div class="readonly-row">
+          <span class="readonly-label">{{ t('device.sessionStatus') }}</span>
+          <span class="readonly-value">{{ config.SessionStatus || '-' }}</span>
         </div>
-        <div class="form-group">
-          <label :data-testid="qa('tr069-config-acs-password-label')">{{ t('device.password') }}</label>
-          <BaseSecretInput
-            v-model="config.Password"
-            :container-data-testid="qa('tr069-config-acs-password-container')"
-            :input-data-testid="qa('tr069-config-acs-password-input')"
-            :toggle-data-testid="qa('tr069-config-acs-password-toggle')"
-          />
+        <div class="readonly-row">
+          <span class="readonly-label">{{ t('device.activeAcsUrl') }}</span>
+          <span class="readonly-value">{{ config.URL || '-' }}</span>
+        </div>
+        <div class="readonly-row">
+          <span class="readonly-label">{{ t('device.connectionRequestUrl') }}</span>
+          <span class="readonly-value">{{ config.ConnectionRequestURL || '-' }}</span>
         </div>
       </div>
 
-      <div class="credentials-section" :data-testid="qa('tr069-config-connection-credentials-section')">
-        <h3 :data-testid="qa('tr069-config-connection-credentials-title')">{{ t('device.connectionRequestCredentials') }}</h3>
-        <div class="form-group">
-          <label :data-testid="qa('tr069-config-connection-username-label')">{{ t('device.username') }}</label>
-          <input
-            type="text"
-            :data-testid="qa('tr069-config-connection-username-input')"
-            v-model="config.ConnectionRequestUsername"
-            required
-          />
+      <div class="credentials-section">
+        <h3>{{ t('device.connectionRequestCredentials') }}</h3>
+        <div class="readonly-row">
+          <span class="readonly-label">{{ t('device.username') }}</span>
+          <span class="readonly-value">{{ config.ConnectionRequestUsername || '-' }}</span>
         </div>
-        <div class="form-group">
-          <label :data-testid="qa('tr069-config-connection-password-label')">{{ t('device.password') }}</label>
-          <BaseSecretInput
-            v-model="config.ConnectionRequestPassword"
-            :container-data-testid="qa('tr069-config-connection-password-container')"
-            :input-data-testid="qa('tr069-config-connection-password-input')"
-            :toggle-data-testid="qa('tr069-config-connection-password-toggle')"
-          />
+        <div class="readonly-row">
+          <span class="readonly-label">{{ t('device.password') }}</span>
+          <span class="readonly-value">{{ config.ConnectionRequestPassword || '-' }}</span>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="credentials-section">
+          <h3>{{ t('device.primaryProfile') }}</h3>
+          <div class="form-group">
+            <label>{{ t('device.acsUrl') }}</label>
+            <input v-model="config.PrimaryURL" type="text" required />
+          </div>
+          <div class="form-group">
+            <label>{{ t('device.username') }}</label>
+            <input v-model="config.PrimaryUsername" type="text" required />
+          </div>
+          <div class="form-group">
+            <label>{{ t('device.password') }}</label>
+            <BaseSecretInput v-model="config.PrimaryPassword" />
+          </div>
+        </div>
+
+        <div class="credentials-section">
+          <h3>{{ t('device.backupProfile') }}</h3>
+          <div class="form-group">
+            <label>{{ t('device.acsUrl') }}</label>
+            <input v-model="config.BackupURL" type="text" required />
+          </div>
+          <div class="form-group">
+            <label>{{ t('device.username') }}</label>
+            <input v-model="config.BackupUsername" type="text" required />
+          </div>
+          <div class="form-group">
+            <label>{{ t('device.password') }}</label>
+            <BaseSecretInput v-model="config.BackupPassword" />
+          </div>
         </div>
       </div>
 
@@ -187,14 +204,23 @@ onMounted(fetchConfig);
           :apply-disabled="loading"
           @cancel="fetchConfig"
         />
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn btn-primary"
           :data-testid="qa('tr069-config-send-inform-button')"
           @click="handleSendInform"
           :disabled="loading || !config.EnableCWMP"
         >
           {{ t('device.sendInform') }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          :data-testid="qa('tr069-config-send-bootstrap-button')"
+          @click="handleSendBootstrap"
+          :disabled="loading || !config.EnableCWMP"
+        >
+          {{ t('device.sendBootstrap') }}
         </button>
       </div>
     </form>
@@ -206,43 +232,53 @@ onMounted(fetchConfig);
   padding: 1.5rem;
 }
 
+.readonly-section {
+  margin: 1rem 0 1.5rem 0;
+}
+
+.readonly-row {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 1rem;
+  padding: 0.35rem 0;
+}
+
+.readonly-label {
+  color: var(--text-primary);
+}
+
+.readonly-value {
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .credentials-section {
-  margin: 2rem 0;
-  padding: 1.5rem;
+  margin: 1rem 0;
+  padding: 1rem;
   background-color: var(--bg-secondary);
   border-radius: 4px;
 }
 
 .credentials-section h3 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
   color: var(--text-primary);
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
-}
-
-/* Custom switch size (60px × 34px) for larger prominence */
-:deep(.switch) {
-  width: 60px;
-  height: 34px;
-  flex-shrink: 0;
-}
-
-:deep(.slider:before) {
-  height: 26px;
-  width: 26px;
-}
-
-:deep(input:checked + .slider:before) {
-  transform: translateX(26px);
 }
 
 input {
@@ -253,16 +289,12 @@ input {
   font-size: 0.9rem;
 }
 
-input:disabled {
-  background-color: var(--bg-secondary);
-  cursor: not-allowed;
-}
-
 .button-group {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .loading-state {
@@ -285,17 +317,13 @@ input:disabled {
     padding: 1rem;
   }
 
-  .credentials-section {
-    padding: 1rem;
-    margin: 1.5rem 0;
+  .profile-grid {
+    grid-template-columns: 1fr;
   }
 
-  .button-group {
-    flex-direction: column;
-  }
-
-  .button-group :deep(.btn) {
-    width: 100%;
+  .readonly-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
   }
 }
 </style>
