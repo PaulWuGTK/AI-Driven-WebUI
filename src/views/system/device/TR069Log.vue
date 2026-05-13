@@ -40,7 +40,7 @@ onMounted(fetchLogs);
       {{ error }}
     </div>
 
-    <div v-else-if="logData" class="panel-section" :data-testid="qa('tr069-log-panel')">
+    <div v-else-if="logData" class="tr069-log-section" :data-testid="qa('tr069-log-panel')">
       <div class="meta-row">
         <span>{{ t('device.logCount') }}: {{ logData.count }}</span>
         <span>{{ t('device.logMaxEntries') }}: {{ logData.maxEntries }}</span>
@@ -72,6 +72,11 @@ onMounted(fetchLogs);
 <style scoped>
 .tr069-log {
   padding: 1.5rem;
+}
+
+.tr069-log-section {
+  background: transparent;
+  box-shadow: none;
 }
 
 .meta-row {
