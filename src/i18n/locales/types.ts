@@ -24,6 +24,8 @@ export interface Translations {
     management: string;
     account: string;
     ntp: string;
+    tr069: string;
+    tr369: string;
     ssh: string;
     advanced: string;
     serviceControl: string;

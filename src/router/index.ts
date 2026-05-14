@@ -60,7 +60,9 @@ const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
   { pathPrefix: '/system/diagnostics', menuKey: 'management.tools' },
 
   { pathPrefix: '/system/account', menuKey: 'management.account' },
-  { pathPrefix: '/system/device', menuKey: 'management.device' }
+  { pathPrefix: '/system/device/tr069', menuKey: 'management.tr069' },
+  { pathPrefix: '/system/device/tr369', menuKey: 'management.tr369' },
+  { pathPrefix: '/system/device', menuKey: 'management.tr069' }
 ];
 
 const resolveMenuKeyFromRoute = (path: string): string | null => {
@@ -608,13 +610,33 @@ const router = createRouter({
     },
     {
       path: '/system/device',
-      name: 'SystemDevice',
+      redirect: '/system/device/tr069'
+    },
+    {
+      path: '/system/device/tr069',
+      name: 'SystemDeviceTR069',
       component: () => import('../views/system/device/DeviceManagement.vue'),
+      props: { mode: 'tr069' },
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/system/device/tr369',
+      name: 'SystemDeviceTR369',
+      component: () => import('../views/system/device/DeviceManagement.vue'),
+      props: { mode: 'tr369' },
       beforeEnter: requireAuth
     },
     {
       path: '/management/device',
-      redirect: '/system/device'
+      redirect: '/system/device/tr069'
+    },
+    {
+      path: '/management/tr069',
+      redirect: '/system/device/tr069'
+    },
+    {
+      path: '/management/tr369',
+      redirect: '/system/device/tr369'
     },
     {
       path: '/system/account',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TR069Config from './TR069Config.vue';
 import TR069Log from './TR069Log.vue';
@@ -8,19 +8,32 @@ import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
-const activeTab = ref('tr069');
+const props = defineProps<{
+  mode?: 'tr069' | 'tr369';
+}>();
+const isTR369Only = computed(() => props.mode === 'tr369');
+const activeTab = ref(isTR369Only.value ? 'tr369' : 'tr069');
 
-// Use computed to dynamically generate tabs
-const tabs = computed(() => [
-  { id: 'tr069', label: t('device.tr069Config') },
-  { id: 'tr069-log', label: t('device.tr069Log') },
-  { id: 'tr369', label: t('device.tr369Config') }
-]);
+watch(isTR369Only, (value) => {
+  activeTab.value = value ? 'tr369' : 'tr069';
+}, { immediate: true });
+
+const tabs = computed(() => {
+  if (isTR369Only.value) {
+    return [{ id: 'tr369', label: t('device.tr369Config') }];
+  }
+  return [
+    { id: 'tr069', label: t('device.tr069Config') },
+    { id: 'tr069-log', label: t('device.tr069Log') }
+  ];
+});
 </script>
 
 <template>
   <div class="page-container">
-    <h1 class="page-title" :data-testid="qa('device-management-title')">{{ t('device.title') }}</h1>
+    <h1 class="page-title" :data-testid="qa('device-management-title')">
+      {{ isTR369Only ? t('device.tr369Config') : t('device.tr069Config') }}
+    </h1>
 
     <div class="status-content" :data-testid="qa('device-management-content')">
       <div class="panel-section" :data-testid="qa('device-management-panel')">

@@ -176,7 +176,8 @@ const baseMenuItems: MenuItem[] = [
       { name: 'Account Management', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.account' },
       { name: 'Account Management CHT', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.accountCht' },
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp', menuKey: 'management.ntp' },
-      { name: 'Device Management', path: '/management/device', translationKey: 'menu.device', menuKey: 'management.device' },
+      { name: 'TR-069', path: '/management/tr069', translationKey: 'menu.tr069', menuKey: 'management.tr069' },
+      { name: 'TR-369', path: '/management/tr369', translationKey: 'menu.tr369', menuKey: 'management.tr369' },
       {
         name: 'Settings',
         path: '/management/settings',
@@ -436,7 +437,9 @@ watch(() => route.path, (newPath) => {
     '/management/settings/reset': ['/system/settings/reset'],
     '/management/settings/backup': ['/system/settings/backup'],
     '/management/settings/update': ['/system/settings/update'],
-    '/management/device': ['/system/device'],
+    '/management/device': ['/system/device', '/system/device/tr069'],
+    '/management/tr069': ['/system/device/tr069'],
+    '/management/tr369': ['/system/device/tr369'],
     '/management/account': ['/system/account']
   };
 
