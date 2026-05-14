@@ -125,7 +125,7 @@ onMounted(fetchConfig);
         </div>
       </div>
 
-      <div class="credentials-section">
+      <div class="credentials-section section-panel">
         <h3>{{ t('device.connectionRequestCredentials') }}</h3>
         <div class="readonly-row">
           <span class="readonly-label">{{ t('device.username') }}</span>
@@ -138,7 +138,7 @@ onMounted(fetchConfig);
       </div>
 
       <div class="profile-grid">
-        <div class="credentials-section">
+        <div class="credentials-section section-panel">
           <h3>{{ t('device.primaryProfile') }}</h3>
           <div class="form-group">
             <label>{{ t('device.acsUrl') }}</label>
@@ -154,7 +154,7 @@ onMounted(fetchConfig);
           </div>
         </div>
 
-        <div class="credentials-section">
+        <div class="credentials-section section-panel">
           <h3>{{ t('device.backupProfile') }}</h3>
           <div class="form-group">
             <label>{{ t('device.acsUrl') }}</label>
@@ -233,7 +233,7 @@ onMounted(fetchConfig);
 }
 
 .readonly-section {
-  margin: 1rem 0 1.5rem 0;
+  margin: 0.75rem 0 1rem 0;
 }
 
 .readonly-row {
@@ -254,25 +254,34 @@ onMounted(fetchConfig);
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin: 0 0 0.5rem 0;
 }
 
 .credentials-section {
-  margin: 1rem 0;
-  padding: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.section-panel {
   background-color: var(--bg-secondary);
   border-radius: 4px;
+  padding: 0.75rem 1rem;
 }
 
 .credentials-section h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.75rem 0;
   font-size: 1rem;
   color: var(--text-primary);
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.profile-grid .form-group:last-child {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -315,10 +324,6 @@ input {
 @media (max-width: 768px) {
   .tr069-config {
     padding: 1rem;
-  }
-
-  .profile-grid {
-    grid-template-columns: 1fr;
   }
 
   .readonly-row {
