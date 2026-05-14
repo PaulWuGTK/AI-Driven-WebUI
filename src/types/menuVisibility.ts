@@ -279,6 +279,14 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
+  'management.tr069': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
+  'management.tr369': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
   'management.settings': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
@@ -349,7 +357,9 @@ export const menuRoleVisibilityRules: Record<string, RoleVisibilityRule> = {
   'application.ddns': { super: true, normal: false },
   'management.account': { super: true, normal: false },
   'management.accountCht': { super: true, normal: true },
-  'management.device': { super: true, normal: false }
+  'management.device': { super: true, normal: false },
+  'management.tr069': { super: true, normal: false },
+  'management.tr369': { super: true, normal: false }
 };
 
 export function isMenuVisible(
