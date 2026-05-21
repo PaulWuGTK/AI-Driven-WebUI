@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import IPv4Configuration from './IPv4Config.vue';
 import DeviceConnected from './DeviceList.vue';
+import DHCPACL from './DHCPACL.vue';
 import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -20,7 +21,8 @@ type Tab = {
 const tabs = computed<Tab[]>(() =>
   [
     { id: 'ipv4', label: t('lanBasic.ipv4Configuration'), menuKey: 'basicSetup.lan.ipv4' },
-    { id: 'devices', label: t('lanBasic.deviceConnected'), menuKey: 'basicSetup.lan.deviceConnected' }
+    { id: 'devices', label: t('lanBasic.deviceConnected'), menuKey: 'basicSetup.lan.deviceConnected' },
+    { id: 'dhcp-acl', label: t('lanBasic.dhcpAcl'), menuKey: 'basicSetup.lan.dhcpAcl' }
   ].filter(tab => canShowMenu(tab.menuKey))
 );
 
@@ -61,6 +63,7 @@ onMounted(async () => {
         <div class="tab-content" :data-testid="qa('lan-settings-tab-content')">
           <IPv4Configuration v-if="activeTab === 'ipv4'" :data-testid="qa('lan-ipv4-config')" />
           <DeviceConnected v-if="activeTab === 'devices'" :data-testid="qa('lan-device-connected')" />
+          <DHCPACL v-if="activeTab === 'dhcp-acl'" :data-testid="qa('lan-dhcp-acl')" />
         </div>
       </div>
     </div>

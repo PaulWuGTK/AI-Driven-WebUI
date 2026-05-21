@@ -131,6 +131,10 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
+  'basicSetup.lan.dhcpAcl': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
+  },
   'basicSetup.wlan': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }

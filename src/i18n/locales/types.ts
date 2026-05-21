@@ -155,6 +155,11 @@ export interface Translations {
     bssid: string;
     auto: string;
     enable: string;
+    matchLogic: string;
+    dhcpOption60: string;
+    vendorClassId: string;
+    dhcpOption61: string;
+    clientIdentifier: string;
     disable: string;
     associatedDevicesTotal: string;
     noAssociatedDevices: string;
@@ -291,6 +296,7 @@ export interface Translations {
     guestWiFi: string;
     guestLAN: string;
     deviceConnected: string;
+    dhcpAcl: string;
     enable: string;
     mloEnable: string;
     ssid: string;
@@ -425,6 +431,10 @@ export interface Translations {
     refresh: string;
     apply: string;
     cancel: string;
+    applySuccess: string;
+    applyingDhcpAcl: string;
+    fetchDhcpAclFailed: string;
+    updateDhcpAclFailed: string;
     ipChangeSuccess: string;
     ipChangeMessage: string;
     redirectingIn: string;
