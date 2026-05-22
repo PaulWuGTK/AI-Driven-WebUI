@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StaticRouteTab from './StaticRouteTab.vue';
-import DnsRouteTab from './DnsRouteTab.vue';
 import { useQA } from '../../../utils/qa';
 
 const { qa } = useQA();
@@ -11,8 +10,7 @@ const { t } = useI18n();
 const activeTab = ref('static-route');
 
 const tabs = computed(() => [
-  { id: 'static-route', label: t('routing.staticRoute') },
-  { id: 'dns-route', label: t('routing.dnsRoute') }
+  { id: 'static-route', label: t('routing.staticRoute') }
 ]);
 </script>
 
@@ -36,8 +34,7 @@ const tabs = computed(() => [
         </div>
 
         <div class="tab-content" :data-testid="qa('routing-config-tab-content')">
-          <StaticRouteTab v-if="activeTab === 'static-route'" :data-testid="qa('routing-static-route-tab')" />
-          <DnsRouteTab v-else-if="activeTab === 'dns-route'" :data-testid="qa('routing-dns-route-tab')" />
+          <StaticRouteTab :data-testid="qa('routing-static-route-tab')" />
         </div>
       </div>
     </div>

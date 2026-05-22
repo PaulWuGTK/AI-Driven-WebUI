@@ -48,7 +48,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'status.wanFailover': {
-    netLayoutTypes: { prpl: false, genix: true, cht: false },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'status.lan': {
@@ -108,7 +108,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.backupWan': {
-    netLayoutTypes: { prpl: false, genix: true, cht: false },
+    netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.lan': {

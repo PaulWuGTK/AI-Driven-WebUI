@@ -19,6 +19,9 @@ if (typeof window !== 'undefined') {
 }
 
 const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
+  { pathPrefix: '/status/wan-failover', menuKey: 'status.wanFailover' },
+
+  { pathPrefix: '/basic/backup-wan', menuKey: 'basicSetup.backupWan' },
   { pathPrefix: '/network/lan/ipv4', menuKey: 'basicSetup.lan.ipv4' },
   { pathPrefix: '/network/lan/devices', menuKey: 'basicSetup.lan.deviceConnected' },
   { pathPrefix: '/network/lan', menuKey: 'basicSetup.lan' },
