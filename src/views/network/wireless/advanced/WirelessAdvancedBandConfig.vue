@@ -43,6 +43,7 @@ const updateConfig = (field: keyof WlanAdvancedConfig, value: string | number) =
             :model-value="Number(modelValue.RadioEnable)"
             :true-value="1"
             :false-value="0"
+            :disabled="mloEnabled"
             :data-testid="qa(`wireless-advanced-band-config-enable-toggle-${slug(title)}`)"
             :slider-data-testid="qa(`wireless-advanced-band-config-enable-toggle-slider-${slug(title)}`)"
             @update:model-value="(value) => updateConfig('RadioEnable', Number(value))"
