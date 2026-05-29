@@ -354,6 +354,13 @@ const validatePasswordField = (password: string, key: string, securityMode?: str
   }
 
   const value = String(password ?? '');
+
+  // Reject passwords that start with a space
+  if (value.length > 0 && value.charAt(0) === ' ') {
+    passwordErrors[key] = t('wireless.passwordLeadingSpace');
+    return false;
+  }
+
   const wpa3Only = isWpa3OnlyPersonal(securityMode);
   const valid = wpa3Only
     ? isPrintableAscii(value) && value.length >= 1 && value.length <= 64
