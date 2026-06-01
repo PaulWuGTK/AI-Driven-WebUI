@@ -1200,7 +1200,7 @@ const translations = {
     smartConnect: '智能连接',
     smartConnectTooltip: '启用 Smart Connect 后，所有频段（2.4GHz、5GHz、6GHz）将共享同一个 Wi-Fi 名称，您的客户端设备会自动连接到最佳频段。若您希望分别配置各个频段（2.4GHz、5GHz、6GHz），可以关闭 Smart Connect。',
     mloNetwork: 'MLO 网络',
-    mloTooltip: 'Multi-Link Operation（MLO，多链路操作）使支持 Wi-Fi 7 的设备能够同时在 2.4、5 和 6GHz 频段上连接，为 VR/AR、游戏、远程办公和云计算带来更高速度、更低时延和更高可靠性。',
+    mloTooltip: 'Multi-Link Operation（MLO，多链路操作）使支持 Wi-Fi 7 的设备能够同时在 2.4 GHz、5 GHz 和 6 GHz 频段上连接，为 VR/AR、游戏、远程办公和云计算带来更高速度、更低时延和更高可靠性。',
     psc: 'PSC',
     pscTooltip: 'Preferred Scanning Channel（PSC，优先扫描信道）是一组优先使用的 6GHz 信道，通过减少扫描时间并避免干扰，帮助 Wi-Fi 6E/7 设备更快速、更稳定地完成连接。',
     pmf: 'PMF',

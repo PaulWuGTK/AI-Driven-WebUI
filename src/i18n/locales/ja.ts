@@ -1200,7 +1200,7 @@ const translations = {
     smartConnect: 'スマートコネクト',
     smartConnectTooltip: 'Smart Connect を有効にすると、すべてのバンド（2.4GHz、5GHz、6GHz）が同じ Wi-Fi 名を共有し、クライアント機器は自動的に最適なバンドに接続します。各バンド（2.4GHz、5GHz、6GHz）を個別に設定したい場合は、Smart Connect を無効にしてください。',
     mloNetwork: 'MLO ネットワーク',
-    mloTooltip: 'Multi-Link Operation（MLO）は、Wi-Fi 7 対応機器が 2.4、5、6GHz の各バンドに同時接続できるようにし、VR／AR、ゲーム、リモートワーク、クラウドコンピューティングにおいて、より高速で低遅延かつ高信頼な通信を提供します。',
+    mloTooltip: 'Multi-Link Operation（MLO）は、Wi-Fi 7 対応機器が 2.4 GHz、5 GHz、6 GHz の各バンドに同時接続できるようにし、VR／AR、ゲーム、リモートワーク、クラウドコンピューティングにおいて、より高速で低遅延かつ高信頼な通信を提供します。',
     psc: 'PSC',
     pscTooltip: 'Preferred Scanning Channel（PSC）は優先度の高い 6GHz チャネルの集合で、スキャン時間を短縮し干渉を回避することで、Wi-Fi 6E/7 機器がより高速かつ安定して接続できるようにします。',
     pmf: 'PMF',

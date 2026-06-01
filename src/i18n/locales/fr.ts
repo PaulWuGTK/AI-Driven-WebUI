@@ -1200,7 +1200,7 @@ const translations = {
     smartConnect: 'Smart Connect',
     smartConnectTooltip: 'Lorsque Smart Connect est activé, toutes les bandes (2,4GHz, 5GHz et 6GHz) partagent un seul nom Wi-Fi et vos appareils clients se connectent automatiquement à la bande la plus adaptée. Vous pouvez désactiver Smart Connect si vous souhaitez configurer séparément chaque bande (2,4GHz, 5GHz, 6GHz).',
     mloNetwork: 'Réseau MLO',
-    mloTooltip: 'Multi-Link Operation (MLO) permet aux appareils Wi-Fi 7 de se connecter simultanément aux bandes 2,4, 5 et 6GHz, offrant des débits plus élevés, une latence réduite et une fiabilité accrue pour la VR/AR, le jeu en ligne, le travail à distance et l’informatique en nuage.',
+    mloTooltip: 'Multi-Link Operation (MLO) permet aux appareils Wi-Fi 7 de se connecter simultanément aux bandes 2,4 GHz, 5 GHz et 6 GHz, offrant des débits plus élevés, une latence réduite et une fiabilité accrue pour la VR/AR, le jeu en ligne, le travail à distance et l\'informatique en nuage.',
     psc: 'PSC',
     pscTooltip: 'Preferred Scanning Channel (PSC) est un ensemble de canaux 6GHz prioritaires qui aide les appareils Wi-Fi 6E/7 à se connecter plus rapidement et plus fiablement en réduisant le temps de balayage et en limitant les interférences.',
     pmf: 'PMF',
