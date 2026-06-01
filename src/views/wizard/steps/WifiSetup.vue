@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-defineEmits(['next', 'prev']);
+const emit = defineEmits(['next', 'prev']);
 
 const { t } = useI18n();
 const { qa } = useQA();
@@ -157,6 +157,68 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
   const normalized = String(securityMode || '').trim().toLowerCase();
   return normalized !== 'none' && normalized !== 'open' && normalized !== 'owe';
 };
+
+const isWpa3OnlyPersonal = (securityMode?: string): boolean => {
+  const mode = String(securityMode ?? '').toUpperCase();
+  return mode.includes('WPA3') && !mode.includes('WPA2');
+};
+
+const isPrintableAscii = (value: string): boolean => /^[\x20-\x7E]*$/.test(value);
+const isHex64 = (value: string): boolean => /^[0-9a-fA-F]{64}$/.test(value);
+
+const passwordErrors = reactive<Record<string, string>>({});
+
+const validatePassword = (password: string, key: string, securityMode?: string): boolean => {
+  if (!securityRequiresPassword(securityMode)) {
+    delete passwordErrors[key];
+    return true;
+  }
+
+  const value = String(password ?? '');
+
+  if (value.length > 0 && value.charAt(0) === ' ') {
+    passwordErrors[key] = t('wireless.passwordLeadingSpace');
+    return false;
+  }
+
+  const wpa3Only = isWpa3OnlyPersonal(securityMode);
+  const valid = wpa3Only
+    ? isPrintableAscii(value) && value.length >= 1 && value.length <= 64
+    : isPrintableAscii(value) && ((value.length >= 8 && value.length <= 63) || (value.length === 64 && isHex64(value)));
+
+  if (!valid) {
+    passwordErrors[key] = t(
+      wpa3Only ? 'wireless.passwordInvalidFormatWpa3' : 'wireless.passwordInvalidFormat'
+    );
+    return false;
+  }
+
+  delete passwordErrors[key];
+  return true;
+};
+
+const handleNext = () => {
+  Object.keys(passwordErrors).forEach((key) => delete passwordErrors[key]);
+  let valid = true;
+
+  if (props.config.wifi.smartConnect) {
+    if (securityRequiresPassword(props.config.wifi.common.security)) {
+      valid = validatePassword(props.config.wifi.common.password, 'common', props.config.wifi.common.security) && valid;
+    }
+  } else {
+    const bands = ['2g', '5g', '6g'] as const;
+    for (const band of bands) {
+      const bandConfig = props.config.wifi.bands[band];
+      if (bandConfig.enabled && securityRequiresPassword(bandConfig.security)) {
+        valid = validatePassword(bandConfig.password, band, bandConfig.security) && valid;
+      }
+    }
+  }
+
+  if (valid) {
+    emit('next');
+  }
+};
 </script>
 
 <template>
@@ -248,6 +310,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
             :toggle-data-testid="qa('wizard-wifi-common-password-toggle')"
             :max-length="63"
           />
+          <p v-if="passwordErrors['common']" class="error-text" :data-testid="qa('wizard-wifi-common-password-error')">{{ passwordErrors['common'] }}</p>
           <p class="help-text">{{ t('wizard.passwordHelpText') }}</p>
         </div>
       </div>
@@ -289,6 +352,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
                   :input-data-testid="qa('wizard-wifi-band-2g-password-input')"
                   :toggle-data-testid="qa('wizard-wifi-band-2g-password-toggle')"
                 />
+                <p v-if="passwordErrors['2g']" class="error-text" :data-testid="qa('wizard-wifi-band-2g-password-error')">{{ passwordErrors['2g'] }}</p>
               </div>
             </div>
           </div>
@@ -330,6 +394,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
                   :input-data-testid="qa('wizard-wifi-band-5g-password-input')"
                   :toggle-data-testid="qa('wizard-wifi-band-5g-password-toggle')"
                 />
+                <p v-if="passwordErrors['5g']" class="error-text" :data-testid="qa('wizard-wifi-band-5g-password-error')">{{ passwordErrors['5g'] }}</p>
               </div>
             </div>
           </div>
@@ -371,6 +436,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
                   :input-data-testid="qa('wizard-wifi-band-6g-password-input')"
                   :toggle-data-testid="qa('wizard-wifi-band-6g-password-toggle')"
                 />
+                <p v-if="passwordErrors['6g']" class="error-text" :data-testid="qa('wizard-wifi-band-6g-password-error')">{{ passwordErrors['6g'] }}</p>
               </div>
             </div>
           </div>
@@ -425,7 +491,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
         :cancel-data-testid="qa('wizard-wifi-back-button')"
         :apply-data-testid="qa('wizard-wifi-next-button')"
         @cancel="$emit('prev')"
-        @apply="$emit('next')"
+        @apply="handleNext"
       />
     </div>
   </div>
@@ -726,6 +792,13 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
   font-size: 0.85rem;
   color: red;
   margin: 0.5rem 0 0 0;
+  font-weight: 500;
+}
+
+.error-text {
+  font-size: 0.85rem;
+  color: #dc3545;
+  margin: 0.25rem 0 0 0;
   font-weight: 500;
 }
 
