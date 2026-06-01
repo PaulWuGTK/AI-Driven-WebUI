@@ -20,6 +20,7 @@ const TOTAL_SECONDS = 120;
 const linkStatus = ref<'Down' | 'Up' | undefined>(undefined);
 const onboardingStatus = ref('Inprogress');
 const statusMessage = ref('');
+const setupFailed = ref(false);
 
 let countdownTimer: number | null = null;
 let statusPollTimer: number | null = null;
@@ -27,9 +28,18 @@ const progressPercent = computed(() =>
   Math.min(100, Math.max(0, ((TOTAL_SECONDS - countdown.value) / TOTAL_SECONDS) * 100))
 );
 const statusDescription = computed(() => {
+  if (setupFailed.value) return '';
   const link = linkStatus.value ?? '-';
   return `Link: ${link} | Status: ${displayOnboardingStatus()}`;
 });
+
+const overlayMessage = computed(() =>
+  setupFailed.value ? t('wizard.onboardingFailedTitle') : t('wizard.processingTitle')
+);
+
+const handleBackToSetup = () => {
+  emit('back-to-agent-setup');
+};
 
 const startOnboarding = async () => {
   try {
@@ -37,8 +47,14 @@ const startOnboarding = async () => {
     startPolling();
   } catch (error) {
     console.error('Failed to start agent onboarding:', error);
-    statusMessage.value = 'Failed to start setup. Please try again.';
+    setupFailed.value = true;
+    statusMessage.value = t('wizard.onboardingStartFailed');
   }
+};
+
+const isFailedStatus = (status: string): boolean => {
+  const normalized = status.toLowerCase().replace(/[\s_-]/g, '');
+  return normalized === 'failed' || normalized === 'fail' || normalized === 'error' || normalized === 'nok';
 };
 
 const pollStatus = async () => {
@@ -50,12 +66,14 @@ const pollStatus = async () => {
     if (onboardingStatus.value === 'Success') {
       stopPolling();
       emit('agent-success');
+    } else if (isFailedStatus(onboardingStatus.value)) {
+      stopPolling();
+      setupFailed.value = true;
+      statusMessage.value = t('wizard.onboardingFailed');
     } else if (props.agentSetupMode === 'ethernet' && linkStatus.value === 'Down') {
       stopPolling();
-      statusMessage.value = 'Connection failed. Returning to setup.';
-      setTimeout(() => {
-        emit('back-to-agent-setup');
-      }, 2000);
+      setupFailed.value = true;
+      statusMessage.value = t('wizard.ethernetConnectionFailed');
     } else {
       updateStatusMessage();
     }
@@ -97,10 +115,8 @@ onMounted(() => {
     countdown.value--;
     if (countdown.value <= 0) {
       stopPolling();
-      statusMessage.value = 'Setup timed out. Returning to setup.';
-      setTimeout(() => {
-        emit('back-to-agent-setup');
-      }, 2000);
+      setupFailed.value = true;
+      statusMessage.value = t('wizard.onboardingTimeout');
     }
   }, 1000);
 
@@ -149,16 +165,27 @@ const displayOnboardingStatus = () => {
 
     <BlockingOverlay
       :is-visible="true"
-      :message="t('wizard.processingTitle')"
+      :message="overlayMessage"
       :description1="statusMessage"
       :description2="statusDescription"
       :auto-complete="false"
       :show-countdown="false"
-      :show-progress="true"
+      :show-progress="!setupFailed"
       :countdown-value="countdown"
       :progress-value="progressPercent"
+      :icon-type="'spinner'"
       :data-testid="qa('wizard-agent-processing-overlay')"
-    />
+    >
+      <template v-if="setupFailed" #actions>
+        <button
+          class="back-to-setup-btn"
+          :data-testid="qa('wizard-agent-processing-back-button')"
+          @click="handleBackToSetup"
+        >
+          {{ t('wizard.backToSetup') }}
+        </button>
+      </template>
+    </BlockingOverlay>
   </div>
 </template>
 
@@ -219,5 +246,22 @@ const displayOnboardingStatus = () => {
   color: #856404;
   font-size: 0.9rem;
   margin: 0;
+}
+
+.back-to-setup-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.back-to-setup-btn:hover {
+  background: #006abd;
 }
 </style>

@@ -905,6 +905,12 @@ export interface Translations {
     statusInProgress: string;
     statusSuccess: string;
     statusFailed: string;
+    onboardingFailedTitle: string;
+    onboardingStartFailed: string;
+    onboardingFailed: string;
+    ethernetConnectionFailed: string;
+    onboardingTimeout: string;
+    backToSetup: string;
     applyingTitle: string;
     applyingMessage: string;
     applyingWarning: string;
