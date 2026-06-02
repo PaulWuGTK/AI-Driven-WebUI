@@ -2,7 +2,9 @@
 import { ref, reactive, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
+import BaseInput from '../../../components/common/BaseInput.vue';
 import { useQA } from '../../../utils/qa';
+import { validateSsid, getByteLength, normalizeSsid, truncateToByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
 import type { WizardConfig } from '../../../types/wizard';
 
 interface Props {
@@ -166,6 +168,33 @@ const isWpa3OnlyPersonal = (securityMode?: string): boolean => {
 const isPrintableAscii = (value: string): boolean => /^[\x20-\x7E]*$/.test(value);
 const isHex64 = (value: string): boolean => /^[0-9a-fA-F]{64}$/.test(value);
 
+const ssidErrors = reactive<Record<string, string>>({});
+const ssidByteLengths = reactive<Record<string, number>>({});
+
+const validateSsidField = (ssid: string, key: string): boolean => {
+  const validation = validateSsid(ssid, t);
+  ssidByteLengths[key] = validation.byteLength;
+  if (!validation.isValid) {
+    ssidErrors[key] = validation.errorMessage || '';
+  } else {
+    delete ssidErrors[key];
+  }
+  return validation.isValid;
+};
+
+const handleSsidInput = (value: string, key: string, callback: (val: string) => void) => {
+  const normalizedValue = normalizeSsid(value);
+  const byteLength = getByteLength(normalizedValue);
+  if (byteLength <= SSID_MAX_BYTES) {
+    callback(normalizedValue);
+    validateSsidField(normalizedValue, key);
+  } else {
+    const truncated = truncateToByteLength(normalizedValue, SSID_MAX_BYTES);
+    callback(truncated);
+    validateSsidField(truncated, key);
+  }
+};
+
 const passwordErrors = reactive<Record<string, string>>({});
 
 const validatePassword = (password: string, key: string, securityMode?: string): boolean => {
@@ -199,9 +228,11 @@ const validatePassword = (password: string, key: string, securityMode?: string):
 
 const handleNext = () => {
   Object.keys(passwordErrors).forEach((key) => delete passwordErrors[key]);
+  Object.keys(ssidErrors).forEach((key) => delete ssidErrors[key]);
   let valid = true;
 
   if (props.config.wifi.smartConnect) {
+    valid = validateSsidField(props.config.wifi.common.ssid, 'common') && valid;
     if (securityRequiresPassword(props.config.wifi.common.security)) {
       valid = validatePassword(props.config.wifi.common.password, 'common', props.config.wifi.common.security) && valid;
     }
@@ -209,8 +240,11 @@ const handleNext = () => {
     const bands = ['2g', '5g', '6g'] as const;
     for (const band of bands) {
       const bandConfig = props.config.wifi.bands[band];
-      if (bandConfig.enabled && securityRequiresPassword(bandConfig.security)) {
-        valid = validatePassword(bandConfig.password, band, bandConfig.security) && valid;
+      if (bandConfig.enabled) {
+        valid = validateSsidField(bandConfig.ssid, band) && valid;
+        if (securityRequiresPassword(bandConfig.security)) {
+          valid = validatePassword(bandConfig.password, band, bandConfig.security) && valid;
+        }
       }
     }
   }
@@ -277,14 +311,16 @@ const handleNext = () => {
 
       <div v-if="config.wifi.smartConnect" class="form-container">
         <div class="form-group">
-          <label>{{ t('wizard.ssid') }} <span class="required">*</span></label>
-          <input
-            type="text"
-            v-model="config.wifi.common.ssid"
+          <BaseInput
+            :modelValue="config.wifi.common.ssid"
+            :label="t('wizard.ssid')"
             :placeholder="t('wizard.ssidPlaceholder')"
-            class="form-input"
+            :error="!!ssidErrors['common']"
+            :errorMessage="ssidErrors['common']"
+            :helpText="ssidByteLengths['common'] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths['common'] }) : ''"
             :data-testid="qa('wizard-wifi-common-ssid-input')"
             required
+            @update:modelValue="(v) => handleSsidInput(String(v), 'common', (val) => { config.wifi.common.ssid = val; })"
           />
         </div>
 
@@ -329,8 +365,15 @@ const handleNext = () => {
           </div>
           <div v-if="config.wifi.bands['2g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['2g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-2g-ssid-input')" />
+              <BaseInput
+                :modelValue="config.wifi.bands['2g'].ssid"
+                :label="t('wizard.ssid')"
+                :error="!!ssidErrors['2g']"
+                :errorMessage="ssidErrors['2g']"
+                :helpText="ssidByteLengths['2g'] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths['2g'] }) : ''"
+                :data-testid="qa('wizard-wifi-band-2g-ssid-input')"
+                @update:modelValue="(v) => handleSsidInput(String(v), '2g', (val) => { config.wifi.bands['2g'].ssid = val; })"
+              />
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -371,8 +414,15 @@ const handleNext = () => {
           </div>
           <div v-if="config.wifi.bands['5g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['5g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-5g-ssid-input')" />
+              <BaseInput
+                :modelValue="config.wifi.bands['5g'].ssid"
+                :label="t('wizard.ssid')"
+                :error="!!ssidErrors['5g']"
+                :errorMessage="ssidErrors['5g']"
+                :helpText="ssidByteLengths['5g'] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths['5g'] }) : ''"
+                :data-testid="qa('wizard-wifi-band-5g-ssid-input')"
+                @update:modelValue="(v) => handleSsidInput(String(v), '5g', (val) => { config.wifi.bands['5g'].ssid = val; })"
+              />
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -413,8 +463,15 @@ const handleNext = () => {
           </div>
           <div v-if="config.wifi.bands['6g'].enabled" class="band-fields">
             <div class="form-group">
-              <label>{{ t('wizard.ssid') }}</label>
-              <input type="text" v-model="config.wifi.bands['6g'].ssid" class="form-input" :data-testid="qa('wizard-wifi-band-6g-ssid-input')" />
+              <BaseInput
+                :modelValue="config.wifi.bands['6g'].ssid"
+                :label="t('wizard.ssid')"
+                :error="!!ssidErrors['6g']"
+                :errorMessage="ssidErrors['6g']"
+                :helpText="ssidByteLengths['6g'] !== undefined ? t('wireless.ssidBytesInfo', { bytes: ssidByteLengths['6g'] }) : ''"
+                :data-testid="qa('wizard-wifi-band-6g-ssid-input')"
+                @update:modelValue="(v) => handleSsidInput(String(v), '6g', (val) => { config.wifi.bands['6g'].ssid = val; })"
+              />
             </div>
             <div class="form-row">
               <div class="form-group">
