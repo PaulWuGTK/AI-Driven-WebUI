@@ -11,7 +11,7 @@ import BaseSelect from '../../../components/common/BaseSelect.vue';
 import { BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
-import { validateSsid, getByteLength, normalizeSsid, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
+import { validateSsid, getByteLength, normalizeSsid, truncateToByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
 import type {
   WlanBasicMultiGetResponse,
   WlanBasicMultiPostRequest,
@@ -322,9 +322,10 @@ const handleSsidInput = (value: string, key: string, callback: (val: string) => 
     callback(normalizedValue);
     validateSsidField(normalizedValue, key);
   } else {
-    // Show error message when exceeding max bytes
-    ssidByteLengths[key] = byteLength;
-    ssidErrors[key] = t('wireless.ssidTooLong', { current: byteLength, max: SSID_MAX_BYTES });
+    // Truncate to max bytes and update model
+    const truncated = truncateToByteLength(normalizedValue, SSID_MAX_BYTES);
+    callback(truncated);
+    validateSsidField(truncated, key);
   }
 };
 

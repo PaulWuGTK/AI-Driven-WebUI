@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 interface Props {
   modelValue: string | number;
@@ -87,6 +87,12 @@ const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const value = props.type === 'number' ? Number(target.value) : target.value;
   emit('update:modelValue', value);
+  // After parent processes the value (e.g. truncation), sync DOM back to model
+  nextTick(() => {
+    if (target.value !== String(props.modelValue)) {
+      target.value = String(props.modelValue);
+    }
+  });
 };
 
 const handleBlur = (event: FocusEvent) => {
