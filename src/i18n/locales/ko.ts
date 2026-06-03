@@ -494,7 +494,6 @@ const translations = {
     mloSettings: 'MLO 설정',
     mloEnable: 'MLO 활성화',
     mloModeDisabled: 'MLO가 활성화되어 있어 모드를 변경할 수 없습니다.',
-    mloAdvancedDisabled: 'MLO가 활성화되어 있어 개별 밴드의 라디오 및 모드 설정을 변경할 수 없습니다.',
     mloMeshDisabled: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있어 Mesh 설정을 변경할 수 없습니다.',
     meshMloDisabled: 'Mesh가 활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
     commonSsidDisabled: '공통 SSID가 비활성화되어 있어 MLO 설정을 변경할 수 없습니다.',

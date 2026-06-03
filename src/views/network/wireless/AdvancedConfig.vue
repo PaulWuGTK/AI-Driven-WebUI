@@ -105,7 +105,7 @@ onMounted(fetchAdvancedConfig);
         <div class="mlo-status" v-if="advancedData.WlanAdvanced.MLOEnable === 1" :data-testid="qa('wireless-advanced-config-mlo-status')">
           <div class="info-banner" :data-testid="qa('wireless-advanced-config-mlo-info-banner')">
             <span class="material-icons">info</span>
-            <span>{{ t('wireless.mloAdvancedDisabled') }}</span>
+            <span>{{ t('wireless.mloModeDisabled') }}</span>
           </div>
         </div>
 
