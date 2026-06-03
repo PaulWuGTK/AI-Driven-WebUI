@@ -162,7 +162,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
 
 const isWpa3OnlyPersonal = (securityMode?: string): boolean => {
   const mode = String(securityMode ?? '').toUpperCase();
-  return mode.includes('WPA3') && !mode.includes('WPA2');
+  return mode.includes('WPA3') && !mode.includes('WPA2') && !mode.includes('TRANSITION');
 };
 
 const isPrintableAscii = (value: string): boolean => /^[\x20-\x7E]*$/.test(value);

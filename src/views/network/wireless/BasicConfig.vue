@@ -341,7 +341,7 @@ const shouldShowPasswordField = (securityMode: string | undefined): boolean => {
 
 const isWpa3OnlyPersonal = (securityMode: string | undefined): boolean => {
   const mode = String(securityMode ?? '').toUpperCase();
-  return mode.includes('WPA3') && !mode.includes('WPA2');
+  return mode.includes('WPA3') && !mode.includes('WPA2') && !mode.includes('TRANSITION');
 };
 
 const isHex64 = (value: string): boolean => /^[0-9a-fA-F]{64}$/.test(value);
