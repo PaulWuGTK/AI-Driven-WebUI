@@ -21,6 +21,7 @@ export interface WanInterface {
   VLANType: "untagged" | "vlan" | "atm";
   VLANID: number;
   VLANPriority: number;
+  MTU: number;
   StaticIPv4Address?: StaticIPv4Address;
   StaticIPv6Address?: StaticIPv6Address;
 }

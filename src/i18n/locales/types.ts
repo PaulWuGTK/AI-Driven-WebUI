@@ -406,6 +406,7 @@ export interface Translations {
     detail: string;
     confirmDelete: string;
     enableSensing: string;
+    mtu: string;
     ipv4DnsMode: string;
     ipv6DnsMode: string;
   };

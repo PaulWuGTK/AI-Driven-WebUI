@@ -639,6 +639,7 @@ const translations = {
     detail: '자세히 보기',
     confirmDelete: '이 WAN 모드를 삭제하시겠습니까?',
     enableSensing: '감지 활성화',
+    mtu: 'MTU',
     ipv4DnsMode: 'IPv4 DNS 모드',
     ipv6DnsMode: 'IPv6 DNS 모드'
   },

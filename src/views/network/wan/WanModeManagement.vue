@@ -71,8 +71,9 @@ const handleAdd = () => {
       PPPoEUserName: '',
       PPPoEPassword: '',
       VLANType: 'untagged',
-      VLANID: 100, 
-      VLANPriority: 0,  
+      VLANID: 100,
+      VLANPriority: 0,
+      MTU: 1500,
       StaticIPv4Address: { 
         IPv4Address: '',
         SubnetMask: '',
