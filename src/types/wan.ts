@@ -18,6 +18,7 @@ export interface WanIPv4Config  {
 
 export interface WanInterface {
   Duplex: string;
+  MTU: number;
   Type: string;
   PPPoEUserName: string;
   VlanPriority: string;

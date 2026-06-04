@@ -7,6 +7,7 @@ export const wanMockData: WanStatusResponse = {
     WANModeConfig: {
       Interfaces: [{
         Duplex: "Full",
+        MTU: 1500,
         Type: "untagged",
         PPPoEUserName: "",
         VlanPriority: "0",
