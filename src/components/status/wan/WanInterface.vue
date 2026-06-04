@@ -35,6 +35,10 @@ defineProps<{
           <span class="info-label" :data-testid="qa('wan-interface-duplex-label')">{{ t('wan.duplex') }}</span>
           <span class="info-value" :data-testid="qa('wan-interface-duplex-value')">{{ interface.Duplex }}</span>
         </div>
+        <div class="info-row">
+          <span class="info-label" :data-testid="qa('wan-interface-mtu-label')">{{ t('wan.mtu') }}</span>
+          <span class="info-value" :data-testid="qa('wan-interface-mtu-value')">{{ interface.MTU }}</span>
+        </div>
       </div>
 
       <!-- IPv4 Configuration -->

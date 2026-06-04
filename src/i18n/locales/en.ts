@@ -137,6 +137,7 @@ const translations = {
     macAddress: 'MAC Address',
     speed: 'Speed',
     duplex: 'Duplex',
+    mtu: 'MTU',
     ipv4Address: 'IPv4 Address',
     status: 'Status',
     wanModeConfig: 'WAN Mode Config',

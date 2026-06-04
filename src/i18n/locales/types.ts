@@ -114,6 +114,7 @@ export interface Translations {
     macAddress: string;
     speed: string;
     duplex: string;
+    mtu: string;
     ipv4Address: string;
     status: string;
     wanModeConfig: string;
