@@ -18,7 +18,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
           PPPoEPassword: "",
           VLANType: "untagged",
           VLANID: 100,
-          VLANPriority: 0
+          VLANPriority: 0,
+          MTU: 1500
         }
       ]
     },
@@ -38,7 +39,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
           PPPoEPassword: "password",
           VLANType: "untagged",
           VLANID: 100,
-          VLANPriority: 0
+          VLANPriority: 0,
+          MTU: 1500
         }
       ]
     },
@@ -59,6 +61,7 @@ export const wanManagementMockData: WanModeManagementResponse = {
           VLANType: "untagged",
           VLANID: 100,
           VLANPriority: 0,
+          MTU: 1500,
           StaticIPv4Address: {
             DNSServers: "192.168.101.1",
             DefaultRouter: "192.168.101.1",
@@ -90,7 +93,8 @@ export const wanManagementMockData: WanModeManagementResponse = {
           PPPoEPassword: "",
           VLANType: "untagged",
           VLANID: 100,
-          VLANPriority: 0
+          VLANPriority: 0,
+          MTU: 1500
         }
       ]
     }

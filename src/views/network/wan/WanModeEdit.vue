@@ -40,6 +40,7 @@ const defaultInterface: WanInterface = {
   VLANType: "untagged",
   VLANID: 100,
   VLANPriority: 0,
+  MTU: 1500,
   StaticIPv4Address: { ...defaultStaticIPv4 },
   StaticIPv6Address: { ...defaultStaticIPv6 }
 };
@@ -218,6 +219,17 @@ const validateVLANPriority = (value: number) => {
                 {{ mode }}
               </option>
             </select>
+          </div>
+
+          <div class="form-group">
+            <label :data-testid="qa(`wan-mode-edit-mtu-label-${ifaceIndex}`)">{{ t('wanManagement.mtu') }}</label>
+            <input
+              type="number"
+              :data-testid="qa(`wan-mode-edit-mtu-input-${ifaceIndex}`)"
+              v-model.number="iface.MTU"
+              required
+              min="0"
+            />
           </div>
 
           <div class="form-group">

@@ -639,6 +639,7 @@ const translations = {
     detail: '详细信息',
     confirmDelete: '确定要删除此 WAN 模式吗？',
     enableSensing: '启用感知',
+    mtu: 'MTU',
     ipv4DnsMode: 'IPv4 DNS 模式',
     ipv6DnsMode: 'IPv6 DNS 模式'
   },

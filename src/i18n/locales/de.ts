@@ -639,6 +639,7 @@ const translations = {
     detail: 'Details',
     confirmDelete: 'Möchten Sie diesen WAN-Modus wirklich löschen?',
     enableSensing: 'Erkennung aktivieren',
+    mtu: 'MTU',
     ipv4DnsMode: 'IPv4-DNS-Modus',
     ipv6DnsMode: 'IPv6-DNS-Modus'
   },

@@ -105,6 +105,10 @@ const vlanTypeDisplay = {
                 <span class="card-label" :data-testid="qa(`wan-mode-detail-vlan-priority-label-${ifaceIndex}`)">{{ t('wanManagement.vlanPriority') }}</span>
                 <span class="card-value" :data-testid="qa(`wan-mode-detail-vlan-priority-value-${ifaceIndex}`)">{{ iface.VLANPriority }}</span>
               </div>
+              <div class="card-row">
+                <span class="card-label" :data-testid="qa(`wan-mode-detail-mtu-label-${ifaceIndex}`)">{{ t('wanManagement.mtu') }}</span>
+                <span class="card-value" :data-testid="qa(`wan-mode-detail-mtu-value-${ifaceIndex}`)">{{ iface.MTU }}</span>
+              </div>
               <div v-if="iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'" class="card-row" :data-testid="qa(`wan-mode-detail-pppoe-username-row-${ifaceIndex}`)">
                 <span class="card-label" :data-testid="qa(`wan-mode-detail-pppoe-username-label-${ifaceIndex}`)">{{ t('wanManagement.pppoeUsername') }}</span>
                 <span class="card-value" :data-testid="qa(`wan-mode-detail-pppoe-username-value-${ifaceIndex}`)">{{ iface.PPPoEUserName }}</span>
