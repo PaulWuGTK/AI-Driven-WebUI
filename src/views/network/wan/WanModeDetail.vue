@@ -19,7 +19,8 @@ const ipv4ModeDisplay = {
   'none': 'None',
   'static': 'Static',
   'dslite': 'DS-Lite',
-  'link': 'Link'
+  'link': 'Link',
+  '3gpp-nas': '3GPP NAS'
 };
 
 const ipv6ModeDisplay = {
@@ -27,7 +28,8 @@ const ipv6ModeDisplay = {
   'ppp6': 'PPPoE',
   'none': 'None',
   'static': 'Static',
-  'link': 'Link'
+  'link': 'Link',
+  '3gpp-nas': '3GPP NAS'
 };
 
 const vlanTypeDisplay = {
