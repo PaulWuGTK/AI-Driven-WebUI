@@ -64,8 +64,8 @@ const editingMode = ref<WanModeConfig>(props.mode ? {
 
 const physicalTypes = ['Ethernet', 'ADSL', 'VDSL', 'SFP', 'GPON', 'GFAST', 'Bridge', 'WWAN'];
 const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'] as const;
-const ipv4Modes = ['dhcp4', 'ppp4', 'none', 'static', 'dslite', 'link'] as const;
-const ipv6Modes = ['dhcp6', 'ppp6', 'none', 'static', 'link'] as const;
+const ipv4Modes = ['dhcp4', 'ppp4', 'none', 'static', 'dslite', 'link', '3gpp-nas'] as const;
+const ipv6Modes = ['dhcp6', 'ppp6', 'none', 'static', 'link', '3gpp-nas'] as const;
 const vlanTypes = ['untagged', 'vlan', 'atm'] as const;
 const dnsModes = ['Static', 'Dynamic', ''] as const;
 

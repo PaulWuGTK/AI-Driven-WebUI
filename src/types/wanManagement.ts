@@ -14,8 +14,8 @@ export interface StaticIPv6Address {
 
 export interface WanInterface {
   Interface: "wan" | "voip" | "mgmt" | "iptv";
-  IPv4Mode: "dhcp4" | "ppp4" | "none" | "static" | "dslite" | "link";
-  IPv6Mode: "dhcp6" | "ppp6" | "none" | "static" | "link";
+  IPv4Mode: "dhcp4" | "ppp4" | "none" | "static" | "dslite" | "link" | "3gpp-nas";
+  IPv6Mode: "dhcp6" | "ppp6" | "none" | "static" | "link" | "3gpp-nas";
   PPPoEUserName: string;
   PPPoEPassword: string;
   VLANType: "untagged" | "vlan" | "atm";
