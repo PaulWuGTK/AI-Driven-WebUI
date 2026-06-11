@@ -34,7 +34,6 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
-        <div class="progress-step active"></div>
       </div>
 
       <div class="review-container" :data-testid="qa('wizard-review-sections')">
@@ -43,14 +42,6 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
           <div class="review-item" :data-testid="qa('wizard-review-mode-item')">
             <span class="label">{{ t('wizard.reviewMode') }}</span>
             <span class="value" :data-testid="qa('wizard-review-mode-value')">{{ config.mode === 'router' ? t('wizard.routerModeTitle') : t('wizard.agentModeTitle') }}</span>
-          </div>
-        </div>
-
-        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-wan-section')">
-          <h3 :data-testid="qa('wizard-review-wan-title')">{{ t('wizard.reviewWanConnection') }}</h3>
-          <div class="review-item" :data-testid="qa('wizard-review-wan-item')">
-            <span class="label">{{ t('wizard.reviewConnectionType') }}</span>
-            <span class="value" :data-testid="qa('wizard-review-wan-value')">{{ config.wan.wanMode.replace(/_/g, ' ') }}</span>
           </div>
         </div>
 

@@ -23,7 +23,6 @@ const { qa } = useQA();
         <div class="progress-step"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
-        <div class="progress-step"></div>
       </div>
 
       <div class="environment-diagram" :data-testid="qa('wizard-router-env-diagram')">

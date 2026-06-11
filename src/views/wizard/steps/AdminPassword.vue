@@ -48,7 +48,6 @@ const isValid = computed(() => {
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
-        <div class="progress-step active"></div>
         <div class="progress-step"></div>
       </div>
 

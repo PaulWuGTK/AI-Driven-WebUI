@@ -25,7 +25,6 @@ const { qa } = useQA();
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
-        <div class="progress-step active"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>
         <div class="progress-step"></div>

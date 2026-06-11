@@ -13,7 +13,6 @@ import AgentSetup from './steps/AgentSetup.vue';
 import AgentProcessing from './steps/AgentProcessing.vue';
 import AgentComplete from './steps/AgentComplete.vue';
 import RouterEnvironment from './steps/RouterEnvironment.vue';
-import WanModeSelect from './steps/WanModeSelect.vue';
 import MeshSetup from './steps/MeshSetup.vue';
 import WifiSetup from './steps/WifiSetup.vue';
 import AdminPassword from './steps/AdminPassword.vue';
@@ -106,7 +105,7 @@ const maxSteps = computed(() => {
   if (config.value.mode === 'agent') {
     return 4;
   }
-  return 8;
+  return 7;
 });
 
 onMounted(async () => {
@@ -216,11 +215,10 @@ const getStepComponent = () => {
   if (config.value.mode === 'router') {
     switch (currentStep.value) {
       case 3: return RouterEnvironment;
-      case 4: return WanModeSelect;
-      case 5: return MeshSetup;
-      case 6: return WifiSetup;
-      case 7: return AdminPassword;
-      case 8: return ReviewSettings;
+      case 4: return MeshSetup;
+      case 5: return WifiSetup;
+      case 6: return AdminPassword;
+      case 7: return ReviewSettings;
       default: return PrivacyPolicy;
     }
   } else {
