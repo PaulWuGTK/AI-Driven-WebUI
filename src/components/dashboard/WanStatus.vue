@@ -73,19 +73,21 @@ const props = defineProps<{
 
 .info-item {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 0.25rem 0.5rem;
 }
 
 .info-label {
-  flex: 0 0 140px;
+  flex: 0 0 auto;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .value {
   flex: 1 1 auto;
   min-width: 0;
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
