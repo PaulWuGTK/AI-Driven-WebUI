@@ -420,6 +420,15 @@ const onCommonSsidToggle = () => {
   // Data synchronization happens only when submitting (buildPostPayload).
 };
 
+const onCommonSsidSecurityModeChange = () => {
+  if (!commonSsidConfig.value || !draft.value) return;
+  validatePasswordField(commonSsidConfig.value.KeyPassPhrase, 'CommonSSID', commonSsidConfig.value.SecurityMode);
+  // MLO is not supported on open networks (Security: None) – auto-disable
+  if (commonSsidConfig.value.SecurityMode === 'None') {
+    draft.value.MLOEnable = 0;
+  }
+};
+
 /**
  * Keep the backend payload shape intact.
  * UI may hide some fields (e.g., MFPConfig), but we still preserve values from the loaded config
@@ -626,10 +635,10 @@ onMounted(fetchConfig);
                 <BaseSwitch
                   v-model="draft.MLOEnable"
                   class="switch-toggle"
-                  :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 }"
+                  :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 || commonSsidConfig?.SecurityMode === 'None' }"
                   :true-value="1"
                   :false-value="0"
-                  :disabled="Number(draft.CommonSSIDEnable) === 0"
+                  :disabled="Number(draft.CommonSSIDEnable) === 0 || commonSsidConfig?.SecurityMode === 'None'"
                   :data-testid="qa('wlan-basic-multi-mlo-enable-toggle')"
                   :slider-data-testid="qa('wlan-basic-multi-mlo-enable-toggle-slider')"
                 />
@@ -637,6 +646,9 @@ onMounted(fetchConfig);
 
               <div v-if="Number(draft.CommonSSIDEnable) === 0" class="hint">
                 {{ t('wireless.commonSsidDisabled') }}
+              </div>
+              <div v-else-if="commonSsidConfig?.SecurityMode === 'None'" class="hint">
+                {{ t('wireless.mloSecurityNoneHint') }}
               </div>
             </div>
           </div>
@@ -693,7 +705,7 @@ onMounted(fetchConfig);
                   :options="securityModeOptionsForCommonSsid.map((m) => ({ label: m, value: m }))"
                   :disabled="Number(commonSsidConfig.Enable) === 0"
                   :data-testid="qa('wlan-basic-multi-common-ssid-security')"
-                  @update:model-value="() => validatePasswordField(commonSsidConfig!.KeyPassPhrase, 'CommonSSID', commonSsidConfig!.SecurityMode)"
+                  @update:model-value="onCommonSsidSecurityModeChange"
                 />
               </div>
 

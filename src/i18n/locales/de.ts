@@ -498,6 +498,7 @@ const translations = {
     mloMeshDisabled: 'MLO ist auf einem oder mehreren APs (Basis oder Gast) aktiviert – Mesh-Einstellungen können nicht geändert werden.',
     meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.',
     commonSsidDisabled: 'Gemeinsame SSID ist deaktiviert – MLO-Einstellungen können nicht geändert werden.',
+    mloSecurityNoneHint: 'Hinweis: MLO ist nicht verfügbar, wenn der Sicherheitsmodus auf „None" eingestellt ist.',
     mloMeshWarning: 'MLO ist derzeit auf einem oder mehreren APs (Basis oder Gast) aktiviert. Es wird beim Anwenden der Mesh-Einstellungen automatisch deaktiviert.',
     ssidGroupName: 'SSID-Gruppenname',
     noSsidGroups: 'Keine SSID-Gruppen verfügbar',
