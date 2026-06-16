@@ -51,12 +51,13 @@ const sortedEthernet = computed(() => {
 
 .port-item {
   display: flex;
-  flex-direction: row; /* 改為水平排列 */
+  flex-direction: row;
   align-items: center;
-  gap: 1rem; /* 元素間距稍微拉開 */
+  gap: 1rem;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   width: 100%;
+  min-width: 0;
   background-color: #f8f8f8;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -86,8 +87,10 @@ const sortedEthernet = computed(() => {
 .port-info {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
 }
 
 .port-name {
