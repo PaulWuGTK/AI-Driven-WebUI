@@ -498,6 +498,7 @@ const translations = {
     mloMeshDisabled: 'MLO is enabled on one or more APs (Basic or Guest) – Mesh Settings cannot be changed.',
     meshMloDisabled: 'Mesh is enabled – MLO settings cannot be changed.',
     commonSsidDisabled: 'Common SSID is disabled – MLO settings cannot be changed.',
+    mloSecurityNoneHint: 'Note: MLO is unavailable when security mode is set to \'None\'.',
     mloMeshWarning: 'MLO is currently enabled on one or more APs (Basic or Guest). It will be disabled automatically when applying Mesh settings.',
     ssidGroupName: 'SSID Group Name',
     noSsidGroups: 'No SSID groups available',

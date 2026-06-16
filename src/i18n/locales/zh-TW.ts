@@ -498,6 +498,7 @@ const translations = {
     mloMeshDisabled: '一或多個 AP（基本或訪客）已啟用 MLO – 無法變更 Mesh 設定。',
     meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。',
     commonSsidDisabled: '通用 SSID 已停用 – 無法變更 MLO 設定。',
+    mloSecurityNoneHint: '注意：當安全模式設定為「None」時，MLO 無法使用。',
     mloMeshWarning: '一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。',
     ssidGroupName: 'SSID 群組名稱',
     noSsidGroups: '目前沒有可用的 SSID 群組',
