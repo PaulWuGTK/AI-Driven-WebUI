@@ -439,7 +439,7 @@ const translations = {
     rootUid: 'Root-UID'
   },
   systemStats: {
-    title: 'Systemstatistiken',
+    title: 'Durchsatz',
     wanThroughput: 'WAN-Durchsatz',
     lanThroughput: 'LAN-Durchsatz',
     wifiThroughput: 'WiFi-Durchsatz',
