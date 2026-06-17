@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
-import BlockingOverlay from '../../../components/BlockingOverlay.vue';
+
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
@@ -21,14 +21,9 @@ const selectedAP = ref<ExtenderNeighbor | null>(null);
 const password = ref('');
 const showSuccess = ref(false);
 const successMessage = ref('');
-const redirectCountdown = ref<number | null>(null);
-const redirectTimer = ref<number | null>(null);
-const redirectUrl = ref<string | null>(null);
-const redirectDuration = 10;
-const redirectProgress = computed(() => {
-  if (redirectCountdown.value === null) return 0;
-  return Math.min(100, Math.max(0, ((redirectDuration - redirectCountdown.value) / redirectDuration) * 100));
-});
+const showModeSwitchNotice = ref(false);
+const modeSwitchIp = ref<string | null>(null);
+const modeSwitchMode = ref<'extender' | 'router'>('extender');
 
 // Computed properties
 const isExtenderEnabled = computed(() => 
@@ -90,28 +85,11 @@ const applyConfigChanges = async () => {
       }
     });
     
-    // Check if we need to redirect (mode switch)
+    // Check if mode switch occurred
     if (response.Extender && 'ip_address' in response.Extender && response.Extender.ip_address) {
-      redirectUrl.value = `http://${response.Extender.ip_address}`;
-      redirectCountdown.value = redirectDuration;
-      successMessage.value = response.Extender.message || '';
-      showSuccess.value = false;
-      
-      // Start countdown for redirect
-      if (redirectTimer.value) {
-        clearInterval(redirectTimer.value);
-      }
-      
-      redirectTimer.value = window.setInterval(() => {
-        if (redirectCountdown.value !== null) {
-          redirectCountdown.value--;
-          if (redirectCountdown.value <= 0) {
-            clearInterval(redirectTimer.value as number);
-            window.location.href = redirectUrl.value as string;
-          }
-        }
-      }, 1000);
-      
+      modeSwitchIp.value = response.Extender.ip_address;
+      modeSwitchMode.value = tempExtenderEnabled.value === 1 ? 'extender' : 'router';
+      showModeSwitchNotice.value = true;
     } else {
       await fetchExtenderStatus();
       showSuccessNotification('Configuration updated successfully');
@@ -214,7 +192,7 @@ const showSuccessNotification = (message: string) => {
   successMessage.value = message;
   showSuccess.value = true;
   setTimeout(() => {
-    if (!redirectCountdown.value) { // Don't hide if we're redirecting
+    if (!showModeSwitchNotice.value) {
       showSuccess.value = false;
     }
   }, 3000);
@@ -225,15 +203,10 @@ const getStatusClass = (status: string) => {
   return status === 'connected' ? 'status-connected' : 'status-disconnected';
 };
 
-// Cancel redirect
-const cancelRedirect = () => {
-  if (redirectTimer.value) {
-    clearInterval(redirectTimer.value);
-    redirectTimer.value = null;
-  }
-  redirectCountdown.value = null;
-  redirectUrl.value = null;
-  showSuccess.value = false;
+// Dismiss mode switch notice
+const dismissModeSwitchNotice = () => {
+  showModeSwitchNotice.value = false;
+  modeSwitchIp.value = null;
 };
 
 onMounted(() => {
@@ -596,21 +569,23 @@ onMounted(() => {
         {{ successMessage }}
       </div>
 
-      <BlockingOverlay
-        :is-visible="redirectCountdown !== null"
-        :message="t('wirelessExtender.configuration')"
-        :description1="successMessage || t('common.loading')"
-        :description2="redirectUrl ? `${redirectUrl}` : ''"
-        :auto-complete="false"
-        :show-countdown="false"
-        :show-progress="true"
-        :progress-value="redirectProgress"
-        :data-testid="qa('wireless-extender-redirect-overlay')"
-      >
-        <template #actions>
-          <button @click="cancelRedirect" class="btn-cancel-redirect" :data-testid="qa('wireless-extender-cancel-redirect-button')">Cancel</button>
-        </template>
-      </BlockingOverlay>
+      <!-- Mode Switch Notice -->
+      <div v-if="showModeSwitchNotice" class="mode-switch-overlay" :data-testid="qa('wireless-extender-mode-switch-overlay')">
+        <div class="mode-switch-card" :data-testid="qa('wireless-extender-mode-switch-card')">
+          <div class="mode-switch-icon">
+            <span class="material-icons">info</span>
+          </div>
+          <h3 class="mode-switch-title" :data-testid="qa('wireless-extender-mode-switch-title')">
+            {{ modeSwitchMode === 'extender' ? t('wirelessExtender.switchedToExtender') : t('wirelessExtender.switchedToRouter') }}
+          </h3>
+          <p class="mode-switch-message" :data-testid="qa('wireless-extender-mode-switch-message')">
+            {{ modeSwitchMode === 'extender' ? t('wirelessExtender.extenderAccessInfo', { ip: modeSwitchIp }) : t('wirelessExtender.routerAccessInfo', { ip: modeSwitchIp }) }}
+          </p>
+          <button class="btn btn-primary mode-switch-dismiss" :data-testid="qa('wireless-extender-mode-switch-dismiss')" @click="dismissModeSwitchNotice">
+            {{ t('common.confirm') }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -804,26 +779,53 @@ input {
   z-index: 100;
 }
 
-.redirect-info {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+.mode-switch-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 
-.btn-cancel-redirect {
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
+.mode-switch-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.btn-cancel-redirect:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+.mode-switch-icon {
+  margin-bottom: 1rem;
+}
+
+.mode-switch-icon .material-icons {
+  font-size: 48px;
+  color: #0078d4;
+}
+
+.mode-switch-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.mode-switch-message {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.mode-switch-dismiss {
+  padding: 0.5rem 2rem;
 }
 
 .loading-state {

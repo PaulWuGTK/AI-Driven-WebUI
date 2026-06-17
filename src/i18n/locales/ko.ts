@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'WPA 프리셰어 키',
     connect: '연결',
     connected: '연결됨',
-    disconnected: '해제됨'
+    disconnected: '해제됨',
+    switchedToExtender: '확장기 모드로 전환됨',
+    switchedToRouter: '라우터 모드로 전환됨',
+    extenderAccessInfo: '장치가 확장기 모드로 전환 중입니다. DHCP에서 할당된 IP가 있으면 해당 주소로 접속하십시오. IP를 받지 못한 경우 {ip}로 접속하십시오.',
+    routerAccessInfo: '장치가 라우터 모드로 전환 중입니다. {ip}로 접속하십시오.'
   },
   wanSetup: {
     title: 'WAN 설정',

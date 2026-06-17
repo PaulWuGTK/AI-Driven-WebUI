@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'WPA 預共享金鑰',
     connect: '連接',
     connected: '已連接',
-    disconnected: '未連接'
+    disconnected: '未連接',
+    switchedToExtender: '已切換至延伸器模式',
+    switchedToRouter: '已切換至路由器模式',
+    extenderAccessInfo: '裝置正在切換至延伸器模式。若已取得 DHCP 配發的 IP，請使用該位址存取裝置；若未取得 IP，請透過 {ip} 存取。',
+    routerAccessInfo: '裝置正在切換回路由器模式，請透過 {ip} 存取裝置。'
   },
   wanSetup: {
     title: 'WAN 設定',

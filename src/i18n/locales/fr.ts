@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'Clé pré-partagée WPA',
     connect: 'Connecter',
     connected: 'Connecté',
-    disconnected: 'Déconnecté'
+    disconnected: 'Déconnecté',
+    switchedToExtender: 'Basculé en mode Extender',
+    switchedToRouter: 'Basculé en mode Routeur',
+    extenderAccessInfo: 'L\'appareil bascule en mode Extender. Si une adresse IP DHCP est disponible, utilisez-la pour accéder à l\'appareil. Sinon, accédez à l\'appareil via {ip}.',
+    routerAccessInfo: 'L\'appareil bascule en mode Routeur. Veuillez accéder à l\'appareil via {ip}.'
   },
   wanSetup: {
     title: 'Paramètres WAN',

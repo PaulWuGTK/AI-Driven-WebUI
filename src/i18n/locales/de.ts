@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'WPA-Preshared-Key',
     connect: 'Verbinden',
     connected: 'Verbunden',
-    disconnected: 'Getrennt'
+    disconnected: 'Getrennt',
+    switchedToExtender: 'In den Extender-Modus gewechselt',
+    switchedToRouter: 'In den Router-Modus gewechselt',
+    extenderAccessInfo: 'Das Gerät wechselt in den Extender-Modus. Wenn eine DHCP-zugewiesene IP verfügbar ist, verwenden Sie diese Adresse. Andernfalls erreichen Sie das Gerät unter {ip}.',
+    routerAccessInfo: 'Das Gerät wechselt zurück in den Router-Modus. Bitte greifen Sie über {ip} auf das Gerät zu.'
   },
   wanSetup: {
     title: 'WAN-Einstellungen',
