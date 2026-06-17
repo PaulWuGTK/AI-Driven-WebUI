@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'WPA事前共有キー',
     connect: '接続',
     connected: '接続済み',
-    disconnected: '未接続'
+    disconnected: '未接続',
+    switchedToExtender: 'エクステンダーモードに切り替えました',
+    switchedToRouter: 'ルーターモードに切り替えました',
+    extenderAccessInfo: 'デバイスはエクステンダーモードに切り替え中です。DHCP で IP アドレスが割り当てられている場合はそのアドレスでアクセスしてください。IP が取得できない場合は {ip} でアクセスしてください。',
+    routerAccessInfo: 'デバイスはルーターモードに切り替え中です。{ip} でアクセスしてください。'
   },
   wanSetup: {
     title: 'WAN設定',

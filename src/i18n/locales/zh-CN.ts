@@ -599,7 +599,11 @@ const translations = {
     wpaPreshareKey: 'WPA 预共享密钥',
     connect: '连接',
     connected: '已连接',
-    disconnected: '已断开'
+    disconnected: '已断开',
+    switchedToExtender: '已切换至扩展器模式',
+    switchedToRouter: '已切换至路由器模式',
+    extenderAccessInfo: '设备正在切换至扩展器模式。若已获取 DHCP 分配的 IP，请使用该地址访问设备；若未获取 IP，请通过 {ip} 访问。',
+    routerAccessInfo: '设备正在切换回路由器模式，请通过 {ip} 访问设备。'
   },
   wanSetup: {
     title: 'WAN 设置',
