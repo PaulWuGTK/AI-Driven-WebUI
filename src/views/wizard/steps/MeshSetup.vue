@@ -48,6 +48,10 @@ const { qa } = useQA();
           :slider-data-testid="qa('wizard-mesh-enable-slider')"
         />
       </div>
+      <div v-if="config.mesh.enable" class="warning-message" :data-testid="qa('wizard-mesh-enforce-hint')">
+        <span class="material-icons warning-icon">info</span>
+        <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
+      </div>
     </div>
 
     <div class="button-container">
@@ -214,6 +218,23 @@ const { qa } = useQA();
 .tooltip-wrapper:hover .tooltip-box {
   opacity: 1;
   visibility: visible;
+}
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 0.9rem;
+}
+
+.warning-icon {
+  font-size: 20px;
+  color: #856404;
 }
 
 .toggle-switch {

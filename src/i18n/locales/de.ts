@@ -1240,6 +1240,7 @@ const translations = {
     applyingWarning: 'Bitte warten Sie, bis die Konfiguration angewendet wurde.',
     meshTitle: 'Smart Mesh',
     meshSubtitle: 'Erstellen Sie ein Smart Mesh-Netzwerk für nahtlose Wi-Fi-Abdeckung in Ihrem gesamten Zuhause mit einfacher zentraler Verwaltung.',
+    meshEnforcesCommonSsid: 'Wenn Mesh aktiviert ist, wird die gemeinsame SSID erzwungen.',
     meshInfoTitle: 'Was ist Smart Mesh?',
     meshInfoDescription: 'Smart Mesh ermöglicht es mehreren Routern, als ein einziges Netzwerk zusammenzuarbeiten und nahtlose Abdeckung in Ihrem Zuhause oder Büro zu bieten. Geräte verbinden sich automatisch mit dem stärksten Signal.',
     meshBenefitsTitle: 'Vorteile:',

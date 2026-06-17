@@ -1299,6 +1299,7 @@ const translations = {
     applyingWarning: 'Please wait while the configuration is being applied.',
     meshTitle: 'Smart Mesh',
     meshSubtitle: 'Create a Smart Mesh network for seamless Wi-Fi coverage across your home with simple central management.',
+    meshEnforcesCommonSsid: 'When Mesh is enabled, Common SSID will be enforced.',
     meshInfoTitle: 'What is Smart Mesh?',
     meshInfoDescription: 'Smart Mesh allows multiple routers to work together as a single network, providing seamless coverage throughout your home or office. Devices automatically connect to the strongest signal.',
     meshBenefitsTitle: 'Benefits:',

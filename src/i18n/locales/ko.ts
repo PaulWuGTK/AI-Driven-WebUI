@@ -1240,6 +1240,7 @@ const translations = {
     applyingWarning: '설정이 적용되는 동안 잠시만 기다려 주십시오.',
     meshTitle: 'Smart Mesh',
     meshSubtitle: 'Smart Mesh 네트워크를 구성하여 집 안 전체에 끊김 없는 Wi-Fi 범위를 제공하고 중앙에서 간편하게 관리하십시오.',
+    meshEnforcesCommonSsid: 'Mesh가 활성화되면 Common SSID가 강제로 활성화됩니다.',
     meshInfoTitle: 'Smart Mesh란?',
     meshInfoDescription: 'Smart Mesh는 여러 대의 공유기가 하나의 네트워크처럼 함께 동작하여 가정이나 사무실 전체에 끊김 없는 커버리지를 제공합니다. 장치는 자동으로 신호가 가장 강한 노드에 연결됩니다.',
     meshBenefitsTitle: '장점:',

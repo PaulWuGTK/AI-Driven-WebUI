@@ -1240,6 +1240,7 @@ const translations = {
     applyingWarning: '請稍候，設定套用中。',
     meshTitle: 'Smart Mesh',
     meshSubtitle: '建立 Smart Mesh 網路，讓 Wi-Fi 訊號在家中無縫涵蓋，並透過簡單的集中管理進行維護。',
+    meshEnforcesCommonSsid: '啟用 Mesh 時，將強制啟用 Common SSID。',
     meshInfoTitle: '什麼是 Smart Mesh？',
     meshInfoDescription: 'Smart Mesh 可讓多台路由器協同運作成單一網路，在家中或辦公室提供無縫的涵蓋範圍，裝置會自動連線到訊號最強的節點。',
     meshBenefitsTitle: '優點：',
