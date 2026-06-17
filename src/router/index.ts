@@ -34,6 +34,7 @@ const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
   { pathPrefix: '/network/wireless/mesh', menuKey: 'basicSetup.wlan.meshNetwork' },
   { pathPrefix: '/basic/wlan/zones', menuKey: 'basicSetup.wlan.wifiZones' },
   { pathPrefix: '/network/wireless/extender', menuKey: 'basicSetup.wlan.wirelessExtender' },
+  { pathPrefix: '/network/wireless/macfilter', menuKey: 'basicSetup.wlan.wirelessMacFilter' },
   { pathPrefix: '/network/wireless', menuKey: 'basicSetup.wlan' },
   { pathPrefix: '/basic/wlan', menuKey: 'basicSetup.wlan' },
 
@@ -381,6 +382,16 @@ const router = createRouter({
     {
       path: '/basic/wlan/extender',
       redirect: '/network/wireless/extender'
+    },
+    {
+      path: '/network/wireless/macfilter',
+      name: 'NetworkWirelessMacFilter',
+      component: () => import('../views/network/wireless/MacFilterConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wlan/macfilter',
+      redirect: '/network/wireless/macfilter'
     },
     {
       path: '/basic/cellular',

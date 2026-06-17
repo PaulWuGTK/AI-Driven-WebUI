@@ -7,6 +7,7 @@ import WirelessAdvancedConfig from './AdvancedConfig.vue';
 import WirelessWpsConfig from './WpsConfig.vue';
 import WirelessMeshConfig from './MeshConfig.vue';
 import WirelessExtenderTab from './ExtenderConfig.vue';
+import MacFilteringTab from '../../advanced/security/MacFilteringTab.vue';
 import TabInProgress from '../../../components/TabInProgress.vue';
 import { useMenuVisibilityContext } from '../../../composables/useMenuVisibilityContext';
 import { useQA } from '../../../utils/qa';
@@ -40,6 +41,14 @@ const tabs = computed<Tab[]>(() => {
       id: 'wlan',
       label: t('wireless.wlanExtender'),
       menuKey: 'basicSetup.wlan.wirelessExtender'
+    });
+  }
+
+  if (canShowMenu('basicSetup.wlan.wirelessMacFilter')) {
+    baseTabs.push({
+      id: 'macfilter',
+      label: t('menu.wifiMacFiltering'),
+      menuKey: 'basicSetup.wlan.wirelessMacFilter'
     });
   }
 
@@ -97,6 +106,7 @@ onMounted(async () => {
           <WirelessWpsConfig v-if="activeTab === 'wps'" :data-testid="qa('wireless-wps-config')" />
           <WirelessMeshConfig v-if="activeTab === 'mesh'" :data-testid="qa('wireless-mesh-config')" />
           <WirelessExtenderTab v-if="activeTab === 'wlan'" :data-testid="qa('wireless-wlan-extender')" />
+          <MacFilteringTab v-if="activeTab === 'macfilter'" :data-testid="qa('wireless-mac-filter')" />
           <TabInProgress v-if="activeTab === 'zones'" :data-testid="qa('wireless-wifi-zones')" />
         </div>
       </div>

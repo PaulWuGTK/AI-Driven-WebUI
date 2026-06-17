@@ -12,7 +12,7 @@ export const getMACFiltering = async (): Promise<MACFilteringResponse> => {
     return getMACFilteringMockData();
   }
 
-  return callApi<MACFilteringResponse>('/API/info?list=MACFiltering');
+  return callApi<MACFilteringResponse>('/API/info?list=WifiMACFiltering');
 };
 
 export const updateMACFiltering = async (data: MACFilteringUpdateRequest): Promise<MACFilteringResponse> => {
@@ -21,7 +21,7 @@ export const updateMACFiltering = async (data: MACFilteringUpdateRequest): Promi
     return updateMACFilteringMockData(data);
   }
 
-  return callApi<MACFilteringResponse>('/API/info?list=MACFiltering', {
+  return callApi<MACFilteringResponse>('/API/info?list=WifiMACFiltering', {
     method: 'POST',
     body: JSON.stringify(data),
   });

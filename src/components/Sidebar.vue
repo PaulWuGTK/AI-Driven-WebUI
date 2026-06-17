@@ -114,7 +114,8 @@ const baseMenuItems: MenuItem[] = [
           { name: 'WPS Configuration', path: '/basic/wlan/wps', translationKey: 'menu.wpsConfig', menuKey: 'basicSetup.wlan.wpsConfig' },
           { name: 'Mesh Network', path: '/basic/wlan/mesh', translationKey: 'menu.meshNetwork', menuKey: 'basicSetup.wlan.meshNetwork' },
           { name: 'WiFi Zones', path: '/basic/wlan/zones', translationKey: 'menu.wifiZones', menuKey: 'basicSetup.wlan.wifiZones' },
-          { name: 'Wireless Extender', path: '/basic/wlan/extender', translationKey: 'menu.wirelessExtender', menuKey: 'basicSetup.wlan.wirelessExtender' }
+          { name: 'Wireless Extender', path: '/basic/wlan/extender', translationKey: 'menu.wirelessExtender', menuKey: 'basicSetup.wlan.wirelessExtender' },
+          { name: 'WiFi MAC Filtering', path: '/basic/wlan/macfilter', translationKey: 'menu.wifiMacFiltering', menuKey: 'basicSetup.wlan.wirelessMacFilter' }
         ]
       },
       { name: 'Cellular', path: '/basic/cellular', translationKey: 'menu.cellular', menuKey: 'basicSetup.cellular' },

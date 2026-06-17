@@ -6,7 +6,7 @@ export interface MACFilteringEntry {
 }
 
 export interface MACFilteringResponse {
-  MACFiltering: {
+  WifiMACFiltering: {
     wifi2g: MACFilteringEntry[];
     wifi5g: MACFilteringEntry[];
     wifi6g: MACFilteringEntry[];
@@ -14,7 +14,7 @@ export interface MACFilteringResponse {
 }
 
 export interface MACFilteringUpdateRequest {
-  MACFiltering: {
+  WifiMACFiltering: {
     wifi2g: MACFilteringEntry[];
     wifi5g: MACFilteringEntry[];
     wifi6g: MACFilteringEntry[];
