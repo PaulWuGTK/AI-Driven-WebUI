@@ -439,7 +439,7 @@ const translations = {
     rootUid: 'UID root'
   },
   systemStats: {
-    title: 'Statistiques système',
+    title: 'Débit',
     wanThroughput: 'Débit WAN',
     lanThroughput: 'Débit LAN',
     wifiThroughput: 'Débit WiFi',

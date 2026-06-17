@@ -439,7 +439,7 @@ const translations = {
     rootUid: 'ルート UID'
   },
   systemStats: {
-    title: 'システム統計',
+    title: 'スループット',
     wanThroughput: 'WANスループット',
     lanThroughput: 'LANスループット',
     wifiThroughput: 'WiFiスループット',
