@@ -168,7 +168,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: true }
   },
   'basicSetup.wlan.wirelessMacFilter': {
-    netLayoutTypes: { prpl: false, genix: false, cht: false },
+    netLayoutTypes: { prpl: false, genix: true, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: false }
   },
   'basicSetup.cellular': {
