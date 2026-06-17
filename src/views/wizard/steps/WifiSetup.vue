@@ -83,6 +83,13 @@ const band6gSecurityOptions = computed(() => {
   return commonSecurityOptions.value;
 });
 
+// When Mesh is enabled, enforce Smart Connect (Common SSID) on
+watch(() => props.config.mesh.enable, (meshEnabled) => {
+  if (meshEnabled) {
+    props.config.wifi.smartConnect = true;
+  }
+}, { immediate: true });
+
 watch(() => props.config.wifi.smartConnect, (isEnabled) => {
   if (isEnabled) {
     savedBandPasswords.value['2g'] = props.config.wifi.bands['2g'].password;
@@ -284,9 +291,15 @@ const handleNext = () => {
           <BaseSwitch
             v-model="config.wifi.smartConnect"
             class="toggle-switch"
+            :disabled="config.mesh.enable"
             :data-testid="qa('wizard-wifi-smart-connect-toggle')"
             :slider-data-testid="qa('wizard-wifi-smart-connect-toggle-slider')"
           />
+        </div>
+
+        <div v-if="config.mesh.enable" class="enforce-hint" :data-testid="qa('wizard-wifi-mesh-enforce-hint')">
+          <span class="material-icons enforce-hint-icon">info</span>
+          <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
         </div>
 
         <div class="toggle-row">
@@ -603,6 +616,7 @@ const handleNext = () => {
 
 .settings-section {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   margin-bottom: 2rem;
   padding: 1.5rem;
@@ -719,6 +733,24 @@ const handleNext = () => {
 .tooltip-wrapper:hover .tooltip-box {
   opacity: 1;
   visibility: visible;
+}
+
+.enforce-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 0.85rem;
+}
+
+.enforce-hint-icon {
+  font-size: 18px;
+  color: #856404;
 }
 
 .toggle-switch {

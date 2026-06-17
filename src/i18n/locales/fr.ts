@@ -1240,6 +1240,7 @@ const translations = {
     applyingWarning: 'Veuillez patienter pendant l’application de la configuration.',
     meshTitle: 'Smart Mesh',
     meshSubtitle: 'Créez un réseau Smart Mesh pour une couverture Wi-Fi transparente dans toute votre maison avec une gestion centrale simple.',
+    meshEnforcesCommonSsid: 'Lorsque le Mesh est activé, le SSID commun sera imposé.',
     meshInfoTitle: 'Qu\'est-ce que Smart Mesh ?',
     meshInfoDescription: 'Smart Mesh permet à plusieurs routeurs de fonctionner ensemble comme un seul réseau, offrant une couverture transparente dans votre maison ou bureau. Les appareils se connectent automatiquement au signal le plus fort.',
     meshBenefitsTitle: 'Avantages :',

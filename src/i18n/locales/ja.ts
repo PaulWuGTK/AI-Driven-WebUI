@@ -1240,6 +1240,7 @@ const translations = {
     applyingWarning: '設定の適用が完了するまでお待ちください。',
     meshTitle: 'スマートメッシュ',
     meshSubtitle: 'シンプルな中央管理で家全体にシームレスな Wi-Fi カバレッジを提供するスマートメッシュネットワークを作成します。',
+    meshEnforcesCommonSsid: 'Mesh が有効な場合、Common SSID が強制的に有効になります。',
     meshInfoTitle: 'スマートメッシュとは？',
     meshInfoDescription: 'スマートメッシュは、複数のルーターが 1 つのネットワークとして連携し、家やオフィス全体でシームレスなカバレッジを提供します。デバイスは自動的に最強の信号に接続します。',
     meshBenefitsTitle: 'メリット：',
