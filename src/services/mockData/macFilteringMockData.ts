@@ -1,7 +1,7 @@
 import type { MACFilteringResponse, MACFilteringUpdateRequest } from '../../types/macFiltering';
 
 const mockMACFilteringData: MACFilteringResponse = {
-  MACFiltering: {
+  WifiMACFiltering: {
     wifi2g: [
       {
         Path: 'WiFi.AccessPoint.1.',
@@ -52,10 +52,10 @@ export const getMACFilteringMockData = (): MACFilteringResponse => mockMACFilter
 export const updateMACFilteringMockData = (
   data: MACFilteringUpdateRequest
 ): MACFilteringResponse => {
-  mockMACFilteringData.MACFiltering = {
-    wifi2g: [...data.MACFiltering.wifi2g],
-    wifi5g: [...data.MACFiltering.wifi5g],
-    wifi6g: [...data.MACFiltering.wifi6g]
+  mockMACFilteringData.WifiMACFiltering = {
+    wifi2g: [...data.WifiMACFiltering.wifi2g],
+    wifi5g: [...data.WifiMACFiltering.wifi5g],
+    wifi6g: [...data.WifiMACFiltering.wifi6g]
   };
 
   return mockMACFilteringData;

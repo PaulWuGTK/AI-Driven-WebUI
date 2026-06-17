@@ -3,7 +3,6 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import IpFilteringTab from './security/IpFilteringTab.vue';
-import MacFilteringTab from './security/MacFilteringTab.vue';
 import GeneralMacFilteringTab from './security/GeneralMacFilteringTab.vue';
 import { useMenuVisibilityContext } from '../../composables/useMenuVisibilityContext';
 import { useQA } from '../../utils/qa';
@@ -15,19 +14,11 @@ const router = useRouter();
 const activeTab = ref('ipfiltering');
 const { fetchMenuContext, canShowMenu } = useMenuVisibilityContext('super');
 
-const isDevMode = computed(() => route.query.dev === 'true');
-
 const tabs = computed(() => {
-  const baseTabs = [
+  return [
     { id: 'ipfiltering', label: t('menu.ipFiltering'), menuKey: 'basicSetup.security.ipFiltering' },
     { id: 'general-macfiltering', label: t('menu.generalMacFiltering'), menuKey: 'basicSetup.security.macFiltering' }
   ].filter(tab => canShowMenu(tab.menuKey));
-
-  if (isDevMode.value) {
-    baseTabs.push({ id: 'wifi-macfiltering', label: t('menu.wifiMacFiltering'), menuKey: 'basicSetup.security.macFiltering' });
-  }
-
-  return baseTabs.filter(tab => !tab.menuKey || canShowMenu(tab.menuKey));
 });
 
 const ensureActiveTab = () => {
@@ -78,7 +69,6 @@ onMounted(async () => {
         <div class="tab-content" :data-testid="qa('security-tab-content')">
           <IpFilteringTab v-if="activeTab === 'ipfiltering'" :data-testid="qa('security-ipfiltering-content')" />
           <GeneralMacFilteringTab v-if="activeTab === 'general-macfiltering'" :data-testid="qa('security-general-macfiltering-content')" />
-          <MacFilteringTab v-if="activeTab === 'wifi-macfiltering' && isDevMode" :data-testid="qa('security-wifi-macfiltering-content')" />
         </div>
       </div>
     </div>
