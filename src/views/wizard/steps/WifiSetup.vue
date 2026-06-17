@@ -297,11 +297,6 @@ const handleNext = () => {
           />
         </div>
 
-        <div v-if="config.mesh.enable" class="enforce-hint" :data-testid="qa('wizard-wifi-mesh-enforce-hint')">
-          <span class="material-icons enforce-hint-icon">info</span>
-          <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
-        </div>
-
         <div class="toggle-row">
           <label class="toggle-label">
             <span>{{ t('wizard.mloNetwork') }}</span>
@@ -318,6 +313,11 @@ const handleNext = () => {
             :data-testid="qa('wizard-wifi-mlo-toggle')"
             :slider-data-testid="qa('wizard-wifi-mlo-toggle-slider')"
           />
+        </div>
+
+        <div v-if="config.mesh.enable" class="enforce-hint" :data-testid="qa('wizard-wifi-mesh-enforce-hint')">
+          <span class="material-icons enforce-hint-icon">info</span>
+          <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
         </div>
       </div>
 
@@ -739,7 +739,8 @@ const handleNext = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  width: 100%;
+  flex-basis: 100%;
+  margin-top: -1rem;
   padding: 0.5rem 0.75rem;
   background-color: #fff3cd;
   border: 1px solid #ffc107;
