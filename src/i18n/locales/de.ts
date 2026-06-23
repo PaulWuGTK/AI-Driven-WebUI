@@ -495,6 +495,7 @@ const translations = {
     mloSettings: 'MLO-Einstellungen',
     mloEnable: 'MLO aktivieren',
     mloModeDisabled: 'MLO ist aktiviert – Modus kann nicht geändert werden.',
+    mloModeDisabledWithGroups: 'MLO ist für Gruppen aktiviert: {groups} – Modus kann nicht geändert werden.',
     mloMeshDisabled: 'MLO ist auf einem oder mehreren APs (Basis oder Gast) aktiviert – Mesh-Einstellungen können nicht geändert werden.',
     meshMloDisabled: 'Mesh ist aktiviert – MLO-Einstellungen können nicht geändert werden.',
     commonSsidDisabled: 'Gemeinsame SSID ist deaktiviert – MLO-Einstellungen können nicht geändert werden.',

@@ -495,6 +495,7 @@ const translations = {
     mloSettings: 'MLO 設定',
     mloEnable: 'MLO を有効にする',
     mloModeDisabled: 'MLO が有効です – モードは変更できません。',
+    mloModeDisabledWithGroups: 'MLO がグループ {groups} で有効です – モードは変更できません。',
     mloMeshDisabled: '1つ以上の AP（基本またはゲスト）で MLO が有効です – メッシュ設定は変更できません。',
     meshMloDisabled: 'メッシュが有効です – MLO 設定は変更できません。',
     commonSsidDisabled: '共通 SSID が無効です – MLO 設定は変更できません。',
