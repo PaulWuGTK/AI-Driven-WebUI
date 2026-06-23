@@ -441,6 +441,9 @@ export interface Translations {
     ipChangeMessage: string;
     redirectingIn: string;
     redirectNow: string;
+    invalidLanIP: string;
+    invalidSubnetMask: string;
+    unreasonableSubnetMask: string;
   };
   serviceControl: {
     title: string;

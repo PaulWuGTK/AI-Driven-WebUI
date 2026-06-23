@@ -709,7 +709,10 @@ const translations = {
     ipChangeSuccess: 'IP 地址修改成功',
     ipChangeMessage: 'LAN IP 地址已修改为 {newIP}，页面将自动跳转到新的地址。',
     redirectingIn: '即将跳转：',
-    redirectNow: '立即跳转'
+    redirectNow: '立即跳转',
+    invalidLanIP: '無效的 LAN IP 地址格式',
+    invalidSubnetMask: '無效的子网掩码格式',
+    unreasonableSubnetMask: 'IP {ip} 使用子网掩码 {mask} 不合理。建議使用：{suggestion}。此配置可能導致網絡問題且無法訪問設備。'
   },
   serviceControl: {
     title: '服务控制',
