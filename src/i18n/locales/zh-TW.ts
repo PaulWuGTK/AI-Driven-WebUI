@@ -495,6 +495,7 @@ const translations = {
     mloSettings: 'MLO 設定',
     mloEnable: '啟用 MLO',
     mloModeDisabled: 'MLO 已啟用，無法變更模式。',
+    mloModeDisabledWithGroups: 'MLO 已在群組 {groups} 啟用，無法變更模式。',
     mloMeshDisabled: '一或多個 AP（基本或訪客）已啟用 MLO – 無法變更 Mesh 設定。',
     meshMloDisabled: 'Mesh 已啟用 – 無法變更 MLO 設定。',
     commonSsidDisabled: '通用 SSID 已停用 – 無法變更 MLO 設定。',

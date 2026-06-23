@@ -288,6 +288,7 @@ export interface Translations {
     mloSettings: string;
     mloEnable: string;
     mloModeDisabled: string;
+    mloModeDisabledWithGroups: string;
     mloMeshDisabled: string;
     meshMloDisabled: string;
     mloMeshWarning: string;

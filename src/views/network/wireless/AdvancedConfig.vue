@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { getWlanAdvanced, updateWlanAdvanced } from '../../../services/api/wireless';
@@ -16,6 +16,13 @@ const advancedData = ref<WlanAdvancedResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const showBlockingOverlay = ref(false);
+
+const mloEnabledGroupsText = computed(() => {
+  if (!advancedData.value?.WlanAdvanced.MLOEnabledGroups?.length) {
+    return '';
+  }
+  return advancedData.value.WlanAdvanced.MLOEnabledGroups.join(', ');
+});
 
 const fetchAdvancedConfig = async () => {
   loading.value = true;
@@ -105,7 +112,8 @@ onMounted(fetchAdvancedConfig);
         <div class="mlo-status" v-if="advancedData.WlanAdvanced.MLOEnable === 1" :data-testid="qa('wireless-advanced-config-mlo-status')">
           <div class="info-banner" :data-testid="qa('wireless-advanced-config-mlo-info-banner')">
             <span class="material-icons">info</span>
-            <span>{{ t('wireless.mloModeDisabled') }}</span>
+            <span v-if="mloEnabledGroupsText">{{ t('wireless.mloModeDisabledWithGroups', { groups: mloEnabledGroupsText }) }}</span>
+            <span v-else>{{ t('wireless.mloModeDisabled') }}</span>
           </div>
         </div>
 
