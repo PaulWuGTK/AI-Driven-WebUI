@@ -8,6 +8,7 @@ import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
+import { AuthService } from '../../../services/auth';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
@@ -89,17 +90,20 @@ const startCountdown = (action: 'restart' | 'factory') => {
   showCountdown.value = true;
   countdownAction.value = action;
   countdown.value = 100;
-  
+
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
   }
-  
+
   countdownTimer.value = window.setInterval(() => {
     countdown.value--;
     if (countdown.value <= 0) {
       if (countdownTimer.value) {
         clearInterval(countdownTimer.value);
       }
+      // Clear session after reset/restart to force login
+      const auth = AuthService.getInstance();
+      auth.clearSession();
       router.push(`/login?t=${Date.now()}`);
     }
   }, 1000);
