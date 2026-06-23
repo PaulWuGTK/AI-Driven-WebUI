@@ -709,7 +709,10 @@ const translations = {
     ipChangeSuccess: 'IP 位址變更成功',
     ipChangeMessage: 'LAN IP 位址已變更為 {newIP}，頁面將自動導向至新的位址。',
     redirectingIn: '即將重新導向：',
-    redirectNow: '立即重新導向'
+    redirectNow: '立即重新導向',
+    invalidLanIP: '無效的 LAN IP 位址格式',
+    invalidSubnetMask: '無效的子網路遮罩格式',
+    unreasonableSubnetMask: 'IP {ip} 使用子網路遮罩 {mask} 不合理。建議使用：{suggestion}。此設定可能導致網路問題且無法存取設備。'
   },
   serviceControl: {
     title: '服務控制',

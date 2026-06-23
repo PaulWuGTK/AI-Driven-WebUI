@@ -709,7 +709,10 @@ const translations = {
     ipChangeSuccess: 'Adresse IP modifiée avec succès',
     ipChangeMessage: 'L’adresse IP LAN a été changée en {newIP}. La page sera automatiquement redirigée vers la nouvelle adresse.',
     redirectingIn: 'Redirection dans :',
-    redirectNow: 'Rediriger maintenant'
+    redirectNow: 'Rediriger maintenant',
+    invalidLanIP: 'Format d\'adresse IP LAN invalide',
+    invalidSubnetMask: 'Format de masque de sous-réseau invalide',
+    unreasonableSubnetMask: 'Le masque de sous-réseau {mask} est inapproprié pour l\'IP {ip}. Masque suggéré : {suggestion}. Cette configuration peut causer des problèmes réseau et empêcher l\'accès au périphérique.'
   },
   serviceControl: {
     title: 'Contrôle des services',

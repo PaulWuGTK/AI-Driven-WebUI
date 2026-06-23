@@ -709,7 +709,10 @@ const translations = {
     ipChangeSuccess: 'IP 주소가 성공적으로 변경되었습니다',
     ipChangeMessage: 'LAN IP 주소가 {newIP}로 변경되었습니다. 페이지는 새 주소로 자동 리다이렉트됩니다.',
     redirectingIn: '리다이렉트까지 남은 시간:',
-    redirectNow: '지금 바로 이동'
+    redirectNow: '지금 바로 이동',
+    invalidLanIP: '잘못된 LAN IP 주소 형식',
+    invalidSubnetMask: '잘못된 서브넷 마스크 형식',
+    unreasonableSubnetMask: 'IP {ip}에 대한 서브넷 마스크 {mask}가 부적절합니다. 권장 마스크: {suggestion}. 이 구성은 네트워크 문제를 일으키고 장치 액세스를 방해할 수 있습니다.'
   },
   serviceControl: {
     title: '서비스 제어',

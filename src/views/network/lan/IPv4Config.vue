@@ -3,7 +3,8 @@ import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { LanBasicResponse, IPAddressReservation } from '../../../types/lanBasic';
 import { getLanBasic, updateLanBasic } from '../../../services/api/lanBasic';
-import { ActionButtons, BaseSwitch, BaseTable } from '../../../components/common';
+import { ActionButtons, BaseSwitch, BaseTable, BaseToast } from '../../../components/common';
+import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { useQA } from '../../../utils/qa';
 import IPChangeRedirect from '../../../components/IPChangeRedirect.vue';
 const { isQAMode, qa, slug } = useQA();
@@ -11,8 +12,11 @@ const { isQAMode, qa, slug } = useQA();
 const { t } = useI18n();
 const lanData = ref<LanBasicResponse | null>(null);
 const loading = ref(false);
-const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const successMessage = ref('');
+const errorToastMessage = ref('');
+const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
+const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const editingIndex = ref<number | null>(null);
 const originalIPAddress = ref<string>('');
 const showRedirectDialog = ref(false);
@@ -85,6 +89,58 @@ const isValidSubnetMask = (mask: string): boolean => {
   return /^1+0*$/.test(binary);
 };
 
+const isReasonableSubnetMask = (ip: string, mask: string): boolean => {
+  if (!isValidIPv4(ip) || !isValidSubnetMask(mask)) return false;
+
+  const ipParts = ip.split('.').map(part => parseInt(part, 10));
+  const maskParts = mask.split('.').map(part => parseInt(part, 10));
+
+  // Get the network prefix length (number of 1 bits in mask)
+  let prefixLength = 0;
+  maskParts.forEach(octet => {
+    let bits = octet.toString(2).padStart(8, '0');
+    prefixLength += bits.split('1').length - 1;
+  });
+
+  // Check for private IP ranges and enforce reasonable masks
+  // Class A private: 10.0.0.0/8 (mask should be >= /8, i.e., 255.0.0.0 or smaller subnet)
+  // Class B private: 172.16.0.0/12 (mask should be >= /12, i.e., 255.240.0.0 or smaller subnet)
+  // Class C private: 192.168.0.0/16 (mask should be >= /16, i.e., 255.255.0.0 or smaller subnet)
+
+  // For private Class C (192.168.x.x), mask should be at least /16 (255.255.0.0)
+  if (ipParts[0] === 192 && ipParts[1] === 168) {
+    if (prefixLength < 16) {
+      return false; // Mask like 255.0.0.0 is unreasonable for 192.168.x.x
+    }
+  }
+
+  // For private Class B (172.16.x.x - 172.31.x.x), mask should be at least /12 (255.240.0.0)
+  if (ipParts[0] === 172 && ipParts[1] >= 16 && ipParts[1] <= 31) {
+    if (prefixLength < 12) {
+      return false; // Mask like 255.0.0.0 is unreasonable for 172.16-31.x.x
+    }
+  }
+
+  // For private Class A (10.x.x.x), mask should be at least /8 (255.0.0.0)
+  if (ipParts[0] === 10) {
+    if (prefixLength < 8) {
+      return false; // Unreasonable mask for 10.x.x.x
+    }
+  }
+
+  // For typical LAN usage, mask should not be smaller than /8
+  if (prefixLength < 8) {
+    return false;
+  }
+
+  // For typical LAN usage, mask should not be larger than /30 (point-to-point would be /31 or /32)
+  if (prefixLength > 29) {
+    return false; // /30 or smaller doesn't make sense for LAN with DHCP
+  }
+
+  return true;
+};
+
 const isValidMACAddress = (mac: string): boolean => {
   return /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(mac);
 };
@@ -133,6 +189,16 @@ const fetchLanBasic = async () => {
   }
 };
 
+const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
+  successMessage.value = message;
+  triggerSuccessToast();
+};
+
+const showErrorMessage = (message: string) => {
+  errorToastMessage.value = message;
+  triggerErrorToast();
+};
+
 const handleAddReservation = () => {
   reservations.value.push({
     MACAddress: '',
@@ -144,19 +210,19 @@ const handleAddReservation = () => {
 
 const validateReservation = (reservation: IPAddressReservation): boolean => {
   if (!isValidMACAddress(reservation.MACAddress)) {
-    error.value = 'Invalid MAC address format';
+    showErrorMessage('Invalid MAC address format');
     return false;
   }
 
   if (!isValidIPv4(reservation.IPAddress)) {
-    error.value = 'Invalid IP address format';
+    showErrorMessage('Invalid IP address format');
     return false;
   }
 
   if (lanData.value && lanData.value.LanBasic.DHCPv4Setting.Enable) {
     const { BeginAddress, EndAddress } = lanData.value.LanBasic.DHCPv4Setting;
     if (!isIPInRange(reservation.IPAddress, BeginAddress, EndAddress)) {
-      error.value = 'Reserved IP must be within DHCP range';
+      showErrorMessage('Reserved IP must be within DHCP range');
       return false;
     }
   }
@@ -170,7 +236,6 @@ const handleConfirmReservation = (index: number) => {
     return;
   }
   editingIndex.value = null;
-  error.value = null;
 };
 
 const handleCancelReservation = (index: number) => {
@@ -178,7 +243,6 @@ const handleCancelReservation = (index: number) => {
     reservations.value.splice(index, 1);
   }
   editingIndex.value = null;
-  error.value = null;
 };
 
 const handleEditReservation = (index: number) => {
@@ -199,29 +263,50 @@ const validateLANSettings = (): boolean => {
 
   // Validate LAN IP
   if (isIPv4Static && !isValidIPv4(LANIPSetting.IPv4IPAddress)) {
-    error.value = 'Invalid LAN IP address format';
+    showErrorMessage(t('lanBasic.invalidLanIP'));
     return false;
   }
 
   if (isIPv4Static && !isValidSubnetMask(LANIPSetting.SubnetMask)) {
-    error.value = 'Invalid subnet mask format';
+    showErrorMessage(t('lanBasic.invalidSubnetMask'));
+    return false;
+  }
+
+  // Check if subnet mask is reasonable for the given IP address
+  if (isIPv4Static && !isReasonableSubnetMask(LANIPSetting.IPv4IPAddress, LANIPSetting.SubnetMask)) {
+    const ipParts = LANIPSetting.IPv4IPAddress.split('.').map(p => parseInt(p, 10));
+    let suggestion = '255.255.255.0'; // Default suggestion
+
+    if (ipParts[0] === 192 && ipParts[1] === 168) {
+      suggestion = '255.255.255.0'; // Class C
+    } else if (ipParts[0] === 172 && ipParts[1] >= 16 && ipParts[1] <= 31) {
+      suggestion = '255.255.0.0'; // Class B
+    } else if (ipParts[0] === 10) {
+      suggestion = '255.255.255.0'; // Class A but suggest Class C for typical usage
+    }
+
+    showErrorMessage(t('lanBasic.unreasonableSubnetMask', {
+      ip: LANIPSetting.IPv4IPAddress,
+      mask: LANIPSetting.SubnetMask,
+      suggestion
+    }));
     return false;
   }
 
   // Validate DHCP settings if enabled
   if (DHCPv4Setting.Enable) {
     if (!isValidIPv4(DHCPv4Setting.BeginAddress)) {
-      error.value = 'Invalid DHCP start address';
+      showErrorMessage('Invalid DHCP start address');
       return false;
     }
 
     if (!isValidIPv4(DHCPv4Setting.EndAddress)) {
-      error.value = 'Invalid DHCP end address';
+      showErrorMessage('Invalid DHCP end address');
       return false;
     }
 
     if (!isValidSubnetMask(DHCPv4Setting.SubnetMask)) {
-      error.value = 'Invalid DHCP subnet mask';
+      showErrorMessage('Invalid DHCP subnet mask');
       return false;
     }
 
@@ -245,24 +330,24 @@ const validateLANSettings = (): boolean => {
       const broadcastAddr = networkAddr | (~lanMask >>> 0);
 
       if (beginIp < networkAddr || beginIp > broadcastAddr) {
-        error.value = 'DHCP start address must be within LAN subnet';
+        showErrorMessage('DHCP start address must be within LAN subnet');
         return false;
       }
 
       if (endIp < networkAddr || endIp > broadcastAddr) {
-        error.value = 'DHCP end address must be within LAN subnet';
+        showErrorMessage('DHCP end address must be within LAN subnet');
         return false;
       }
 
       if (beginIp >= endIp) {
-        error.value = 'DHCP start address must be lower than end address';
+        showErrorMessage('DHCP start address must be lower than end address');
         return false;
       }
     }
 
     // Validate DNS server if provided
     if (DHCPv4Setting.DNSServers && !DHCPv4Setting.DNSServers.split(',').every(ip => isValidIPv4(ip.trim()))) {
-      error.value = 'Invalid DNS server address';
+      showErrorMessage('Invalid DNS server address');
       return false;
     }
   }
@@ -273,7 +358,6 @@ const validateLANSettings = (): boolean => {
 const handleApply = async () => {
   if (!lanData.value) return;
 
-  error.value = null;
   if (!validateLANSettings()) {
     return;
   }
@@ -299,15 +383,12 @@ const handleApply = async () => {
       }
     });
 
-    showSuccess.value = true;
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 3000);
+    showSuccessMessage(t('lanBasic.applySuccess'));
     await fetchLanBasic();
-  
+
   } catch (err) {
     console.error('Error updating LAN settings:', err);
-    error.value = 'Failed to update LAN settings';
+    showErrorMessage('Failed to update LAN settings');
   } finally {
     loading.value = false;
   }
@@ -320,14 +401,85 @@ const handleRedirect = () => {
   window.location.href = newURL;
 };
 
+const autoAdjustDHCPRange = (oldLanIP?: string) => {
+  if (!lanData.value) return;
+
+  const { LANIPSetting, DHCPv4Setting } = lanData.value.LanBasic;
+
+  // Only auto-adjust if DHCP is enabled and IPv4 is static
+  if (!DHCPv4Setting.Enable || LANIPSetting.IPv4Enable !== 1 || LANIPSetting.IPv4Protocol !== 'Static') {
+    return;
+  }
+
+  const newLanIP = LANIPSetting.IPv4IPAddress;
+  const mask = LANIPSetting.SubnetMask;
+
+  if (!isValidIPv4(newLanIP) || !isValidSubnetMask(mask)) {
+    return;
+  }
+
+  // Calculate network address and range
+  const ipParts = newLanIP.split('.').map(p => parseInt(p, 10));
+  const maskParts = mask.split('.').map(p => parseInt(p, 10));
+
+  // Calculate network address
+  const networkParts = ipParts.map((part, i) => part & maskParts[i]);
+
+  // Calculate broadcast address
+  const broadcastParts = networkParts.map((part, i) => part | (~maskParts[i] & 255));
+
+  // Calculate usable IP range (excluding network address, LAN IP, and broadcast)
+  // Strategy: Use .2 to (broadcast - 10) to leave room for static IPs
+  const beginParts = [...networkParts];
+  const endParts = [...broadcastParts];
+
+  // First usable IP (skip network address)
+  beginParts[3] = networkParts[3] + 2;
+
+  // Last usable IP (reserve last 10 IPs for static assignments)
+  endParts[3] = broadcastParts[3] - 10;
+
+  // Ensure we don't include the LAN IP in DHCP range
+  const lanLastOctet = ipParts[3];
+  if (beginParts[3] === lanLastOctet) {
+    beginParts[3]++;
+  }
+  if (endParts[3] === lanLastOctet) {
+    endParts[3]--;
+  }
+
+  // Validate range is reasonable (at least 10 IPs)
+  const rangeSize = endParts[3] - beginParts[3] + 1;
+  if (rangeSize < 10) {
+    // Subnet too small, use minimal range
+    beginParts[3] = networkParts[3] + 1;
+    endParts[3] = Math.min(broadcastParts[3] - 1, beginParts[3] + 9);
+  }
+
+  const newBegin = beginParts.join('.');
+  const newEnd = endParts.join('.');
+
+  // Update DHCP range
+  DHCPv4Setting.BeginAddress = newBegin;
+  DHCPv4Setting.EndAddress = newEnd;
+  DHCPv4Setting.SubnetMask = mask;
+
+  // Update DNS Server if it was set to the old LAN IP
+  if (oldLanIP && DHCPv4Setting.DNSServers === oldLanIP) {
+    DHCPv4Setting.DNSServers = newLanIP;
+  }
+};
+
 const handleIPInput = (event: Event, field: string) => {
   if (!lanData.value) return;
-  
+
   const input = event.target as HTMLInputElement;
   const validatedIP = validateIPInput(input.value);
-  
+
   if (field === 'lanIP') {
+    const oldLanIP = lanData.value.LanBasic.LANIPSetting.IPv4IPAddress;
     lanData.value.LanBasic.LANIPSetting.IPv4IPAddress = validatedIP;
+    autoAdjustDHCPRange(oldLanIP);
   } else if (field === 'dnsServer') {
     lanData.value.LanBasic.DHCPv4Setting.DNSServers = validatedIP;
   } else if (field === 'beginAddress') {
@@ -335,6 +487,10 @@ const handleIPInput = (event: Event, field: string) => {
   } else if (field === 'endAddress') {
     lanData.value.LanBasic.DHCPv4Setting.EndAddress = validatedIP;
   }
+};
+
+const handleSubnetMaskChange = () => {
+  autoAdjustDHCPRange();
 };
 
 onMounted(fetchLanBasic);
@@ -406,6 +562,7 @@ onMounted(fetchLanBasic);
                   type="text"
                   :data-testid="qa('ipv4-configuration-lan-ip-subnet-mask-input')"
                   v-model="lanData.LanBasic.LANIPSetting.SubnetMask"
+                  @change="handleSubnetMaskChange"
                   placeholder="255.255.255.0"
                 />
               </div>
@@ -654,9 +811,18 @@ onMounted(fetchLanBasic);
       </div>
     </template>
 
-    <div v-if="showSuccess" class="success-message" :data-testid="qa('ipv4-configuration-success-message')">
-      {{ t('common.apply') }} successful
-    </div>
+    <BaseToast
+      v-model="showSuccessToast"
+      :message="successMessage"
+      type="success"
+      :data-testid="qa('ipv4-configuration-success-toast')"
+    />
+    <BaseToast
+      v-model="showErrorToast"
+      :message="errorToastMessage"
+      type="error"
+      :data-testid="qa('ipv4-configuration-error-toast')"
+    />
 
     <IPChangeRedirect
       :is-visible="showRedirectDialog"

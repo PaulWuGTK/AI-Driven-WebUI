@@ -709,7 +709,10 @@ const translations = {
     ipChangeSuccess: 'IP アドレスの変更が完了しました',
     ipChangeMessage: 'LAN IP アドレスが {newIP} に変更されました。ページは自動的に新しいアドレスへリダイレクトされます。',
     redirectingIn: 'リダイレクトまで：',
-    redirectNow: '今すぐリダイレクト'
+    redirectNow: '今すぐリダイレクト',
+    invalidLanIP: '無効な LAN IP アドレス形式',
+    invalidSubnetMask: '無効なサブネットマスク形式',
+    unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。'
   },
   serviceControl: {
     title: 'サービス制御',
