@@ -310,6 +310,10 @@ export interface Translations {
     dhcpSetting: string;
     enableDhcpServer: string;
     dnsServer: string;
+    dnsServers: string;
+    dnsServersHint: string;
+    dnsServersInvalid: string;
+    dnsServersTooMany: string;
     beginAddress: string;
     endAddress: string;
     leaseTime: string;

@@ -345,10 +345,17 @@ const validateLANSettings = (): boolean => {
       }
     }
 
-    // Validate DNS server if provided
-    if (DHCPv4Setting.DNSServers && !DHCPv4Setting.DNSServers.split(',').every(ip => isValidIPv4(ip.trim()))) {
-      showErrorMessage('Invalid DNS server address');
-      return false;
+    // Validate DNS servers if provided
+    if (DHCPv4Setting.DNSServers) {
+      const dnsEntries = DHCPv4Setting.DNSServers.split(',').map(ip => ip.trim()).filter(ip => ip);
+      if (dnsEntries.length > 4) {
+        showErrorMessage(t('lanBasic.dnsServersTooMany'));
+        return false;
+      }
+      if (!dnsEntries.every(ip => isValidIPv4(ip))) {
+        showErrorMessage(t('lanBasic.dnsServersInvalid'));
+        return false;
+      }
     }
   }
 
@@ -481,7 +488,8 @@ const handleIPInput = (event: Event, field: string) => {
     lanData.value.LanBasic.LANIPSetting.IPv4IPAddress = validatedIP;
     autoAdjustDHCPRange(oldLanIP);
   } else if (field === 'dnsServer') {
-    lanData.value.LanBasic.DHCPv4Setting.DNSServers = validatedIP;
+    // Allow commas for multiple DNS servers - don't use validateIPInput
+    lanData.value.LanBasic.DHCPv4Setting.DNSServers = (event.target as HTMLInputElement).value;
   } else if (field === 'beginAddress') {
     lanData.value.LanBasic.DHCPv4Setting.BeginAddress = validatedIP;
   } else if (field === 'endAddress') {
@@ -660,15 +668,16 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
-            <label :data-testid="qa('ipv4-configuration-dhcp-dns-server-label')">{{ t('lanBasic.dnsServer') }}</label>
+            <label :data-testid="qa('ipv4-configuration-dhcp-dns-server-label')">{{ t('lanBasic.dnsServers') }}</label>
             <input
               type="text"
               :data-testid="qa('ipv4-configuration-dhcp-dns-server-input')"
               :value="lanData.LanBasic.DHCPv4Setting.DNSServers"
               @input="handleIPInput($event, 'dnsServer')"
               :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
-              placeholder="192.168.1.1"
+              placeholder="192.168.1.1, 8.8.8.8"
             />
+            <span class="field-hint">{{ t('lanBasic.dnsServersHint') }}</span>
           </div>
 
           <div class="form-group">
@@ -875,6 +884,12 @@ onMounted(fetchLanBasic);
   display: block;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--text-secondary, #6b7280);
+  margin-top: 2px;
 }
 
 .input-with-unit {
