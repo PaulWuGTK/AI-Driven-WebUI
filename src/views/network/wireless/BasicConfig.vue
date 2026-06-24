@@ -238,6 +238,7 @@ const updateLocal = () => {
    */
   if (!data.value || editIndex.value === null || !draft.value) return;
   if (!validateDraftPasswords()) return;
+  if (Object.keys(ssidErrors).length > 0) return;
 
   // Get the edited group from the sorted array
   const editedGroup = groups.value[editIndex.value];
@@ -485,11 +486,32 @@ const showSuccessMessage = () => {
 };
 
 // PUBLIC_INTERFACE
+const validateAllSsids = (): boolean => {
+  if (!data.value) return false;
+  for (const group of data.value.WlanBasic.WlanGroup) {
+    const g = group as any;
+    // Validate group-level SSID
+    if (g.SSID) {
+      const result = validateSsid(g.SSID, t);
+      if (!result.isValid) return false;
+    }
+    // Validate per-band SSIDs
+    for (const band of ['wifi2g', 'wifi5g', 'wifi6g']) {
+      if (g[band]?.SSID) {
+        const result = validateSsid(g[band].SSID, t);
+        if (!result.isValid) return false;
+      }
+    }
+  }
+  return true;
+};
+
 const applyPost = async () => {
   /**
    * Non-edit-mode "Apply": POST current local state to backend in WlanGroup + Interface structure.
    * Shows success feedback consistent with the rest of this page.
    */
+  if (!validateAllSsids()) return;
   const payload = buildPostPayload();
   if (!payload) return;
 
