@@ -67,12 +67,30 @@ const getProtocolLabel = (protocol: string): string => {
 const isValidIPv4 = (ip: string): boolean => {
   const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
   if (!ipv4Regex.test(ip)) return false;
-  
+
   const parts = ip.split('.');
   return parts.every(part => {
     const num = parseInt(part, 10);
     return num >= 0 && num <= 255;
   });
+};
+
+/**
+ * Check if an IP address is a reasonable DNS server address.
+ * Rejects broadcast, loopback, 0.x.x.x, and 255.x.x.x addresses.
+ */
+const isValidDnsAddress = (ip: string): boolean => {
+  if (!isValidIPv4(ip)) return false;
+  const parts = ip.split('.').map(p => parseInt(p, 10));
+  // Reject 0.0.0.0
+  if (parts.every(p => p === 0)) return false;
+  // Reject 255.255.255.255 (broadcast)
+  if (parts.every(p => p === 255)) return false;
+  // Reject 127.x.x.x (loopback)
+  if (parts[0] === 127) return false;
+  // Reject first octet 0 or 255
+  if (parts[0] === 0 || parts[0] === 255) return false;
+  return true;
 };
 
 const isValidSubnetMask = (mask: string): boolean => {
@@ -352,7 +370,7 @@ const validateLANSettings = (): boolean => {
         showErrorMessage(t('lanBasic.dnsServersTooMany'));
         return false;
       }
-      if (!dnsEntries.every(ip => isValidIPv4(ip))) {
+      if (!dnsEntries.every(ip => isValidDnsAddress(ip))) {
         showErrorMessage(t('lanBasic.dnsServersInvalid'));
         return false;
       }
