@@ -21,13 +21,13 @@ export function getByteLength(str: string): number {
 
 /**
  * Check if SSID contains only allowed characters
- * Allowed: English letters, numbers, ASCII special characters, Chinese characters
- * Not allowed: Korean, Japanese, Russian, Arabic, Emoji, etc.
+ * Block only control characters (< 0x20) except space; all printable characters are allowed
+ * per BBF TR-181 specification (string(32), no character type restriction)
  */
 export function hasValidCharacters(ssid: string): boolean {
-  // Allow: ASCII printable characters (0x20-0x7E) and CJK Unified Ideographs (Chinese: 0x4E00-0x9FFF)
-  const validCharPattern = /^[\x20-\x7E\u4E00-\u9FFF]*$/;
-  return validCharPattern.test(normalizeSsid(ssid));
+  // Block control characters (0x00-0x1F) except allow everything else
+  const controlCharPattern = /[\x00-\x1F]/;
+  return !controlCharPattern.test(normalizeSsid(ssid));
 }
 
 /**
