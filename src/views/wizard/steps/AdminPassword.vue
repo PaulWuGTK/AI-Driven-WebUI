@@ -21,16 +21,23 @@ const passwordsMatch = computed(() => {
 });
 
 const passwordPattern = /^[0-9a-zA-Z]+$/;
+const ADMIN_PASSWORD_MAX_LENGTH = 64;
 
 const isPasswordValid = computed(() => {
   if (!props.config.admin.password) return false;
   return passwordPattern.test(props.config.admin.password);
 });
 
+const isPasswordTooLong = computed(() => {
+  if (!props.config.admin.password) return false;
+  return props.config.admin.password.length > ADMIN_PASSWORD_MAX_LENGTH;
+});
+
 const isValid = computed(() => {
   return props.config.admin.username &&
          props.config.admin.password &&
          isPasswordValid.value &&
+         !isPasswordTooLong.value &&
          props.config.admin.password === confirmPassword.value;
 });
 </script>
@@ -70,12 +77,13 @@ const isValid = computed(() => {
           <BaseSecretInput
             v-model="config.admin.password"
             class="admin-password-input"
-            :class="{ 'input-error': config.admin.password && !isPasswordValid }"
+            :class="{ 'input-error': config.admin.password && (!isPasswordValid || isPasswordTooLong) }"
             :placeholder="t('wizard.passwordPlaceholder')"
             :input-data-testid="qa('wizard-admin-password-input')"
             :toggle-data-testid="qa('wizard-admin-password-toggle')"
           />
-          <p v-if="config.admin.password && !isPasswordValid" class="error-text">Password can only contain letters (a-z, A-Z) and numbers (0-9)</p>
+          <p v-if="config.admin.password && isPasswordTooLong" class="error-text">{{ t('account.errorPasswordLength', { maxLength: ADMIN_PASSWORD_MAX_LENGTH }) }}</p>
+          <p v-else-if="config.admin.password && !isPasswordValid" class="error-text">Password can only contain letters (a-z, A-Z) and numbers (0-9)</p>
         </div>
 
         <div class="form-group">
