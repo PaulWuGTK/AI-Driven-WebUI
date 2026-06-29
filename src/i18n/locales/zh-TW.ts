@@ -1556,7 +1556,7 @@ const translations = {
     description: '描述',
     protocol: '通訊協定',
     externalPortRange: '外部連接埠範圍',
-    internalPortRange: '內部連接埠範圍',
+    internalPortRange: '內部連接埠',
     internalIPAddress: '內部 IP 位址',
     active: '啟用中',
     enablePortForwarding: '啟用連接埠轉送',
@@ -1567,7 +1567,8 @@ const translations = {
     localPort: '本機連接埠',
     localPortStart: '本機連接埠範圍（起始）',
     localPortEnd: '本機連接埠範圍（結束）',
-    comment: '備註'
+    comment: '備註',
+    externalPortRangeInvalid: '結束連接埠必須大於或等於起始連接埠。'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',

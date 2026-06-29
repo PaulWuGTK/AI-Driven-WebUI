@@ -1556,7 +1556,7 @@ const translations = {
     description: 'Description',
     protocol: 'Protocole',
     externalPortRange: 'Plage de ports externes',
-    internalPortRange: 'Plage de ports internes',
+    internalPortRange: 'Port interne',
     internalIPAddress: 'Adresse IP interne',
     active: 'Actif',
     enablePortForwarding: 'Activer la redirection de port',
@@ -1567,7 +1567,8 @@ const translations = {
     localPort: 'Port local',
     localPortStart: 'Plage de ports locaux (début)',
     localPortEnd: 'Plage de ports locaux (fin)',
-    comment: 'Commentaire'
+    comment: 'Commentaire',
+    externalPortRangeInvalid: 'Le port de fin doit être supérieur ou égal au port de début.'
   },
   ipFiltering: {
     enableIpFiltering: 'Activer le filtrage IP',
