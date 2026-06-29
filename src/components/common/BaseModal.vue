@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="handleOverlayClick">
-        <div :class="modalClasses" @click.stop>
+      <div v-if="modelValue" class="modal-overlay" @mousedown.self="handleOverlayClick">
+        <div :class="modalClasses">
           <div v-if="$slots.header || title" class="modal-header">
             <slot name="header">
               <h3 class="modal-title">{{ title }}</h3>
