@@ -54,6 +54,7 @@
             max="65535"
             :data-testid="qa('port-forward-external-port-end-input')"
           />
+          <p v-if="isPortRangeInvalid" class="error-text">{{ $t('portForwarding.externalPortRangeInvalid') }}</p>
         </div>
 
         <div class="form-group">
@@ -176,11 +177,19 @@ watch(() => props.rule, (newRule) => {
   internalPort.value = newRule.InternalPort || '';
 }, { immediate: true });
 
+const isPortRangeInvalid = computed(() => {
+  const start = Number(externalPortStart.value);
+  const end = Number(externalPortEnd.value);
+  return externalPortEnd.value !== '' && !isNaN(start) && !isNaN(end) && end < start;
+});
+
 function handleCancel() {
   emit('cancel');
 }
 
 function handleSubmit() {
+  if (isPortRangeInvalid.value) return;
+
   const externalRange = externalPortEnd.value
     ? `${externalPortStart.value}-${externalPortEnd.value}`
     : externalPortStart.value;
@@ -256,6 +265,12 @@ function handleSubmit() {
 
 .form-group input::placeholder {
   color: var(--text-tertiary);
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin: 0;
 }
 
 .form-actions {

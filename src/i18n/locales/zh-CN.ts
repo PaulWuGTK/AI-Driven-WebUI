@@ -1556,7 +1556,7 @@ const translations = {
     description: '描述',
     protocol: '协议',
     externalPortRange: '外部端口范围',
-    internalPortRange: '内部端口范围',
+    internalPortRange: '内部端口',
     internalIPAddress: '内部 IP 地址',
     active: '已启用',
     enablePortForwarding: '启用端口转发',
@@ -1567,7 +1567,8 @@ const translations = {
     localPort: '本地端口',
     localPortStart: '本地端口范围（起始）',
     localPortEnd: '本地端口范围（结束）',
-    comment: '备注'
+    comment: '备注',
+    externalPortRangeInvalid: '结束端口必须大于或等于起始端口。'
   },
   ipFiltering: {
     enableIpFiltering: '启用 IP 过滤',

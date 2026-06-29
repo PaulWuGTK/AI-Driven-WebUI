@@ -784,7 +784,7 @@ const translations = {
     description: 'Description',
     protocol: 'Protocol',
     externalPortRange: 'External Port Range',
-    internalPortRange: 'Internal Port Range',
+    internalPortRange: 'Internal Port',
     internalIPAddress: 'Internal IP Address',
     active: 'Active',
     enablePortForwarding: 'Enable Port Forwarding',
@@ -795,7 +795,8 @@ const translations = {
     localPort: 'Local Port',
     localPortStart: 'Local Port Range(Start)',
     localPortEnd: 'Local Port Range(End)',
-    comment: 'Comment'
+    comment: 'Comment',
+    externalPortRangeInvalid: 'End port must be greater than or equal to start port.'
   },
   dmz: {
     title: 'DMZ Settings',

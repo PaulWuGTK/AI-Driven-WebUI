@@ -1556,7 +1556,7 @@ const translations = {
     description: '説明',
     protocol: 'プロトコル',
     externalPortRange: '外部ポート範囲',
-    internalPortRange: '内部ポート範囲',
+    internalPortRange: '内部ポート',
     internalIPAddress: '内部 IP アドレス',
     active: 'アクティブ',
     enablePortForwarding: 'ポート転送を有効にする',
@@ -1567,7 +1567,8 @@ const translations = {
     localPort: 'ローカルポート',
     localPortStart: 'ローカルポート範囲（開始）',
     localPortEnd: 'ローカルポート範囲（終了）',
-    comment: 'コメント'
+    comment: 'コメント',
+    externalPortRangeInvalid: '終了ポートは開始ポート以上である必要があります。'
   },
   ipFiltering: {
     enableIpFiltering: 'IP フィルタリングを有効にする',

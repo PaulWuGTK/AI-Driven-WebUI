@@ -1556,7 +1556,7 @@ const translations = {
     description: '설명',
     protocol: '프로토콜',
     externalPortRange: '외부 포트 범위',
-    internalPortRange: '내부 포트 범위',
+    internalPortRange: '내부 포트',
     internalIPAddress: '내부 IP 주소',
     active: '동작 중',
     enablePortForwarding: '포트 포워딩 사용',
@@ -1567,7 +1567,8 @@ const translations = {
     localPort: '로컬 포트',
     localPortStart: '로컬 포트 범위(시작)',
     localPortEnd: '로컬 포트 범위(끝)',
-    comment: '메모'
+    comment: '메모',
+    externalPortRangeInvalid: '종료 포트는 시작 포트보다 크거나 같아야 합니다.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP 필터링 사용',
