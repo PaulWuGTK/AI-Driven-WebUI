@@ -33,7 +33,7 @@ const compareString = (a: string, b: string, order: SortOrder) => {
 };
 
 const numericSort = (key: keyof StatisticsEntry): StatisticsSortFn => {
-  return (a, b, order) => compareNumber(toNumber(a[key]), toNumber(b[key]), order);
+  return (a, b, order) => compareNumber(toNumber(a[key] ?? '0'), toNumber(b[key] ?? '0'), order);
 };
 
 const ethernetPortRank = (port: string) => {
@@ -139,6 +139,13 @@ const buildColumns = (portSortFn: StatisticsSortFn, prefix: string) => [
 const ethernetColumns = computed(() => buildColumns(ethernetPortSort, 'statistics-ethernet'));
 const wlanColumns = computed(() => buildColumns(wlanPortSort, 'statistics-wlan'));
 
+const formatPortLabel = (row: StatisticsEntry) => {
+  if (row.Role) {
+    return `${row.Role.toUpperCase()} (${row.Port})`;
+  }
+  return row.Port;
+};
+
 const getEthernetRowTestId = (_row: StatisticsEntry, index: number, mobile: boolean) =>
   qa(mobile ? `statistics-ethernet-card-${index}` : `statistics-ethernet-row-${index}`) ?? '';
 
@@ -190,7 +197,11 @@ onMounted(fetchStatistics);
               initial-sort-key="Port"
               initial-sort-order="asc"
               :row-data-testid="getEthernetRowTestId"
-            />
+            >
+              <template #cell-Port="{ row }">
+                {{ formatPortLabel(row as StatisticsEntry) }}
+              </template>
+            </BaseTable>
           </div>
         </div>
 
