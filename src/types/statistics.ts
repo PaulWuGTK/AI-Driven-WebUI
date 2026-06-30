@@ -1,5 +1,6 @@
 export interface StatisticsEntry {
   Port: string;
+  Role?: string;
   RxBytes: string;
   RxPackets: string;
   RxError: string;
