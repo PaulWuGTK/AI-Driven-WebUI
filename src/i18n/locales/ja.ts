@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} バイト',
     ssidInvalidCharacters: 'SSID に無効な文字が含まれています（英語、数字、記号、中国語のみ使用可能）',
     passwordLeadingSpace: 'パスワードの先頭にスペースは使用できません',
-    passwordInvalidFormat: 'パスワードは8〜63文字、または16進数64文字で入力してください',
-    passwordInvalidFormatWpa3: 'パスワードは1〜64文字の表示可能なASCII文字で入力してください'
+    passwordInvalidFormat: 'パスワードは8〜63文字、または16進数64文字で入力してください'
   },
   guest: {
     title: 'ゲストアクセス',

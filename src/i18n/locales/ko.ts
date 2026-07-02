@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} 바이트',
     ssidInvalidCharacters: 'SSID에 유효하지 않은 문자가 포함되어 있습니다 (영어, 숫자, 기호, 중국어만 사용 가능)',
     passwordLeadingSpace: '비밀번호는 공백으로 시작할 수 없습니다',
-    passwordInvalidFormat: '비밀번호는 8~63자 또는 64자리 16진수여야 합니다',
-    passwordInvalidFormatWpa3: '비밀번호는 출력 가능한 ASCII 1~64자여야 합니다'
+    passwordInvalidFormat: '비밀번호는 8~63자 또는 64자리 16진수여야 합니다'
   },
   guest: {
     title: '게스트 액세스',

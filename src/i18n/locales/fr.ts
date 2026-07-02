@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} octets',
     ssidInvalidCharacters: 'Le SSID contient des caractères non valides (seuls l\'anglais, les chiffres, les symboles et le chinois sont autorisés)',
     passwordLeadingSpace: 'Le mot de passe ne peut pas commencer par un espace',
-    passwordInvalidFormat: 'Le mot de passe doit contenir 8 à 63 caractères, ou exactement 64 caractères hexadécimaux',
-    passwordInvalidFormatWpa3: 'Le mot de passe doit contenir 1 à 64 caractères ASCII imprimables'
+    passwordInvalidFormat: 'Le mot de passe doit contenir 8 à 63 caractères, ou exactement 64 caractères hexadécimaux'
   },
   guest: {
     title: 'Accès invité',
