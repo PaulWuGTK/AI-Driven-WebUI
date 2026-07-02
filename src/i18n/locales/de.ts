@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} Bytes',
     ssidInvalidCharacters: 'SSID enthält ungültige Zeichen (nur Englisch, Zahlen, Symbole und Chinesisch erlaubt)',
     passwordLeadingSpace: 'Das Passwort darf nicht mit einem Leerzeichen beginnen',
-    passwordInvalidFormat: 'Das Passwort muss 8 bis 63 Zeichen lang sein oder genau 64 hexadezimale Zeichen enthalten',
-    passwordInvalidFormatWpa3: 'Das Passwort muss 1 bis 64 druckbare ASCII-Zeichen enthalten'
+    passwordInvalidFormat: 'Das Passwort muss 8 bis 63 Zeichen lang sein oder genau 64 hexadezimale Zeichen enthalten'
   },
   guest: {
     title: 'Gastzugang',

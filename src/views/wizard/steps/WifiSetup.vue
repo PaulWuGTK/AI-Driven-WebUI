@@ -167,11 +167,6 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
   return normalized !== 'none' && normalized !== 'open' && normalized !== 'owe';
 };
 
-const isWpa3OnlyPersonal = (securityMode?: string): boolean => {
-  const mode = String(securityMode ?? '').toUpperCase();
-  return mode.includes('WPA3') && !mode.includes('WPA2') && !mode.includes('TRANSITION');
-};
-
 const isPrintableAscii = (value: string): boolean => /^[\x20-\x7E]*$/.test(value);
 const isHex64 = (value: string): boolean => /^[0-9a-fA-F]{64}$/.test(value);
 
@@ -217,15 +212,13 @@ const validatePassword = (password: string, key: string, securityMode?: string):
     return false;
   }
 
-  const wpa3Only = isWpa3OnlyPersonal(securityMode);
-  const valid = wpa3Only
-    ? isPrintableAscii(value) && value.length >= 1 && value.length <= 64
-    : isPrintableAscii(value) && ((value.length >= 8 && value.length <= 63) || (value.length === 64 && isHex64(value)));
+  // WPA3-Personal follows the same validation as WPA2-Personal:
+  // 8-63 printable ASCII characters, or exactly 64 hex characters.
+  const valid = isPrintableAscii(value)
+    && ((value.length >= 8 && value.length <= 63) || (value.length === 64 && isHex64(value)));
 
   if (!valid) {
-    passwordErrors[key] = t(
-      wpa3Only ? 'wireless.passwordInvalidFormatWpa3' : 'wireless.passwordInvalidFormat'
-    );
+    passwordErrors[key] = t('wireless.passwordInvalidFormat');
     return false;
   }
 

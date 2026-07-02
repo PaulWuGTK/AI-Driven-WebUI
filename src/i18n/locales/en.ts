@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} bytes',
     ssidInvalidCharacters: 'SSID contains invalid characters (only English, numbers, symbols, and Chinese allowed)',
     passwordLeadingSpace: 'Password cannot start with a space',
-    passwordInvalidFormat: 'Password must be 8-63 characters, or exactly 64 hexadecimal characters',
-    passwordInvalidFormatWpa3: 'Password must be 1-64 printable ASCII characters'
+    passwordInvalidFormat: 'Password must be 8-63 characters, or exactly 64 hexadecimal characters'
   },
   guest: {
     title: 'Guest Access',

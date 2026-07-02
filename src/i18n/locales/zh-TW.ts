@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} 位元組',
     ssidInvalidCharacters: 'SSID 包含無效字元（僅允許英文、數字、符號和中文）',
     passwordLeadingSpace: '密碼不可使用空白開頭',
-    passwordInvalidFormat: '密碼需為 8-63 個字元，或 64 個十六進位字元',
-    passwordInvalidFormatWpa3: '密碼需為 1-64 個可列印 ASCII 字元'
+    passwordInvalidFormat: '密碼需為 8-63 個字元，或 64 個十六進位字元'
   },
   guest: {
     title: '訪客存取',

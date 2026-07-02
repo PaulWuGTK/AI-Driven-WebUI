@@ -524,8 +524,7 @@ const translations = {
     ssidBytesInfo: '{bytes} 字节',
     ssidInvalidCharacters: 'SSID 包含无效字符（仅允许英文、数字、符号和中文）',
     passwordLeadingSpace: '密码不能以空格开头',
-    passwordInvalidFormat: '密码需为 8-63 个字符，或 64 个十六进制字符',
-    passwordInvalidFormatWpa3: '密码需为 1-64 个可打印 ASCII 字符'
+    passwordInvalidFormat: '密码需为 8-63 个字符，或 64 个十六进制字符'
   },
   guest: {
     title: '访客访问',
