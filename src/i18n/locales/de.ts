@@ -694,6 +694,7 @@ const translations = {
     dhcpv4Setting: 'DHCPv4-Einstellungen',
     enableDhcpServer: 'DHCP-Server aktivieren',
     dnsServer: 'DNS-Server',
+    dnsServersOrigin: 'DNS-Herkunft',
     dnsServers: 'DNS-Server',
     dnsServersHint: 'Mehrere DNS-Server durch Kommas trennen, z.B. 192.168.1.1, 8.8.8.8 (max. 4)',
     dnsServersInvalid: 'Ungültige DNS-Serveradresse. Bitte geben Sie gültige IPv4-Adressen durch Kommas getrennt ein.',

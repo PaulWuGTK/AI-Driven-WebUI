@@ -694,6 +694,7 @@ const translations = {
     dhcpv4Setting: 'DHCPv4 설정',
     enableDhcpServer: 'DHCP 서버 활성화',
     dnsServer: 'DNS 서버',
+    dnsServersOrigin: 'DNS 출처',
     dnsServers: 'DNS 서버',
     dnsServersHint: '여러 DNS 서버를 쉼표로 구분하세요. 예: 192.168.1.1, 8.8.8.8 (최대 4개)',
     dnsServersInvalid: 'DNS 서버 주소가 유효하지 않습니다. 쉼표로 구분된 유효한 IPv4 주소를 입력하세요.',

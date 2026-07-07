@@ -694,6 +694,7 @@ const translations = {
     dhcpv4Setting: 'Paramètres DHCPv4',
     enableDhcpServer: 'Activer le serveur DHCP',
     dnsServer: 'Serveur DNS',
+    dnsServersOrigin: 'Origine DNS',
     dnsServers: 'Serveurs DNS',
     dnsServersHint: 'Séparez les serveurs DNS par des virgules, ex. 192.168.1.1, 8.8.8.8 (max 4)',
     dnsServersInvalid: 'Adresse de serveur DNS invalide. Veuillez entrer des adresses IPv4 valides séparées par des virgules.',
