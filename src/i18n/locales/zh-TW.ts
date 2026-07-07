@@ -1592,7 +1592,11 @@ const translations = {
     currentWhitelistFilterTable: '目前白名單過濾表',
     number: '編號',
     active: '啟用中',
-    noEntries: '目前沒有任何項目'
+    noEntries: '目前沒有任何項目',
+    ipAddressRequired: '請輸入起始和結束 IP 位址。',
+    invalidIpv4Format: 'IPv4 位址格式無效。',
+    invalidIpv6Format: 'IPv6 位址格式無效。',
+    reservedIpNotAllowed: '不允許使用保留的 IP 位址（0.0.0.0、127.x.x.x、255.255.255.255）。'
   },
   generalMacFiltering: {
     enableMacFiltering: '啟用 MAC 過濾',

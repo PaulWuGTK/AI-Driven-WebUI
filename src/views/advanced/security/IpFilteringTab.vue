@@ -256,6 +256,14 @@ const isValidIPv4 = (ip: string): boolean => {
   return ipv4Regex.test(ip);
 };
 
+const isReservedIPv4 = (ip: string): boolean => {
+  const parts = ip.split('.').map(p => parseInt(p, 10));
+  if (parts.every(p => p === 0)) return true;
+  if (parts.every(p => p === 255)) return true;
+  if (parts[0] === 127) return true;
+  return false;
+};
+
 const isValidIPv6 = (ip: string): boolean => {
   const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
   return ipv6Regex.test(ip);
@@ -276,19 +284,23 @@ const addEntry = () => {
   errorMessage.value = '';
 
   if (!newEntry.value.IPStart || !newEntry.value.IPEnd) {
-    errorMessage.value = 'Please enter both start and end IP addresses';
+    errorMessage.value = t('ipFiltering.ipAddressRequired');
     return;
   }
 
   // Validate IP format based on selected version
   if (ipVersion.value === 'IPv4') {
     if (!isValidIPv4(newEntry.value.IPStart) || !isValidIPv4(newEntry.value.IPEnd)) {
-      errorMessage.value = 'The local IP start format is incorrect.';
+      errorMessage.value = t('ipFiltering.invalidIpv4Format');
+      return;
+    }
+    if (isReservedIPv4(newEntry.value.IPStart) || isReservedIPv4(newEntry.value.IPEnd)) {
+      errorMessage.value = t('ipFiltering.reservedIpNotAllowed');
       return;
     }
   } else {
     if (!isValidIPv6(newEntry.value.IPStart) || !isValidIPv6(newEntry.value.IPEnd)) {
-      errorMessage.value = 'The local IP start format is incorrect.';
+      errorMessage.value = t('ipFiltering.invalidIpv6Format');
       return;
     }
   }

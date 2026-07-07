@@ -1592,7 +1592,11 @@ const translations = {
     currentWhitelistFilterTable: '현재 화이트리스트 필터 테이블',
     number: '번호',
     active: '동작 중',
-    noEntries: '등록된 항목이 없습니다'
+    noEntries: '등록된 항목이 없습니다',
+    ipAddressRequired: '시작 및 종료 IP 주소를 모두 입력하세요.',
+    invalidIpv4Format: 'IPv4 주소 형식이 올바르지 않습니다.',
+    invalidIpv6Format: 'IPv6 주소 형식이 올바르지 않습니다.',
+    reservedIpNotAllowed: '예약된 IP 주소(0.0.0.0, 127.x.x.x, 255.255.255.255)는 사용할 수 없습니다.'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC 필터링 사용',

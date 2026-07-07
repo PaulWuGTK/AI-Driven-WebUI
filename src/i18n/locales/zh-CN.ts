@@ -1592,7 +1592,11 @@ const translations = {
     currentWhitelistFilterTable: '当前白名单过滤表',
     number: '序号',
     active: '已启用',
-    noEntries: '暂无任何条目'
+    noEntries: '暂无任何条目',
+    ipAddressRequired: '请输入起始和结束 IP 地址。',
+    invalidIpv4Format: 'IPv4 地址格式无效。',
+    invalidIpv6Format: 'IPv6 地址格式无效。',
+    reservedIpNotAllowed: '不允许使用保留的 IP 地址（0.0.0.0、127.x.x.x、255.255.255.255）。'
   },
   generalMacFiltering: {
     enableMacFiltering: '启用 MAC 过滤',

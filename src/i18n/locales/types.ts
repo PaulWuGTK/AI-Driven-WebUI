@@ -1086,5 +1086,9 @@ export interface Translations {
     number: string;
     active: string;
     noEntries: string;
+    ipAddressRequired: string;
+    invalidIpv4Format: string;
+    invalidIpv6Format: string;
+    reservedIpNotAllowed: string;
   };
 }
