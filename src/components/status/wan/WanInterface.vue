@@ -70,7 +70,7 @@ defineProps<{
                 <td :data-testid="qa(`wan-interface-ipv4-mode-${ipIndex}`)">{{ ip.IPv4Mode }}</td>
                 <td :data-testid="qa(`wan-interface-ipv4-address-${ipIndex}`)">{{ ip.IPv4Address }}</td>
                 <td :data-testid="qa(`wan-interface-ipv4-gateway-${ipIndex}`)">{{ ip.Gateway }}</td>
-                <td :data-testid="qa(`wan-interface-ipv4-dns-${ipIndex}`)">{{ ip.DNSServer }}</td>
+                <td class="cell-truncate" :title="ip.DNSServer" :data-testid="qa(`wan-interface-ipv4-dns-${ipIndex}`)">{{ ip.DNSServer }}</td>
                 <td :data-testid="qa(`wan-interface-ipv4-subnet-${ipIndex}`)">{{ ip.SubnetMask }}</td>
                 <td :data-testid="qa(`wan-interface-ipv4-status-${ipIndex}`)">{{ ip.Status }}</td>
               </tr>
@@ -138,7 +138,7 @@ defineProps<{
                 <td :data-testid="qa(`wan-interface-ipv6-address-${ipIndex}`)">{{ ip.IPv6Address || '-' }}</td>
                 <td :data-testid="qa(`wan-interface-ipv6-prefix-${ipIndex}`)">{{ ip.Prefix || '-' }}</td>
                 <td :data-testid="qa(`wan-interface-ipv6-gateway-${ipIndex}`)">{{ ip.Gateway || '-' }}</td>
-                <td :data-testid="qa(`wan-interface-ipv6-dns-${ipIndex}`)">{{ ip.DNSServer || '-' }}</td>
+                <td class="cell-truncate" :title="ip.DNSServer || '-'" :data-testid="qa(`wan-interface-ipv6-dns-${ipIndex}`)">{{ ip.DNSServer || '-' }}</td>
                 <td :data-testid="qa(`wan-interface-ipv6-status-${ipIndex}`)">{{ ip.Status }}</td>
               </tr>
             </tbody>
@@ -234,6 +234,13 @@ defineProps<{
 .table-container th:last-child,
 .table-container td:last-child {
   text-align: center;
+}
+
+.cell-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 0;
 }
 
 .subsection-title {
