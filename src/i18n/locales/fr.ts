@@ -1592,7 +1592,11 @@ const translations = {
     currentWhitelistFilterTable: 'Table de filtrage de la liste blanche actuelle',
     number: 'Numéro',
     active: 'Actif',
-    noEntries: 'Aucune entrée'
+    noEntries: 'Aucune entrée',
+    ipAddressRequired: 'Veuillez entrer les adresses IP de début et de fin.',
+    invalidIpv4Format: 'Format d\'adresse IPv4 invalide.',
+    invalidIpv6Format: 'Format d\'adresse IPv6 invalide.',
+    reservedIpNotAllowed: 'Les adresses IP réservées (0.0.0.0, 127.x.x.x, 255.255.255.255) ne sont pas autorisées.'
   },
   generalMacFiltering: {
     enableMacFiltering: 'Activer le filtrage MAC',

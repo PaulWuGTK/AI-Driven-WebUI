@@ -1592,7 +1592,11 @@ const translations = {
     currentWhitelistFilterTable: '現在のホワイトリストフィルターテーブル',
     number: '番号',
     active: '有効',
-    noEntries: 'エントリがありません'
+    noEntries: 'エントリがありません',
+    ipAddressRequired: '開始 IP アドレスと終了 IP アドレスの両方を入力してください。',
+    invalidIpv4Format: 'IPv4 アドレスの形式が無効です。',
+    invalidIpv6Format: 'IPv6 アドレスの形式が無効です。',
+    reservedIpNotAllowed: '予約済み IP アドレス（0.0.0.0、127.x.x.x、255.255.255.255）は使用できません。'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC フィルタリングを有効にする',
