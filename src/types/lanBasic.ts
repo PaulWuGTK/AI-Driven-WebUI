@@ -15,11 +15,13 @@ export interface LANIPSetting {
 
 export interface DHCPv4Setting {
   Enable: 0 | 1;
+  DNSServersOrigin: string;
   DNSServers: string;
   BeginAddress: string;
   EndAddress: string;
   SubnetMask: string;
   LeaseTime: number;
+  ListDNSServersOrigin?: string[];
 }
 
 export interface IPAddressReservation {

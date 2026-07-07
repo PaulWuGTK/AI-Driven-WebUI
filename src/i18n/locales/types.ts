@@ -310,6 +310,7 @@ export interface Translations {
     dhcpSetting: string;
     enableDhcpServer: string;
     dnsServer: string;
+    dnsServersOrigin: string;
     dnsServers: string;
     dnsServersHint: string;
     dnsServersInvalid: string;
@@ -426,6 +427,7 @@ export interface Translations {
     dhcpv4Setting: string;
     enableDhcpServer: string;
     dnsServer: string;
+    dnsServersOrigin: string;
     dnsServers: string;
     dnsServersHint: string;
     dnsServersInvalid: string;

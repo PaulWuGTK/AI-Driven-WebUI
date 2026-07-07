@@ -7,6 +7,7 @@ const isDevelopment = import.meta.env.DEV;
 const DEFAULT_IPV4_PROTOCOL_LIST = ['DHCP', 'Static'];
 const DEFAULT_IPV6_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
 const DEFAULT_IPV6_PREFIX_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
+const DEFAULT_DNS_SERVERS_ORIGIN_LIST = ['Static', 'Relay'];
 
 const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
   const lan = response?.LanBasic ?? {};
@@ -38,11 +39,15 @@ const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
       },
       DHCPv4Setting: {
         Enable: toFlag01(dhcp.Enable, 1),
+        DNSServersOrigin: String(dhcp.DNSServersOrigin ?? 'Static'),
         DNSServers: String(dhcp.DNSServers ?? '192.168.1.1'),
         BeginAddress: String(dhcp.BeginAddress ?? '192.168.1.2'),
         EndAddress: String(dhcp.EndAddress ?? '192.168.1.254'),
         SubnetMask: String(dhcp.SubnetMask ?? '255.255.255.0'),
         LeaseTime: Number(dhcp.LeaseTime ?? 43200),
+        ListDNSServersOrigin: Array.isArray(dhcp.ListDNSServersOrigin) && dhcp.ListDNSServersOrigin.length > 0
+          ? dhcp.ListDNSServersOrigin
+          : DEFAULT_DNS_SERVERS_ORIGIN_LIST,
       },
       IPAddressReservation: reservations.map((item: any) => ({
         MACAddress: String(item?.MACAddress ?? ''),
@@ -73,6 +78,7 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
         },
         DHCPv4Setting: {
           Enable: 1,
+          DNSServersOrigin: 'Static',
           DNSServers: '192.168.1.1',
           BeginAddress: '192.168.1.2',
           EndAddress: '192.168.1.254',

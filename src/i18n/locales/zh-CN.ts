@@ -694,6 +694,7 @@ const translations = {
     dhcpv4Setting: 'DHCPv4 设置',
     enableDhcpServer: '启用 DHCP 服务器',
     dnsServer: 'DNS 服务器',
+    dnsServersOrigin: 'DNS 来源',
     dnsServers: 'DNS 服务器',
     dnsServersHint: '多个 DNS 服务器请以逗号分隔，例如 192.168.1.1, 8.8.8.8（最多 4 个）',
     dnsServersInvalid: 'DNS 服务器地址无效，请输入以逗号分隔的有效 IPv4 地址。',

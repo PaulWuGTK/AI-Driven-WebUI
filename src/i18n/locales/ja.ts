@@ -694,6 +694,7 @@ const translations = {
     dhcpv4Setting: 'DHCPv4 設定',
     enableDhcpServer: 'DHCP サーバー有効化',
     dnsServer: 'DNS サーバー',
+    dnsServersOrigin: 'DNS ソース',
     dnsServers: 'DNS サーバー',
     dnsServersHint: '複数の DNS サーバーはカンマで区切ってください（例: 192.168.1.1, 8.8.8.8、最大 4 つ）',
     dnsServersInvalid: 'DNS サーバーアドレスが無効です。カンマ区切りの有効な IPv4 アドレスを入力してください。',

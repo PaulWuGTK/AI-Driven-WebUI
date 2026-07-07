@@ -51,6 +51,8 @@ const showIPv6PrefixField = computed(() =>
 );
 const ipv6ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6Protocol ?? ['AutoConfigured', 'Static']);
 const ipv6PrefixProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6PrefixProtocol ?? ['AutoConfigured', 'Static']);
+const dnsOriginOptions = computed(() => lanData.value?.LanBasic.DHCPv4Setting.ListDNSServersOrigin ?? ['Static']);
+const showDnsServersInput = computed(() => lanData.value?.LanBasic.DHCPv4Setting.DNSServersOrigin === 'Static');
 const protocolLabelMap: Record<string, string> = {
   DHCP: 'lanBasic.protocolDhcp',
   Static: 'lanBasic.protocolStatic',
@@ -363,8 +365,8 @@ const validateLANSettings = (): boolean => {
       }
     }
 
-    // Validate DNS servers if provided
-    if (DHCPv4Setting.DNSServers) {
+    // Validate DNS servers if provided and origin is Static
+    if (DHCPv4Setting.DNSServersOrigin === 'Static' && DHCPv4Setting.DNSServers) {
       const dnsEntries = DHCPv4Setting.DNSServers.split(',').map(ip => ip.trim()).filter(ip => ip);
       if (dnsEntries.length > 4) {
         showErrorMessage(t('lanBasic.dnsServersTooMany'));
@@ -686,6 +688,25 @@ onMounted(fetchLanBasic);
           </div>
 
           <div class="form-group">
+            <label :data-testid="qa('ipv4-configuration-dhcp-dns-origin-label')">{{ t('lanBasic.dnsServersOrigin') }}</label>
+            <select
+              v-model="lanData.LanBasic.DHCPv4Setting.DNSServersOrigin"
+              :data-testid="qa('ipv4-configuration-dhcp-dns-origin-select')"
+              :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
+              class="form-select"
+            >
+              <option
+                v-for="origin in dnsOriginOptions"
+                :key="origin"
+                :value="origin"
+                :data-testid="qa(`ipv4-configuration-dhcp-dns-origin-option-${origin.toLowerCase()}`)"
+              >
+                {{ origin }}
+              </option>
+            </select>
+          </div>
+
+          <div v-if="showDnsServersInput" class="form-group">
             <label :data-testid="qa('ipv4-configuration-dhcp-dns-server-label')">{{ t('lanBasic.dnsServers') }}</label>
             <input
               type="text"
