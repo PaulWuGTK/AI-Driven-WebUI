@@ -99,38 +99,14 @@ ssh root@192.168.1.1 "cd /tmp && tar zxf dist.tar.gz && rm -rf /www/* && cp -a d
 
 ## AI 輔助開發（Claude Code）
 
-本專案使用 Claude Code 作為 AI 開發助手。相關設定已內建在 repo 中：
-
-```
-.claude/
-├── CLAUDE.md              # 專案規則（自動載入）— 部署路徑、Git 規範
-└── skills/
-    ├── README.md           # Skills 使用說明
-    └── webui-generator/    # 頁面生成 Skill
-        ├── SKILL.md        # Skill 定義
-        └── reference/      # 設計規範（10 份文件）
-```
-
-### 快速開始
+本專案使用 Claude Code 作為 AI 開發助手。使用前需先設定 Skills：
 
 1. 安裝 Claude Code：`npm install -g @anthropic-ai/claude-code`
-2. 在專案目錄執行 `claude`
-3. 直接對話描述需求，例如：
+2. 從內部 Skills 倉庫 clone 設定檔到專案的 `.claude/` 目錄（倉庫位址請洽團隊負責人）
+3. 在專案目錄執行 `claude`
+4. 直接對話描述需求，例如：
    - 「請根據 StatusLan.lua 生成 LAN Status 頁面」
    - 「請修正 WiFi 頁面的 SSID 驗證問題」
    - 「請讀取 Jira ticket PCSDW1-XXX 並修正對應頁面」
 
-詳細說明見 [Skills README](.claude/skills/README.md)。
-
-## SSID UTF-8 驗證規則
-
-SSID 欄位使用 UTF-8 byte length 驗證（1–32 bytes），輸入前先做 Unicode NFC 正規化。
-
-| 範例 | UTF-8 Bytes |
-|------|------------|
-| `HomeWiFi` | 8 bytes |
-| `測試WiFi` | 10 bytes（中文字 3 bytes × 2 + ASCII 4 bytes） |
-
-實作位置：
-- 驗證工具：[src/utils/ssidValidation.ts](src/utils/ssidValidation.ts)
-- 無線設定頁：[src/views/network/wireless/BasicConfig.vue](src/views/network/wireless/BasicConfig.vue)
+詳細說明見 `.claude/skills/README.md`。
