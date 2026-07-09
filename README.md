@@ -1,34 +1,136 @@
-# AI-Driven-WebUI
-Using bolt.new to generate router pages
+# AI-Driven WebUI
 
-## SSID UTF-8 Storage Rule
+Gemtek Router WebUI — Vue 3 + TypeScript + Vite 前端專案，搭配 Claude Code AI 輔助開發。
 
-Wireless SSID fields are validated and normalized using these rules:
+## 技術棧
 
-- SSID length is validated by `UTF-8` byte length, not character count
-- allowed range is `1..32 bytes`
-- input is normalized to Unicode `NFC` before validation and before POST payload generation
-- the UI may show Chinese and English, but stored values are normalized UTF-8 strings
+| 項目 | 技術 |
+|------|------|
+| 前端框架 | Vue 3 (Composition API + `<script setup>`) |
+| 語言 | TypeScript |
+| 建置工具 | Vite 5 |
+| 路由 | Vue Router 4 |
+| 國際化 | Vue I18n（7 語系：en, zh-TW, zh-CN, ja, ko, fr, de） |
+| HTTP | Axios |
+| 圖表 | Chart.js + vue-chartjs, D3.js |
+| 樣式 | CSS Variables 設計系統 |
 
-Examples:
+## 環境需求
 
-- `HomeWiFi`
-  - stored value: `HomeWiFi`
-  - UTF-8 byte length: `8`
+- **Node.js** >= 18（建議 20.x）
+- **npm** >= 9
 
-- `測試WiFi`
-  - stored value: `測試WiFi`
-  - UTF-8 byte length: `10`
-  - reasoning: `測` = 3 bytes, `試` = 3 bytes, `W` = 1, `i` = 1, `F` = 1, `i` = 1
+## 安裝與啟動
 
-- visually similar Unicode input
-  - input form A: decomposed characters such as `e + combining acute`
-  - input form B: precomposed `é`
-  - stored value: normalized `NFC` form
-  - result: byte counting and backend payload stay consistent
+```bash
+# 安裝套件
+npm install
 
-Implementation:
+# 開發模式（預設 http://localhost:5173）
+npm run dev
 
-- validation utility: [src/utils/ssidValidation.ts](c:/Users/paul0/Downloads/project-bolt-github-20251104_genix/project/src/utils/ssidValidation.ts)
-- multi-group wireless page: [src/views/network/wireless/BasicConfig.vue](c:/Users/paul0/Downloads/project-bolt-github-20251104_genix/project/src/views/network/wireless/BasicConfig.vue)
-- single-band wireless editor: [src/views/network/wireless/basic/WirelessBandConfig.vue](c:/Users/paul0/Downloads/project-bolt-github-20251104_genix/project/src/views/network/wireless/basic/WirelessBandConfig.vue)
+# TypeScript 檢查 + 生產環境建置
+npm run build
+
+# 預覽建置結果
+npm run preview
+```
+
+## 專案架構
+
+```
+src/
+├── assets/              # 靜態資源（圖片、SVG）
+├── components/          # 共用元件（Sidebar, Header, BaseTable, BaseModal...）
+├── composables/         # Vue Composables（共用邏輯）
+├── i18n/
+│   └── locales/         # 7 種語系翻譯檔 + types.ts
+├── router/              # Vue Router 路由設定
+├── services/
+│   ├── api/             # API Service 層（各頁面 normalizer）
+│   └── mockData/        # Mock 資料（開發環境用）
+├── styles/              # 全域 CSS + 設計系統變數
+├── types/               # TypeScript 型別定義
+├── utils/               # 工具函式（驗證、格式化）
+├── views/               # 頁面元件
+│   ├── status/          # Status 區段（LAN/WAN/WLAN Status...）
+│   ├── network/         # Network 區段（LAN/WAN/Wireless 設定...）
+│   ├── advanced/        # Advanced 區段（Security, NAT, Routing...）
+│   ├── system/          # System 區段（Firmware, Backup, NTP...）
+│   ├── application/     # Application 區段（DDNS, UPnP...）
+│   ├── iot/             # IoT 區段（Thread, Matter）
+│   └── wizard/          # Setup Wizard
+├── App.vue              # 根元件
+└── main.ts              # 進入點
+```
+
+## 建置與打包
+
+```bash
+# 建置（TypeScript 檢查 + Vite 打包）
+npm run build
+
+# 打包成 tar.gz（部署用）
+tar -czf dist.tar.gz dist
+```
+
+建置產出在 `dist/` 目錄，打包後的 `dist.tar.gz` 可直接部署到設備。
+
+## 部署到設備（DUT）
+
+WebUI 部署目標路徑為 `/www/`（不是 `/www/webui/`）。
+
+```bash
+# 完整部署流程
+scp -O dist.tar.gz root@192.168.1.1:/tmp/dist.tar.gz
+ssh root@192.168.1.1 "cd /tmp && tar zxf dist.tar.gz && rm -rf /www/* && cp -a dist/* /www/ && sync"
+```
+
+## Git 分支
+
+本專案依板子類型區分分支，命名規則為 `{BoardType}WebUI-{日期}`：
+
+- **GFiberWebUI-\*** — GFiber 板子專用
+- **GenericWebUI-\*** — Generic 板子專用（內部 Gitea mirror，SDK Makefile 會釘死 commit hash）
+
+兩個分支程式碼一致，透過 cherry-pick 同步。每次 commit 都包含 `dist.tar.gz` 建置產物。
+
+> **注意：** GenericWebUI 分支禁止 force push，因為 Gitea mirror 會同步，force push 會導致 SDK build 找不到已釘死的 commit。
+
+## AI 輔助開發（Claude Code）
+
+本專案使用 Claude Code 作為 AI 開發助手。相關設定已內建在 repo 中：
+
+```
+.claude/
+├── CLAUDE.md              # 專案規則（自動載入）— 部署路徑、Git 規範
+└── skills/
+    ├── README.md           # Skills 使用說明
+    └── webui-generator/    # 頁面生成 Skill
+        ├── SKILL.md        # Skill 定義
+        └── reference/      # 設計規範（10 份文件）
+```
+
+### 快速開始
+
+1. 安裝 Claude Code：`npm install -g @anthropic-ai/claude-code`
+2. 在專案目錄執行 `claude`
+3. 直接對話描述需求，例如：
+   - 「請根據 StatusLan.lua 生成 LAN Status 頁面」
+   - 「請修正 WiFi 頁面的 SSID 驗證問題」
+   - 「請讀取 Jira ticket PCSDW1-XXX 並修正對應頁面」
+
+詳細說明見 [Skills README](.claude/skills/README.md)。
+
+## SSID UTF-8 驗證規則
+
+SSID 欄位使用 UTF-8 byte length 驗證（1–32 bytes），輸入前先做 Unicode NFC 正規化。
+
+| 範例 | UTF-8 Bytes |
+|------|------------|
+| `HomeWiFi` | 8 bytes |
+| `測試WiFi` | 10 bytes（中文字 3 bytes × 2 + ASCII 4 bytes） |
+
+實作位置：
+- 驗證工具：[src/utils/ssidValidation.ts](src/utils/ssidValidation.ts)
+- 無線設定頁：[src/views/network/wireless/BasicConfig.vue](src/views/network/wireless/BasicConfig.vue)
