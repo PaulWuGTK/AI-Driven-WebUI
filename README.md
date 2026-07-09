@@ -70,11 +70,11 @@ src/
 # 建置（TypeScript 檢查 + Vite 打包）
 npm run build
 
-# 打包成 tar.gz（部署用）
-tar -czf dist.tar.gz dist
+# 打包成 tar.gz（部署用，SDK 指定檔名）
+tar -czf ai-driven-webui.tar.gz dist
 ```
 
-建置產出在 `dist/` 目錄，打包後的 `dist.tar.gz` 可直接部署到設備。
+建置產出在 `dist/` 目錄，打包後的 `ai-driven-webui.tar.gz` 可直接部署到設備。
 
 ## 部署到設備（DUT）
 
@@ -82,8 +82,8 @@ WebUI 部署目標路徑為 `/www/`（不是 `/www/webui/`）。
 
 ```bash
 # 完整部署流程
-scp -O dist.tar.gz root@192.168.1.1:/tmp/dist.tar.gz
-ssh root@192.168.1.1 "cd /tmp && tar zxf dist.tar.gz && rm -rf /www/* && cp -a dist/* /www/ && sync"
+scp -O ai-driven-webui.tar.gz root@192.168.1.1:/tmp/ai-driven-webui.tar.gz
+ssh root@192.168.1.1 "cd /tmp && tar zxf ai-driven-webui.tar.gz && rm -rf /www/* && cp -a dist/* /www/ && sync"
 ```
 
 ## Git 分支
@@ -93,7 +93,7 @@ ssh root@192.168.1.1 "cd /tmp && tar zxf dist.tar.gz && rm -rf /www/* && cp -a d
 - **GFiberWebUI-\*** — GFiber 板子專用
 - **GenericWebUI-\*** — Generic 板子專用（內部 Gitea mirror，SDK Makefile 會釘死 commit hash）
 
-兩個分支程式碼一致，透過 cherry-pick 同步。每次 commit 都包含 `dist.tar.gz` 建置產物。
+兩個分支程式碼一致，透過 cherry-pick 同步。每次 commit 都包含 `ai-driven-webui.tar.gz` 建置產物。
 
 > **注意：** GenericWebUI 分支禁止 force push，因為 Gitea mirror 會同步，force push 會導致 SDK build 找不到已釘死的 commit。
 
