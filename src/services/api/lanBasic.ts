@@ -7,7 +7,7 @@ const isDevelopment = import.meta.env.DEV;
 const DEFAULT_IPV4_PROTOCOL_LIST = ['DHCP', 'Static'];
 const DEFAULT_IPV6_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
 const DEFAULT_IPV6_PREFIX_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
-const DEFAULT_DNS_SERVERS_ORIGIN_LIST = ['Static', 'Relay'];
+const DEFAULT_DNS_SERVERS_ORIGIN_LIST = ['Static', 'Relay', 'Proxy'];
 
 const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
   const lan = response?.LanBasic ?? {};
@@ -45,9 +45,15 @@ const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
         EndAddress: String(dhcp.EndAddress ?? '192.168.1.254'),
         SubnetMask: String(dhcp.SubnetMask ?? '255.255.255.0'),
         LeaseTime: Number(dhcp.LeaseTime ?? 43200),
-        ListDNSServersOrigin: Array.isArray(dhcp.ListDNSServersOrigin) && dhcp.ListDNSServersOrigin.length > 0
-          ? dhcp.ListDNSServersOrigin
-          : DEFAULT_DNS_SERVERS_ORIGIN_LIST,
+        ListDNSServersOrigin: (() => {
+          if (Array.isArray(dhcp.ListDNSServersOrigin)) {
+            const filtered = dhcp.ListDNSServersOrigin.filter(
+              (v: unknown) => typeof v === 'string' && DEFAULT_DNS_SERVERS_ORIGIN_LIST.includes(v)
+            );
+            if (filtered.length > 0) return filtered;
+          }
+          return DEFAULT_DNS_SERVERS_ORIGIN_LIST;
+        })(),
       },
       IPAddressReservation: reservations.map((item: any) => ({
         MACAddress: String(item?.MACAddress ?? ''),
