@@ -10,7 +10,7 @@ import BaseInput from '../../../components/common/BaseInput.vue';
 import BaseSelect from '../../../components/common/BaseSelect.vue';
 import { BaseSecretInput, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
-import { getWlanBasicMulti, updateWlanBasicMulti } from '../../../services/api/wireless';
+import { getWlanBasicMulti, updateWlanBasicMulti, getWlanMesh } from '../../../services/api/wireless';
 import { validateSsid, getByteLength, normalizeSsid, truncateToByteLength, SSID_MAX_BYTES } from '../../../utils/ssidValidation';
 import type {
   WlanBasicMultiGetResponse,
@@ -26,6 +26,7 @@ const { qa, slug } = useQA();
 const loading = ref(false);
 const showSuccess = ref(false);
 const showBlockingOverlay = ref(false);
+const meshEnabled = ref(false);
 
 const data = ref<WlanBasicMultiGetResponse | null>(null);
 
@@ -166,6 +167,15 @@ const fetchConfig = async () => {
   }
 };
 
+const fetchMeshStatus = async () => {
+  try {
+    const resp = await getWlanMesh();
+    meshEnabled.value = Number(resp?.WlanMesh?.MeshEnable) === 1;
+  } catch {
+    meshEnabled.value = false;
+  }
+};
+
 const groups = computed(() => {
   const wlanGroups = data.value?.WlanBasic?.WlanGroup ?? [];
   return wlanGroups.slice().sort((a, b) => {
@@ -180,6 +190,11 @@ const enterEdit = (index: number) => {
   /** Enter edit mode for a given SSID group index. */
   editIndex.value = index;
   draft.value = normalizeGroup(JSON.parse(JSON.stringify(groups.value[index])));
+
+  // When Mesh is enabled, enforce Common SSID on
+  if (meshEnabled.value && draft.value) {
+    draft.value.CommonSSIDEnable = 1;
+  }
 
   // Initialize commonSsidConfig from group-level data (not from Interface array)
   const group = draft.value;
@@ -528,7 +543,10 @@ const handleBlockingComplete = () => {
   router.go(0);
 };
 
-onMounted(fetchConfig);
+onMounted(() => {
+  fetchConfig();
+  fetchMeshStatus();
+});
 </script>
 
 <template>
@@ -637,10 +655,15 @@ onMounted(fetchConfig);
                   v-model="draft.CommonSSIDEnable"
                   :true-value="1"
                   :false-value="0"
+                  :disabled="meshEnabled"
                   :data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle')"
                   :slider-data-testid="qa('wlan-basic-multi-common-ssid-enable-toggle-slider')"
                   @change="onCommonSsidToggle"
                 />
+              </div>
+              <div v-if="meshEnabled" class="hint mesh-enforce-hint">
+                <span class="material-icons mesh-enforce-hint-icon">info</span>
+                <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
               </div>
             </div>
 
@@ -1071,6 +1094,23 @@ onMounted(fetchConfig);
   margin-top: 6px;
   font-size: 12px;
   color: var(--text-secondary);
+}
+
+.mesh-enforce-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 12px;
+}
+
+.mesh-enforce-hint-icon {
+  font-size: 16px;
+  color: #856404;
 }
 
 .row-head {
