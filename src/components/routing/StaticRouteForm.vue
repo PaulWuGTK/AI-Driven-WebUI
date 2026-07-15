@@ -76,6 +76,21 @@ watch(() => formData.value.UsedGWIp, (newVal) => {
   }
 });
 
+// Auto-fill subnet mask based on destination IP:
+// host IP (last octet != 0) → 255.255.255.255
+// network IP (last octet == 0) → 255.255.255.0
+watch(() => formData.value.DestIp, (newVal) => {
+  if (formData.value.IpType !== 'IPv4') return;
+  const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  if (!ipv4Regex.test(newVal)) return;
+  const lastOctet = parseInt(newVal.split('.')[3], 10);
+  if (lastOctet !== 0) {
+    formData.value.DestMask = '255.255.255.255';
+  } else if (!formData.value.DestMask) {
+    formData.value.DestMask = '255.255.255.0';
+  }
+});
+
 const validateIPv4 = (ip: string): boolean => {
   const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
   return ipv4Regex.test(ip);
