@@ -3,6 +3,7 @@ import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DashboardWiFi } from '../../types/dashboard';
 import { useQA } from '../../utils/qa';
+import BaseSecretInput from '../common/BaseSecretInput.vue';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
@@ -59,7 +60,16 @@ const requiresPassword = (securityMode: string): boolean => {
         </div>
         <div class="network-row" v-if="requiresPassword(band.SecurityMode)" :data-testid="qa(`dashboard-wifi-status-network-password-row-${index}`)">
           <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-password-label-${index}`)">{{ t('dashboard.password') }}</div>
-          <div class="row-value password text-truncate" :data-testid="qa(`dashboard-wifi-status-network-password-value-${index}`)" :title="band.Password">{{ band.Password }}</div>
+          <div class="row-value password" :data-testid="qa(`dashboard-wifi-status-network-password-value-${index}`)">
+            <BaseSecretInput
+              mode="display"
+              :model-value="band.Password"
+              mask-symbol="•"
+              :toggle-data-testid="qa(`dashboard-wifi-status-network-password-toggle-${index}`)"
+              :value-data-testid="qa(`dashboard-wifi-status-network-password-plain-${index}`)"
+              :masked-data-testid="qa(`dashboard-wifi-status-network-password-masked-${index}`)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -121,8 +131,19 @@ const requiresPassword = (securityMode: string): boolean => {
 }
 
 .row-value.password {
-  font-family: monospace;
   font-weight: normal;
+}
+
+.row-value.password :deep(.base-secret-input) {
+  justify-content: flex-end;
+}
+
+.row-value.password :deep(.secret-display) {
+  font-family: monospace;
+}
+
+.row-value.password :deep(.secret-toggle) {
+  flex-shrink: 0;
 }
 
 .security-icon {
