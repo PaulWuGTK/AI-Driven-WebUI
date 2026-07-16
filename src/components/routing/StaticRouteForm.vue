@@ -229,7 +229,7 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="handleClose">
+  <div class="modal-overlay" @mousedown.self="handleClose">
     <div class="modal-content" :data-testid="qa('static-route-form-modal')">
       <div class="modal-header">
         <button class="back-btn" @click="handleClose" :data-testid="qa('static-route-form-back')">
