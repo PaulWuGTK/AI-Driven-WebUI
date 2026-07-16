@@ -418,6 +418,9 @@ export interface Translations {
     mtu: string;
     ipv4DnsMode: string;
     ipv6DnsMode: string;
+    vlanRequiredForMultiInterface: string;
+    duplicateVlanId: string;
+    pppModeOnlyOneInterface: string;
   };
   lanBasic: {
     title: string;

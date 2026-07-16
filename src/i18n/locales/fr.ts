@@ -653,7 +653,10 @@ const translations = {
     enableSensing: 'Activer la détection',
     mtu: 'MTU',
     ipv4DnsMode: 'Mode DNS IPv4',
-    ipv6DnsMode: 'Mode DNS IPv6'
+    ipv6DnsMode: 'Mode DNS IPv6',
+    vlanRequiredForMultiInterface: 'Le type VLAN doit être défini sur « vlan » avant d\'ajouter plusieurs interfaces.',
+    duplicateVlanId: 'L\'ID VLAN doit être unique entre les interfaces.',
+    pppModeOnlyOneInterface: 'Le mode PPPoE (ppp4/ppp6) ne peut être activé que sur une seule interface à la fois.'
   },
   backupWan: {
     title: 'Gestion du WAN de secours',

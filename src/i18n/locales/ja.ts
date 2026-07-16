@@ -653,7 +653,10 @@ const translations = {
     enableSensing: 'センシング有効化',
     mtu: 'MTU',
     ipv4DnsMode: 'IPv4 DNS モード',
-    ipv6DnsMode: 'IPv6 DNS モード'
+    ipv6DnsMode: 'IPv6 DNS モード',
+    vlanRequiredForMultiInterface: '複数のインターフェースを追加するには、VLANタイプを「vlan」に設定してください。',
+    duplicateVlanId: 'VLAN IDはインターフェース間で一意でなければなりません。',
+    pppModeOnlyOneInterface: 'PPPoEモード（ppp4/ppp6）は同時に1つのインターフェースのみ有効にできます。'
   },
   backupWan: {
     title: 'バックアップ WAN 管理',

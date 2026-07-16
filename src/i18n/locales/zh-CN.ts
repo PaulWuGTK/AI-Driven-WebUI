@@ -653,7 +653,10 @@ const translations = {
     enableSensing: '启用感知',
     mtu: 'MTU',
     ipv4DnsMode: 'IPv4 DNS 模式',
-    ipv6DnsMode: 'IPv6 DNS 模式'
+    ipv6DnsMode: 'IPv6 DNS 模式',
+    vlanRequiredForMultiInterface: '添加多个接口前，VLAN 类型必须设为「vlan」。',
+    duplicateVlanId: '各接口的 VLAN ID 不可重复。',
+    pppModeOnlyOneInterface: 'PPPoE 模式（ppp4/ppp6）同时只能有一个接口启用。'
   },
   backupWan: {
     title: '备援 WAN 管理',

@@ -91,6 +91,14 @@ const getAvailableInterfaces = (currentInterface: string) => {
   return props.listInterface.filter(iface => !otherSelectedInterfaces.has(iface));
 };
 
+// Rule 1: Can only add interface when all existing interfaces have VLANType = 'vlan'
+const canAddInterface = computed(() => {
+  if (availableInterfaces.value.length === 0) return false;
+  return editingMode.value.Interfaces.every(iface => iface.VLANType === 'vlan');
+});
+
+const validationError = ref('');
+
 const showPPPoE = (iface: WanInterface) => {
   return iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6';
 };
@@ -108,6 +116,25 @@ const showStaticIPv6 = (iface: WanInterface) => {
 };
 
 const handleSave = () => {
+  validationError.value = '';
+
+  // Rule 2: VLAN ID must be unique across interfaces with VLANType = 'vlan'
+  const vlanInterfaces = editingMode.value.Interfaces.filter(iface => iface.VLANType === 'vlan');
+  const vlanIds = vlanInterfaces.map(iface => iface.VLANID);
+  if (vlanIds.length !== new Set(vlanIds).size) {
+    validationError.value = t('wanManagement.duplicateVlanId');
+    return;
+  }
+
+  // Rule 3: ppp4/ppp6 can only be enabled on one interface at a time
+  const pppInterfaces = editingMode.value.Interfaces.filter(
+    iface => iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'
+  );
+  if (pppInterfaces.length > 1) {
+    validationError.value = t('wanManagement.pppModeOnlyOneInterface');
+    return;
+  }
+
   emit('save', editingMode.value);
 };
 
@@ -421,10 +448,15 @@ const validateVLANPriority = (value: number) => {
           class="btn btn-secondary"
           :data-testid="qa('wan-mode-edit-add-interface-button')"
           @click="addInterface"
-          :disabled="availableInterfaces.length === 0"
+          :disabled="!canAddInterface"
+          :title="!canAddInterface && availableInterfaces.length > 0 ? t('wanManagement.vlanRequiredForMultiInterface') : ''"
         >
           {{ t('wanManagement.addInterface') }}
         </button>
+      </div>
+
+      <div v-if="validationError" class="validation-error" :data-testid="qa('wan-mode-edit-validation-error')">
+        {{ validationError }}
       </div>
 
       <div class="button-group">
@@ -520,6 +552,16 @@ input:disabled {
   color: var(--text-primary);
   border: none;
   background: none;
+}
+
+.validation-error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #fff3f3;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  color: #dc3545;
+  font-size: 0.9rem;
 }
 
 .button-group {
