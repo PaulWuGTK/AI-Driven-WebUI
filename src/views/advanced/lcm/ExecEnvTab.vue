@@ -355,7 +355,7 @@ onMounted(fetchConfig);
       </SectionCard>
     </template>
 
-    <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
+    <div v-if="showAddModal" class="modal-overlay" @mousedown.self="closeModal">
       <div class="modal-content" :data-testid="qa('lcm-execenv-modal')">
         <div class="modal-header">
           <h2>{{ modalTitle }}</h2>
