@@ -10,6 +10,14 @@ const { t } = useI18n();
 
 const props = defineProps<{
   mode: WanModeConfig | null;
+  listPhysicalType: string[];
+  listInterface: string[];
+  listDNSMode: string[];
+  listIPv6DNSMode: string[];
+  listIPv4Mode: string[];
+  listIPv6Mode: string[];
+  listVLANType: string[];
+  listConnectionTrigger: string[];
 }>();
 
 const emit = defineEmits<{
@@ -32,12 +40,15 @@ const defaultStaticIPv6 = {
 };
 
 const defaultInterface: WanInterface = {
-  Interface: "wan",
-  IPv4Mode: "dhcp4",
+  Interface: props.listInterface[0] || "wan",
+  IPv4Mode: props.listIPv4Mode[0] || "dhcp4",
   IPv6Mode: "none",
   PPPoEUserName: '',
   PPPoEPassword: '',
-  VLANType: "untagged",
+  ConnectionTrigger: 'AlwaysOn',
+  ServiceName: '',
+  IdleTime: 0,
+  VLANType: props.listVLANType[0] || "untagged",
   VLANID: 100,
   VLANPriority: 0,
   MTU: 1500,
@@ -49,30 +60,26 @@ const editingMode = ref<WanModeConfig>(props.mode ? {
   ...JSON.parse(JSON.stringify(props.mode)),
   Interfaces: props.mode.Interfaces.map(iface => ({
     ...iface,
+    ConnectionTrigger: iface.ConnectionTrigger || 'AlwaysOn',
+    ServiceName: iface.ServiceName || '',
+    IdleTime: iface.IdleTime || 0,
     StaticIPv4Address: iface.StaticIPv4Address || { ...defaultStaticIPv4 },
     StaticIPv6Address: iface.StaticIPv6Address || { ...defaultStaticIPv6 }
   }))
 } : {
   WANMode: '',
   Status: 'Enabled',
-  PhysicalType: 'Ethernet',
+  PhysicalType: props.listPhysicalType[0] || 'Ethernet',
   EnableSensing: 1,
-  DNSMode: 'Dynamic',
-  IPv6DNSMode: 'Dynamic',
+  DNSMode: props.listDNSMode[0] || 'Dynamic',
+  IPv6DNSMode: props.listIPv6DNSMode[0] || 'Dynamic',
   Interfaces: [{ ...defaultInterface }]
 });
-
-const physicalTypes = ['Ethernet', 'ADSL', 'VDSL', 'SFP', 'GPON', 'GFAST', 'Bridge', 'WWAN'];
-const allInterfaces = ['wan', 'voip', 'mgmt', 'iptv'] as const;
-const ipv4Modes = ['dhcp4', 'ppp4', 'none', 'static', 'dslite', 'link', '3gpp-nas'] as const;
-const ipv6Modes = ['dhcp6', 'ppp6', 'none', 'static', 'link', '3gpp-nas'] as const;
-const vlanTypes = ['untagged', 'vlan', 'atm'] as const;
-const dnsModes = ['Static', 'Dynamic', ''] as const;
 
 // Compute available interfaces (excluding already selected ones)
 const availableInterfaces = computed(() => {
   const selectedInterfaces = new Set(editingMode.value.Interfaces.map(iface => iface.Interface));
-  return allInterfaces.filter(iface => !selectedInterfaces.has(iface));
+  return props.listInterface.filter(iface => !selectedInterfaces.has(iface));
 });
 
 const getAvailableInterfaces = (currentInterface: string) => {
@@ -81,7 +88,7 @@ const getAvailableInterfaces = (currentInterface: string) => {
       .map(iface => iface.Interface)
       .filter(iface => iface !== currentInterface)
   );
-  return allInterfaces.filter(iface => !otherSelectedInterfaces.has(iface));
+  return props.listInterface.filter(iface => !otherSelectedInterfaces.has(iface));
 };
 
 const showPPPoE = (iface: WanInterface) => {
@@ -161,8 +168,8 @@ const validateVLANPriority = (value: number) => {
       <div class="form-group">
         <label :data-testid="qa('wan-mode-edit-ipv4-dns-mode-label')">{{ t('wanManagement.ipv4DnsMode') }}</label>
         <select v-model="editingMode.DNSMode" :data-testid="qa('wan-mode-edit-ipv4-dns-mode-select')">
-          <option v-for="mode in dnsModes" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv4-dns-mode-option-${slug(mode || 'none')}`)">
-            {{ mode || 'None' }}
+          <option v-for="mode in listDNSMode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv4-dns-mode-option-${slug(mode)}`)">
+            {{ mode }}
           </option>
         </select>
       </div>
@@ -170,8 +177,8 @@ const validateVLANPriority = (value: number) => {
       <div class="form-group">
         <label :data-testid="qa('wan-mode-edit-ipv6-dns-mode-label')">{{ t('wanManagement.ipv6DnsMode') }}</label>
         <select v-model="editingMode.IPv6DNSMode" :data-testid="qa('wan-mode-edit-ipv6-dns-mode-select')">
-          <option v-for="mode in dnsModes" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv6-dns-mode-option-${slug(mode || 'none')}`)">
-            {{ mode || 'None' }}
+          <option v-for="mode in listIPv6DNSMode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv6-dns-mode-option-${slug(mode)}`)">
+            {{ mode }}
           </option>
         </select>
       </div>
@@ -179,7 +186,7 @@ const validateVLANPriority = (value: number) => {
       <div class="form-group">
         <label :data-testid="qa('wan-mode-edit-physical-type-label')">{{ t('wanManagement.physicalType') }}</label>
         <select v-model="editingMode.PhysicalType" :data-testid="qa('wan-mode-edit-physical-type-select')">
-          <option v-for="type in physicalTypes" :key="type" :value="type" :data-testid="qa(`wan-mode-edit-physical-type-option-${slug(type)}`)">
+          <option v-for="type in listPhysicalType" :key="type" :value="type" :data-testid="qa(`wan-mode-edit-physical-type-option-${slug(type)}`)">
             {{ type }}
           </option>
         </select>
@@ -188,13 +195,13 @@ const validateVLANPriority = (value: number) => {
       <template v-for="(iface, ifaceIndex) in editingMode.Interfaces" :key="ifaceIndex">
         <div class="interface-section" :data-testid="qa(`wan-mode-edit-interface-section-${ifaceIndex}`)">
           <h3 :data-testid="qa(`wan-mode-edit-interface-title-${ifaceIndex}`)">Interface {{ ifaceIndex + 1 }}</h3>
-          
+
           <div class="form-group">
             <label :data-testid="qa(`wan-mode-edit-interface-label-${ifaceIndex}`)">{{ t('wanManagement.interface') }}</label>
             <select v-model="iface.Interface" :data-testid="qa(`wan-mode-edit-interface-select-${ifaceIndex}`)">
-              <option 
-                v-for="int in getAvailableInterfaces(iface.Interface)" 
-                :key="int" 
+              <option
+                v-for="int in getAvailableInterfaces(iface.Interface)"
+                :key="int"
                 :value="int"
                 :data-testid="qa(`wan-mode-edit-interface-option-${ifaceIndex}-${slug(int)}`)"
               >
@@ -206,7 +213,7 @@ const validateVLANPriority = (value: number) => {
           <div class="form-group">
             <label :data-testid="qa(`wan-mode-edit-ipv4-mode-label-${ifaceIndex}`)">{{ t('wanManagement.ipv4Mode') }}</label>
             <select v-model="iface.IPv4Mode" :data-testid="qa(`wan-mode-edit-ipv4-mode-select-${ifaceIndex}`)">
-              <option v-for="mode in ipv4Modes" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv4-mode-option-${ifaceIndex}-${slug(mode)}`)">
+              <option v-for="mode in listIPv4Mode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv4-mode-option-${ifaceIndex}-${slug(mode)}`)">
                 {{ mode }}
               </option>
             </select>
@@ -215,7 +222,7 @@ const validateVLANPriority = (value: number) => {
           <div class="form-group">
             <label :data-testid="qa(`wan-mode-edit-ipv6-mode-label-${ifaceIndex}`)">{{ t('wanManagement.ipv6Mode') }}</label>
             <select v-model="iface.IPv6Mode" :data-testid="qa(`wan-mode-edit-ipv6-mode-select-${ifaceIndex}`)">
-              <option v-for="mode in ipv6Modes" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv6-mode-option-${ifaceIndex}-${slug(mode)}`)">
+              <option v-for="mode in listIPv6Mode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv6-mode-option-${ifaceIndex}-${slug(mode)}`)">
                 {{ mode }}
               </option>
             </select>
@@ -235,7 +242,7 @@ const validateVLANPriority = (value: number) => {
           <div class="form-group">
             <label :data-testid="qa(`wan-mode-edit-vlan-type-label-${ifaceIndex}`)">{{ t('wanManagement.vlanType') }}</label>
             <select v-model="iface.VLANType" :data-testid="qa(`wan-mode-edit-vlan-type-select-${ifaceIndex}`)">
-              <option v-for="type in vlanTypes" :key="type" :value="type" :data-testid="qa(`wan-mode-edit-vlan-type-option-${ifaceIndex}-${slug(type)}`)">
+              <option v-for="type in listVLANType" :key="type" :value="type" :data-testid="qa(`wan-mode-edit-vlan-type-option-${ifaceIndex}-${slug(type)}`)">
                 {{ type }}
               </option>
             </select>
@@ -289,6 +296,35 @@ const validateVLANPriority = (value: number) => {
                 :required="true"
                 :max-length="64"
                 @update:model-value="iface.PPPoEPassword = validatePPPoEInput($event, 'password')"
+              />
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa(`wan-mode-edit-connection-trigger-label-${ifaceIndex}`)">{{ t('wanManagement.connectionTrigger') }}</label>
+              <select v-model="iface.ConnectionTrigger" :data-testid="qa(`wan-mode-edit-connection-trigger-select-${ifaceIndex}`)">
+                <option v-for="trigger in listConnectionTrigger" :key="trigger" :value="trigger" :data-testid="qa(`wan-mode-edit-connection-trigger-option-${ifaceIndex}-${slug(trigger)}`)">
+                  {{ trigger }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa(`wan-mode-edit-service-name-label-${ifaceIndex}`)">{{ t('wanManagement.serviceName') }}</label>
+              <input
+                type="text"
+                :data-testid="qa(`wan-mode-edit-service-name-input-${ifaceIndex}`)"
+                v-model="iface.ServiceName"
+              />
+            </div>
+
+            <div class="form-group">
+              <label :data-testid="qa(`wan-mode-edit-idle-time-label-${ifaceIndex}`)">{{ t('wanManagement.idleTime') }}</label>
+              <input
+                type="number"
+                :data-testid="qa(`wan-mode-edit-idle-time-input-${ifaceIndex}`)"
+                v-model.number="iface.IdleTime"
+                min="0"
+                :disabled="iface.ConnectionTrigger !== 'OnDemand'"
               />
             </div>
           </div>
@@ -380,9 +416,9 @@ const validateVLANPriority = (value: number) => {
       </template>
 
       <div class="button-group">
-        <button 
-          type="button" 
-          class="btn btn-secondary" 
+        <button
+          type="button"
+          class="btn btn-secondary"
           :data-testid="qa('wan-mode-edit-add-interface-button')"
           @click="addInterface"
           :disabled="availableInterfaces.length === 0"
@@ -445,6 +481,12 @@ input, select {
 input.readonly {
   background-color: var(--bg-secondary);
   cursor: not-allowed;
+}
+
+input:disabled {
+  background-color: var(--bg-tertiary, #f0f0f0);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .interface-section {

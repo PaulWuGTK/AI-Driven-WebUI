@@ -13,7 +13,7 @@ defineProps<{
 }>();
 
 // Display mappings
-const ipv4ModeDisplay = {
+const ipv4ModeDisplay: Record<string, string> = {
   'dhcp4': 'DHCP',
   'ppp4': 'PPPoE',
   'none': 'None',
@@ -23,7 +23,7 @@ const ipv4ModeDisplay = {
   '3gpp-nas': '3GPP NAS'
 };
 
-const ipv6ModeDisplay = {
+const ipv6ModeDisplay: Record<string, string> = {
   'dhcp6': 'DHCP',
   'ppp6': 'PPPoE',
   'none': 'None',
@@ -32,7 +32,7 @@ const ipv6ModeDisplay = {
   '3gpp-nas': '3GPP NAS'
 };
 
-const vlanTypeDisplay = {
+const vlanTypeDisplay: Record<string, string> = {
   'untagged': 'Untagged',
   'vlan': 'VLAN',
   'atm': 'ATM'
@@ -118,6 +118,18 @@ const vlanTypeDisplay = {
               <div v-if="iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'" class="card-row" :data-testid="qa(`wan-mode-detail-pppoe-password-row-${ifaceIndex}`)">
                 <span class="card-label" :data-testid="qa(`wan-mode-detail-pppoe-password-label-${ifaceIndex}`)">{{ t('wanManagement.pppoePassword') }}</span>
                 <span class="card-value" :data-testid="qa(`wan-mode-detail-pppoe-password-value-${ifaceIndex}`)">{{ iface.PPPoEPassword }}</span>
+              </div>
+              <div v-if="iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6'" class="card-row" :data-testid="qa(`wan-mode-detail-connection-trigger-row-${ifaceIndex}`)">
+                <span class="card-label" :data-testid="qa(`wan-mode-detail-connection-trigger-label-${ifaceIndex}`)">{{ t('wanManagement.connectionTrigger') }}</span>
+                <span class="card-value" :data-testid="qa(`wan-mode-detail-connection-trigger-value-${ifaceIndex}`)">{{ iface.ConnectionTrigger }}</span>
+              </div>
+              <div v-if="(iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6') && iface.ServiceName" class="card-row" :data-testid="qa(`wan-mode-detail-service-name-row-${ifaceIndex}`)">
+                <span class="card-label" :data-testid="qa(`wan-mode-detail-service-name-label-${ifaceIndex}`)">{{ t('wanManagement.serviceName') }}</span>
+                <span class="card-value" :data-testid="qa(`wan-mode-detail-service-name-value-${ifaceIndex}`)">{{ iface.ServiceName }}</span>
+              </div>
+              <div v-if="(iface.IPv4Mode === 'ppp4' || iface.IPv6Mode === 'ppp6') && iface.ConnectionTrigger === 'OnDemand'" class="card-row" :data-testid="qa(`wan-mode-detail-idle-time-row-${ifaceIndex}`)">
+                <span class="card-label" :data-testid="qa(`wan-mode-detail-idle-time-label-${ifaceIndex}`)">{{ t('wanManagement.idleTime') }}</span>
+                <span class="card-value" :data-testid="qa(`wan-mode-detail-idle-time-value-${ifaceIndex}`)">{{ iface.IdleTime }}</span>
               </div>
 
               <!-- Static IPv4 Address Section -->

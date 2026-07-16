@@ -24,6 +24,16 @@ const isEditing = ref(false);
 const editingMode = ref<WanModeConfig | null>(null);
 const viewingMode = ref<WanModeConfig | null>(null);
 
+// Dynamic lists from backend
+const listPhysicalType = ref<string[]>([]);
+const listInterface = ref<string[]>([]);
+const listDNSMode = ref<string[]>([]);
+const listIPv6DNSMode = ref<string[]>([]);
+const listIPv4Mode = ref<string[]>([]);
+const listIPv6Mode = ref<string[]>([]);
+const listVLANType = ref<string[]>([]);
+const listConnectionTrigger = ref<string[]>([]);
+
 const modeColumns = computed(() => [
   { key: 'WANMode', label: t('wanManagement.name'), headerDataTestid: qa('wan-mode-management-header-name') },
   { key: 'EnableSensing', label: t('wanManagement.enableSensing'), headerDataTestid: qa('wan-mode-management-header-enable-sensing') },
@@ -46,8 +56,17 @@ const fetchManagementData = async () => {
       tempManagementData.value = [];
       return;
     }
-    managementData.value = response.WanModeManagement;
-    tempManagementData.value = JSON.parse(JSON.stringify(response.WanModeManagement));
+    const data = response.WanModeManagement;
+    listPhysicalType.value = data.ListPhysicalType || [];
+    listInterface.value = data.ListInterface || [];
+    listDNSMode.value = data.ListDNSMode || [];
+    listIPv6DNSMode.value = data.ListIPv6DNSMode || [];
+    listIPv4Mode.value = data.ListIPv4Mode || [];
+    listIPv6Mode.value = data.ListIPv6Mode || [];
+    listVLANType.value = data.ListVLANType || [];
+    listConnectionTrigger.value = data.ListConnectionTrigger || [];
+    managementData.value = data.Profiles || [];
+    tempManagementData.value = JSON.parse(JSON.stringify(data.Profiles || []));
   } catch (err) {
     console.error('Error fetching WAN mode management:', err);
     error.value = 'Failed to fetch WAN mode management';
@@ -60,21 +79,24 @@ const handleAdd = () => {
   editingMode.value = {
     WANMode: '',
     Status: 'Enabled',
-    PhysicalType: 'Ethernet',
+    PhysicalType: listPhysicalType.value[0] || 'Ethernet',
     EnableSensing: 1,
-    DNSMode: 'Dynamic',
-    IPv6DNSMode: 'Dynamic',
+    DNSMode: listDNSMode.value[0] || 'Dynamic',
+    IPv6DNSMode: listIPv6DNSMode.value[0] || 'Dynamic',
     Interfaces: [{
-      Interface: 'wan',
-      IPv4Mode: 'dhcp4',
+      Interface: listInterface.value[0] || 'wan',
+      IPv4Mode: listIPv4Mode.value[0] || 'dhcp4',
       IPv6Mode: 'none',
       PPPoEUserName: '',
       PPPoEPassword: '',
-      VLANType: 'untagged',
+      ConnectionTrigger: 'AlwaysOn',
+      ServiceName: '',
+      IdleTime: 0,
+      VLANType: listVLANType.value[0] || 'untagged',
       VLANID: 100,
       VLANPriority: 0,
       MTU: 1500,
-      StaticIPv4Address: { 
+      StaticIPv4Address: {
         IPv4Address: '',
         SubnetMask: '',
         DNSServers: '',
@@ -98,7 +120,7 @@ const handleEdit = (mode: WanModeConfig) => {
 
 const handleDelete = async (mode: WanModeConfig) => {
   if (!confirm(t('wanManagement.confirmDelete'))) return;
-  
+
   try {
     const updatedModes = tempManagementData.value.filter(m => m.WANMode !== mode.WANMode);
     tempManagementData.value = updatedModes;
@@ -141,7 +163,9 @@ const handleApply = async () => {
   loading.value = true;
   try {
     const response = await updateWanModeManagement({
-      WanModeManagement: tempManagementData.value
+      WanModeManagement: {
+        Profiles: tempManagementData.value
+      }
     });
     const nokMessage = extractNokMessage(response);
     if (nokMessage) {
@@ -253,6 +277,14 @@ onMounted(fetchManagementData);
         v-else-if="isEditing"
         :data-testid="qa('wan-mode-management-edit')"
         :mode="editingMode"
+        :listPhysicalType="listPhysicalType"
+        :listInterface="listInterface"
+        :listDNSMode="listDNSMode"
+        :listIPv6DNSMode="listIPv6DNSMode"
+        :listIPv4Mode="listIPv4Mode"
+        :listIPv6Mode="listIPv6Mode"
+        :listVLANType="listVLANType"
+        :listConnectionTrigger="listConnectionTrigger"
         @save="handleSave"
         @cancel="isEditing = false"
       />

@@ -13,12 +13,15 @@ export interface StaticIPv6Address {
 }
 
 export interface WanInterface {
-  Interface: "wan" | "voip" | "mgmt" | "iptv";
-  IPv4Mode: "dhcp4" | "ppp4" | "none" | "static" | "dslite" | "link" | "3gpp-nas";
-  IPv6Mode: "dhcp6" | "ppp6" | "none" | "static" | "link" | "3gpp-nas";
+  Interface: string;
+  IPv4Mode: string;
+  IPv6Mode: string;
   PPPoEUserName: string;
   PPPoEPassword: string;
-  VLANType: "untagged" | "vlan" | "atm";
+  ConnectionTrigger: string;
+  ServiceName: string;
+  IdleTime: number;
+  VLANType: string;
   VLANID: number;
   VLANPriority: number;
   MTU: number;
@@ -29,17 +32,31 @@ export interface WanInterface {
 export interface WanModeConfig {
   WANMode: string;
   Status: string;
-  PhysicalType: "Ethernet" | "ADSL" | "VDSL" | "SFP" | "GPON" | "GFAST" | "Bridge" | "WWAN";
+  PhysicalType: string;
   EnableSensing: number;
-  DNSMode: "Static" | "Dynamic" | "";
-  IPv6DNSMode: "Static" | "Dynamic" | "";
+  DNSMode: string;
+  IPv6DNSMode: string;
   Interfaces: WanInterface[];
 }
 
+export interface WanModeManagementData {
+  ListPhysicalType: string[];
+  ListInterface: string[];
+  ListDNSMode: string[];
+  ListIPv6DNSMode: string[];
+  ListIPv4Mode: string[];
+  ListIPv6Mode: string[];
+  ListVLANType: string[];
+  ListConnectionTrigger: string[];
+  Profiles: WanModeConfig[];
+}
+
 export interface WanModeManagementResponse {
-  WanModeManagement: WanModeConfig[];
+  WanModeManagement: WanModeManagementData;
 }
 
 export interface WanModeManagementUpdateRequest {
-  WanModeManagement: WanModeConfig[];
+  WanModeManagement: {
+    Profiles: WanModeConfig[];
+  };
 }
