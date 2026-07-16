@@ -13,9 +13,8 @@ export async function getWanModeManagement(): Promise<WanModeManagementResponse>
 
 export async function updateWanModeManagement(data: WanModeManagementUpdateRequest): Promise<WanModeManagementResponse> {
   if (isDevelopment) {
-    // Update mock data while preserving Status
-    wanManagementMockData.WanModeManagement = data.WanModeManagement.map(newConfig => {
-      const existingConfig = wanManagementMockData.WanModeManagement.find(
+    wanManagementMockData.WanModeManagement.Profiles = data.WanModeManagement.Profiles.map(newConfig => {
+      const existingConfig = wanManagementMockData.WanModeManagement.Profiles.find(
         config => config.WANMode === newConfig.WANMode
       );
       return {

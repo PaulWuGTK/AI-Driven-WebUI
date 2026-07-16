@@ -398,6 +398,9 @@ export interface Translations {
     vlanPriority: string;
     pppoeUsername: string;
     pppoePassword: string;
+    connectionTrigger: string;
+    serviceName: string;
+    idleTime: string;
     staticIpv4: string;
     staticIpv6: string;
     ipv4Address: string;
