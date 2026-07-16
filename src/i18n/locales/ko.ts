@@ -653,7 +653,10 @@ const translations = {
     enableSensing: '감지 활성화',
     mtu: 'MTU',
     ipv4DnsMode: 'IPv4 DNS 모드',
-    ipv6DnsMode: 'IPv6 DNS 모드'
+    ipv6DnsMode: 'IPv6 DNS 모드',
+    vlanRequiredForMultiInterface: '여러 인터페이스를 추가하려면 VLAN 유형을 "vlan"으로 설정해야 합니다.',
+    duplicateVlanId: 'VLAN ID는 인터페이스 간에 고유해야 합니다.',
+    pppModeOnlyOneInterface: 'PPPoE 모드(ppp4/ppp6)는 한 번에 하나의 인터페이스에서만 활성화할 수 있습니다.'
   },
   backupWan: {
     title: '백업 WAN 관리',
