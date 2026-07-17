@@ -730,7 +730,7 @@ const translations = {
     redirectNow: '今すぐリダイレクト',
     invalidLanIP: '無効な LAN IP アドレス形式',
     invalidPrivateIp: 'LAN IPはプライベートアドレス（10.x.x.x、172.16-31.x.x、または192.168.x.x）である必要があります。',
-    invalidLeaseTime: 'リース時間は300〜604800秒（5分〜7日）の範囲で指定してください。',
+    invalidLeaseTime: 'リース時間は1〜604800秒（1秒〜7日）の範囲で指定してください。',
     invalidSubnetMask: '無効なサブネットマスク形式',
     unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。'
   },
