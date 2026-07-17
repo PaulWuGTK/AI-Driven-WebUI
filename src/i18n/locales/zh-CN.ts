@@ -730,6 +730,7 @@ const translations = {
     redirectNow: '立即跳转',
     invalidLanIP: '無效的 LAN IP 地址格式',
     invalidPrivateIp: 'LAN IP 必须为私有地址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。',
+    invalidLeaseTime: '租约时间必须在 300 至 604800 秒之间（5 分钟至 7 天）。',
     invalidSubnetMask: '無效的子网掩码格式',
     unreasonableSubnetMask: 'IP {ip} 使用子网掩码 {mask} 不合理。建議使用：{suggestion}。此配置可能導致網絡問題且無法訪問設備。'
   },

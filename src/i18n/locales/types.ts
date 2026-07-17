@@ -461,6 +461,7 @@ export interface Translations {
     redirectNow: string;
     invalidLanIP: string;
     invalidPrivateIp: string;
+    invalidLeaseTime: string;
     invalidSubnetMask: string;
     unreasonableSubnetMask: string;
   };
