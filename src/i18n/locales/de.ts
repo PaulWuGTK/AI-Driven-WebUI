@@ -730,7 +730,7 @@ const translations = {
     redirectNow: 'Jetzt weiterleiten',
     invalidLanIP: 'Ungültiges LAN-IP-Adressformat',
     invalidPrivateIp: 'Die LAN-IP muss eine private Adresse sein (10.x.x.x, 172.16-31.x.x oder 192.168.x.x).',
-    invalidLeaseTime: 'Die Lease-Zeit muss zwischen 300 und 604800 Sekunden (5 Minuten bis 7 Tage) liegen.',
+    invalidLeaseTime: 'Die Lease-Zeit muss zwischen 1 und 604800 Sekunden (1 Sekunde bis 7 Tage) liegen.',
     invalidSubnetMask: 'Ungültiges Subnetzmaskenformat',
     unreasonableSubnetMask: 'Die Subnetzmaske {mask} ist für IP {ip} ungeeignet. Vorgeschlagene Maske: {suggestion}. Diese Konfiguration kann Netzwerkprobleme verursachen und den Gerätezugriff verhindern.'
   },
