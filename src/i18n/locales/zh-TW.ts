@@ -212,7 +212,9 @@ const translations = {
     ipv6Enable: '啟用 IPv6',
     ipv6Protocol: 'IPv6 協定',
     ipv6Address: 'IPv6 位址',
-    ipv6Prefix: 'IPv6 前綴'
+    ipv6Prefix: 'IPv6 前綴',
+    invalidLanIP: '無效的 LAN IP 位址格式',
+    invalidPrivateIp: 'LAN IP 必須為私有位址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。'
   },
   lan: {
     title: 'LAN 狀態',
@@ -727,6 +729,7 @@ const translations = {
     redirectingIn: '即將重新導向：',
     redirectNow: '立即重新導向',
     invalidLanIP: '無效的 LAN IP 位址格式',
+    invalidPrivateIp: 'LAN IP 必須為私有位址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。',
     invalidSubnetMask: '無效的子網路遮罩格式',
     unreasonableSubnetMask: 'IP {ip} 使用子網路遮罩 {mask} 不合理。建議使用：{suggestion}。此設定可能導致網路問題且無法存取設備。'
   },

@@ -212,7 +212,9 @@ const translations = {
     ipv6Enable: 'Activer IPv6',
     ipv6Protocol: 'Protocole IPv6',
     ipv6Address: 'Adresse IPv6',
-    ipv6Prefix: 'Préfixe IPv6'
+    ipv6Prefix: 'Préfixe IPv6',
+    invalidLanIP: 'Format d\'adresse IP LAN invalide',
+    invalidPrivateIp: 'L\'IP LAN doit être une adresse privée (10.x.x.x, 172.16-31.x.x ou 192.168.x.x).'
   },
   lan: {
     title: 'LAN',
@@ -727,6 +729,7 @@ const translations = {
     redirectingIn: 'Redirection dans :',
     redirectNow: 'Rediriger maintenant',
     invalidLanIP: 'Format d\'adresse IP LAN invalide',
+    invalidPrivateIp: 'L\'IP LAN doit être une adresse privée (10.x.x.x, 172.16-31.x.x ou 192.168.x.x).',
     invalidSubnetMask: 'Format de masque de sous-réseau invalide',
     unreasonableSubnetMask: 'Le masque de sous-réseau {mask} est inapproprié pour l\'IP {ip}. Masque suggéré : {suggestion}. Cette configuration peut causer des problèmes réseau et empêcher l\'accès au périphérique.'
   },

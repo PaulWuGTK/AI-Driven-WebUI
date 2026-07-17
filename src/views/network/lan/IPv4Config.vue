@@ -95,6 +95,18 @@ const isValidDnsAddress = (ip: string): boolean => {
   return true;
 };
 
+const isPrivateIPv4 = (ip: string): boolean => {
+  if (!isValidIPv4(ip)) return false;
+  const parts = ip.split('.').map(p => parseInt(p, 10));
+  // Class A: 10.0.0.0 – 10.255.255.255
+  if (parts[0] === 10) return true;
+  // Class B: 172.16.0.0 – 172.31.255.255
+  if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+  // Class C: 192.168.0.0 – 192.168.255.255
+  if (parts[0] === 192 && parts[1] === 168) return true;
+  return false;
+};
+
 const isValidSubnetMask = (mask: string): boolean => {
   const maskRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
   if (!maskRegex.test(mask)) return false;
@@ -284,6 +296,12 @@ const validateLANSettings = (): boolean => {
   // Validate LAN IP
   if (isIPv4Static && !isValidIPv4(LANIPSetting.IPv4IPAddress)) {
     showErrorMessage(t('lanBasic.invalidLanIP'));
+    return false;
+  }
+
+  // Validate LAN IP is within private IPv4 ranges (RFC 1918)
+  if (isIPv4Static && !isPrivateIPv4(LANIPSetting.IPv4IPAddress)) {
+    showErrorMessage(t('lanBasic.invalidPrivateIp'));
     return false;
   }
 
