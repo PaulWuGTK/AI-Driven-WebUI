@@ -333,6 +333,12 @@ const validateLANSettings = (): boolean => {
 
   // Validate DHCP settings if enabled
   if (DHCPv4Setting.Enable) {
+    // Validate Lease Time range (300 - 604800 seconds)
+    if (DHCPv4Setting.LeaseTime < 300 || DHCPv4Setting.LeaseTime > 604800) {
+      showErrorMessage(t('lanBasic.invalidLeaseTime'));
+      return false;
+    }
+
     if (!isValidIPv4(DHCPv4Setting.BeginAddress)) {
       showErrorMessage('Invalid DHCP start address');
       return false;
