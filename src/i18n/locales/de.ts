@@ -655,6 +655,7 @@ const translations = {
     ipv4DnsMode: 'IPv4-DNS-Modus',
     ipv6DnsMode: 'IPv6-DNS-Modus',
     vlanRequiredForMultiInterface: 'Der VLAN-Typ muss auf „vlan" gesetzt sein, bevor mehrere Schnittstellen hinzugefügt werden können.',
+    invalidVlanId: 'Die VLAN-ID muss zwischen 2 und 4094 liegen.',
     duplicateVlanId: 'Die VLAN-ID muss zwischen den Schnittstellen eindeutig sein.',
     pppModeOnlyOneInterface: 'Der PPPoE-Modus (ppp4/ppp6) kann nur auf einer Schnittstelle gleichzeitig aktiviert werden.'
   },

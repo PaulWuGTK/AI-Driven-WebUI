@@ -118,8 +118,15 @@ const showStaticIPv6 = (iface: WanInterface) => {
 const handleSave = () => {
   validationError.value = '';
 
-  // Rule 2: VLAN ID must be unique across interfaces with VLANType = 'vlan'
+  // Rule: VLAN ID must be between 2 and 4094
   const vlanInterfaces = editingMode.value.Interfaces.filter(iface => iface.VLANType === 'vlan');
+  const invalidVlan = vlanInterfaces.find(iface => iface.VLANID < 2 || iface.VLANID > 4094);
+  if (invalidVlan) {
+    validationError.value = t('wanManagement.invalidVlanId');
+    return;
+  }
+
+  // Rule 2: VLAN ID must be unique across interfaces with VLANType = 'vlan'
   const vlanIds = vlanInterfaces.map(iface => iface.VLANID);
   if (vlanIds.length !== new Set(vlanIds).size) {
     validationError.value = t('wanManagement.duplicateVlanId');
@@ -153,6 +160,11 @@ const validatePPPoEInput = (value: string, field: 'username' | 'password') => {
     return value.slice(0, 64);
   }
   return value;
+};
+
+const validateVLANID = (value: number) => {
+  if (isNaN(value)) return 2;
+  return Math.max(2, Math.min(4094, value));
 };
 
 const validateVLANPriority = (value: number) => {
@@ -277,13 +289,15 @@ const validateVLANPriority = (value: number) => {
 
           <div v-if="showVLAN(iface)" :data-testid="qa(`wan-mode-edit-vlan-settings-${ifaceIndex}`)">
             <div class="form-group">
-              <label :data-testid="qa(`wan-mode-edit-vlan-id-label-${ifaceIndex}`)">{{ t('wanManagement.vlanId') }}</label>
+              <label :data-testid="qa(`wan-mode-edit-vlan-id-label-${ifaceIndex}`)">{{ t('wanManagement.vlanId') }} (2-4094)</label>
               <input
                 type="number"
                 :data-testid="qa(`wan-mode-edit-vlan-id-input-${ifaceIndex}`)"
-                v-model="iface.VLANID"
+                v-model.number="iface.VLANID"
                 required
-                min="0"
+                min="2"
+                max="4094"
+                @input="iface.VLANID = validateVLANID(Number(($event.target as HTMLInputElement).value))"
               />
             </div>
 
