@@ -212,7 +212,9 @@ const translations = {
     ipv6Enable: 'IPv6を有効化',
     ipv6Protocol: 'IPv6プロトコル',
     ipv6Address: 'IPv6アドレス',
-    ipv6Prefix: 'IPv6プレフィックス'
+    ipv6Prefix: 'IPv6プレフィックス',
+    invalidLanIP: '無効な LAN IP アドレス形式',
+    invalidPrivateIp: 'LAN IPはプライベートアドレス（10.x.x.x、172.16-31.x.x、または192.168.x.x）である必要があります。'
   },
   lan: {
     title: 'LAN',
@@ -727,6 +729,7 @@ const translations = {
     redirectingIn: 'リダイレクトまで：',
     redirectNow: '今すぐリダイレクト',
     invalidLanIP: '無効な LAN IP アドレス形式',
+    invalidPrivateIp: 'LAN IPはプライベートアドレス（10.x.x.x、172.16-31.x.x、または192.168.x.x）である必要があります。',
     invalidSubnetMask: '無効なサブネットマスク形式',
     unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。'
   },

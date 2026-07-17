@@ -460,6 +460,7 @@ export interface Translations {
     redirectingIn: string;
     redirectNow: string;
     invalidLanIP: string;
+    invalidPrivateIp: string;
     invalidSubnetMask: string;
     unreasonableSubnetMask: string;
   };

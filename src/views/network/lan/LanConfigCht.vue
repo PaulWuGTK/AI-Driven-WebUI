@@ -18,6 +18,27 @@ const toFlag01 = (value: unknown): 0 | 1 => {
   return value === 1 || value === '1' || value === true ? 1 : 0;
 };
 
+const errorMessage = ref<string | null>(null);
+
+const isValidIPv4 = (ip: string): boolean => {
+  const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
+  if (!ipv4Regex.test(ip)) return false;
+  const parts = ip.split('.');
+  return parts.every(part => {
+    const num = parseInt(part, 10);
+    return num >= 0 && num <= 255;
+  });
+};
+
+const isPrivateIPv4 = (ip: string): boolean => {
+  if (!isValidIPv4(ip)) return false;
+  const parts = ip.split('.').map(p => parseInt(p, 10));
+  if (parts[0] === 10) return true;
+  if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+  if (parts[0] === 192 && parts[1] === 168) return true;
+  return false;
+};
+
 const formData = ref({
   IPv4Enable: 1 as 0 | 1,
   IPv4Protocol: 'DHCP',
@@ -74,7 +95,24 @@ const handleCancel = () => {
   fetchLanChtSettings();
 };
 
+const validateSettings = (): boolean => {
+  errorMessage.value = null;
+  if (formData.value.IPv4Enable && formData.value.IPv4Protocol === 'Static') {
+    if (!isValidIPv4(formData.value.IPv4Address)) {
+      errorMessage.value = t('basicBridgeLan.invalidLanIP');
+      return false;
+    }
+    if (!isPrivateIPv4(formData.value.IPv4Address)) {
+      errorMessage.value = t('basicBridgeLan.invalidPrivateIp');
+      return false;
+    }
+  }
+  return true;
+};
+
 const handleSubmit = async () => {
+  if (!validateSettings()) return;
+
   loading.value = true;
   error.value = null;
   try {
@@ -257,6 +295,10 @@ onMounted(fetchLanChtSettings);
         </div>
       </template>
 
+      <div v-if="errorMessage" class="error-message" :data-testid="qa('lan-cht-error-message')">
+        {{ errorMessage }}
+      </div>
+
       <div v-if="showSuccess" class="success-message" :data-testid="qa('lan-cht-success-message')">
         {{ t('common.saveSuccess') }}
       </div>
@@ -338,6 +380,18 @@ input,
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid var(--border-color);
+}
+
+.error-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #dc3545;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  animation: fadeInOut 5s ease-in-out;
+  z-index: 100;
 }
 
 .success-message {
