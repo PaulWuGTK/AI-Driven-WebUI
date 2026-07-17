@@ -655,6 +655,7 @@ const translations = {
     ipv4DnsMode: 'IPv4 DNS 模式',
     ipv6DnsMode: 'IPv6 DNS 模式',
     vlanRequiredForMultiInterface: '新增多個介面前，VLAN 類型必須設為「vlan」。',
+    invalidVlanId: 'VLAN ID 必須介於 2 至 4094 之間。',
     duplicateVlanId: '各介面的 VLAN ID 不可重複。',
     pppModeOnlyOneInterface: 'PPPoE 模式（ppp4/ppp6）同時只能有一個介面啟用。'
   },

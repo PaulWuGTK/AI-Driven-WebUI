@@ -655,6 +655,7 @@ const translations = {
     ipv4DnsMode: 'Mode DNS IPv4',
     ipv6DnsMode: 'Mode DNS IPv6',
     vlanRequiredForMultiInterface: 'Le type VLAN doit être défini sur « vlan » avant d\'ajouter plusieurs interfaces.',
+    invalidVlanId: 'L\'ID VLAN doit être compris entre 2 et 4094.',
     duplicateVlanId: 'L\'ID VLAN doit être unique entre les interfaces.',
     pppModeOnlyOneInterface: 'Le mode PPPoE (ppp4/ppp6) ne peut être activé que sur une seule interface à la fois.'
   },

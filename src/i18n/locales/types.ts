@@ -419,6 +419,7 @@ export interface Translations {
     ipv4DnsMode: string;
     ipv6DnsMode: string;
     vlanRequiredForMultiInterface: string;
+    invalidVlanId: string;
     duplicateVlanId: string;
     pppModeOnlyOneInterface: string;
   };
