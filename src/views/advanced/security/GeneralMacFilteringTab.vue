@@ -93,6 +93,11 @@ const addMacAddress = () => {
     return;
   }
 
+  if (targetList.length >= 32) {
+    error.value = t('generalMacFiltering.maxEntriesReached');
+    return;
+  }
+
   const newNo = targetList.length > 0 ? Math.max(...targetList.map(e => e.No)) + 1 : 1;
 
   const newEntry: GeneralMacFilteringEntry = {
@@ -279,6 +284,9 @@ onMounted(fetchMacFiltering);
               </tr>
             </tbody>
           </table>
+          <div class="note-text" :data-testid="qa('general-mac-max-note')">
+            {{ t('generalMacFiltering.maxEntriesNote') }}
+          </div>
         </div>
       </template>
 
@@ -511,6 +519,12 @@ onMounted(fetchMacFiltering);
   padding: 2rem;
   text-align: center;
   color: #dc3545;
+}
+
+.note-text {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 
 </style>

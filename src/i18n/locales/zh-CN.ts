@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: '删除 MAC 地址',
     deleteMacMessage: '确定要删除该 MAC 地址吗？',
     applyChangesTitle: '应用 MAC 过滤设置',
-    applyChangesMessage: '启用 MAC 过滤将禁用 WPS，是否继续？'
+    applyChangesMessage: '启用 MAC 过滤将禁用 WPS，是否继续？',
+    maxEntriesNote: '备注：最多可添加 32 条。',
+    maxEntriesReached: '已达 32 条上限'
   },
   wirelessExtender: {
     title: '无线扩展器',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: '请输入起始和结束 IP 地址。',
     invalidIpv4Format: 'IPv4 地址格式无效。',
     invalidIpv6Format: 'IPv6 地址格式无效。',
-    reservedIpNotAllowed: '不允许使用保留的 IP 地址（0.0.0.0、127.x.x.x、255.255.255.255）。'
+    reservedIpNotAllowed: '不允许使用保留的 IP 地址（0.0.0.0、127.x.x.x、255.255.255.255）。',
+    maxEntriesNote: '备注：最多可添加 32 条。',
+    maxEntriesReached: '已达 32 条上限'
   },
   generalMacFiltering: {
     enableMacFiltering: '启用 MAC 过滤',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: '暂无任何条目',
     emptyMacError: 'MAC 地址不能为空',
     invalidMacFormat: 'MAC 地址格式无效',
-    duplicateMacError: '该 MAC 地址已存在'
+    duplicateMacError: '该 MAC 地址已存在',
+    maxEntriesNote: '备注：最多可添加 32 条。',
+    maxEntriesReached: '已达 32 条上限'
   },
   basicWanCht: {
     title: 'WAN 设置',

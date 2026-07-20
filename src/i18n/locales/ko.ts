@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: 'MAC 주소 삭제',
     deleteMacMessage: '이 MAC 주소를 삭제하시겠습니까?',
     applyChangesTitle: 'MAC 필터 설정 적용',
-    applyChangesMessage: 'MAC 필터를 활성화하면 WPS가 비활성화됩니다. 계속하시겠습니까?'
+    applyChangesMessage: 'MAC 필터를 활성화하면 WPS가 비활성화됩니다. 계속하시겠습니까?',
+    maxEntriesNote: '참고: 최대 32개 항목을 추가할 수 있습니다.',
+    maxEntriesReached: '최대 32개 항목에 도달했습니다'
   },
   wirelessExtender: {
     title: '무선 확장기',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: '시작 및 종료 IP 주소를 모두 입력하세요.',
     invalidIpv4Format: 'IPv4 주소 형식이 올바르지 않습니다.',
     invalidIpv6Format: 'IPv6 주소 형식이 올바르지 않습니다.',
-    reservedIpNotAllowed: '예약된 IP 주소(0.0.0.0, 127.x.x.x, 255.255.255.255)는 사용할 수 없습니다.'
+    reservedIpNotAllowed: '예약된 IP 주소(0.0.0.0, 127.x.x.x, 255.255.255.255)는 사용할 수 없습니다.',
+    maxEntriesNote: '참고: 최대 32개 항목을 추가할 수 있습니다.',
+    maxEntriesReached: '최대 32개 항목에 도달했습니다'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC 필터링 사용',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: '등록된 항목이 없습니다',
     emptyMacError: 'MAC 주소는 비워 둘 수 없습니다',
     invalidMacFormat: 'MAC 주소 형식이 올바르지 않습니다',
-    duplicateMacError: '이 MAC 주소는 이미 존재합니다'
+    duplicateMacError: '이 MAC 주소는 이미 존재합니다',
+    maxEntriesNote: '참고: 최대 32개 항목을 추가할 수 있습니다.',
+    maxEntriesReached: '최대 32개 항목에 도달했습니다'
   },
   basicWanCht: {
     title: 'WAN 설정',

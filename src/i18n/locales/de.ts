@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: 'MAC-Adresse löschen',
     deleteMacMessage: 'Möchten Sie diese MAC-Adresse wirklich löschen?',
     applyChangesTitle: 'MAC-Filtereinstellungen übernehmen',
-    applyChangesMessage: 'Das Aktivieren des MAC-Filters deaktiviert WPS. Fortfahren?'
+    applyChangesMessage: 'Das Aktivieren des MAC-Filters deaktiviert WPS. Fortfahren?',
+    maxEntriesNote: 'Hinweis: Maximal 32 Einträge möglich.',
+    maxEntriesReached: 'Maximum von 32 Einträgen erreicht'
   },
   wirelessExtender: {
     title: 'WLAN-Extender',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: 'Bitte geben Sie sowohl Start- als auch End-IP-Adresse ein.',
     invalidIpv4Format: 'Ungültiges IPv4-Adressformat.',
     invalidIpv6Format: 'Ungültiges IPv6-Adressformat.',
-    reservedIpNotAllowed: 'Reservierte IP-Adressen (0.0.0.0, 127.x.x.x, 255.255.255.255) sind nicht erlaubt.'
+    reservedIpNotAllowed: 'Reservierte IP-Adressen (0.0.0.0, 127.x.x.x, 255.255.255.255) sind nicht erlaubt.',
+    maxEntriesNote: 'Hinweis: Maximal 32 Einträge möglich.',
+    maxEntriesReached: 'Maximum von 32 Einträgen erreicht'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC-Filterung aktivieren',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: 'Keine Einträge',
     emptyMacError: 'MAC-Adresse darf nicht leer sein',
     invalidMacFormat: 'Ungültiges MAC-Adressformat',
-    duplicateMacError: 'Diese MAC-Adresse ist bereits vorhanden'
+    duplicateMacError: 'Diese MAC-Adresse ist bereits vorhanden',
+    maxEntriesNote: 'Hinweis: Maximal 32 Einträge möglich.',
+    maxEntriesReached: 'Maximum von 32 Einträgen erreicht'
   },
   basicWanCht: {
     title: 'WAN-Einstellungen',
