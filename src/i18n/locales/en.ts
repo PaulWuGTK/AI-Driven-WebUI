@@ -659,7 +659,8 @@ const translations = {
     vlanRequiredForMultiInterface: 'VLAN type must be set to "vlan" before adding multiple interfaces.',
     invalidVlanId: 'VLAN ID must be between 2 and 4094.',
     duplicateVlanId: 'VLAN ID must be unique across interfaces.',
-    pppModeOnlyOneInterface: 'PPPoE mode (ppp4/ppp6) can only be enabled on one interface at a time.'
+    pppModeOnlyOneInterface: 'PPPoE mode (ppp4/ppp6) can only be enabled on one interface at a time.',
+    dhcpv6Mode: 'DHCPv6 Mode'
   },
   backupWan: {
     title: 'Backup WAN Management',

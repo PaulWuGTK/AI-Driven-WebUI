@@ -659,7 +659,8 @@ const translations = {
     vlanRequiredForMultiInterface: '添加多个接口前，VLAN 类型必须设为「vlan」。',
     invalidVlanId: 'VLAN ID 必须在 2 至 4094 之间。',
     duplicateVlanId: '各接口的 VLAN ID 不可重复。',
-    pppModeOnlyOneInterface: 'PPPoE 模式（ppp4/ppp6）同时只能有一个接口启用。'
+    pppModeOnlyOneInterface: 'PPPoE 模式（ppp4/ppp6）同时只能有一个接口启用。',
+    dhcpv6Mode: 'DHCPv6 模式'
   },
   backupWan: {
     title: '备援 WAN 管理',

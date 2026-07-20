@@ -422,6 +422,7 @@ export interface Translations {
     invalidVlanId: string;
     duplicateVlanId: string;
     pppModeOnlyOneInterface: string;
+    dhcpv6Mode: string;
   };
   lanBasic: {
     title: string;

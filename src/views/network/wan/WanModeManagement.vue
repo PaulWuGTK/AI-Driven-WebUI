@@ -33,6 +33,7 @@ const listIPv4Mode = ref<string[]>([]);
 const listIPv6Mode = ref<string[]>([]);
 const listVLANType = ref<string[]>([]);
 const listConnectionTrigger = ref<string[]>([]);
+const listDHCPv6Mode = ref<string[]>([]);
 
 const modeColumns = computed(() => [
   { key: 'WANMode', label: t('wanManagement.name'), headerDataTestid: qa('wan-mode-management-header-name') },
@@ -65,6 +66,7 @@ const fetchManagementData = async () => {
     listIPv6Mode.value = data.ListIPv6Mode || [];
     listVLANType.value = data.ListVLANType || [];
     listConnectionTrigger.value = data.ListConnectionTrigger || [];
+    listDHCPv6Mode.value = data.ListDHCPv6Mode || [];
     managementData.value = data.Profiles || [];
     tempManagementData.value = JSON.parse(JSON.stringify(data.Profiles || []));
   } catch (err) {
@@ -87,6 +89,7 @@ const handleAdd = () => {
       Interface: listInterface.value[0] || 'wan',
       IPv4Mode: listIPv4Mode.value[0] || 'dhcp4',
       IPv6Mode: 'none',
+      DHCPv6Mode: '',
       PPPoEUserName: '',
       PPPoEPassword: '',
       ConnectionTrigger: 'AlwaysOn',
@@ -285,6 +288,7 @@ onMounted(fetchManagementData);
         :listIPv6Mode="listIPv6Mode"
         :listVLANType="listVLANType"
         :listConnectionTrigger="listConnectionTrigger"
+        :listDHCPv6Mode="listDHCPv6Mode"
         @save="handleSave"
         @cancel="isEditing = false"
       />
