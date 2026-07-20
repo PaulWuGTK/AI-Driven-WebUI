@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: 'MAC アドレス削除',
     deleteMacMessage: 'この MAC アドレスを削除してもよろしいですか？',
     applyChangesTitle: 'MAC フィルター設定を適用',
-    applyChangesMessage: 'MAC フィルターを有効にすると WPS が無効になります。続行しますか？'
+    applyChangesMessage: 'MAC フィルターを有効にすると WPS が無効になります。続行しますか？',
+    maxEntriesNote: '注：最大32件まで追加できます。',
+    maxEntriesReached: '最大32件に達しました'
   },
   wirelessExtender: {
     title: 'ワイヤレスエクステンダー',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: '開始 IP アドレスと終了 IP アドレスの両方を入力してください。',
     invalidIpv4Format: 'IPv4 アドレスの形式が無効です。',
     invalidIpv6Format: 'IPv6 アドレスの形式が無効です。',
-    reservedIpNotAllowed: '予約済み IP アドレス（0.0.0.0、127.x.x.x、255.255.255.255）は使用できません。'
+    reservedIpNotAllowed: '予約済み IP アドレス（0.0.0.0、127.x.x.x、255.255.255.255）は使用できません。',
+    maxEntriesNote: '注：最大32件まで追加できます。',
+    maxEntriesReached: '最大32件に達しました'
   },
   generalMacFiltering: {
     enableMacFiltering: 'MAC フィルタリングを有効にする',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: 'エントリはありません',
     emptyMacError: 'MAC アドレスを入力してください',
     invalidMacFormat: 'MAC アドレスの形式が正しくありません',
-    duplicateMacError: 'この MAC アドレスは既に存在します'
+    duplicateMacError: 'この MAC アドレスは既に存在します',
+    maxEntriesNote: '注：最大32件まで追加できます。',
+    maxEntriesReached: '最大32件に達しました'
   },
   basicWanCht: {
     title: 'WAN 設定',

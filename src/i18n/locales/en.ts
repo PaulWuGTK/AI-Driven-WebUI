@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: 'Delete MAC Address',
     deleteMacMessage: 'Are you sure you want to delete this MAC address?',
     applyChangesTitle: 'Apply MAC Filter Settings',
-    applyChangesMessage: 'Enabling MAC filter will disable WPS. Do you want to continue?'
+    applyChangesMessage: 'Enabling MAC filter will disable WPS. Do you want to continue?',
+    maxEntriesNote: 'Note: Maximum of 32 entries can be added.',
+    maxEntriesReached: 'Maximum of 32 entries reached'
   },
   wirelessExtender: {
     title: 'Wireless Extender',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: 'Please enter both start and end IP addresses.',
     invalidIpv4Format: 'Invalid IPv4 address format.',
     invalidIpv6Format: 'Invalid IPv6 address format.',
-    reservedIpNotAllowed: 'Reserved IP addresses (0.0.0.0, 127.x.x.x, 255.255.255.255) are not allowed.'
+    reservedIpNotAllowed: 'Reserved IP addresses (0.0.0.0, 127.x.x.x, 255.255.255.255) are not allowed.',
+    maxEntriesNote: 'Note: Maximum of 32 entries can be added.',
+    maxEntriesReached: 'Maximum of 32 entries reached'
   },
   generalMacFiltering: {
     enableMacFiltering: 'Enable MAC Filtering',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: 'No entries',
     emptyMacError: 'MAC address cannot be empty',
     invalidMacFormat: 'Invalid MAC address format',
-    duplicateMacError: 'This MAC address already exists'
+    duplicateMacError: 'This MAC address already exists',
+    maxEntriesNote: 'Note: Maximum of 32 entries can be added.',
+    maxEntriesReached: 'Maximum of 32 entries reached'
   },
   basicWanCht: {
     title: 'WAN Settings',

@@ -151,6 +151,9 @@
             </tr>
           </tbody>
         </table>
+        <div class="note-text" :data-testid="qa('ip-filtering-max-note')">
+          {{ $t('ipFiltering.maxEntriesNote') }}
+        </div>
       </div>
     </template>
 
@@ -306,6 +309,12 @@ const addEntry = () => {
   }
 
   const list = filterMode.value === 'Blacklist' ? config.value.BlackList : config.value.WhiteList;
+
+  if (list.length >= 32) {
+    errorMessage.value = t('ipFiltering.maxEntriesReached');
+    return;
+  }
+
   const nextNo = list.length > 0 ? Math.max(...list.map(e => e.No)) + 1 : 1;
 
   const entry: IpFilterEntry = {
@@ -574,6 +583,12 @@ onMounted(() => {
 
 .input-error:focus {
   border-color: var(--color-error) !important;
+}
+
+.note-text {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 
 </style>

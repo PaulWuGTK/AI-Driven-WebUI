@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: 'Supprimer l’adresse MAC',
     deleteMacMessage: 'Voulez-vous vraiment supprimer cette adresse MAC ?',
     applyChangesTitle: 'Appliquer les paramètres du filtre MAC',
-    applyChangesMessage: 'L’activation du filtrage MAC désactivera le WPS. Continuer ?'
+    applyChangesMessage: 'L\u2019activation du filtrage MAC d\u00e9sactivera le WPS. Continuer ?',
+    maxEntriesNote: 'Remarque : 32 entrées maximum.',
+    maxEntriesReached: 'Limite de 32 entrées atteinte'
   },
   wirelessExtender: {
     title: 'Répéteur sans fil',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: 'Veuillez entrer les adresses IP de début et de fin.',
     invalidIpv4Format: 'Format d\'adresse IPv4 invalide.',
     invalidIpv6Format: 'Format d\'adresse IPv6 invalide.',
-    reservedIpNotAllowed: 'Les adresses IP réservées (0.0.0.0, 127.x.x.x, 255.255.255.255) ne sont pas autorisées.'
+    reservedIpNotAllowed: 'Les adresses IP réservées (0.0.0.0, 127.x.x.x, 255.255.255.255) ne sont pas autorisées.',
+    maxEntriesNote: 'Remarque : 32 entrées maximum.',
+    maxEntriesReached: 'Limite de 32 entrées atteinte'
   },
   generalMacFiltering: {
     enableMacFiltering: 'Activer le filtrage MAC',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: 'Aucune entrée',
     emptyMacError: 'L’adresse MAC ne peut pas être vide',
     invalidMacFormat: 'Format d’adresse MAC invalide',
-    duplicateMacError: 'Cette adresse MAC existe déjà'
+    duplicateMacError: 'Cette adresse MAC existe déjà',
+    maxEntriesNote: 'Remarque : 32 entrées maximum.',
+    maxEntriesReached: 'Limite de 32 entrées atteinte'
   },
   basicWanCht: {
     title: 'Paramètres WAN',

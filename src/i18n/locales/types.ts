@@ -345,6 +345,8 @@ export interface Translations {
     deleteMacMessage: string;
     applyChangesTitle: string;
     applyChangesMessage: string;
+    maxEntriesNote: string;
+    maxEntriesReached: string;
   };
   wirelessExtender: {
     title: string;
@@ -1100,5 +1102,7 @@ export interface Translations {
     invalidIpv4Format: string;
     invalidIpv6Format: string;
     reservedIpNotAllowed: string;
+    maxEntriesNote: string;
+    maxEntriesReached: string;
   };
 }

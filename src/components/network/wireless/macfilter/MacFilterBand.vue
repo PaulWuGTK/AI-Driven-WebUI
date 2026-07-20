@@ -108,6 +108,11 @@ const addMacAddress = () => {
     return;
   }
 
+  if (macAddresses.value.length >= 32) {
+    error.value = t('macfilter.maxEntriesReached');
+    return;
+  }
+
   macAddresses.value.push(newMacAddress.value);
   updateEntryMacList();
   newMacAddress.value = '';
@@ -432,6 +437,10 @@ onMounted(() => {
           </div>
         </div>
       </div>
+
+      <div class="note-text" :data-testid="qa(`mac-filter-band-max-note-${slug(band)}`)">
+        {{ t('macfilter.maxEntriesNote') }}
+      </div>
     </div>
 
     <!-- Confirmation Dialog -->
@@ -595,5 +604,11 @@ onMounted(() => {
     gap: 0.5rem;
     margin-top: 1rem;
   }
+}
+
+.note-text {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 </style>

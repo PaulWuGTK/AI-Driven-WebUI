@@ -578,7 +578,9 @@ const translations = {
     deleteMacTitle: '刪除 MAC 位址',
     deleteMacMessage: '確定要刪除此 MAC 位址嗎？',
     applyChangesTitle: '套用 MAC 篩選設定',
-    applyChangesMessage: '啟用 MAC 篩選將停用 WPS，是否繼續？'
+    applyChangesMessage: '啟用 MAC 篩選將停用 WPS，是否繼續？',
+    maxEntriesNote: '備註：最多可新增 32 筆。',
+    maxEntriesReached: '已達 32 筆上限'
   },
   wirelessExtender: {
     title: '無線延伸器',
@@ -1608,7 +1610,9 @@ const translations = {
     ipAddressRequired: '請輸入起始和結束 IP 位址。',
     invalidIpv4Format: 'IPv4 位址格式無效。',
     invalidIpv6Format: 'IPv6 位址格式無效。',
-    reservedIpNotAllowed: '不允許使用保留的 IP 位址（0.0.0.0、127.x.x.x、255.255.255.255）。'
+    reservedIpNotAllowed: '不允許使用保留的 IP 位址（0.0.0.0、127.x.x.x、255.255.255.255）。',
+    maxEntriesNote: '備註：最多可新增 32 筆。',
+    maxEntriesReached: '已達 32 筆上限'
   },
   generalMacFiltering: {
     enableMacFiltering: '啟用 MAC 過濾',
@@ -1627,7 +1631,9 @@ const translations = {
     noEntries: '目前沒有任何項目',
     emptyMacError: 'MAC 位址不可為空白',
     invalidMacFormat: 'MAC 位址格式不正確',
-    duplicateMacError: '此 MAC 位址已存在'
+    duplicateMacError: '此 MAC 位址已存在',
+    maxEntriesNote: '備註：最多可新增 32 筆。',
+    maxEntriesReached: '已達 32 筆上限'
   },
   basicWanCht: {
     title: 'WAN 設定',
