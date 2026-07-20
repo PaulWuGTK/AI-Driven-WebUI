@@ -436,10 +436,12 @@ const validateVLANPriority = (value: number) => {
               <div class="form-group">
                 <label :data-testid="qa(`wan-mode-edit-static-ipv6-prefix-label-${ifaceIndex}`)">{{ t('wanManagement.prefixLength') }}</label>
                 <input
-                  type="text"
+                  type="number"
                   :data-testid="qa(`wan-mode-edit-static-ipv6-prefix-input-${ifaceIndex}`)"
-                  v-model="iface.StaticIPv6Address!.PrefixLength"
+                  v-model.number="iface.StaticIPv6Address!.PrefixLength"
                   required
+                  min="1"
+                  max="128"
                 />
               </div>
               <div class="form-group">
