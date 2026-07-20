@@ -18,6 +18,7 @@ const props = defineProps<{
   listIPv6Mode: string[];
   listVLANType: string[];
   listConnectionTrigger: string[];
+  listDHCPv6Mode: string[];
 }>();
 
 const emit = defineEmits<{
@@ -43,6 +44,7 @@ const defaultInterface: WanInterface = {
   Interface: props.listInterface[0] || "wan",
   IPv4Mode: props.listIPv4Mode[0] || "dhcp4",
   IPv6Mode: "none",
+  DHCPv6Mode: '',
   PPPoEUserName: '',
   PPPoEPassword: '',
   ConnectionTrigger: 'AlwaysOn',
@@ -113,6 +115,10 @@ const showStaticIPv4 = (iface: WanInterface) => {
 
 const showStaticIPv6 = (iface: WanInterface) => {
   return iface.IPv6Mode === 'static';
+};
+
+const showDHCPv6Mode = (iface: WanInterface) => {
+  return iface.IPv6Mode === 'dhcp6' || iface.IPv6Mode === 'ppp6';
 };
 
 const handleSave = () => {
@@ -262,6 +268,15 @@ const validateVLANPriority = (value: number) => {
             <label :data-testid="qa(`wan-mode-edit-ipv6-mode-label-${ifaceIndex}`)">{{ t('wanManagement.ipv6Mode') }}</label>
             <select v-model="iface.IPv6Mode" :data-testid="qa(`wan-mode-edit-ipv6-mode-select-${ifaceIndex}`)">
               <option v-for="mode in listIPv6Mode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-ipv6-mode-option-${ifaceIndex}-${slug(mode)}`)">
+                {{ mode }}
+              </option>
+            </select>
+          </div>
+
+          <div v-if="showDHCPv6Mode(iface)" class="form-group">
+            <label :data-testid="qa(`wan-mode-edit-dhcpv6-mode-label-${ifaceIndex}`)">{{ t('wanManagement.dhcpv6Mode') }}</label>
+            <select v-model="iface.DHCPv6Mode" :data-testid="qa(`wan-mode-edit-dhcpv6-mode-select-${ifaceIndex}`)">
+              <option v-for="mode in listDHCPv6Mode" :key="mode" :value="mode" :data-testid="qa(`wan-mode-edit-dhcpv6-mode-option-${ifaceIndex}-${slug(mode)}`)">
                 {{ mode }}
               </option>
             </select>

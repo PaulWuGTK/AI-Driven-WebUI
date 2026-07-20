@@ -16,6 +16,7 @@ export interface WanInterface {
   Interface: string;
   IPv4Mode: string;
   IPv6Mode: string;
+  DHCPv6Mode: string;
   PPPoEUserName: string;
   PPPoEPassword: string;
   ConnectionTrigger: string;
@@ -48,6 +49,7 @@ export interface WanModeManagementData {
   ListIPv6Mode: string[];
   ListVLANType: string[];
   ListConnectionTrigger: string[];
+  ListDHCPv6Mode: string[];
   Profiles: WanModeConfig[];
 }
 

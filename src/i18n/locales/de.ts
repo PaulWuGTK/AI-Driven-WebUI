@@ -659,7 +659,8 @@ const translations = {
     vlanRequiredForMultiInterface: 'Der VLAN-Typ muss auf „vlan" gesetzt sein, bevor mehrere Schnittstellen hinzugefügt werden können.',
     invalidVlanId: 'Die VLAN-ID muss zwischen 2 und 4094 liegen.',
     duplicateVlanId: 'Die VLAN-ID muss zwischen den Schnittstellen eindeutig sein.',
-    pppModeOnlyOneInterface: 'Der PPPoE-Modus (ppp4/ppp6) kann nur auf einer Schnittstelle gleichzeitig aktiviert werden.'
+    pppModeOnlyOneInterface: 'Der PPPoE-Modus (ppp4/ppp6) kann nur auf einer Schnittstelle gleichzeitig aktiviert werden.',
+    dhcpv6Mode: 'DHCPv6-Modus'
   },
   backupWan: {
     title: 'Backup-WAN-Verwaltung',

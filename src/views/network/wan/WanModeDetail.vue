@@ -95,6 +95,10 @@ const vlanTypeDisplay: Record<string, string> = {
                 <span class="card-label" :data-testid="qa(`wan-mode-detail-ipv6-mode-label-${ifaceIndex}`)">{{ t('wanManagement.ipv6Mode') }}</span>
                 <span class="card-value" :data-testid="qa(`wan-mode-detail-ipv6-mode-value-${ifaceIndex}`)">{{ ipv6ModeDisplay[iface.IPv6Mode] }}</span>
               </div>
+              <div v-if="iface.DHCPv6Mode" class="card-row">
+                <span class="card-label" :data-testid="qa(`wan-mode-detail-dhcpv6-mode-label-${ifaceIndex}`)">{{ t('wanManagement.dhcpv6Mode') }}</span>
+                <span class="card-value" :data-testid="qa(`wan-mode-detail-dhcpv6-mode-value-${ifaceIndex}`)">{{ iface.DHCPv6Mode }}</span>
+              </div>
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`wan-mode-detail-vlan-type-label-${ifaceIndex}`)">{{ t('wanManagement.vlanType') }}</span>
                 <span class="card-value" :data-testid="qa(`wan-mode-detail-vlan-type-value-${ifaceIndex}`)">{{ vlanTypeDisplay[iface.VLANType] }}</span>

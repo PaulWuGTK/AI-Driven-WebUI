@@ -659,7 +659,8 @@ const translations = {
     vlanRequiredForMultiInterface: '複数のインターフェースを追加するには、VLANタイプを「vlan」に設定してください。',
     invalidVlanId: 'VLAN IDは2〜4094の範囲でなければなりません。',
     duplicateVlanId: 'VLAN IDはインターフェース間で一意でなければなりません。',
-    pppModeOnlyOneInterface: 'PPPoEモード（ppp4/ppp6）は同時に1つのインターフェースのみ有効にできます。'
+    pppModeOnlyOneInterface: 'PPPoEモード（ppp4/ppp6）は同時に1つのインターフェースのみ有効にできます。',
+    dhcpv6Mode: 'DHCPv6 モード'
   },
   backupWan: {
     title: 'バックアップ WAN 管理',
