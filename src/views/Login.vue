@@ -5,11 +5,11 @@ import { useI18n } from 'vue-i18n';
 import { AuthService } from '../services/auth';
 import { BaseSecretInput } from '../components/common';
 import { useQA } from '../utils/qa';
-import { getMockCaptcha } from '../services/mockData/authMockData';
+import { getMockCaptcha, getMockLoginConfig } from '../services/mockData/authMockData';
 
 const { isQAMode, qa, slug } = useQA();
 const isDevelopment = import.meta.env.DEV;
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
@@ -28,6 +28,40 @@ const lockCountdown = ref<number | null>(null);
 const logoutMessage = ref('');
 const wizardStatusLoading = ref(false);
 const wizardStatusRetryCount = ref(0);
+const captchaEnabled = ref(true);
+
+const backendToI18nLang: Record<string, string> = {
+  'zh-TW': 'zh_TW',
+  'zh-CN': 'zh_CN',
+  'en': 'en',
+  'fr': 'fr',
+  'ja': 'ja',
+  'de': 'de',
+  'ko': 'ko'
+};
+
+const fetchLoginConfig = async () => {
+  try {
+    let data;
+    if (isDevelopment) {
+      data = getMockLoginConfig();
+    } else {
+      const response = await fetch('/API/info?list=Login');
+      if (!response.ok) return;
+      data = await response.json();
+    }
+    if (data?.Login) {
+      if (data.Login.language?.current) {
+        locale.value = backendToI18nLang[data.Login.language.current] || data.Login.language.current;
+      }
+      if (data.Login.captchaEnable === 0) {
+        captchaEnabled.value = false;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch login config:', err);
+  }
+};
 
 const resetCaptchaTimer = () => {
   if (captchaTimeout.value) {
@@ -109,7 +143,7 @@ const lockMessage = computed(() => {
 const handleLogin = async () => {
   if (loading.value || isLocked.value) return;
 
-  if (!captcha.value.trim()) {
+  if (captchaEnabled.value && !captcha.value.trim()) {
     error.value = t('login.pleaseEnterCaptcha');
     return;
   }
@@ -127,8 +161,8 @@ const handleLogin = async () => {
     const loginResult = await auth.login(
       username.value,
       password.value,
-      captchaId.value,
-      captcha.value
+      captchaEnabled.value ? captchaId.value : '',
+      captchaEnabled.value ? captcha.value : ''
     );
 
     if (loginResult.success) {
@@ -227,7 +261,7 @@ const wizardStatusMessage = computed(() => {
     : t('common.loading');
 });
 
-onMounted(() => {
+onMounted(async () => {
   // Check if user was logged out due to inactivity
   if (route.query.reason === 'timeout') {
     logoutMessage.value = t('login.sessionExpired');
@@ -235,7 +269,10 @@ onMounted(() => {
     router.replace({ path: '/login' });
   }
 
-  fetchCaptcha(true);
+  await fetchLoginConfig();
+  if (captchaEnabled.value) {
+    fetchCaptcha(true);
+  }
 });
 
 onUnmounted(() => {
@@ -276,7 +313,7 @@ onUnmounted(() => {
             :toggle-data-testid="qa('login-password-toggle')"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="captchaEnabled">
           <label for="captcha" :data-testid="qa('login-captcha-label')">{{ t('login.captcha') }}</label>
           <div class="captcha-container">
             <div class="captcha-image-wrapper">

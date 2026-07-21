@@ -65,6 +65,18 @@ export function getMockCaptcha() {
   };
 }
 
+export function getMockLoginConfig() {
+  return {
+    Login: {
+      language: {
+        current: 'en',
+        available: ['en', 'fr', 'ja', 'de', 'zh-TW', 'zh-CN', 'ko']
+      },
+      captchaEnable: 1
+    }
+  };
+}
+
 // ============================================
 // OpMode 測試場景
 // ============================================
