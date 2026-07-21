@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'IPv6 Status',
     status: 'Status',
     action: 'Action',
-    enabled: 'Enabled'
+    enabled: 'Enabled',
+    disabled: 'Disabled'
   },
   basicBridgeLan: {
     title: 'LAN Settings',
@@ -811,7 +812,8 @@ const translations = {
     localPortStart: 'Local Port Range(Start)',
     localPortEnd: 'Local Port Range(End)',
     comment: 'Comment',
-    externalPortRangeInvalid: 'End port must be greater than or equal to start port.'
+    externalPortRangeInvalid: 'End port must be greater than or equal to start port.',
+    maxRulesReached: 'The maximum number of port forwarding rules has been reached. Please delete an existing rule before adding a new one.'
   },
   dmz: {
     title: 'DMZ Settings',

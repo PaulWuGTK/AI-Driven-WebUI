@@ -45,7 +45,7 @@
               <td>{{ rule.No }}</td>
               <td>
                 <span class="status-badge" :class="rule.Enable ? 'enabled' : 'disabled'">
-                  {{ rule.Enable ? '1' : '0' }}
+                  {{ rule.Enable ? $t('common.enabled') : $t('common.disabled') }}
                 </span>
               </td>
               <td>{{ rule.Description || '-' }}</td>
@@ -84,7 +84,7 @@
             <span class="card-label">{{ $t('portForwarding.enable') }}</span>
             <span class="card-value">
               <span class="status-badge" :class="rule.Enable ? 'enabled' : 'disabled'">
-                {{ rule.Enable ? '1' : '0' }}
+                {{ rule.Enable ? $t('common.enabled') : $t('common.disabled') }}
               </span>
             </span>
           </div>
@@ -166,7 +166,7 @@ import PortForwardingForm from '../../../components/nat/PortForwardingForm.vue';
 import ConfirmationDialog from '../../../components/ConfirmationDialog.vue';
 import { BaseModal, SectionCard } from '../../../components/common';
 import { portForwardingApi } from '../../../services/api/portForwarding';
-import type { PortForwardRule } from '../../../types/portForwarding';
+import type { PortForwardRule, PortForwardingApiResponse } from '../../../types/portForwarding';
 import { extractNokMessage } from '../../../utils/apiUtils';
 import { useQA } from '../../../utils/qa';
 
@@ -185,6 +185,15 @@ const loading = ref(true);
 const errorMessage = ref('');
 const toFlag01 = (value: unknown): 0 | 1 => {
   return value === 1 || value === '1' || value === true ? 1 : 0;
+};
+
+const resolveApiError = (response: PortForwardingApiResponse): string | null => {
+  const pf = response.PortForwarding;
+  if (!pf?.NOK) return null;
+  if (pf.errCode === 1) {
+    return t('portForwarding.maxRulesReached');
+  }
+  return String(pf.NOK);
 };
 
 const fetchRules = async () => {
@@ -275,9 +284,9 @@ const handleSave = async () => {
       }
     });
 
-    const nokMessage = extractNokMessage(response);
-    if (nokMessage) {
-      errorMessage.value = nokMessage;
+    const apiError = resolveApiError(response);
+    if (apiError) {
+      errorMessage.value = apiError;
       return;
     }
 
@@ -305,9 +314,9 @@ const confirmDelete = async () => {
       }
     });
 
-    const nokMessage = extractNokMessage(response);
-    if (nokMessage) {
-      errorMessage.value = nokMessage;
+    const apiError = resolveApiError(response);
+    if (apiError) {
+      errorMessage.value = apiError;
       showDeleteDialog.value = false;
       return;
     }

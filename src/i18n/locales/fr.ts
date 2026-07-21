@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'Statut IPv6',
     status: 'État',
     action: 'Action',
-    enabled: 'Activé'
+    enabled: 'Activé',
+    disabled: 'Désactivé'
   },
   basicBridgeLan: {
     title: 'Paramètres LAN',
@@ -1583,7 +1584,8 @@ const translations = {
     localPortStart: 'Plage de ports locaux (début)',
     localPortEnd: 'Plage de ports locaux (fin)',
     comment: 'Commentaire',
-    externalPortRangeInvalid: 'Le port de fin doit être supérieur ou égal au port de début.'
+    externalPortRangeInvalid: 'Le port de fin doit être supérieur ou égal au port de début.',
+    maxRulesReached: 'Le nombre maximum de règles de redirection de port a été atteint. Veuillez supprimer une règle existante avant d\'en ajouter une nouvelle.'
   },
   ipFiltering: {
     enableIpFiltering: 'Activer le filtrage IP',

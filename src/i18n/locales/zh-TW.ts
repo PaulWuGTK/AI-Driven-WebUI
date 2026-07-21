@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'IPv6 狀態',
     status: '狀態',
     action: '操作',
-    enabled: '啟用'
+    enabled: '啟用',
+    disabled: '停用'
   },
   basicBridgeLan: {
     title: 'LAN 設定',
@@ -1583,7 +1584,8 @@ const translations = {
     localPortStart: '本機連接埠範圍（起始）',
     localPortEnd: '本機連接埠範圍（結束）',
     comment: '備註',
-    externalPortRangeInvalid: '結束連接埠必須大於或等於起始連接埠。'
+    externalPortRangeInvalid: '結束連接埠必須大於或等於起始連接埠。',
+    maxRulesReached: '已達到通訊埠轉發規則的數量上限，請先刪除現有規則後再新增。'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',

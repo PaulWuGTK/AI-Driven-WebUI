@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'IPv6ステータス',
     status: '状態',
     action: '操作',
-    enabled: '有効'
+    enabled: '有効',
+    disabled: '無効'
   },
   basicBridgeLan: {
     title: 'LAN設定',
@@ -1583,7 +1584,8 @@ const translations = {
     localPortStart: 'ローカルポート範囲（開始）',
     localPortEnd: 'ローカルポート範囲（終了）',
     comment: 'コメント',
-    externalPortRangeInvalid: '終了ポートは開始ポート以上である必要があります。'
+    externalPortRangeInvalid: '終了ポートは開始ポート以上である必要があります。',
+    maxRulesReached: 'ポートフォワーディングルールの上限に達しました。新しいルールを追加するには、既存のルールを削除してください。'
   },
   ipFiltering: {
     enableIpFiltering: 'IP フィルタリングを有効にする',
