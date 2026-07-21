@@ -1,0 +1,149 @@
+
+%define {
+    %persistent object X_GEMTEK-COM_GCPE {
+        %persistent string OpMode {
+            on action validate call check_enum ["Init","Gateway","Extender","Bridge"];
+            default "Init";
+        }
+
+        string NetlayoutType {
+            default "";
+        }
+
+        %persistent uint32 CaptchaEnable {
+            on action validate call check_minimum 0;
+            on action validate call check_maximum 1;
+            default 1;
+        }
+
+    }
+}
+
+%populate {
+    on event "app:start" call gcpe_opmode_start_to_init <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            os.execute("logger -t GCPE 'app:start event triggered'")
+
+            local result = lamx.bus.get("X_GEMTEK-COM_GCPE.")
+            if result and result["X_GEMTEK-COM_GCPE."] then
+
+                local handle = io.popen("cat /etc/gtk_netlayout")
+                if handle then
+                    local type = handle:read("*l")
+                    handle:close()
+                    local t = lamx.transaction.new(false)
+                    t:select("X_GEMTEK-COM_GCPE.")
+                    t:set("NetlayoutType", type)
+                    t:apply()
+                end
+
+                local opmode = result["X_GEMTEK-COM_GCPE."].OpMode
+                os.execute("logger -t GCPE 'app:start Current OpMode is: " .. tostring(opmode) .. "'")
+
+                if opmode == "Init" then
+                    gcpe.startup_init()
+                    os.execute("logger -t GCPE 'app:start startup_init() triggered'")
+                elseif opmode == "Gateway" then
+                    gcpe.setup_init_to_gateway()
+                    os.execute("logger -t GCPE 'app:start setup_init_to_gateway() triggered'")
+                elseif opmode == "Extender" then
+                    gcpe.setup_init_to_extender()
+                    os.execute("logger -t GCPE 'app:start setup_init_to_extender() triggered'")
+                elseif opmode == "Bridge" then
+                    gcpe.setup_init_to_bridge()
+                    os.execute("logger -t GCPE 'app:start setup_init_to_bridge() triggered'")
+                end
+            else
+                os.execute("logger -t GCPE 'app:start Failed to get X_GEMTEK-COM_GCPE object'")
+            end
+        end
+    !>;
+
+
+    on event "dm:object-changed" call gcpe_opmode_init_to_gateway <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_init_to_gateway()
+            print("OpMode is set from Init to Gateway!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Init" && parameters.OpMode.to == "Gateway"';
+
+    on event "dm:object-changed" call gcpe_opmode_init_to_extender <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_init_to_extender()
+            print("OpMode is set from Init to Extender!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Init" && parameters.OpMode.to == "Extender"';
+
+    on event "dm:object-changed" call gcpe_opmode_init_to_bridge <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_init_to_bridge()
+            print("OpMode is set from Init to Bridge!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Init" && parameters.OpMode.to == "Bridge"';
+
+
+
+    on event "dm:object-changed" call gcpe_opmode_extender_to_gateway <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_extender_to_gateway()
+            print("OpMode is set from Extender to Gateway!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Extender" && parameters.OpMode.to == "Gateway"';
+
+    on event "dm:object-changed" call gcpe_opmode_gateway_to_extender <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_gateway_to_extender()
+            print("OpMode is set from Gateway to Extender!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Gateway" && parameters.OpMode.to == "Extender"';
+
+    on event "dm:object-changed" call gcpe_opmode_gateway_to_bridge <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_gateway_to_bridge()
+            print("OpMode is set from Gateway to Bridge!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Gateway" && parameters.OpMode.to == "Bridge"';
+
+    on event "dm:object-changed" call gcpe_opmode_bridge_to_gateway <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_bridge_to_gateway()
+            print("OpMode is set from Bridge to Gateway!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Bridge" && parameters.OpMode.to == "Gateway"';
+
+    on event "dm:object-changed" call gcpe_opmode_extender_to_bridge <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_extender_to_bridge()
+            print("OpMode is set from Extender to Bridge!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Extender" && parameters.OpMode.to == "Bridge"';
+
+    on event "dm:object-changed" call gcpe_opmode_bridge_to_extender <!LUA:
+        function(object, event, data)
+            local gcpe = require 'tr181-gcpe/gcpe'
+            print(event);
+            gcpe.setup_bridge_to_extender()
+            print("OpMode is set from Bridge to Extender!")
+        end
+    !> filter 'path == "X_GEMTEK-COM_GCPE." && parameters.OpMode.from == "Bridge" && parameters.OpMode.to == "Extender"';
+
+}
+
+

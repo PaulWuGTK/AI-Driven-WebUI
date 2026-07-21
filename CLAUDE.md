@@ -34,6 +34,7 @@ ssh root@192.168.1.1 "cp -a /tmp/<filename>.lua <target-path> && chmod 755 <targ
 - Commit message prefix: `WebUI:`
 - **NEVER force push to GenericWebUI-20260522** — internal Gitea mirrors this branch, and SDK Makefiles pin specific commit hashes (`PKG_SOURCE_VERSION`). Force push would make those commits unreachable and break SDK builds.
 - Push to GenericWebUI-20260522 using cherry-pick (not direct push from GFiberWebUI-20260522), so each branch maintains its own commit history.
+- **NEVER use `git commit --amend` after a commit has been pushed.** Once pushed, any fix must be a **new commit** on top. Amending a pushed commit rewrites history and requires force push, which is forbidden on GenericWebUI-20260522. Only amend commits that have NOT been pushed yet.
 
 ## i18n
 
