@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'Die LAN-IP muss eine private Adresse sein (10.x.x.x, 172.16-31.x.x oder 192.168.x.x).',
     invalidLeaseTime: 'Die Lease-Zeit muss zwischen 1 und 604800 Sekunden (1 Sekunde bis 7 Tage) liegen.',
     invalidSubnetMask: 'Ungültiges Subnetzmaskenformat',
-    unreasonableSubnetMask: 'Die Subnetzmaske {mask} ist für IP {ip} ungeeignet. Vorgeschlagene Maske: {suggestion}. Diese Konfiguration kann Netzwerkprobleme verursachen und den Gerätezugriff verhindern.'
+    unreasonableSubnetMask: 'Die Subnetzmaske {mask} ist für IP {ip} ungeeignet. Vorgeschlagene Maske: {suggestion}. Diese Konfiguration kann Netzwerkprobleme verursachen und den Gerätezugriff verhindern.',
+    subnetConflict: 'Das LAN-Subnetz steht im Konflikt mit einem anderen Schnittstellen-Subnetz ({ip}/{mask}). Bitte verwenden Sie eine andere IP-Adresse oder Subnetzmaske, um Netzwerkprobleme zu vermeiden.'
   },
   serviceControl: {
     title: 'Dienststeuerung',

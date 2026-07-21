@@ -36,6 +36,7 @@ const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
         ListIPv6PrefixProtocol: Array.isArray(lanIp.ListIPv6PrefixProtocol) && lanIp.ListIPv6PrefixProtocol.length > 0
           ? lanIp.ListIPv6PrefixProtocol
           : DEFAULT_IPV6_PREFIX_PROTOCOL_LIST,
+        ...(Array.isArray(lanIp.IPv4SegmentList) ? { IPv4SegmentList: lanIp.IPv4SegmentList } : {}),
       },
       DHCPv4Setting: {
         Enable: toFlag01(dhcp.Enable, 1),
@@ -81,6 +82,7 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
           ListIPv4Protocol: DEFAULT_IPV4_PROTOCOL_LIST,
           ListIPv6Protocol: DEFAULT_IPV6_PROTOCOL_LIST,
           ListIPv6PrefixProtocol: DEFAULT_IPV6_PREFIX_PROTOCOL_LIST,
+          IPv4SegmentList: [['192.168.2.1', '255.255.255.0']],
         },
         DHCPv4Setting: {
           Enable: 1,

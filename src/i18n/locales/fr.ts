@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'L\'IP LAN doit être une adresse privée (10.x.x.x, 172.16-31.x.x ou 192.168.x.x).',
     invalidLeaseTime: 'La durée du bail doit être comprise entre 1 et 604800 secondes (1 seconde à 7 jours).',
     invalidSubnetMask: 'Format de masque de sous-réseau invalide',
-    unreasonableSubnetMask: 'Le masque de sous-réseau {mask} est inapproprié pour l\'IP {ip}. Masque suggéré : {suggestion}. Cette configuration peut causer des problèmes réseau et empêcher l\'accès au périphérique.'
+    unreasonableSubnetMask: 'Le masque de sous-réseau {mask} est inapproprié pour l\'IP {ip}. Masque suggéré : {suggestion}. Cette configuration peut causer des problèmes réseau et empêcher l\'accès au périphérique.',
+    subnetConflict: 'Le sous-réseau LAN est en conflit avec le sous-réseau d\'une autre interface ({ip}/{mask}). Veuillez utiliser une adresse IP ou un masque de sous-réseau différent pour éviter les problèmes réseau.'
   },
   serviceControl: {
     title: 'Contrôle des services',

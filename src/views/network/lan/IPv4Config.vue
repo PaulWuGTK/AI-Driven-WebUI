@@ -305,6 +305,31 @@ const validateLANSettings = (): boolean => {
     return false;
   }
 
+  // Check if LAN subnet conflicts with other interface subnets
+  if (isIPv4Static && LANIPSetting.IPv4SegmentList?.length) {
+    const ipToNumber = (ip: string): number => {
+      const parts = ip.split('.').map(p => parseInt(p, 10));
+      return ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+    };
+    const lanIpNum = ipToNumber(LANIPSetting.IPv4IPAddress);
+    const lanMaskNum = ipToNumber(LANIPSetting.SubnetMask);
+    const lanNetwork = (lanIpNum & lanMaskNum) >>> 0;
+
+    for (const [segIp, segMask] of LANIPSetting.IPv4SegmentList) {
+      if (!isValidIPv4(segIp) || !isValidSubnetMask(segMask)) continue;
+      const segIpNum = ipToNumber(segIp);
+      const segMaskNum = ipToNumber(segMask);
+      const segNetwork = (segIpNum & segMaskNum) >>> 0;
+
+      // Two subnets overlap if either network falls within the other's range
+      const narrowerMask = (lanMaskNum & segMaskNum) >>> 0;
+      if ((lanNetwork & narrowerMask) === (segNetwork & narrowerMask)) {
+        showErrorMessage(t('lanBasic.subnetConflict', { ip: segIp, mask: segMask }));
+        return false;
+      }
+    }
+  }
+
   // Check if subnet mask is reasonable for the given IP address
   if (isIPv4Static && !isReasonableSubnetMask(LANIPSetting.IPv4IPAddress, LANIPSetting.SubnetMask)) {
     const ipParts = LANIPSetting.IPv4IPAddress.split('.').map(p => parseInt(p, 10));

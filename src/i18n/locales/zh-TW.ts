@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'LAN IP 必須為私有位址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。',
     invalidLeaseTime: '租約時間必須介於 1 至 604800 秒之間（1 秒至 7 天）。',
     invalidSubnetMask: '無效的子網路遮罩格式',
-    unreasonableSubnetMask: 'IP {ip} 使用子網路遮罩 {mask} 不合理。建議使用：{suggestion}。此設定可能導致網路問題且無法存取設備。'
+    unreasonableSubnetMask: 'IP {ip} 使用子網路遮罩 {mask} 不合理。建議使用：{suggestion}。此設定可能導致網路問題且無法存取設備。',
+    subnetConflict: 'LAN 子網路與其他介面的子網路 ({ip}/{mask}) 衝突，請使用不同的 IP 位址或子網路遮罩以避免網路問題。'
   },
   serviceControl: {
     title: '服務控制',

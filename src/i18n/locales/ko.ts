@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'LAN IP는 사설 주소(10.x.x.x, 172.16-31.x.x 또는 192.168.x.x)여야 합니다.',
     invalidLeaseTime: '임대 시간은 1~604800초(1초~7일) 사이여야 합니다.',
     invalidSubnetMask: '잘못된 서브넷 마스크 형식',
-    unreasonableSubnetMask: 'IP {ip}에 대한 서브넷 마스크 {mask}가 부적절합니다. 권장 마스크: {suggestion}. 이 구성은 네트워크 문제를 일으키고 장치 액세스를 방해할 수 있습니다.'
+    unreasonableSubnetMask: 'IP {ip}에 대한 서브넷 마스크 {mask}가 부적절합니다. 권장 마스크: {suggestion}. 이 구성은 네트워크 문제를 일으키고 장치 액세스를 방해할 수 있습니다.',
+    subnetConflict: 'LAN 서브넷이 다른 인터페이스 서브넷 ({ip}/{mask})과 충돌합니다. 네트워크 문제를 방지하려면 다른 IP 주소 또는 서브넷 마스크를 사용하세요.'
   },
   serviceControl: {
     title: '서비스 제어',

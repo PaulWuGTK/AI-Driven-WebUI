@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'LAN IP must be a private address (10.x.x.x, 172.16-31.x.x, or 192.168.x.x).',
     invalidLeaseTime: 'Lease time must be between 1 and 604800 seconds (1 second to 7 days).',
     invalidSubnetMask: 'Invalid subnet mask format',
-    unreasonableSubnetMask: 'Unreasonable subnet mask {mask} for IP {ip}. Suggested mask: {suggestion}. This configuration may cause network issues and prevent device access.'
+    unreasonableSubnetMask: 'Unreasonable subnet mask {mask} for IP {ip}. Suggested mask: {suggestion}. This configuration may cause network issues and prevent device access.',
+    subnetConflict: 'The LAN subnet conflicts with another interface subnet ({ip}/{mask}). Please use a different IP address or subnet mask to avoid network issues.'
   },
   serviceControl: {
     title: 'Service Control',
