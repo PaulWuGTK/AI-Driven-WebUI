@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useQA } from '../../utils/qa';
 import { wizardApi } from '../../services/api/wizard';
+import { updateSidebarMenuLanguage } from '../../services/api/sidebarMenu';
 import { BaseToast } from '../../components/common';
 import { useAutoDismiss } from '../../composables/useAutoDismiss';
 import type { WizardData, WizardConfig, AgentSetupMode } from '../../types/wizard';
@@ -35,8 +36,24 @@ const availableLanguages = ref([
 
 const username = ref(localStorage.getItem('username') || 'admin');
 
-const handleLanguageChange = (event: Event) => {
+const i18nToBackendLang: Record<string, string> = {
+  'zh_TW': 'zh-TW',
+  'zh_CN': 'zh-CN',
+  'en': 'en',
+  'fr': 'fr',
+  'ja': 'ja',
+  'de': 'de',
+  'ko': 'ko'
+};
+
+const handleLanguageChange = async (event: Event) => {
   const newLocale = (event.target as HTMLSelectElement).value;
+  const backendLang = i18nToBackendLang[newLocale] || newLocale;
+  try {
+    await updateSidebarMenuLanguage(backendLang);
+  } catch (err) {
+    console.error('Failed to persist language setting:', err);
+  }
   locale.value = newLocale;
 };
 
