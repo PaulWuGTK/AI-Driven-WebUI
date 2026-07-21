@@ -233,6 +233,7 @@ onMounted(fetchMeshConfig);
   align-items: center;
   gap: 0.5rem;
   padding: 1rem;
+  margin-bottom: 1.5rem;
   background-color: #e3f2fd;
   border-left: 4px solid #0070BB;
   border-radius: 4px;
