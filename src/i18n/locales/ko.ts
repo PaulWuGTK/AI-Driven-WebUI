@@ -503,6 +503,7 @@ const translations = {
     commonSsidDisabled: '공통 SSID가 비활성화되어 있어 MLO 설정을 변경할 수 없습니다.',
     mloSecurityNoneHint: '참고: 보안 모드가 \'None\'으로 설정된 경우 MLO를 사용할 수 없습니다.',
     mloMeshWarning: '하나 이상의 AP(기본 또는 게스트)에서 MLO가 활성화되어 있습니다. Mesh 설정을 적용하면 자동으로 비활성화됩니다.',
+    meshPrivGroupHint: '참고: Mesh를 활성화하면 PRIV 인터페이스 그룹도 활성화됩니다.',
     ssidGroupName: 'SSID 그룹 이름',
     noSsidGroups: '사용 가능한 SSID 그룹이 없습니다',
     groupDefaultName: 'Home',

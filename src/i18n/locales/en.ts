@@ -503,6 +503,7 @@ const translations = {
     commonSsidDisabled: 'Common SSID is disabled – MLO settings cannot be changed.',
     mloSecurityNoneHint: 'Note: MLO is unavailable when security mode is set to \'None\'.',
     mloMeshWarning: 'MLO is currently enabled on one or more APs (Basic or Guest). It will be disabled automatically when applying Mesh settings.',
+    meshPrivGroupHint: 'Note: Enabling Mesh will also enable the PRIV interface group.',
     ssidGroupName: 'SSID Group Name',
     noSsidGroups: 'No SSID groups available',
     groupDefaultName: 'Home',

@@ -126,6 +126,11 @@ onMounted(fetchMeshConfig);
         />
       </div>
 
+      <div v-if="meshData.WlanMesh.MeshEnable === 1" class="info-banner" :data-testid="qa('wireless-mesh-config-priv-hint')">
+        <span class="material-icons">info</span>
+        <span>{{ t('wireless.meshPrivGroupHint') }}</span>
+      </div>
+
       <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-ssid-section')">
         <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.backhaulSsidConfig') }}</div>
         <div class="ssid-content" :data-testid="qa('wireless-mesh-config-ssid-content')">

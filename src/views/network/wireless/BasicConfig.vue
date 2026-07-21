@@ -667,16 +667,16 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="field">
+            <div class="field" v-if="commonSsidConfig?.SecurityMode !== 'None'">
               <div class="switch-label" :data-testid="qa('wlan-basic-multi-mlo-enable')">
                 <span>{{ t('wireless.mloEnable') }}</span>
                 <BaseSwitch
                   v-model="draft.MLOEnable"
                   class="switch-toggle"
-                  :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 || commonSsidConfig?.SecurityMode === 'None' }"
+                  :class="{ 'is-disabled': Number(draft.CommonSSIDEnable) === 0 }"
                   :true-value="1"
                   :false-value="0"
-                  :disabled="Number(draft.CommonSSIDEnable) === 0 || commonSsidConfig?.SecurityMode === 'None'"
+                  :disabled="Number(draft.CommonSSIDEnable) === 0"
                   :data-testid="qa('wlan-basic-multi-mlo-enable-toggle')"
                   :slider-data-testid="qa('wlan-basic-multi-mlo-enable-toggle-slider')"
                 />
@@ -684,9 +684,6 @@ onMounted(() => {
 
               <div v-if="Number(draft.CommonSSIDEnable) === 0" class="hint">
                 {{ t('wireless.commonSsidDisabled') }}
-              </div>
-              <div v-else-if="commonSsidConfig?.SecurityMode === 'None'" class="hint">
-                {{ t('wireless.mloSecurityNoneHint') }}
               </div>
             </div>
           </div>
