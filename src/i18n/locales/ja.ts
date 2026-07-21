@@ -737,7 +737,8 @@ const translations = {
     invalidPrivateIp: 'LAN IPはプライベートアドレス（10.x.x.x、172.16-31.x.x、または192.168.x.x）である必要があります。',
     invalidLeaseTime: 'リース時間は1〜604800秒（1秒〜7日）の範囲で指定してください。',
     invalidSubnetMask: '無効なサブネットマスク形式',
-    unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。'
+    unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。',
+    subnetConflict: 'LANサブネットが他のインターフェースのサブネット ({ip}/{mask}) と競合しています。ネットワーク問題を避けるため、別のIPアドレスまたはサブネットマスクを使用してください。'
   },
   serviceControl: {
     title: 'サービス制御',

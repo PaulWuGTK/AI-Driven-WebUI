@@ -11,6 +11,7 @@ export interface LANIPSetting {
   ListIPv4Protocol?: string[];
   ListIPv6Protocol?: string[];
   ListIPv6PrefixProtocol?: string[];
+  IPv4SegmentList?: [string, string][];
 }
 
 export interface DHCPv4Setting {
