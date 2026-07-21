@@ -226,6 +226,7 @@ onMounted(fetchMacFiltering);
             type="text"
             v-model="newComment"
             class="form-input"
+            maxlength="30"
             :placeholder="t('generalMacFiltering.commentPlaceholder')"
             :data-testid="qa('general-mac-comment-field')"
           />
