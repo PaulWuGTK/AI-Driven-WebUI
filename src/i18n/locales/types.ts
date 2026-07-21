@@ -1001,6 +1001,7 @@ export interface Translations {
     delete: string;
     enable: string;
     enabled: string;
+    disabled: string;
     loading: string;
     yes: string;
     no: string;

@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'IPv6 상태',
     status: '상태',
     action: '작업',
-    enabled: '활성화됨'
+    enabled: '활성화됨',
+    disabled: '비활성화됨'
   },
   basicBridgeLan: {
     title: 'LAN 설정',
@@ -1583,7 +1584,8 @@ const translations = {
     localPortStart: '로컬 포트 범위(시작)',
     localPortEnd: '로컬 포트 범위(끝)',
     comment: '메모',
-    externalPortRangeInvalid: '종료 포트는 시작 포트보다 크거나 같아야 합니다.'
+    externalPortRangeInvalid: '종료 포트는 시작 포트보다 크거나 같아야 합니다.',
+    maxRulesReached: '포트 포워딩 규칙이 최대 수에 도달했습니다. 새 규칙을 추가하려면 기존 규칙을 삭제하세요.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP 필터링 사용',

@@ -29,5 +29,6 @@ export interface PortForwardingApiResponse {
   PortForwarding: {
     OK?: string;
     NOK?: string;
+    errCode?: number;
   };
 }

@@ -199,7 +199,8 @@ const translations = {
     ipv6Status: 'IPv6-Status',
     status: 'Status',
     action: 'Aktion',
-    enabled: 'Aktiviert'
+    enabled: 'Aktiviert',
+    disabled: 'Deaktiviert'
   },
   basicBridgeLan: {
     title: 'LAN-Einstellungen',
@@ -1583,7 +1584,8 @@ const translations = {
     localPortStart: 'Lokaler Portbereich (Start)',
     localPortEnd: 'Lokaler Portbereich (Ende)',
     comment: 'Kommentar',
-    externalPortRangeInvalid: 'Der Endport muss größer oder gleich dem Startport sein.'
+    externalPortRangeInvalid: 'Der Endport muss größer oder gleich dem Startport sein.',
+    maxRulesReached: 'Die maximale Anzahl an Portweiterleitungsregeln wurde erreicht. Bitte löschen Sie eine vorhandene Regel, bevor Sie eine neue hinzufügen.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP-Filterung aktivieren',
