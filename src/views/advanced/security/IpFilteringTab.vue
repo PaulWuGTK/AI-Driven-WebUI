@@ -106,6 +106,7 @@
           :placeholder="$t('ipFiltering.placeholder')"
           class="form-textarea"
           rows="3"
+          maxlength="30"
           :data-testid="qa('ip-filtering-comment-textarea')"
         ></textarea>
       </div>
