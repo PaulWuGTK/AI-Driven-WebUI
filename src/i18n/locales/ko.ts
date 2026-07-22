@@ -800,7 +800,10 @@ const translations = {
     bridge: '브리지',
     applyingModeConfig: '{mode} 모드 설정을 적용하는 중입니다...',
     applyingDescription: '동작 모드 설정을 적용하고 있습니다. 잠시만 기다려 주세요.',
-    applyingDurationHint: '이 작업은 최대 {seconds}초 정도 소요될 수 있습니다.'
+    applyingDurationHint: '이 작업은 최대 {seconds}초 정도 소요될 수 있습니다.',
+    modeSwitchTitle: '{mode} 모드로 전환되었습니다',
+    gatewayAccessInfo: '장치가 현재 게이트웨이 모드입니다. PC를 LAN 포트에 연결한 후 {ip}에서 장치에 접속하세요.',
+    nonGatewayAccessInfo: '장치 모드가 변경되었습니다. PC를 상위 라우터의 네트워크에 연결한 후 DHCP로 할당된 IP 또는 대체 IP {ip}에서 장치에 접속하세요.'
   },
   ssh: {
     title: 'SSH',

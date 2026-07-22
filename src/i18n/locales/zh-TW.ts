@@ -800,7 +800,10 @@ const translations = {
     bridge: '橋接',
     applyingModeConfig: '正在套用 {mode} 模式設定...',
     applyingDescription: '正在套用運作模式設定，請稍候。',
-    applyingDurationHint: '此流程最多可能需要 {seconds} 秒。'
+    applyingDurationHint: '此流程最多可能需要 {seconds} 秒。',
+    modeSwitchTitle: '已切換至 {mode} 模式',
+    gatewayAccessInfo: '裝置目前為閘道模式。請將電腦連接至 LAN 埠，然後透過 {ip} 存取裝置。',
+    nonGatewayAccessInfo: '裝置模式已變更。請將電腦連接至上行路由器的網路，然後透過 DHCP 分配的 IP 或備用 IP {ip} 存取裝置。'
   },
   ssh: {
     title: 'SSH',

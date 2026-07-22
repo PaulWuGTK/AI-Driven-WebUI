@@ -800,7 +800,10 @@ const translations = {
     bridge: 'ブリッジ',
     applyingModeConfig: '「{mode}」モード設定を適用しています...',
     applyingDescription: '動作モード設定を適用しています。しばらくお待ちください。',
-    applyingDurationHint: 'この処理には最大 {seconds} 秒かかる場合があります。'
+    applyingDurationHint: 'この処理には最大 {seconds} 秒かかる場合があります。',
+    modeSwitchTitle: '{mode} モードに切り替えました',
+    gatewayAccessInfo: 'デバイスは現在ゲートウェイモードです。PCをLANポートに接続し、{ip} からデバイスにアクセスしてください。',
+    nonGatewayAccessInfo: 'デバイスモードが変更されました。PCを上流ルーターのネットワークに接続し、DHCPで割り当てられたIPまたは代替IP {ip} からデバイスにアクセスしてください。'
   },
   ssh: {
     title: 'SSH',

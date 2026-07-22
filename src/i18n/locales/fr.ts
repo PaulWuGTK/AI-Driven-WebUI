@@ -800,7 +800,10 @@ const translations = {
     bridge: 'Pont',
     applyingModeConfig: 'Application de la configuration du mode {mode}...',
     applyingDescription: 'Veuillez patienter pendant l’application de la configuration du mode de fonctionnement.',
-    applyingDurationHint: 'Ce processus peut prendre jusqu’à {seconds} secondes.'
+    applyingDurationHint: 'Ce processus peut prendre jusqu\'à {seconds} secondes.',
+    modeSwitchTitle: 'Basculé en mode {mode}',
+    gatewayAccessInfo: 'L\'appareil est maintenant en mode passerelle. Veuillez connecter votre PC au port LAN, puis accéder à l\'appareil via {ip}.',
+    nonGatewayAccessInfo: 'Le mode de l\'appareil a été modifié. Veuillez connecter votre PC au réseau du routeur en amont, puis accéder à l\'appareil via l\'IP attribuée par DHCP ou l\'IP de secours {ip}.'
   },
   ssh: {
     title: 'SSH',

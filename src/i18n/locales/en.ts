@@ -861,7 +861,10 @@ const translations = {
     bridge: 'Bridge',
     applyingModeConfig: 'Applying {mode} mode configuration...',
     applyingDescription: 'Please wait while the operation mode configuration is being applied.',
-    applyingDurationHint: 'This process may take up to {seconds} seconds.'
+    applyingDurationHint: 'This process may take up to {seconds} seconds.',
+    modeSwitchTitle: 'Switched to {mode} Mode',
+    gatewayAccessInfo: 'The device is now in Gateway mode. Please connect your PC to the LAN port, then access the device at {ip}.',
+    nonGatewayAccessInfo: 'The device mode has been changed. Please connect your PC to the uplink router\'s network, then access the device via DHCP-assigned IP or fallback IP {ip}.'
   },
   ssh: {
     title: 'SSH',

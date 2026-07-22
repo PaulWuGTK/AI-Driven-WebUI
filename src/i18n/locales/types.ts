@@ -554,6 +554,9 @@ export interface Translations {
     gateway: string;
     extender: string;
     bridge: string;
+    modeSwitchTitle: string;
+    gatewayAccessInfo: string;
+    nonGatewayAccessInfo: string;
   };
   ssh: {
     title: string;
