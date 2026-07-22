@@ -292,7 +292,6 @@ export interface Translations {
     mloMeshDisabled: string;
     meshMloDisabled: string;
     mloMeshWarning: string;
-    meshPrivGroupHint: string;
   };
   guest: {
     title: string;
