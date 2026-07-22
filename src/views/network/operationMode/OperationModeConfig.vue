@@ -20,6 +20,8 @@ const overlayDescription1 = computed(() => t('operationMode.applyingDescription'
 const overlayDescription2 = computed(() =>
   t('operationMode.applyingDurationHint', { seconds: overlayDurationSeconds })
 );
+const showModeSwitchNotice = ref(false);
+const switchedMode = ref('');
 
 const fetchOperationMode = async () => {
   loading.value = true;
@@ -37,23 +39,18 @@ const fetchOperationMode = async () => {
   }
 };
 
-const redirectToLogin = () => {
-  const timestamp = new Date().getTime();
-  let targetUrl = '';
-
-  if (selectedMode.value === 'Gateway') {
-    targetUrl = `http://192.168.1.1/login?t=${timestamp}`;
-  } else if (selectedMode.value === 'Bridge' || selectedMode.value === 'Extender') {
-    targetUrl = `http://192.168.1.100/login?t=${timestamp}`;
-  }
-
-  if (targetUrl) {
-    window.location.href = targetUrl;
-  }
+const getAccessIp = (mode: string): string => {
+  if (mode === 'Gateway') return '192.168.1.1';
+  return '172.16.123.100';
 };
 
 const handleCountdownComplete = () => {
-  redirectToLogin();
+  showCountdown.value = false;
+  showModeSwitchNotice.value = true;
+};
+
+const dismissModeSwitchNotice = () => {
+  showModeSwitchNotice.value = false;
 };
 
 const handleSubmit = async () => {
@@ -67,6 +64,7 @@ const handleSubmit = async () => {
     };
     await updateOperationMode(updateData);
 
+    switchedMode.value = selectedMode.value;
     countdownMessage.value = t('operationMode.applyingModeConfig', { mode: selectedMode.value });
     showCountdown.value = true;
   } catch (err) {
@@ -138,6 +136,27 @@ onMounted(fetchOperationMode);
       :duration="overlayDurationSeconds"
       @complete="handleCountdownComplete"
     />
+
+    <!-- Mode Switch Notice -->
+    <div v-if="showModeSwitchNotice" class="mode-switch-overlay">
+      <div class="mode-switch-card">
+        <div class="mode-switch-icon">
+          <span class="material-icons">info</span>
+        </div>
+        <h3 class="mode-switch-title">
+          {{ t('operationMode.modeSwitchTitle', { mode: switchedMode }) }}
+        </h3>
+        <p class="mode-switch-message">
+          {{ switchedMode === 'Gateway'
+            ? t('operationMode.gatewayAccessInfo', { ip: getAccessIp('Gateway') })
+            : t('operationMode.nonGatewayAccessInfo', { ip: getAccessIp(switchedMode) })
+          }}
+        </p>
+        <button class="btn btn-primary mode-switch-dismiss" @click="dismissModeSwitchNotice">
+          {{ t('common.confirm') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -192,6 +211,55 @@ select:disabled {
   background-color: white;
   border-radius: 4px;
   box-shadow: var(--shadow-sm);
+}
+
+.mode-switch-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.mode-switch-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mode-switch-icon {
+  margin-bottom: 1rem;
+}
+
+.mode-switch-icon .material-icons {
+  font-size: 48px;
+  color: #0078d4;
+}
+
+.mode-switch-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.mode-switch-message {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.mode-switch-dismiss {
+  padding: 0.5rem 2rem;
 }
 
 @media (max-width: 768px) {

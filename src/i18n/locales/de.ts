@@ -800,7 +800,10 @@ const translations = {
     bridge: 'Bridge',
     applyingModeConfig: 'Konfiguration des Modus {mode} wird angewendet...',
     applyingDescription: 'Bitte warten Sie, während die Betriebsmodus-Konfiguration angewendet wird.',
-    applyingDurationHint: 'Dieser Vorgang kann bis zu {seconds} Sekunden dauern.'
+    applyingDurationHint: 'Dieser Vorgang kann bis zu {seconds} Sekunden dauern.',
+    modeSwitchTitle: 'Auf {mode}-Modus umgeschaltet',
+    gatewayAccessInfo: 'Das Gerät befindet sich jetzt im Gateway-Modus. Bitte verbinden Sie Ihren PC mit dem LAN-Port und greifen Sie über {ip} auf das Gerät zu.',
+    nonGatewayAccessInfo: 'Der Gerätemodus wurde geändert. Bitte verbinden Sie Ihren PC mit dem Netzwerk des Upstream-Routers und greifen Sie über die per DHCP zugewiesene IP oder die Ausweich-IP {ip} auf das Gerät zu.'
   },
   ssh: {
     title: 'SSH',

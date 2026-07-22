@@ -800,7 +800,10 @@ const translations = {
     bridge: '桥接',
     applyingModeConfig: '正在应用{mode}模式配置...',
     applyingDescription: '正在应用运行模式配置，请稍候。',
-    applyingDurationHint: '该过程最多可能需要 {seconds} 秒。'
+    applyingDurationHint: '该过程最多可能需要 {seconds} 秒。',
+    modeSwitchTitle: '已切换至 {mode} 模式',
+    gatewayAccessInfo: '设备目前为网关模式。请将电脑连接至 LAN 端口，然后通过 {ip} 访问设备。',
+    nonGatewayAccessInfo: '设备模式已更改。请将电脑连接至上行路由器的网络，然后通过 DHCP 分配的 IP 或备用 IP {ip} 访问设备。'
   },
   ssh: {
     title: 'SSH',
