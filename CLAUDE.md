@@ -42,3 +42,39 @@ ssh root@192.168.1.1 "cp -a /tmp/<filename>.lua <target-path> && chmod 755 <targ
 - Type definitions in `src/i18n/locales/types.ts`
 - Always update all 7 locale files + types.ts when adding/modifying i18n keys
 
+## Jira API
+
+**Base URL:** `https://gemteks-jira.atlassian.net`
+**API Version:** `/rest/api/3/` (NOT v2)
+**Authentication:** Uses environment variables
+
+### Environment Variables (already configured)
+
+```bash
+JIRA_BASE_URL="https://gemteks-jira.atlassian.net"
+JIRA_USER_EMAIL="paul_wu@gemteks.com"
+JIRA_API_TOKEN="ATATT3xFfG..." # Atlassian API token
+```
+
+### Fetch Single Issue
+
+```bash
+curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
+  "$JIRA_BASE_URL/rest/api/3/issue/PCSDW1-XXX" | \
+  python -c "import sys, json; data = json.load(sys.stdin); print(json.dumps({'key': data['key'], 'summary': data['fields']['summary'], 'description': data['fields']['description'], 'status': data['fields']['status']['name']}, indent=2, ensure_ascii=False))"
+```
+
+### Query Multiple Issues
+
+```bash
+curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
+  "$JIRA_BASE_URL/rest/api/3/search?jql=project=PCSDW1+AND+status+not+in+(Done)&maxResults=20&fields=summary,status,assignee" | \
+  python -c "import sys, json; data = json.load(sys.stdin); [print(f\"{issue['key']}: {issue['fields']['summary']}\") for issue in data['issues']]"
+```
+
+### Important Notes
+
+- Use `/rest/api/3/` (not `/rest/api/2/`)
+- For JQL queries, use `status not in (Done)` (NOT `status != Done`)
+- The old internal Jira URL `jira.gemteksolutions.com` is deprecated
+
