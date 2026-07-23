@@ -69,7 +69,7 @@
             v-model="newEntry.IPStart"
             :placeholder="ipVersion === 'IPv4' ? '192.168.1.1' : '2001:db8::1'"
             class="form-input"
-            :class="{ 'input-error': errorMessage }"
+            :class="{ 'input-error': errorField === 'start' || errorField === 'both' }"
             :data-testid="qa('ip-filtering-ip-start-input')"
           >
         </div>
@@ -80,7 +80,7 @@
             v-model="newEntry.IPEnd"
             :placeholder="ipVersion === 'IPv4' ? '192.168.1.10' : '2001:db8::10'"
             class="form-input"
-            :class="{ 'input-error': errorMessage }"
+            :class="{ 'input-error': errorField === 'end' || errorField === 'both' }"
             :data-testid="qa('ip-filtering-ip-end-input')"
           >
         </div>
@@ -216,6 +216,7 @@ const newEntry = ref<Omit<IpFilterEntry, 'No'>>({
 });
 
 const errorMessage = ref<string>('');
+const errorField = ref<'start' | 'end' | 'both' | null>(null);
 const originalConfig = ref<IpFilteringConfig | null>(null);
 const successMessage = ref('');
 const errorToastMessage = ref('');
@@ -282,29 +283,69 @@ const onEnableChange = (value?: string | number | boolean) => {
     ipVersion.value = 'IPv4';
   }
   errorMessage.value = '';
+  errorField.value = null;
 };
 
 const addEntry = () => {
   errorMessage.value = '';
+  errorField.value = null;
 
   if (!newEntry.value.IPStart || !newEntry.value.IPEnd) {
     errorMessage.value = t('ipFiltering.ipAddressRequired');
+    if (!newEntry.value.IPStart && !newEntry.value.IPEnd) {
+      errorField.value = 'both';
+    } else if (!newEntry.value.IPStart) {
+      errorField.value = 'start';
+    } else {
+      errorField.value = 'end';
+    }
     return;
   }
 
   // Validate IP format based on selected version
   if (ipVersion.value === 'IPv4') {
-    if (!isValidIPv4(newEntry.value.IPStart) || !isValidIPv4(newEntry.value.IPEnd)) {
+    const startValid = isValidIPv4(newEntry.value.IPStart);
+    const endValid = isValidIPv4(newEntry.value.IPEnd);
+
+    if (!startValid || !endValid) {
       errorMessage.value = t('ipFiltering.invalidIpv4Format');
+      if (!startValid && !endValid) {
+        errorField.value = 'both';
+      } else if (!startValid) {
+        errorField.value = 'start';
+      } else {
+        errorField.value = 'end';
+      }
       return;
     }
-    if (isReservedIPv4(newEntry.value.IPStart) || isReservedIPv4(newEntry.value.IPEnd)) {
+
+    const startReserved = isReservedIPv4(newEntry.value.IPStart);
+    const endReserved = isReservedIPv4(newEntry.value.IPEnd);
+
+    if (startReserved || endReserved) {
       errorMessage.value = t('ipFiltering.reservedIpNotAllowed');
+      if (startReserved && endReserved) {
+        errorField.value = 'both';
+      } else if (startReserved) {
+        errorField.value = 'start';
+      } else {
+        errorField.value = 'end';
+      }
       return;
     }
   } else {
-    if (!isValidIPv6(newEntry.value.IPStart) || !isValidIPv6(newEntry.value.IPEnd)) {
+    const startValid = isValidIPv6(newEntry.value.IPStart);
+    const endValid = isValidIPv6(newEntry.value.IPEnd);
+
+    if (!startValid || !endValid) {
       errorMessage.value = t('ipFiltering.invalidIpv6Format');
+      if (!startValid && !endValid) {
+        errorField.value = 'both';
+      } else if (!startValid) {
+        errorField.value = 'start';
+      } else {
+        errorField.value = 'end';
+      }
       return;
     }
   }
@@ -338,6 +379,8 @@ const addEntry = () => {
     Protocol: 'Both',
     Comment: ''
   };
+  errorMessage.value = '';
+  errorField.value = null;
 };
 
 const deleteEntry = (no: number) => {
@@ -381,16 +424,19 @@ const cancel = () => {
     Comment: ''
   };
   errorMessage.value = '';
+  errorField.value = null;
 };
 
 watch(ipVersion, () => {
   errorMessage.value = '';
+  errorField.value = null;
   newEntry.value.IPStart = '';
   newEntry.value.IPEnd = '';
 });
 
 watch([() => newEntry.value.IPStart, () => newEntry.value.IPEnd], () => {
   errorMessage.value = '';
+  errorField.value = null;
 });
 
 onMounted(() => {
