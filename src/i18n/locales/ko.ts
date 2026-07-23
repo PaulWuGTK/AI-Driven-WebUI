@@ -759,7 +759,10 @@ const translations = {
     enable: 'DMZ 활성화',
     ipAddress: 'IP 주소',
     ipAddressHint: 'DMZ 호스트의 IP 주소를 입력하세요',
-    description: 'DMZ(비무장 지대)를 사용하면 로컬 네트워크의 컴퓨터를 인터넷에 완전히 노출할 수 있습니다. NAT 환경에서 문제가 발생하는 온라인 게임이나 화상 회의 애플리케이션에 유용합니다.'
+    description: 'DMZ(비무장 지대)를 사용하면 로컬 네트워크의 컴퓨터를 인터넷에 완전히 노출할 수 있습니다. NAT 환경에서 문제가 발생하는 온라인 게임이나 화상 회의 애플리케이션에 유용합니다.',
+    ipRequired: 'DMZ를 활성화할 때 DMZ IP 주소를 입력해야 합니다.',
+    invalidIpFormat: 'IP 주소 형식이 잘못되었습니다. 유효한 IPv4 주소를 입력하세요 (예: 192.168.1.100).',
+    ipNotInLanSubnet: 'DMZ IP 주소는 LAN 서브넷 범위 내에 있어야 합니다.'
   },
   ddns: {
     title: 'DDNS 설정',

@@ -759,7 +759,10 @@ const translations = {
     enable: '启用 DMZ',
     ipAddress: 'IP 地址',
     ipAddressHint: '请输入 DMZ 主机的 IP 地址',
-    description: 'DMZ（隔离区）可让本地网络中的一台计算机完全暴露在 Internet 中。当在线游戏或视频会议由于 NAT 无法正常工作时，此功能非常有用。'
+    description: 'DMZ（隔离区）可让本地网络中的一台计算机完全暴露在 Internet 中。当在线游戏或视频会议由于 NAT 无法正常工作时，此功能非常有用。',
+    ipRequired: '启用 DMZ 时必须输入 DMZ IP 地址。',
+    invalidIpFormat: 'IP 地址格式无效，请输入有效的 IPv4 地址（例如：192.168.1.100）。',
+    ipNotInLanSubnet: 'DMZ IP 地址必须位于 LAN 子网范围内。'
   },
   ddns: {
     title: 'DDNS设置',

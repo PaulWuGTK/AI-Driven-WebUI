@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DmzResponse } from '../../../types/dmz';
 import { getDmz, updateDmz } from '../../../services/api/dmz';
+import { getLanBasic } from '../../../services/api/lanBasic';
 import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -12,6 +13,8 @@ const dmzData = ref<DmzResponse | null>(null);
 const loading = ref(false);
 const showSuccess = ref(false);
 const error = ref<string | null>(null);
+const lanIpAddress = ref<string>('');
+const lanSubnetMask = ref<string>('');
 const toFlag01 = (value: unknown): 0 | 1 => {
   return value === 1 || value === '1' || value === true ? 1 : 0;
 };
@@ -29,17 +32,64 @@ const fetchDmz = async () => {
   }
 };
 
-const isValidIPv4 = (ip: string): boolean => {
-  if (ip === "0.0.0.0") return true;
+const fetchLanInfo = async () => {
+  try {
+    const lanData = await getLanBasic();
+    if (lanData?.LanBasic?.LANIPSetting) {
+      lanIpAddress.value = lanData.LanBasic.LANIPSetting.IPv4IPAddress || '';
+      lanSubnetMask.value = lanData.LanBasic.LANIPSetting.SubnetMask || '';
+    }
+  } catch (err) {
+    console.error('Error fetching LAN info:', err);
+    // Fallback: allow validation to pass if LAN info unavailable
+  }
+};
 
+const isValidIPv4 = (ip: string): boolean => {
   const ipv4Regex = /^(\d{1,3}\.){3}\d{1,3}$/;
   if (!ipv4Regex.test(ip)) return false;
 
   const parts = ip.split('.');
-  return parts.every(part => {
+  if (!parts.every(part => {
     const num = parseInt(part, 10);
     return num >= 0 && num <= 255;
-  });
+  })) {
+    return false;
+  }
+
+  // Reject invalid DMZ addresses
+  if (ip === '0.0.0.0') return false;
+  if (ip === '255.255.255.255') return false;
+
+  // Reject addresses starting with 0 or 255
+  const firstOctet = parseInt(parts[0], 10);
+  if (firstOctet === 0 || firstOctet === 255) return false;
+
+  return true;
+};
+
+const isInLanSubnet = (dmzIp: string): boolean => {
+  if (!lanIpAddress.value || !lanSubnetMask.value) {
+    return true; // Fallback: allow if LAN info unavailable
+  }
+
+  const ipToNumber = (ip: string): number => {
+    const parts = ip.split('.').map(p => parseInt(p, 10));
+    return ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+  };
+
+  try {
+    const dmzIpNum = ipToNumber(dmzIp);
+    const lanIpNum = ipToNumber(lanIpAddress.value);
+    const maskNum = ipToNumber(lanSubnetMask.value);
+
+    const dmzNetwork = (dmzIpNum & maskNum) >>> 0;
+    const lanNetwork = (lanIpNum & maskNum) >>> 0;
+
+    return dmzNetwork === lanNetwork;
+  } catch (e) {
+    return true; // Fallback: allow if calculation fails
+  }
 };
 
 const showSuccessMessage = () => {
@@ -49,15 +99,36 @@ const showSuccessMessage = () => {
   }, 3000);
 };
 
+const handleIPInput = () => {
+  // Clear error when user starts editing
+  if (error.value) {
+    error.value = null;
+  }
+};
+
 const handleSubmit = async () => {
   if (!dmzData.value) return;
 
   error.value = null;
 
   const enabled = toFlag01(dmzData.value.AdvancedDmz.Enable) === 1;
-  if (enabled && !isValidIPv4(dmzData.value.AdvancedDmz.IPAddress)) {
-    error.value = 'Invalid IP address format';
-    return;
+  const ipAddress = dmzData.value.AdvancedDmz.IPAddress.trim();
+
+  if (enabled) {
+    if (!ipAddress) {
+      error.value = t('dmz.ipRequired');
+      return;
+    }
+
+    if (!isValidIPv4(ipAddress)) {
+      error.value = t('dmz.invalidIpFormat');
+      return;
+    }
+
+    if (!isInLanSubnet(ipAddress)) {
+      error.value = t('dmz.ipNotInLanSubnet');
+      return;
+    }
   }
 
   loading.value = true;
@@ -65,7 +136,7 @@ const handleSubmit = async () => {
     await updateDmz({
       AdvancedDmz: {
         Enable: toFlag01(dmzData.value.AdvancedDmz.Enable),
-        IPAddress: enabled ? dmzData.value.AdvancedDmz.IPAddress : "0.0.0.0"
+        IPAddress: ipAddress || "0.0.0.0"  // Preserve IP, use 0.0.0.0 only if empty
       }
     });
     showSuccessMessage();
@@ -78,7 +149,9 @@ const handleSubmit = async () => {
   }
 };
 
-onMounted(fetchDmz);
+onMounted(async () => {
+  await Promise.all([fetchDmz(), fetchLanInfo()]);
+});
 </script>
 
 <template>
@@ -114,7 +187,8 @@ onMounted(fetchDmz);
           <input
             type="text"
             v-model="dmzData.AdvancedDmz.IPAddress"
-            placeholder="192.168.101.168"
+            @input="handleIPInput"
+            placeholder="192.168.1.100"
             :data-testid="qa('dmz-ip-input')"
           >
         </div>
