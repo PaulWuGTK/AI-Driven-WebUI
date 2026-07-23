@@ -26,3 +26,13 @@ dist-ssr
 # Backend / SDK files (committed separately to company SDK repo)
 *.lua
 *.odl
+
+# Build artifacts
+tsconfig.*.tsbuildinfo
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Documentation files
+*.pptx
+*.ppt
