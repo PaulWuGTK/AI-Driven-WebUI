@@ -429,6 +429,15 @@ const validateLANSettings = (): boolean => {
 const handleApply = async () => {
   if (!lanData.value) return;
 
+  // Clean up DNS servers string: remove leading/trailing commas and spaces, collapse multiple commas
+  if (lanData.value.LanBasic.DHCPv4Setting.DNSServers) {
+    lanData.value.LanBasic.DHCPv4Setting.DNSServers = lanData.value.LanBasic.DHCPv4Setting.DNSServers
+      .split(',')
+      .map(ip => ip.trim())
+      .filter(ip => ip)
+      .join(',');
+  }
+
   if (!validateLANSettings()) {
     return;
   }
