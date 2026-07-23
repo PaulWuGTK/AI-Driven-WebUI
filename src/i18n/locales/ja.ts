@@ -759,7 +759,10 @@ const translations = {
     enable: 'DMZ を有効化',
     ipAddress: 'IP アドレス',
     ipAddressHint: 'DMZホストのIPアドレスを入力してください',
-    description: 'DMZ（非武装地帯）を有効にすると、ローカルネットワーク上のコンピューターをインターネットに完全公開できます。NAT を介すると動作しにくいオンラインゲームやビデオ会議アプリに便利です。'
+    description: 'DMZ（非武装地帯）を有効にすると、ローカルネットワーク上のコンピューターをインターネットに完全公開できます。NAT を介すると動作しにくいオンラインゲームやビデオ会議アプリに便利です。',
+    ipRequired: 'DMZ を有効にする場合、DMZ IP アドレスの入力が必要です。',
+    invalidIpFormat: 'IP アドレスの形式が無効です。有効な IPv4 アドレスを入力してください（例：192.168.1.100）。',
+    ipNotInLanSubnet: 'DMZ IP アドレスは LAN サブネット範囲内である必要があります。'
   },
   ddns: {
     title: 'DDNS設定',

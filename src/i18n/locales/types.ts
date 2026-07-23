@@ -515,7 +515,11 @@ export interface Translations {
     title: string;
     enable: string;
     ipAddress: string;
+    ipAddressHint: string;
     description: string;
+    ipRequired: string;
+    invalidIpFormat: string;
+    ipNotInLanSubnet: string;
   };
   ddns: {
     title: string;
