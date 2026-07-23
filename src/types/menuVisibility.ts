@@ -20,6 +20,7 @@ export interface MenuVisibilityRule {
     Extender: boolean;
   };
   roles?: RoleVisibilityRule;
+  qaOnly?: boolean;
 }
 
 export interface MenuVisibilityRules {
@@ -165,7 +166,8 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   },
   'basicSetup.wlan.wirelessExtender': {
     netLayoutTypes: { prpl: false, genix: true, cht: true },
-    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: true }
+    operationModes: { Init: false, Gateway: true, Bridge: false, Extender: true },
+    qaOnly: true
   },
   'basicSetup.wlan.wirelessMacFilter': {
     netLayoutTypes: { prpl: false, genix: true, cht: false },
@@ -371,7 +373,8 @@ export function isMenuVisible(
   netLayoutType: NetLayoutType,
   operationMode: OperationMode,
   features?: { cellular?: boolean; matter?: boolean; thread?: boolean },
-  userRole: UserRole = 'super'
+  userRole: UserRole = 'super',
+  isQAMode: boolean = false
 ): boolean {
   const rule = menuVisibilityRules[menuKey];
 
@@ -381,6 +384,11 @@ export function isMenuVisible(
   }
 
   if (menuKey.includes('cellular') && features?.cellular === false) {
+    return false;
+  }
+
+  // Check if menu item is QA-only
+  if (rule.qaOnly && !isQAMode) {
     return false;
   }
 

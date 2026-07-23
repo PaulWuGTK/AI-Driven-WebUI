@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth';
 import { useQA } from '../utils/qa';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
 
-const { qa, slug } = useQA();
+const { qa, slug, isQAMode } = useQA();
 
 const router = useRouter();
 const route = useRoute();
@@ -225,7 +225,8 @@ const filterSubItems = (subItems: SubMenuItem[]): SubMenuItem[] => {
         netLayoutType.value,
         operationMode.value,
         features.value,
-        userRole.value
+        userRole.value,
+        isQAMode.value
       );
       return visible;
     })
@@ -237,7 +238,8 @@ const filterSubItems = (subItems: SubMenuItem[]): SubMenuItem[] => {
             netLayoutType.value,
             operationMode.value,
             features.value,
-            userRole.value
+            userRole.value,
+            isQAMode.value
           )
         );
         return {
@@ -257,7 +259,8 @@ const filterMenuItems = () => {
         netLayoutType.value,
         operationMode.value,
         features.value,
-        userRole.value
+        userRole.value,
+        isQAMode.value
       );
     })
     .map(item => {
@@ -282,7 +285,8 @@ const filterMenuItems = () => {
       netLayoutType.value,
       operationMode.value,
       features.value,
-      userRole.value
+      userRole.value,
+      isQAMode.value
     );
 
     if (xperienceControlVisible) {
