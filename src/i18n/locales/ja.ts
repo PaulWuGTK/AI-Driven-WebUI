@@ -1773,6 +1773,41 @@ const translations = {
     confirmDeleteDnsRoute: 'この DNS ルートを削除してもよろしいですか？',
     loadDnsRoutesFailed: 'DNS ルートの読み込みに失敗しました。',
     saveDnsRoutesFailed: 'DNS ルートの保存に失敗しました。'
+  },
+  systemDebug: {
+    title: 'システムデバッグ情報',
+    description: 'デバッグ用のシステム情報を取得（非表示ページ、__qa=1 が必要）',
+    category: 'カテゴリ',
+    fetchInfo: '情報を取得',
+    loading: '読み込み中...',
+    clear: 'クリア',
+    copy: 'クリップボードにコピー',
+    response: 'レスポンス',
+    timestamp: 'タイムスタンプ',
+    error: 'エラー',
+    success: '成功',
+    failed: '失敗',
+    dataTitle: 'システムデータ',
+    placeholder: 'カテゴリを選択して「情報を取得」をクリックしてデータを取得してください',
+    fetchError: 'システム情報の取得に失敗しました',
+    categories: {
+      system: 'システム',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'メッシュ',
+      firewall: 'ファイアウォール',
+      routing: 'ルーティング'
+    },
+    categoryDesc: {
+      system: '一般的なシステム情報とステータス',
+      wan: 'WAN インターフェースの設定とステータス',
+      lan: 'LAN インターフェースの設定とステータス',
+      wlan: 'WLAN の設定とステータス',
+      mesh: 'メッシュネットワーク情報',
+      firewall: 'ファイアウォールルールとステータス',
+      routing: 'ルーティングテーブルと設定'
+    }
   }
 };
 

@@ -1773,6 +1773,41 @@ const translations = {
     confirmDeleteDnsRoute: '이 DNS 라우트를 삭제하시겠습니까?',
     loadDnsRoutesFailed: 'DNS 라우트를 불러오지 못했습니다.',
     saveDnsRoutesFailed: 'DNS 라우트를 저장하지 못했습니다.'
+  },
+  systemDebug: {
+    title: '시스템 디버그 정보',
+    description: '디버깅 목적으로 시스템 정보 가져오기（숨김 페이지, __qa=1 필요）',
+    category: '카테고리',
+    fetchInfo: '정보 가져오기',
+    loading: '로딩 중...',
+    clear: '지우기',
+    copy: '클립보드에 복사',
+    response: '응답',
+    timestamp: '타임스탬프',
+    error: '오류',
+    success: '성공',
+    failed: '실패',
+    dataTitle: '시스템 데이터',
+    placeholder: '카테고리를 선택하고 "정보 가져오기"를 클릭하여 데이터를 검색하세요',
+    fetchError: '시스템 정보를 가져오지 못했습니다',
+    categories: {
+      system: '시스템',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: '메시',
+      firewall: '방화벽',
+      routing: '라우팅'
+    },
+    categoryDesc: {
+      system: '일반 시스템 정보 및 상태',
+      wan: 'WAN 인터페이스 구성 및 상태',
+      lan: 'LAN 인터페이스 구성 및 상태',
+      wlan: 'WLAN 구성 및 상태',
+      mesh: '메시 네트워크 정보',
+      firewall: '방화벽 규칙 및 상태',
+      routing: '라우팅 테이블 및 구성'
+    }
   }
 };
 
