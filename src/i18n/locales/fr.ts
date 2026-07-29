@@ -1772,7 +1772,42 @@ const translations = {
     maxDnsRoutesReached: 'Un maximum de 20 routes DNS est autorisé',
     confirmDeleteDnsRoute: 'Voulez-vous vraiment supprimer cette route DNS ?',
     loadDnsRoutesFailed: 'Échec du chargement des routes DNS.',
-    saveDnsRoutesFailed: 'Échec de l’enregistrement des routes DNS.'
+    saveDnsRoutesFailed: "Échec de l'enregistrement des routes DNS."
+  },
+  systemDebug: {
+    title: 'Informations de débogage système',
+    description: 'Récupérer les informations système à des fins de débogage (Page cachée, nécessite __qa=1)',
+    category: 'Catégorie',
+    fetchInfo: 'Récupérer les informations',
+    loading: 'Chargement...',
+    clear: 'Effacer',
+    copy: 'Copier dans le presse-papiers',
+    response: 'Réponse',
+    timestamp: 'Horodatage',
+    error: 'Erreur',
+    success: 'Succès',
+    failed: 'Échec',
+    dataTitle: 'Données système',
+    placeholder: 'Sélectionnez une catégorie et cliquez sur "Récupérer les informations" pour récupérer les données',
+    fetchError: 'Échec de la récupération des informations système',
+    categories: {
+      system: 'Système',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'Maillage',
+      firewall: 'Pare-feu',
+      routing: 'Routage'
+    },
+    categoryDesc: {
+      system: 'Informations et état généraux du système',
+      wan: 'Configuration et état de l\'interface WAN',
+      lan: 'Configuration et état de l\'interface LAN',
+      wlan: 'Configuration et état WLAN',
+      mesh: 'Informations sur le réseau maillé',
+      firewall: 'Règles et état du pare-feu',
+      routing: 'Table de routage et configuration'
+    }
   }
 };
 

@@ -1773,6 +1773,41 @@ const translations = {
     confirmDeleteDnsRoute: '确定要删除此 DNS 路由吗？',
     loadDnsRoutesFailed: '加载 DNS 路由失败。',
     saveDnsRoutesFailed: '保存 DNS 路由失败。'
+  },
+  systemDebug: {
+    title: '系统调试信息',
+    description: '获取系统信息用于调试（隐藏页面，需要 __qa=1）',
+    category: '类别',
+    fetchInfo: '获取信息',
+    loading: '加载中...',
+    clear: '清除',
+    copy: '复制到剪贴板',
+    response: '响应',
+    timestamp: '时间戳',
+    error: '错误',
+    success: '成功',
+    failed: '失败',
+    dataTitle: '系统数据',
+    placeholder: '选择类别并点击"获取信息"以检索数据',
+    fetchError: '获取系统信息失败',
+    categories: {
+      system: '系统',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'Mesh',
+      firewall: '防火墙',
+      routing: '路由'
+    },
+    categoryDesc: {
+      system: '常规系统信息和状态',
+      wan: 'WAN 接口配置和状态',
+      lan: 'LAN 接口配置和状态',
+      wlan: 'WLAN 配置和状态',
+      mesh: 'Mesh 网络信息',
+      firewall: '防火墙规则和状态',
+      routing: '路由表和配置'
+    }
   }
 };
 

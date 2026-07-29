@@ -1773,6 +1773,34 @@ const translations = {
     confirmDeleteDnsRoute: 'Möchten Sie diese DNS-Route wirklich löschen?',
     loadDnsRoutesFailed: 'DNS-Routen konnten nicht geladen werden.',
     saveDnsRoutesFailed: 'DNS-Routen konnten nicht gespeichert werden.'
+  },
+  systemDebug: {
+    title: 'System-Debug',
+    description: 'Systeminformationen zu Diagnose- und Debugging-Zwecken abrufen',
+    fetchInfo: 'Debug-Informationen abrufen',
+    selectCategory: 'Kategorie auswählen',
+    fetch: 'Abrufen',
+    response: 'Antwort',
+    noDataYet: 'Noch keine Daten',
+    selectCategoryAndFetch: 'Wählen Sie eine Kategorie und klicken Sie auf Abrufen, um Informationen zu laden',
+    categories: {
+      system: 'System',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'Mesh',
+      firewall: 'Firewall',
+      routing: 'Routing'
+    },
+    categoryDescriptions: {
+      system: 'Allgemeine Systeminformationen und Status',
+      wan: 'WAN-Schnittstellenkonfiguration und Status',
+      lan: 'LAN-Schnittstellenkonfiguration und verbundene Geräte',
+      wlan: 'WLAN-Konfiguration und Clientinformationen',
+      mesh: 'Mesh-Netzwerktopologie und Knotenstatus',
+      firewall: 'Firewall-Regeln und Sicherheitsstatus',
+      routing: 'Routing-Tabelle und Netzwerkpfade'
+    }
   }
 };
 
