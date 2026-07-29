@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { getSidebarMenu } from '../services/api/sidebarMenu';
 import { AuthService } from '../services/auth';
 import { isMenuVisible, type NetLayoutType, type OperationMode, type UserRole } from '../types/menuVisibility';
+import { useQA } from '../utils/qa';
 
 export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
   const isDevelopment = import.meta.env.DEV;
@@ -9,6 +10,7 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
   const netLayoutType = ref<NetLayoutType>('prpl');
   const userRole = ref<UserRole>(defaultRole);
   const features = ref<Record<string, boolean>>({});
+  const { isQAMode } = useQA();
 
   const fetchMenuContext = async () => {
     const auth = AuthService.getInstance();
@@ -40,7 +42,8 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
       netLayoutType.value,
       operationMode.value,
       features.value,
-      userRole.value
+      userRole.value,
+      isQAMode.value
     );
   };
 

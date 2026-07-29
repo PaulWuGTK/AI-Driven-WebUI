@@ -78,7 +78,8 @@ const translations = {
     matterEevsecontrol : 'EevseControl',
     matterQrscanner : 'QR Scanner',
     matterQuickSetup: 'Quick Setup',
-    matterManualPairing: 'Manual Pairing'
+    matterManualPairing: 'Manual Pairing',
+    systemDebug: 'System Debug'
   },
   header: {
     account: 'Account',
@@ -1773,6 +1774,41 @@ const translations = {
     confirmDeleteDnsRoute: 'Are you sure you want to delete this DNS route?',
     loadDnsRoutesFailed: 'Failed to load DNS routes.',
     saveDnsRoutesFailed: 'Failed to save DNS routes.'
+  },
+  systemDebug: {
+    title: 'System Debug Information',
+    description: 'Fetch system information for debugging purposes (Hidden page, requires __qa=1)',
+    category: 'Category',
+    fetchInfo: 'Fetch Information',
+    loading: 'Loading...',
+    clear: 'Clear',
+    copy: 'Copy to Clipboard',
+    response: 'Response',
+    timestamp: 'Timestamp',
+    error: 'Error',
+    success: 'Success',
+    failed: 'Failed',
+    dataTitle: 'System Data',
+    placeholder: 'Select a category and click "Fetch Information" to retrieve data',
+    fetchError: 'Failed to fetch system information',
+    categories: {
+      system: 'System',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'Mesh',
+      firewall: 'Firewall',
+      routing: 'Routing'
+    },
+    categoryDesc: {
+      system: 'General system information and status',
+      wan: 'WAN interface configuration and status',
+      lan: 'LAN interface configuration and status',
+      wlan: 'WLAN configuration and status',
+      mesh: 'Mesh network information',
+      firewall: 'Firewall rules and status',
+      routing: 'Routing table and configuration'
+    }
   }
 };
 

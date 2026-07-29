@@ -20,6 +20,7 @@ export * from './staticRoute';
 export * from './statistics';
 export * from './statusBridgeLan';
 export * from './statusWanCht';
+export * from './systemDebug';
 export * from './timezone';
 export * from './tr471';
 export * from './upnp';

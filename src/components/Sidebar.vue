@@ -49,6 +49,7 @@ interface MenuItem {
   menuKey: string;
   path?: string;
   subItems?: SubMenuItem[];
+  requiresQA?: boolean;
 }
 
 
@@ -212,6 +213,14 @@ const baseMenuItems: MenuItem[] = [
       { name: 'XperienceControl', path: '/application/xperience-control', translationKey: 'menu.xperienceControl', menuKey: 'speedtest.xperienceControl' },
       { name: 'TR-471', path: '/system/diagnostics/tr471', translationKey: 'menu.tr471', menuKey: 'speedtest.tr471' }
     ]
+  },
+  {
+    name: 'System Debug',
+    icon: statusIcon,
+    path: '/hidden/systemdebug',
+    translationKey: 'menu.systemDebug',
+    menuKey: 'systemdebug',
+    requiresQA: true
   }
 ];
 
@@ -406,6 +415,10 @@ watch(() => locale.value, async (newLocale) => {
       router.push(`/login?t=${Date.now()}`);
     }
   }
+});
+
+watch(isQAMode, () => {
+  filterMenuItems();
 });
 
 watch(() => route.path, (newPath) => {

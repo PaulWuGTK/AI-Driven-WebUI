@@ -336,6 +336,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   'speedtest.tr471': {
     netLayoutTypes: { prpl: false, genix: false, cht: false },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
+  'systemdebug': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true },
+    qaOnly: true
   }
 };
 

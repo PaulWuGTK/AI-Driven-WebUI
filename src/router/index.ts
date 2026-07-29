@@ -136,6 +136,16 @@ const canAccessRouteByVisibility = async (path: string, auth: AuthService): Prom
 
 const requireAuth = async (to: any, from: any, next: any) => {
   const auth = AuthService.getInstance();
+
+  // Check for QA mode bypass - allow access with __qa=1 regardless of authentication
+  const isQAMode = to.query.__qa === '1';
+  if (isQAMode) {
+    // Store QA mode in localStorage via qa.ts utility
+    localStorage.setItem('qa:enabled', '1');
+    next();
+    return;
+  }
+
   if (!auth.isAuthenticated() && to.path !== '/login') {
     cachedSidebarAccess = null;
     next('/login');
@@ -683,6 +693,13 @@ const router = createRouter({
       path: '/iot/matter',
       name: 'IotMatter',
       component: () => import('../views/iot/matter/MatterDashboard.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/hidden/systemdebug',
+      name: 'SystemDebug',
+      component: () => import('../views/hidden/SystemDebug.vue'),
+      meta: { requiresQA: true },
       beforeEnter: requireAuth
     },
     {
