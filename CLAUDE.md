@@ -42,6 +42,56 @@ ssh root@192.168.1.1 "cp -a /tmp/<filename>.lua <target-path> && chmod 755 <targ
 - Type definitions in `src/i18n/locales/types.ts`
 - Always update all 7 locale files + types.ts when adding/modifying i18n keys
 
+## Session Management & Plan Cleanup
+
+### Token Usage Monitoring
+
+- Monitor token usage from system warnings: `Token usage: X/200000; Y remaining`
+- **Alert threshold**: 85% usage (170,000/200,000 tokens)
+- When reaching 85%, proactively remind user and offer to clean up
+
+### Plan File Cleanup
+
+**CRITICAL**: Always clean up plan files when tasks are completed to prevent confusion after session resumption.
+
+#### When to clean up:
+1. **Task completed**: Immediately after finishing implementation and testing
+2. **Before session compression**: When approaching 85% token usage
+3. **On explicit completion**: When user confirms task is done
+
+#### How to clean up:
+```bash
+# Remove completed plan file
+rm -f ~/.claude/plans/<plan-file-name>.md
+
+# Clear todo list if no active tasks
+# Use TodoWrite tool with empty array: []
+```
+
+#### Best practices:
+- **After task completion**: Ask user "該任務已完成，是否移除對應的 plan 檔案？"
+- **Session resumption**: If seeing old plan files, ask user first before automatically resuming
+- **Never assume**: Don't automatically continue plans after session resumption - always confirm with user
+- **Clean todo list**: Clear or update TodoWrite after completing tasks
+
+### Session Resumption Protocol
+
+When continuing from a previous session:
+
+1. **Check current context**: Don't automatically resume old plans
+2. **Confirm with user**: Ask what the current task is
+3. **Clean up old plans**: Remove completed plan files proactively
+4. **Verify todo list**: Ensure TodoWrite reflects current work, not old tasks
+
+**Example prompt after resumption:**
+```
+對話已恢復。發現舊的 plan 檔案 [XXX]，
+請問是要：
+1. 繼續之前的任務
+2. 開始新的任務（並清理舊 plan）
+3. 其他
+```
+
 ## Jira API
 
 **Base URL:** `https://gemteks-jira.atlassian.net`

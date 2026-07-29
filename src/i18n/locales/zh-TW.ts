@@ -78,7 +78,8 @@ const translations = {
     matterEevsecontrol: 'EEVSE 控制',
     matterQrscanner: 'QR 掃描器',
     matterQuickSetup: '快速設定',
-    matterManualPairing: '手動配對'
+    matterManualPairing: '手動配對',
+    systemDebug: '系統除錯'
   },
   header: {
     account: '帳號',
@@ -1773,6 +1774,41 @@ const translations = {
     confirmDeleteDnsRoute: '確定要刪除此 DNS 路由嗎？',
     loadDnsRoutesFailed: '載入 DNS 路由失敗。',
     saveDnsRoutesFailed: '儲存 DNS 路由失敗。'
+  },
+  systemDebug: {
+    title: '系統除錯資訊',
+    description: '擷取系統資訊用於除錯（隱藏頁面，需要 __qa=1）',
+    category: '類別',
+    fetchInfo: '擷取資訊',
+    loading: '載入中...',
+    clear: '清除',
+    copy: '複製到剪貼簿',
+    response: '回應',
+    timestamp: '時間戳記',
+    error: '錯誤',
+    success: '成功',
+    failed: '失敗',
+    dataTitle: '系統資料',
+    placeholder: '選擇類別並點擊「擷取資訊」以取得資料',
+    fetchError: '無法擷取系統資訊',
+    categories: {
+      system: '系統',
+      wan: 'WAN',
+      lan: 'LAN',
+      wlan: 'WLAN',
+      mesh: 'Mesh',
+      firewall: '防火牆',
+      routing: '路由'
+    },
+    categoryDesc: {
+      system: '一般系統資訊與狀態',
+      wan: 'WAN 介面設定與狀態',
+      lan: 'LAN 介面設定與狀態',
+      wlan: 'WLAN 設定與狀態',
+      mesh: 'Mesh 網路資訊',
+      firewall: '防火牆規則與狀態',
+      routing: '路由表與設定'
+    }
   }
 };
 
