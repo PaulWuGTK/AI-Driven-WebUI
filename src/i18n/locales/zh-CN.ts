@@ -734,7 +734,7 @@ const translations = {
     redirectNow: '立即跳转',
     invalidLanIP: '無效的 LAN IP 地址格式',
     invalidPrivateIp: 'LAN IP 必须为私有地址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。',
-    invalidLeaseTime: '租约时间必须在 1 至 604800 秒之间（1 秒至 7 天）。',
+    invalidLeaseTime: '租约时间必须在 120 至 604800 秒之间（2 分钟至 7 天）。',
     invalidSubnetMask: '無效的子网掩码格式',
     unreasonableSubnetMask: 'IP {ip} 使用子网掩码 {mask} 不合理。建議使用：{suggestion}。此配置可能導致網絡問題且無法訪問設備。',
     subnetConflict: 'LAN 子网与其他接口的子网 ({ip}/{mask}) 冲突，请使用不同的 IP 地址或子网掩码以避免网络问题。'
@@ -1807,6 +1807,31 @@ const translations = {
       mesh: 'Mesh 网络信息',
       firewall: '防火墙规则和状态',
       routing: '路由表和配置'
+    },
+    downloadTitle: '下载调试信息',
+    downloadDescription: '从设备生成并下载调试信息文件。"全部"选项会生成完整的 tar.gz 压缩包。',
+    downloadCategory: '下载类别',
+    downloadBtn: '下载',
+    downloadFailed: '无法下载调试信息',
+    downloadComplete: '下载成功：{filename}（{size} KB）',
+    downloading: '生成中...',
+    downloadCategories: {
+      all: '全部 (tar.gz)',
+      network: '网络',
+      wifi: 'WiFi',
+      process: '进程',
+      memory: '内存',
+      log: '日志',
+      service: '服务'
+    },
+    downloadCategoryDesc: {
+      all: '包含所有信息的完整调试压缩包',
+      network: '网络配置和状态',
+      wifi: 'WiFi 配置和已连接客户端',
+      process: '运行中的进程信息',
+      memory: '内存和存储使用详情',
+      log: '内核和系统日志',
+      service: '服务调试信息'
     }
   }
 };

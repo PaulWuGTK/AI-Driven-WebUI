@@ -735,7 +735,7 @@ const translations = {
     redirectNow: '立即重新導向',
     invalidLanIP: '無效的 LAN IP 位址格式',
     invalidPrivateIp: 'LAN IP 必須為私有位址（10.x.x.x、172.16-31.x.x 或 192.168.x.x）。',
-    invalidLeaseTime: '租約時間必須介於 1 至 604800 秒之間（1 秒至 7 天）。',
+    invalidLeaseTime: '租約時間必須介於 120 至 604800 秒之間（2 分鐘至 7 天）。',
     invalidSubnetMask: '無效的子網路遮罩格式',
     unreasonableSubnetMask: 'IP {ip} 使用子網路遮罩 {mask} 不合理。建議使用：{suggestion}。此設定可能導致網路問題且無法存取設備。',
     subnetConflict: 'LAN 子網路與其他介面的子網路 ({ip}/{mask}) 衝突，請使用不同的 IP 位址或子網路遮罩以避免網路問題。'
@@ -1808,6 +1808,31 @@ const translations = {
       mesh: 'Mesh 網路資訊',
       firewall: '防火牆規則與狀態',
       routing: '路由表與設定'
+    },
+    downloadTitle: '下載除錯資訊',
+    downloadDescription: '從裝置產生並下載除錯資訊檔案。「全部」選項會產生完整的 tar.gz 壓縮檔。',
+    downloadCategory: '下載類別',
+    downloadBtn: '下載',
+    downloadFailed: '無法下載除錯資訊',
+    downloadComplete: '下載成功：{filename}（{size} KB）',
+    downloading: '產生中...',
+    downloadCategories: {
+      all: '全部 (tar.gz)',
+      network: '網路',
+      wifi: 'WiFi',
+      process: '程序',
+      memory: '記憶體',
+      log: '日誌',
+      service: '服務'
+    },
+    downloadCategoryDesc: {
+      all: '包含所有資訊的完整除錯壓縮檔',
+      network: '網路設定與狀態',
+      wifi: 'WiFi 設定與已連線客戶端',
+      process: '執行中的程序資訊',
+      memory: '記憶體與儲存空間使用詳情',
+      log: '核心與系統日誌',
+      service: '服務除錯資訊'
     }
   }
 };

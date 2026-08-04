@@ -46,7 +46,7 @@ const fetchLoginConfig = async () => {
     if (isDevelopment) {
       data = getMockLoginConfig();
     } else {
-      const response = await fetch('/API/info?list=Login');
+      const response = await fetch('/API/info?list=Login', { cache: 'no-store' });
       if (!response.ok) return;
       data = await response.json();
     }
@@ -86,7 +86,7 @@ const fetchCaptcha = async (clearError = false) => {
       await new Promise(resolve => setTimeout(resolve, 300));
       data = getMockCaptcha();
     } else {
-      const response = await fetch('/API/info?list=LoginCaptcha');
+      const response = await fetch('/API/info?list=LoginCaptcha', { cache: 'no-store' });
       if (!response.ok) {
         throw new Error(`Failed to fetch captcha: ${response.status}`);
       }

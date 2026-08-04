@@ -735,7 +735,7 @@ const translations = {
     redirectNow: 'Redirect Now',
     invalidLanIP: 'Invalid LAN IP address format',
     invalidPrivateIp: 'LAN IP must be a private address (10.x.x.x, 172.16-31.x.x, or 192.168.x.x).',
-    invalidLeaseTime: 'Lease time must be between 1 and 604800 seconds (1 second to 7 days).',
+    invalidLeaseTime: 'Lease time must be between 120 and 604800 seconds (2 minutes to 7 days).',
     invalidSubnetMask: 'Invalid subnet mask format',
     unreasonableSubnetMask: 'Unreasonable subnet mask {mask} for IP {ip}. Suggested mask: {suggestion}. This configuration may cause network issues and prevent device access.',
     subnetConflict: 'The LAN subnet conflicts with another interface subnet ({ip}/{mask}). Please use a different IP address or subnet mask to avoid network issues.'
@@ -1808,6 +1808,31 @@ const translations = {
       mesh: 'Mesh network information',
       firewall: 'Firewall rules and status',
       routing: 'Routing table and configuration'
+    },
+    downloadTitle: 'Download Debug Information',
+    downloadDescription: 'Generate and download a debug information file from the device. The "All" option generates a comprehensive tar.gz archive.',
+    downloadCategory: 'Download Category',
+    downloadBtn: 'Download',
+    downloadFailed: 'Failed to download debug information',
+    downloadComplete: 'Downloaded successfully: {filename} ({size} KB)',
+    downloading: 'Generating...',
+    downloadCategories: {
+      all: 'All (tar.gz)',
+      network: 'Network',
+      wifi: 'WiFi',
+      process: 'Process',
+      memory: 'Memory',
+      log: 'Log',
+      service: 'Service'
+    },
+    downloadCategoryDesc: {
+      all: 'Complete debug archive with all information',
+      network: 'Network configuration and status',
+      wifi: 'WiFi configuration and connected clients',
+      process: 'Running processes information',
+      memory: 'Memory and flash usage details',
+      log: 'Kernel and system logs',
+      service: 'Services debug information'
     }
   }
 };

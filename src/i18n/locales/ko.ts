@@ -734,7 +734,7 @@ const translations = {
     redirectNow: '지금 바로 이동',
     invalidLanIP: '잘못된 LAN IP 주소 형식',
     invalidPrivateIp: 'LAN IP는 사설 주소(10.x.x.x, 172.16-31.x.x 또는 192.168.x.x)여야 합니다.',
-    invalidLeaseTime: '임대 시간은 1~604800초(1초~7일) 사이여야 합니다.',
+    invalidLeaseTime: '임대 시간은 120~604800초(2분~7일) 사이여야 합니다.',
     invalidSubnetMask: '잘못된 서브넷 마스크 형식',
     unreasonableSubnetMask: 'IP {ip}에 대한 서브넷 마스크 {mask}가 부적절합니다. 권장 마스크: {suggestion}. 이 구성은 네트워크 문제를 일으키고 장치 액세스를 방해할 수 있습니다.',
     subnetConflict: 'LAN 서브넷이 다른 인터페이스 서브넷 ({ip}/{mask})과 충돌합니다. 네트워크 문제를 방지하려면 다른 IP 주소 또는 서브넷 마스크를 사용하세요.'
@@ -1807,6 +1807,31 @@ const translations = {
       mesh: '메시 네트워크 정보',
       firewall: '방화벽 규칙 및 상태',
       routing: '라우팅 테이블 및 구성'
+    },
+    downloadTitle: '디버그 정보 다운로드',
+    downloadDescription: '장치에서 디버그 정보 파일을 생성하고 다운로드합니다. "전체" 옵션은 완전한 tar.gz 아카이브를 생성합니다.',
+    downloadCategory: '다운로드 카테고리',
+    downloadBtn: '다운로드',
+    downloadFailed: '디버그 정보 다운로드에 실패했습니다',
+    downloadComplete: '다운로드 완료: {filename} ({size} KB)',
+    downloading: '생성 중...',
+    downloadCategories: {
+      all: '전체 (tar.gz)',
+      network: '네트워크',
+      wifi: 'WiFi',
+      process: '프로세스',
+      memory: '메모리',
+      log: '로그',
+      service: '서비스'
+    },
+    downloadCategoryDesc: {
+      all: '모든 정보를 포함하는 전체 디버그 아카이브',
+      network: '네트워크 구성 및 상태',
+      wifi: 'WiFi 구성 및 연결된 클라이언트',
+      process: '실행 중인 프로세스 정보',
+      memory: '메모리 및 저장소 사용 정보',
+      log: '커널 및 시스템 로그',
+      service: '서비스 디버그 정보'
     }
   }
 };
