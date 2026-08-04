@@ -734,7 +734,7 @@ const translations = {
     redirectNow: '今すぐリダイレクト',
     invalidLanIP: '無効な LAN IP アドレス形式',
     invalidPrivateIp: 'LAN IPはプライベートアドレス（10.x.x.x、172.16-31.x.x、または192.168.x.x）である必要があります。',
-    invalidLeaseTime: 'リース時間は1〜604800秒（1秒〜7日）の範囲で指定してください。',
+    invalidLeaseTime: 'リース時間は120〜604800秒（2分〜7日）の範囲で指定してください。',
     invalidSubnetMask: '無効なサブネットマスク形式',
     unreasonableSubnetMask: 'IP {ip} にサブネットマスク {mask} は不適切です。推奨マスク: {suggestion}。この設定はネットワーク問題を引き起こし、デバイスへのアクセスを妨げる可能性があります。',
     subnetConflict: 'LANサブネットが他のインターフェースのサブネット ({ip}/{mask}) と競合しています。ネットワーク問題を避けるため、別のIPアドレスまたはサブネットマスクを使用してください。'
@@ -1807,6 +1807,31 @@ const translations = {
       mesh: 'メッシュネットワーク情報',
       firewall: 'ファイアウォールルールとステータス',
       routing: 'ルーティングテーブルと設定'
+    },
+    downloadTitle: 'デバッグ情報のダウンロード',
+    downloadDescription: 'デバイスからデバッグ情報ファイルを生成してダウンロードします。「すべて」オプションは完全な tar.gz アーカイブを生成します。',
+    downloadCategory: 'ダウンロードカテゴリ',
+    downloadBtn: 'ダウンロード',
+    downloadFailed: 'デバッグ情報のダウンロードに失敗しました',
+    downloadComplete: 'ダウンロード完了：{filename}（{size} KB）',
+    downloading: '生成中...',
+    downloadCategories: {
+      all: 'すべて (tar.gz)',
+      network: 'ネットワーク',
+      wifi: 'WiFi',
+      process: 'プロセス',
+      memory: 'メモリ',
+      log: 'ログ',
+      service: 'サービス'
+    },
+    downloadCategoryDesc: {
+      all: 'すべての情報を含む完全なデバッグアーカイブ',
+      network: 'ネットワーク設定とステータス',
+      wifi: 'WiFi 設定と接続クライアント',
+      process: '実行中のプロセス情報',
+      memory: 'メモリとストレージの使用状況',
+      log: 'カーネルとシステムログ',
+      service: 'サービスデバッグ情報'
     }
   }
 };

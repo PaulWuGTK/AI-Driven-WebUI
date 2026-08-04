@@ -353,8 +353,8 @@ const validateLANSettings = (): boolean => {
 
   // Validate DHCP settings if enabled
   if (DHCPv4Setting.Enable) {
-    // Validate Lease Time is a positive integer
-    if (!DHCPv4Setting.LeaseTime || DHCPv4Setting.LeaseTime < 1 || DHCPv4Setting.LeaseTime > 604800) {
+    // Validate Lease Time range (backend minimum is 120 seconds)
+    if (!DHCPv4Setting.LeaseTime || DHCPv4Setting.LeaseTime < 120 || DHCPv4Setting.LeaseTime > 604800) {
       showErrorMessage(t('lanBasic.invalidLeaseTime'));
       return false;
     }
@@ -815,7 +815,7 @@ onMounted(fetchLanBasic);
                 :data-testid="qa('ipv4-configuration-dhcp-lease-time-input')"
                 v-model="lanData.LanBasic.DHCPv4Setting.LeaseTime"
                 :disabled="!lanData.LanBasic.DHCPv4Setting.Enable"
-                min="1"
+                min="120"
                 max="604800"
               />
               <span class="unit" :data-testid="qa('ipv4-configuration-dhcp-lease-time-unit')">{{ t('lanBasic.seconds') }}</span>

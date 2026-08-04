@@ -734,7 +734,7 @@ const translations = {
     redirectNow: 'Rediriger maintenant',
     invalidLanIP: 'Format d\'adresse IP LAN invalide',
     invalidPrivateIp: 'L\'IP LAN doit être une adresse privée (10.x.x.x, 172.16-31.x.x ou 192.168.x.x).',
-    invalidLeaseTime: 'La durée du bail doit être comprise entre 1 et 604800 secondes (1 seconde à 7 jours).',
+    invalidLeaseTime: 'La durée du bail doit être comprise entre 120 et 604800 secondes (2 minutes à 7 jours).',
     invalidSubnetMask: 'Format de masque de sous-réseau invalide',
     unreasonableSubnetMask: 'Le masque de sous-réseau {mask} est inapproprié pour l\'IP {ip}. Masque suggéré : {suggestion}. Cette configuration peut causer des problèmes réseau et empêcher l\'accès au périphérique.',
     subnetConflict: 'Le sous-réseau LAN est en conflit avec le sous-réseau d\'une autre interface ({ip}/{mask}). Veuillez utiliser une adresse IP ou un masque de sous-réseau différent pour éviter les problèmes réseau.'
@@ -1807,6 +1807,31 @@ const translations = {
       mesh: 'Informations sur le réseau maillé',
       firewall: 'Règles et état du pare-feu',
       routing: 'Table de routage et configuration'
+    },
+    downloadTitle: "Télécharger les informations de débogage",
+    downloadDescription: "Générer et télécharger un fichier d'informations de débogage depuis l'appareil. L'option « Tout » génère une archive tar.gz complète.",
+    downloadCategory: 'Catégorie de téléchargement',
+    downloadBtn: 'Télécharger',
+    downloadFailed: "Échec du téléchargement des informations de débogage",
+    downloadComplete: 'Téléchargement réussi : {filename} ({size} Ko)',
+    downloading: 'Génération...',
+    downloadCategories: {
+      all: 'Tout (tar.gz)',
+      network: 'Réseau',
+      wifi: 'WiFi',
+      process: 'Processus',
+      memory: 'Mémoire',
+      log: 'Journal',
+      service: 'Service'
+    },
+    downloadCategoryDesc: {
+      all: "Archive de débogage complète avec toutes les informations",
+      network: 'Configuration et état du réseau',
+      wifi: 'Configuration WiFi et clients connectés',
+      process: 'Informations sur les processus en cours',
+      memory: "Détails d'utilisation de la mémoire et du stockage",
+      log: 'Journaux du noyau et du système',
+      service: 'Informations de débogage des services'
     }
   }
 };

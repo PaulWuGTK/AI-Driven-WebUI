@@ -734,7 +734,7 @@ const translations = {
     redirectNow: 'Jetzt weiterleiten',
     invalidLanIP: 'Ungültiges LAN-IP-Adressformat',
     invalidPrivateIp: 'Die LAN-IP muss eine private Adresse sein (10.x.x.x, 172.16-31.x.x oder 192.168.x.x).',
-    invalidLeaseTime: 'Die Lease-Zeit muss zwischen 1 und 604800 Sekunden (1 Sekunde bis 7 Tage) liegen.',
+    invalidLeaseTime: 'Die Lease-Zeit muss zwischen 120 und 604800 Sekunden (2 Minuten bis 7 Tage) liegen.',
     invalidSubnetMask: 'Ungültiges Subnetzmaskenformat',
     unreasonableSubnetMask: 'Die Subnetzmaske {mask} ist für IP {ip} ungeeignet. Vorgeschlagene Maske: {suggestion}. Diese Konfiguration kann Netzwerkprobleme verursachen und den Gerätezugriff verhindern.',
     subnetConflict: 'Das LAN-Subnetz steht im Konflikt mit einem anderen Schnittstellen-Subnetz ({ip}/{mask}). Bitte verwenden Sie eine andere IP-Adresse oder Subnetzmaske, um Netzwerkprobleme zu vermeiden.'
@@ -1800,6 +1800,31 @@ const translations = {
       mesh: 'Mesh-Netzwerktopologie und Knotenstatus',
       firewall: 'Firewall-Regeln und Sicherheitsstatus',
       routing: 'Routing-Tabelle und Netzwerkpfade'
+    },
+    downloadTitle: 'Debug-Informationen herunterladen',
+    downloadDescription: 'Generieren und Herunterladen einer Debug-Informationsdatei vom Gerät. Die Option „Alle" erzeugt ein vollständiges tar.gz-Archiv.',
+    downloadCategory: 'Download-Kategorie',
+    downloadBtn: 'Herunterladen',
+    downloadFailed: 'Debug-Informationen konnten nicht heruntergeladen werden',
+    downloadComplete: 'Download erfolgreich: {filename} ({size} KB)',
+    downloading: 'Wird generiert...',
+    downloadCategories: {
+      all: 'Alle (tar.gz)',
+      network: 'Netzwerk',
+      wifi: 'WLAN',
+      process: 'Prozesse',
+      memory: 'Speicher',
+      log: 'Protokoll',
+      service: 'Dienste'
+    },
+    downloadCategoryDesc: {
+      all: 'Vollständiges Debug-Archiv mit allen Informationen',
+      network: 'Netzwerkkonfiguration und Status',
+      wifi: 'WLAN-Konfiguration und verbundene Clients',
+      process: 'Informationen zu laufenden Prozessen',
+      memory: 'Details zur Speicher- und Flash-Nutzung',
+      log: 'Kernel- und Systemprotokolle',
+      service: 'Service-Debug-Informationen'
     }
   }
 };
