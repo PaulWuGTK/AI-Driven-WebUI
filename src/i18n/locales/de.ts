@@ -762,7 +762,9 @@ const translations = {
     description: 'DMZ (Demilitarisierte Zone) ermöglicht es, einen Rechner Ihres lokalen Netzwerks vollständig dem Internet auszusetzen. Nützlich für Online-Gaming oder Videokonferenzen, die hinter NAT Probleme haben.',
     ipRequired: 'DMZ-IP-Adresse ist erforderlich, wenn DMZ aktiviert ist.',
     invalidIpFormat: 'Ungültiges IP-Adressformat. Bitte geben Sie eine gültige IPv4-Adresse ein (z. B. 192.168.1.100).',
-    ipNotInLanSubnet: 'Die DMZ-IP-Adresse muss im LAN-Subnetz-Bereich liegen.'
+    ipNotInLanSubnet: 'Die DMZ-IP-Adresse muss im LAN-Subnetz-Bereich liegen.',
+    selectDevice: 'Aus verbundenen Geräten wählen',
+    selectDevicePlaceholder: '-- Gerät auswählen --'
   },
   ddns: {
     title: 'DDNS-Einstellungen',

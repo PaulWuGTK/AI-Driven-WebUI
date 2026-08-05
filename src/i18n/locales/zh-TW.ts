@@ -763,7 +763,9 @@ const translations = {
     description: 'DMZ（非軍事區）可將您區域網路中的某台電腦完整暴露於 Internet。當線上遊戲或視訊會議應用程式因 NAT 而無法正常運作時，可使用此功能。',
     ipRequired: '啟用 DMZ 時，必須輸入 DMZ IP 位址。',
     invalidIpFormat: 'IP 位址格式無效，請輸入有效的 IPv4 位址（例如：192.168.1.100）。',
-    ipNotInLanSubnet: 'DMZ IP 位址必須位於 LAN 子網路範圍內。'
+    ipNotInLanSubnet: 'DMZ IP 位址必須位於 LAN 子網路範圍內。',
+    selectDevice: '從已連線裝置中選擇',
+    selectDevicePlaceholder: '-- 選擇裝置 --'
   },
   ddns: {
     title: 'DDNS設定',
