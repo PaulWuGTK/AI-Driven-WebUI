@@ -716,6 +716,7 @@ export interface Translations {
     powerOffWarning: string;
     rebootWarning: string;
     upgradeFail: string;
+    verifying: string;
   };
   reset: {
     title: string;

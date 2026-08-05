@@ -1022,7 +1022,8 @@ const translations = {
     rebooting: 'Redémarrage en cours…',
     powerOffWarning: 'Veuillez ne pas éteindre l\'appareil.',
     rebootWarning: 'L\'appareil redémarrera après l\'activation.',
-    upgradeFail: 'Échec de la mise à jour du firmware'
+    upgradeFail: 'Échec de la mise à jour du firmware',
+    verifying: 'Vérification du firmware en cours, veuillez patienter...'
   },
   reset: {
     title: 'Réinitialisation de l\'appareil',

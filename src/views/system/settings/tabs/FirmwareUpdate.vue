@@ -25,6 +25,7 @@ const isActivating = ref(false);
 const isRebootPhase = ref(false);
 const upgradeError = ref<string | null>(null);
 const showUpgradeError = ref(false);
+const isVerifying = ref(false);
 const currentPhaseDuration = computed(() => (isRebootPhase.value ? 100 : 60));
 const progressPercent = computed(() => {
   const total = currentPhaseDuration.value;
@@ -259,32 +260,32 @@ const handleUpgrade = async () => {
 
     // Then perform the upgrade with autoActivate always true
     await upgradeFirmware(uploadedFileName.value, true);
-    
-//    console.log('Upgrade command sent, checking for errors...');
-    
+
+    // Show verifying state while checking firmware
+    isVerifying.value = true;
+
     // Check for upgrade errors after a short delay
     // Use a Promise-based approach to ensure proper sequencing
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
         await checkUpgradeError();
-        
+
+        isVerifying.value = false;
+
         // Only start countdown if no upgrade error
         if (!showUpgradeError.value) {
-//          console.log('No upgrade error detected, starting countdown');
           // Clear file selection after successful upgrade
           selectedFile.value = null;
           uploadedFileName.value = null;
           startUpgradeCountdown();
-        } else {
-//          console.log('Upgrade error detected, not starting countdown');
         }
         resolve();
       }, 3000);
     });
     
   } catch (err) {
-//    console.error('Error processing firmware:', err);
     error.value = err instanceof Error ? err.message : 'Failed to process firmware';
+    isVerifying.value = false;
     clearUpgradeState();
   } finally {
     loading.value = false;
@@ -433,6 +434,11 @@ onDeactivated(stopUpgradeTimers);
               style="display: none"
               accept=".bin,.img,.swu"
             >
+
+            <div v-if="isVerifying" class="verifying-banner" :data-testid="qa('firmware-verifying-banner')">
+              <div class="verifying-spinner"></div>
+              <span>{{ t('firmware.verifying') }}</span>
+            </div>
 
             <div v-if="error" class="error-message" :data-testid="qa('firmware-upload-error-message')">
               {{ error }}
@@ -593,6 +599,35 @@ onDeactivated(stopUpgradeTimers);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.verifying-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: rgba(0, 120, 212, 0.1);
+  border: 1px solid rgba(0, 120, 212, 0.3);
+  border-radius: 4px;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+}
+
+.verifying-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 120, 212, 0.2);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .error-message {

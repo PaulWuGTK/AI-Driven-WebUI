@@ -1022,7 +1022,8 @@ const translations = {
     rebooting: '正在重启…',
     powerOffWarning: '请勿关闭电源。',
     rebootWarning: '激活后设备将重新启动。',
-    upgradeFail: '固件升级失败'
+    upgradeFail: '固件升级失败',
+    verifying: '正在验证固件，请稍候...'
   },
   reset: {
     title: '设备重置',

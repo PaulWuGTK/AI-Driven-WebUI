@@ -1084,7 +1084,8 @@ const translations = {
     rebooting: 'Rebooting…',
     powerOffWarning: 'Please do not power off the device.',
     rebootWarning: 'Device will reboot after activation.',
-    upgradeFail: 'Firmware Upgrade Failed'
+    upgradeFail: 'Firmware Upgrade Failed',
+    verifying: 'Verifying firmware, please wait...'
   },
   reset: {
     title: 'Device Reset',

@@ -1022,7 +1022,8 @@ const translations = {
     rebooting: 'Neustart…',
     powerOffWarning: 'Bitte schalten Sie das Gerät nicht aus.',
     rebootWarning: 'Das Gerät wird nach der Aktivierung neu gestartet.',
-    upgradeFail: 'Firmware-Aktualisierung fehlgeschlagen'
+    upgradeFail: 'Firmware-Aktualisierung fehlgeschlagen',
+    verifying: 'Firmware wird überprüft, bitte warten...'
   },
   reset: {
     title: 'Gerät zurücksetzen',
