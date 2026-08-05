@@ -87,6 +87,9 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
     },
     mesh: {
       enable: data.WiFi.MeshEnable === 1
+    },
+    timezone: {
+      currentTimezone: data.TimeZone?.CurrentTimezone || ''
     }
   };
 }
@@ -150,6 +153,9 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
       Admin: {
         Username: config.admin.username,
         Password: config.admin.password
+      },
+      TimeZone: {
+        CurrentTimezone: config.timezone.currentTimezone
       }
     }
   };

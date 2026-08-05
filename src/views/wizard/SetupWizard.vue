@@ -17,6 +17,7 @@ import RouterEnvironment from './steps/RouterEnvironment.vue';
 import MeshSetup from './steps/MeshSetup.vue';
 import WifiSetup from './steps/WifiSetup.vue';
 import AdminPassword from './steps/AdminPassword.vue';
+import TimezoneSetup from './steps/TimezoneSetup.vue';
 import ReviewSettings from './steps/ReviewSettings.vue';
 import ApplyingSettings from './steps/ApplyingSettings.vue';
 import WizardComplete from './steps/WizardComplete.vue';
@@ -113,6 +114,9 @@ const config = ref<WizardConfig>({
   admin: {
     username: 'admin',
     password: ''
+  },
+  timezone: {
+    currentTimezone: ''
   }
 });
 
@@ -122,7 +126,7 @@ const maxSteps = computed(() => {
   if (config.value.mode === 'agent') {
     return 4;
   }
-  return 7;
+  return 8;
 });
 
 onMounted(async () => {
@@ -139,6 +143,9 @@ onMounted(async () => {
     }
     if (autoFillConfig.mesh) {
       config.value.mesh = autoFillConfig.mesh;
+    }
+    if (autoFillConfig.timezone) {
+      config.value.timezone = autoFillConfig.timezone;
     }
   } catch (error) {
     console.error('Failed to load wizard data:', error);
@@ -235,7 +242,8 @@ const getStepComponent = () => {
       case 4: return MeshSetup;
       case 5: return WifiSetup;
       case 6: return AdminPassword;
-      case 7: return ReviewSettings;
+      case 7: return TimezoneSetup;
+      case 8: return ReviewSettings;
       default: return PrivacyPolicy;
     }
   } else {

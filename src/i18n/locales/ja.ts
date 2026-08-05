@@ -1337,7 +1337,13 @@ const translations = {
     band5ghz: '5GHz 無線ネットワーク',
     enable5ghz: '5GHz Wi-Fi を有効にする',
     band6ghz: '6GHz 無線ネットワーク',
-    enable6ghz: '6GHz Wi-Fi を有効にする'
+    enable6ghz: '6GHz Wi-Fi を有効にする',
+    timezoneTitle: 'タイムゾーンの設定',
+    timezoneSubtitle: 'デバイスのタイムゾーンを選択して、正確な時刻表示とスケジュールを確保します。',
+    timezoneLabel: 'タイムゾーン',
+    timezoneHelp: 'お住まいの地域に合ったタイムゾーンを選択してください。',
+    timezoneInfo: '正しいタイムゾーンを設定すると、ログのタイムスタンプとスケジュールタスクが正確になります。',
+    reviewTimezone: 'タイムゾーン'
   },
   common: {
     save: '保存',
@@ -1775,39 +1781,7 @@ const translations = {
     saveDnsRoutesFailed: 'DNS ルートの保存に失敗しました。'
   },
   systemDebug: {
-    title: 'システムデバッグ情報',
-    description: 'デバッグ用のシステム情報を取得（非表示ページ、__qa=1 が必要）',
-    category: 'カテゴリ',
-    fetchInfo: '情報を取得',
-    loading: '読み込み中...',
-    clear: 'クリア',
-    copy: 'クリップボードにコピー',
-    response: 'レスポンス',
-    timestamp: 'タイムスタンプ',
-    error: 'エラー',
-    success: '成功',
-    failed: '失敗',
-    dataTitle: 'システムデータ',
-    placeholder: 'カテゴリを選択して「情報を取得」をクリックしてデータを取得してください',
-    fetchError: 'システム情報の取得に失敗しました',
-    categories: {
-      system: 'システム',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'メッシュ',
-      firewall: 'ファイアウォール',
-      routing: 'ルーティング'
-    },
-    categoryDesc: {
-      system: '一般的なシステム情報とステータス',
-      wan: 'WAN インターフェースの設定とステータス',
-      lan: 'LAN インターフェースの設定とステータス',
-      wlan: 'WLAN の設定とステータス',
-      mesh: 'メッシュネットワーク情報',
-      firewall: 'ファイアウォールルールとステータス',
-      routing: 'ルーティングテーブルと設定'
-    },
+    title: 'システムデバッグダウンロード',
     downloadTitle: 'デバッグ情報のダウンロード',
     downloadDescription: 'デバイスからデバッグ情報ファイルを生成してダウンロードします。「すべて」オプションは完全な tar.gz アーカイブを生成します。',
     downloadCategory: 'ダウンロードカテゴリ',

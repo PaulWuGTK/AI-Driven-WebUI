@@ -995,6 +995,12 @@ export interface Translations {
     nextButton: string;
     manualConfiguration: string;
     acceptTermsCheckbox: string;
+    timezoneTitle: string;
+    timezoneSubtitle: string;
+    timezoneLabel: string;
+    timezoneHelp: string;
+    timezoneInfo: string;
+    reviewTimezone: string;
   };
   common: {
     save: string;

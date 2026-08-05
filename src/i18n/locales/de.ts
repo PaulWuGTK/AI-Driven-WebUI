@@ -1337,7 +1337,13 @@ const translations = {
     band5ghz: '5GHz-Funknetz',
     enable5ghz: '5GHz-Wi-Fi aktivieren',
     band6ghz: '6GHz-Funknetz',
-    enable6ghz: '6GHz-Wi-Fi aktivieren'
+    enable6ghz: '6GHz-Wi-Fi aktivieren',
+    timezoneTitle: 'Zeitzone festlegen',
+    timezoneSubtitle: 'Wählen Sie die Zeitzone für Ihr Gerät, um eine genaue Zeitanzeige und Aufgabenplanung sicherzustellen.',
+    timezoneLabel: 'Zeitzone',
+    timezoneHelp: 'Wählen Sie die Zeitzone, die Ihrem geografischen Standort entspricht.',
+    timezoneInfo: 'Die richtige Zeitzone gewährleistet genaue Protokollzeitstempel und geplante Aufgaben.',
+    reviewTimezone: 'Zeitzone'
   },
   common: {
     save: 'Speichern',
@@ -1775,32 +1781,7 @@ const translations = {
     saveDnsRoutesFailed: 'DNS-Routen konnten nicht gespeichert werden.'
   },
   systemDebug: {
-    title: 'System-Debug',
-    description: 'Systeminformationen zu Diagnose- und Debugging-Zwecken abrufen',
-    fetchInfo: 'Debug-Informationen abrufen',
-    selectCategory: 'Kategorie auswählen',
-    fetch: 'Abrufen',
-    response: 'Antwort',
-    noDataYet: 'Noch keine Daten',
-    selectCategoryAndFetch: 'Wählen Sie eine Kategorie und klicken Sie auf Abrufen, um Informationen zu laden',
-    categories: {
-      system: 'System',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'Mesh',
-      firewall: 'Firewall',
-      routing: 'Routing'
-    },
-    categoryDescriptions: {
-      system: 'Allgemeine Systeminformationen und Status',
-      wan: 'WAN-Schnittstellenkonfiguration und Status',
-      lan: 'LAN-Schnittstellenkonfiguration und verbundene Geräte',
-      wlan: 'WLAN-Konfiguration und Clientinformationen',
-      mesh: 'Mesh-Netzwerktopologie und Knotenstatus',
-      firewall: 'Firewall-Regeln und Sicherheitsstatus',
-      routing: 'Routing-Tabelle und Netzwerkpfade'
-    },
+    title: 'System-Debug-Download',
     downloadTitle: 'Debug-Informationen herunterladen',
     downloadDescription: 'Generieren und Herunterladen einer Debug-Informationsdatei vom Gerät. Die Option „Alle" erzeugt ein vollständiges tar.gz-Archiv.',
     downloadCategory: 'Download-Kategorie',

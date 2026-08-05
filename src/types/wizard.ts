@@ -24,6 +24,10 @@ export interface WizardData {
     wifi5g: WizardWifiInfo;
     wifi6g: WizardWifiInfo;
   };
+  TimeZone: {
+    CurrentTimezone: string;
+    Timezonelist: string[];
+  };
 }
 
 export interface WizardConfig {
@@ -54,6 +58,9 @@ export interface WizardConfig {
   admin: {
     username: string;
     password: string;
+  };
+  timezone: {
+    currentTimezone: string;
   };
 }
 
@@ -97,6 +104,9 @@ export interface WizardSubmitData {
     Admin?: {
       Username: string;
       Password: string;
+    };
+    TimeZone?: {
+      CurrentTimezone: string;
     };
   };
 }

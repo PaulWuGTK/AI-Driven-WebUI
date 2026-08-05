@@ -1,43 +1,15 @@
 /**
  * System Debug API Service
- * API for fetching system debug information and downloading debug bundles
+ * API for downloading debug bundles
  */
 
 import { callApi } from '../apiClient';
 import type {
-  SystemDebugRequest,
-  SystemDebugResponse,
   DebugDownloadCategory,
   DebugDownloadResponse
 } from '../../types/systemDebug';
 
 const API_BASE_URL = '/API';
-
-/**
- * Fetch system debug information via POST
- * @param request - Request payload
- * @returns System debug response with data
- */
-export async function postSystemDebugInfo(
-  request: SystemDebugRequest
-): Promise<SystemDebugResponse> {
-  // POST to /API/info?list=SystemDebug so fcgi_control recognizes it as public API
-  const response = await callApi<{ SystemDebug: SystemDebugResponse }>(
-    `${API_BASE_URL}/info?list=SystemDebug`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        SystemDebug: {
-          category: request.category,
-          action: request.action
-        }
-      })
-    }
-  );
-  // Extract SystemDebug from response wrapper
-  return response.SystemDebug;
-}
 
 /**
  * Request debug info file generation and return download metadata

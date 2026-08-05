@@ -1,14 +1,25 @@
 ﻿<script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ActionButtons, BaseSecretInput } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
-import type { WizardConfig } from '../../../types/wizard';
+import type { WizardConfig, WizardData } from '../../../types/wizard';
 
 interface Props {
   config: WizardConfig;
+  wizardData: WizardData | null;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const timezoneDisplayLabel = computed(() => {
+  const idx = Number(props.config.timezone.currentTimezone);
+  const list = props.wizardData?.TimeZone?.Timezonelist;
+  if (list && !isNaN(idx) && list[idx]) {
+    return list[idx];
+  }
+  return props.config.timezone.currentTimezone || '-';
+});
 defineEmits(['prev', 'submit']);
 const { t } = useI18n();
 const { qa } = useQA();
@@ -27,6 +38,7 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
       <p class="step-subtitle" :data-testid="qa('wizard-review-subtitle')">{{ t('wizard.reviewSubtitle') }}</p>
 
       <div class="progress-bar" :data-testid="qa('wizard-review-progress')">
+        <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
         <div class="progress-step active"></div>
@@ -232,6 +244,14 @@ const securityRequiresPassword = (securityMode?: string): boolean => {
               :value-data-testid="qa('wizard-review-admin-password-value')"
               :masked-data-testid="qa('wizard-review-admin-password-masked')"
             />
+          </div>
+        </div>
+
+        <div v-if="config.mode === 'router'" class="review-section" :data-testid="qa('wizard-review-timezone-section')">
+          <h3 :data-testid="qa('wizard-review-timezone-title')">{{ t('wizard.reviewTimezone') }}</h3>
+          <div class="review-item" :data-testid="qa('wizard-review-timezone-item')">
+            <span class="label">{{ t('wizard.timezoneLabel') }}:</span>
+            <span class="value" :data-testid="qa('wizard-review-timezone-value')">{{ timezoneDisplayLabel }}</span>
           </div>
         </div>
       </div>
