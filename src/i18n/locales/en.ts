@@ -1399,7 +1399,13 @@ const translations = {
     band5ghz: '5GHz Wireless Network',
     enable5ghz: 'Enable 5GHz Wi-Fi',
     band6ghz: '6GHz Wireless Network',
-    enable6ghz: 'Enable 6GHz Wi-Fi'
+    enable6ghz: 'Enable 6GHz Wi-Fi',
+    timezoneTitle: 'Set Your Time Zone',
+    timezoneSubtitle: 'Select the time zone for your device to ensure accurate time display and scheduling.',
+    timezoneLabel: 'Time Zone',
+    timezoneHelp: 'Choose the time zone that matches your geographic location.',
+    timezoneInfo: 'Setting the correct time zone ensures accurate log timestamps and scheduled tasks.',
+    reviewTimezone: 'Time Zone'
   },
   common: {
     save: 'Save',
@@ -1776,39 +1782,7 @@ const translations = {
     saveDnsRoutesFailed: 'Failed to save DNS routes.'
   },
   systemDebug: {
-    title: 'System Debug Information',
-    description: 'Fetch system information for debugging purposes (Hidden page, requires __qa=1)',
-    category: 'Category',
-    fetchInfo: 'Fetch Information',
-    loading: 'Loading...',
-    clear: 'Clear',
-    copy: 'Copy to Clipboard',
-    response: 'Response',
-    timestamp: 'Timestamp',
-    error: 'Error',
-    success: 'Success',
-    failed: 'Failed',
-    dataTitle: 'System Data',
-    placeholder: 'Select a category and click "Fetch Information" to retrieve data',
-    fetchError: 'Failed to fetch system information',
-    categories: {
-      system: 'System',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'Mesh',
-      firewall: 'Firewall',
-      routing: 'Routing'
-    },
-    categoryDesc: {
-      system: 'General system information and status',
-      wan: 'WAN interface configuration and status',
-      lan: 'LAN interface configuration and status',
-      wlan: 'WLAN configuration and status',
-      mesh: 'Mesh network information',
-      firewall: 'Firewall rules and status',
-      routing: 'Routing table and configuration'
-    },
+    title: 'System Debug Download',
     downloadTitle: 'Download Debug Information',
     downloadDescription: 'Generate and download a debug information file from the device. The "All" option generates a comprehensive tar.gz archive.',
     downloadCategory: 'Download Category',

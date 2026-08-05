@@ -123,6 +123,42 @@ const wizardScenarios = {
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
           Password: ""
         }
+      },
+      TimeZone: {
+        CurrentTimezone: "8",
+        Timezonelist: [
+          "(GMT-11:00) Midway Island, Samoa",
+          "(GMT-10:00) Hawaii",
+          "(GMT-09:00) Alaska",
+          "(GMT-08:00) Pacific Time (US & Canada)",
+          "(GMT-07:00) Mountain Time (US & Canada)",
+          "(GMT-06:00) Central Time (US & Canada), Mexico City",
+          "(GMT-05:00) Eastern Time (US & Canada), Bogota, Lima",
+          "(GMT-04:00) Atlantic Time (Canada), Caracas, La Paz",
+          "(GMT-03:30) Newfoundland",
+          "(GMT-03:00) Brazil, Buenos Aires, Georgetown",
+          "(GMT-02:00) Mid-Atlantic",
+          "(GMT-01:00) Azores, Cape Verde Islands",
+          "(GMT) Greenwich Mean Time, Dublin, London, Lisbon",
+          "(GMT+01:00) Amsterdam, Berlin, Rome, Paris, Vienna",
+          "(GMT+02:00) Cairo, Helsinki, Kyiv, Athens",
+          "(GMT+03:00) Baghdad, Moscow, Nairobi",
+          "(GMT+03:30) Tehran",
+          "(GMT+04:00) Abu Dhabi, Baku, Muscat",
+          "(GMT+04:30) Kabul",
+          "(GMT+05:00) Islamabad, Karachi, Tashkent",
+          "(GMT+05:30) Mumbai, Kolkata, Chennai, New Delhi",
+          "(GMT+05:45) Kathmandu",
+          "(GMT+06:00) Almaty, Dhaka",
+          "(GMT+06:30) Rangoon",
+          "(GMT+07:00) Bangkok, Hanoi, Jakarta",
+          "(GMT+08:00) Beijing, Hong Kong, Singapore, Taipei",
+          "(GMT+09:00) Tokyo, Seoul, Osaka",
+          "(GMT+09:30) Adelaide, Darwin",
+          "(GMT+10:00) Brisbane, Canberra, Melbourne, Sydney",
+          "(GMT+11:00) Magadan, Solomon Islands",
+          "(GMT+12:00) Auckland, Wellington, Fiji"
+        ]
       }
     }
   },
@@ -168,6 +204,20 @@ const wizardScenarios = {
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
           Password: ""
         }
+      },
+      TimeZone: {
+        CurrentTimezone: "8",
+        Timezonelist: [
+          "(GMT-11:00) Midway Island, Samoa",
+          "(GMT-10:00) Hawaii",
+          "(GMT-08:00) Pacific Time (US & Canada)",
+          "(GMT-05:00) Eastern Time (US & Canada), Bogota, Lima",
+          "(GMT) Greenwich Mean Time, Dublin, London, Lisbon",
+          "(GMT+01:00) Amsterdam, Berlin, Rome, Paris, Vienna",
+          "(GMT+08:00) Beijing, Hong Kong, Singapore, Taipei",
+          "(GMT+09:00) Tokyo, Seoul, Osaka",
+          "(GMT+12:00) Auckland, Wellington, Fiji"
+        ]
       }
     }
   },
@@ -213,6 +263,20 @@ const wizardScenarios = {
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
           Password: "password"
         }
+      },
+      TimeZone: {
+        CurrentTimezone: "8",
+        Timezonelist: [
+          "(GMT-11:00) Midway Island, Samoa",
+          "(GMT-10:00) Hawaii",
+          "(GMT-08:00) Pacific Time (US & Canada)",
+          "(GMT-05:00) Eastern Time (US & Canada), Bogota, Lima",
+          "(GMT) Greenwich Mean Time, Dublin, London, Lisbon",
+          "(GMT+01:00) Amsterdam, Berlin, Rome, Paris, Vienna",
+          "(GMT+08:00) Beijing, Hong Kong, Singapore, Taipei",
+          "(GMT+09:00) Tokyo, Seoul, Osaka",
+          "(GMT+12:00) Auckland, Wellington, Fiji"
+        ]
       }
     }
   },
@@ -258,6 +322,20 @@ const wizardScenarios = {
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
           Password: ""
         }
+      },
+      TimeZone: {
+        CurrentTimezone: "8",
+        Timezonelist: [
+          "(GMT-11:00) Midway Island, Samoa",
+          "(GMT-10:00) Hawaii",
+          "(GMT-08:00) Pacific Time (US & Canada)",
+          "(GMT-05:00) Eastern Time (US & Canada), Bogota, Lima",
+          "(GMT) Greenwich Mean Time, Dublin, London, Lisbon",
+          "(GMT+01:00) Amsterdam, Berlin, Rome, Paris, Vienna",
+          "(GMT+08:00) Beijing, Hong Kong, Singapore, Taipei",
+          "(GMT+09:00) Tokyo, Seoul, Osaka",
+          "(GMT+12:00) Auckland, Wellington, Fiji"
+        ]
       }
     }
   }

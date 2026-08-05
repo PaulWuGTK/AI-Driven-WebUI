@@ -1337,7 +1337,13 @@ const translations = {
     band5ghz: 'Réseau sans fil 5GHz',
     enable5ghz: 'Activer le Wi-Fi 5GHz',
     band6ghz: 'Réseau sans fil 6GHz',
-    enable6ghz: 'Activer le Wi-Fi 6GHz'
+    enable6ghz: 'Activer le Wi-Fi 6GHz',
+    timezoneTitle: 'Définir le fuseau horaire',
+    timezoneSubtitle: 'Sélectionnez le fuseau horaire de votre appareil pour garantir un affichage précis de l\'heure et des tâches planifiées.',
+    timezoneLabel: 'Fuseau horaire',
+    timezoneHelp: 'Choisissez le fuseau horaire correspondant à votre emplacement géographique.',
+    timezoneInfo: 'Un fuseau horaire correct garantit des horodatages de journal et des tâches planifiées précis.',
+    reviewTimezone: 'Fuseau horaire'
   },
   common: {
     save: 'Enregistrer',
@@ -1775,39 +1781,7 @@ const translations = {
     saveDnsRoutesFailed: "Échec de l'enregistrement des routes DNS."
   },
   systemDebug: {
-    title: 'Informations de débogage système',
-    description: 'Récupérer les informations système à des fins de débogage (Page cachée, nécessite __qa=1)',
-    category: 'Catégorie',
-    fetchInfo: 'Récupérer les informations',
-    loading: 'Chargement...',
-    clear: 'Effacer',
-    copy: 'Copier dans le presse-papiers',
-    response: 'Réponse',
-    timestamp: 'Horodatage',
-    error: 'Erreur',
-    success: 'Succès',
-    failed: 'Échec',
-    dataTitle: 'Données système',
-    placeholder: 'Sélectionnez une catégorie et cliquez sur "Récupérer les informations" pour récupérer les données',
-    fetchError: 'Échec de la récupération des informations système',
-    categories: {
-      system: 'Système',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'Maillage',
-      firewall: 'Pare-feu',
-      routing: 'Routage'
-    },
-    categoryDesc: {
-      system: 'Informations et état généraux du système',
-      wan: 'Configuration et état de l\'interface WAN',
-      lan: 'Configuration et état de l\'interface LAN',
-      wlan: 'Configuration et état WLAN',
-      mesh: 'Informations sur le réseau maillé',
-      firewall: 'Règles et état du pare-feu',
-      routing: 'Table de routage et configuration'
-    },
+    title: 'Téléchargement de débogage système',
     downloadTitle: "Télécharger les informations de débogage",
     downloadDescription: "Générer et télécharger un fichier d'informations de débogage depuis l'appareil. L'option « Tout » génère une archive tar.gz complète.",
     downloadCategory: 'Catégorie de téléchargement',

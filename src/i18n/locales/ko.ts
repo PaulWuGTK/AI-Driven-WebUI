@@ -1337,7 +1337,13 @@ const translations = {
     band5ghz: '5GHz 무선 네트워크',
     enable5ghz: '5GHz Wi-Fi 사용',
     band6ghz: '6GHz 무선 네트워크',
-    enable6ghz: '6GHz Wi-Fi 사용'
+    enable6ghz: '6GHz Wi-Fi 사용',
+    timezoneTitle: '시간대 설정',
+    timezoneSubtitle: '정확한 시간 표시 및 예약 작업을 위해 장치의 시간대를 선택하세요.',
+    timezoneLabel: '시간대',
+    timezoneHelp: '지리적 위치에 맞는 시간대를 선택하세요.',
+    timezoneInfo: '올바른 시간대를 설정하면 로그 타임스탬프와 예약 작업이 정확해집니다.',
+    reviewTimezone: '시간대'
   },
   common: {
     save: '저장',
@@ -1775,39 +1781,7 @@ const translations = {
     saveDnsRoutesFailed: 'DNS 라우트를 저장하지 못했습니다.'
   },
   systemDebug: {
-    title: '시스템 디버그 정보',
-    description: '디버깅 목적으로 시스템 정보 가져오기（숨김 페이지, __qa=1 필요）',
-    category: '카테고리',
-    fetchInfo: '정보 가져오기',
-    loading: '로딩 중...',
-    clear: '지우기',
-    copy: '클립보드에 복사',
-    response: '응답',
-    timestamp: '타임스탬프',
-    error: '오류',
-    success: '성공',
-    failed: '실패',
-    dataTitle: '시스템 데이터',
-    placeholder: '카테고리를 선택하고 "정보 가져오기"를 클릭하여 데이터를 검색하세요',
-    fetchError: '시스템 정보를 가져오지 못했습니다',
-    categories: {
-      system: '시스템',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: '메시',
-      firewall: '방화벽',
-      routing: '라우팅'
-    },
-    categoryDesc: {
-      system: '일반 시스템 정보 및 상태',
-      wan: 'WAN 인터페이스 구성 및 상태',
-      lan: 'LAN 인터페이스 구성 및 상태',
-      wlan: 'WLAN 구성 및 상태',
-      mesh: '메시 네트워크 정보',
-      firewall: '방화벽 규칙 및 상태',
-      routing: '라우팅 테이블 및 구성'
-    },
+    title: '시스템 디버그 다운로드',
     downloadTitle: '디버그 정보 다운로드',
     downloadDescription: '장치에서 디버그 정보 파일을 생성하고 다운로드합니다. "전체" 옵션은 완전한 tar.gz 아카이브를 생성합니다.',
     downloadCategory: '다운로드 카테고리',

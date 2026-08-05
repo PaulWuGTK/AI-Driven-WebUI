@@ -1337,7 +1337,13 @@ const translations = {
     band5ghz: '5GHz 无线网络',
     enable5ghz: '启用 5GHz Wi-Fi',
     band6ghz: '6GHz 无线网络',
-    enable6ghz: '启用 6GHz Wi-Fi'
+    enable6ghz: '启用 6GHz Wi-Fi',
+    timezoneTitle: '设置时区',
+    timezoneSubtitle: '选择设备的时区，以确保时间显示和计划任务的准确性。',
+    timezoneLabel: '时区',
+    timezoneHelp: '请选择与您所在地理位置相符的时区。',
+    timezoneInfo: '设置正确的时区可确保日志时间戳和计划任务的准确性。',
+    reviewTimezone: '时区'
   },
   common: {
     save: '保存',
@@ -1775,39 +1781,7 @@ const translations = {
     saveDnsRoutesFailed: '保存 DNS 路由失败。'
   },
   systemDebug: {
-    title: '系统调试信息',
-    description: '获取系统信息用于调试（隐藏页面，需要 __qa=1）',
-    category: '类别',
-    fetchInfo: '获取信息',
-    loading: '加载中...',
-    clear: '清除',
-    copy: '复制到剪贴板',
-    response: '响应',
-    timestamp: '时间戳',
-    error: '错误',
-    success: '成功',
-    failed: '失败',
-    dataTitle: '系统数据',
-    placeholder: '选择类别并点击"获取信息"以检索数据',
-    fetchError: '获取系统信息失败',
-    categories: {
-      system: '系统',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'Mesh',
-      firewall: '防火墙',
-      routing: '路由'
-    },
-    categoryDesc: {
-      system: '常规系统信息和状态',
-      wan: 'WAN 接口配置和状态',
-      lan: 'LAN 接口配置和状态',
-      wlan: 'WLAN 配置和状态',
-      mesh: 'Mesh 网络信息',
-      firewall: '防火墙规则和状态',
-      routing: '路由表和配置'
-    },
+    title: '系统调试下载',
     downloadTitle: '下载调试信息',
     downloadDescription: '从设备生成并下载调试信息文件。"全部"选项会生成完整的 tar.gz 压缩包。',
     downloadCategory: '下载类别',

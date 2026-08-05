@@ -1338,7 +1338,13 @@ const translations = {
     band5ghz: '5GHz 無線網路',
     enable5ghz: '啟用 5GHz Wi-Fi',
     band6ghz: '6GHz 無線網路',
-    enable6ghz: '啟用 6GHz Wi-Fi'
+    enable6ghz: '啟用 6GHz Wi-Fi',
+    timezoneTitle: '設定時區',
+    timezoneSubtitle: '選擇裝置的時區，以確保時間顯示和排程任務的準確性。',
+    timezoneLabel: '時區',
+    timezoneHelp: '請選擇與您所在地理位置相符的時區。',
+    timezoneInfo: '設定正確的時區可確保日誌時間戳記和排程任務的準確性。',
+    reviewTimezone: '時區'
   },
   common: {
     save: '儲存',
@@ -1776,39 +1782,7 @@ const translations = {
     saveDnsRoutesFailed: '儲存 DNS 路由失敗。'
   },
   systemDebug: {
-    title: '系統除錯資訊',
-    description: '擷取系統資訊用於除錯（隱藏頁面，需要 __qa=1）',
-    category: '類別',
-    fetchInfo: '擷取資訊',
-    loading: '載入中...',
-    clear: '清除',
-    copy: '複製到剪貼簿',
-    response: '回應',
-    timestamp: '時間戳記',
-    error: '錯誤',
-    success: '成功',
-    failed: '失敗',
-    dataTitle: '系統資料',
-    placeholder: '選擇類別並點擊「擷取資訊」以取得資料',
-    fetchError: '無法擷取系統資訊',
-    categories: {
-      system: '系統',
-      wan: 'WAN',
-      lan: 'LAN',
-      wlan: 'WLAN',
-      mesh: 'Mesh',
-      firewall: '防火牆',
-      routing: '路由'
-    },
-    categoryDesc: {
-      system: '一般系統資訊與狀態',
-      wan: 'WAN 介面設定與狀態',
-      lan: 'LAN 介面設定與狀態',
-      wlan: 'WLAN 設定與狀態',
-      mesh: 'Mesh 網路資訊',
-      firewall: '防火牆規則與狀態',
-      routing: '路由表與設定'
-    },
+    title: '系統除錯下載',
     downloadTitle: '下載除錯資訊',
     downloadDescription: '從裝置產生並下載除錯資訊檔案。「全部」選項會產生完整的 tar.gz 壓縮檔。',
     downloadCategory: '下載類別',
