@@ -21,8 +21,8 @@ const timezoneList = computed(() => {
 
 const selectedLabel = computed(() => {
   const idx = Number(props.config.timezone.currentTimezone);
-  if (!isNaN(idx) && timezoneList.value[idx]) {
-    return timezoneList.value[idx];
+  if (!isNaN(idx) && idx >= 1 && timezoneList.value[idx - 1]) {
+    return timezoneList.value[idx - 1];
   }
   return '';
 });
@@ -56,7 +56,7 @@ const selectedLabel = computed(() => {
           <option
             v-for="(tz, index) in timezoneList"
             :key="index"
-            :value="String(index)"
+            :value="String(index + 1)"
           >
             {{ tz }}
           </option>

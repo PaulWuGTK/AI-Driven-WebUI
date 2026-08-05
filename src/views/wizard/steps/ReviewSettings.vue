@@ -15,8 +15,8 @@ const props = defineProps<Props>();
 const timezoneDisplayLabel = computed(() => {
   const idx = Number(props.config.timezone.currentTimezone);
   const list = props.wizardData?.TimeZone?.Timezonelist;
-  if (list && !isNaN(idx) && list[idx]) {
-    return list[idx];
+  if (list && !isNaN(idx) && idx >= 1 && list[idx - 1]) {
+    return list[idx - 1];
   }
   return props.config.timezone.currentTimezone || '-';
 });
