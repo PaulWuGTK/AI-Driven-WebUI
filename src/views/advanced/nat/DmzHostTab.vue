@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { DmzResponse } from '../../../types/dmz';
+import type { DeviceConnected } from '../../../types/lanBasic';
 import { getDmz, updateDmz } from '../../../services/api/dmz';
-import { getLanBasic } from '../../../services/api/lanBasic';
+import { getLanBasic, getDeviceConnected } from '../../../services/api/lanBasic';
 import { ActionButtons, BaseSwitch } from '../../../components/common';
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -15,6 +16,8 @@ const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const lanIpAddress = ref<string>('');
 const lanSubnetMask = ref<string>('');
+const connectedDevices = ref<DeviceConnected[]>([]);
+const selectedDevice = ref<string>('');
 const toFlag01 = (value: unknown): 0 | 1 => {
   return value === 1 || value === '1' || value === true ? 1 : 0;
 };
@@ -42,6 +45,24 @@ const fetchLanInfo = async () => {
   } catch (err) {
     console.error('Error fetching LAN info:', err);
     // Fallback: allow validation to pass if LAN info unavailable
+  }
+};
+
+const fetchDevices = async () => {
+  try {
+    const response = await getDeviceConnected();
+    connectedDevices.value = response.LanDeviceConnected ?? [];
+  } catch (err) {
+    console.error('Error fetching connected devices:', err);
+  }
+};
+
+const handleDeviceSelect = (event: Event) => {
+  const ip = (event.target as HTMLSelectElement).value;
+  selectedDevice.value = ip;
+  if (ip && dmzData.value) {
+    dmzData.value.AdvancedDmz.IPAddress = ip;
+    handleIPInput();
   }
 };
 
@@ -150,7 +171,7 @@ const handleSubmit = async () => {
 };
 
 onMounted(async () => {
-  await Promise.all([fetchDmz(), fetchLanInfo()]);
+  await Promise.all([fetchDmz(), fetchLanInfo(), fetchDevices()]);
 });
 </script>
 
@@ -178,6 +199,27 @@ onMounted(async () => {
               :slider-data-testid="qa('dmz-enable-slider')"
             />
           </div>
+        </div>
+
+        <div v-if="dmzData.AdvancedDmz.Enable && connectedDevices.length > 0" class="form-group">
+          <label :data-testid="qa('dmz-device-select-label')">
+            {{ t('dmz.selectDevice') }}
+          </label>
+          <select
+            :value="selectedDevice"
+            class="form-select"
+            :data-testid="qa('dmz-device-select')"
+            @change="handleDeviceSelect"
+          >
+            <option value="">{{ t('dmz.selectDevicePlaceholder') }}</option>
+            <option
+              v-for="device in connectedDevices"
+              :key="device.MACAddress"
+              :value="device.IPAddress"
+            >
+              {{ device.Host || device.MACAddress }} ({{ device.IPAddress }})
+            </option>
+          </select>
         </div>
 
         <div v-if="dmzData.AdvancedDmz.Enable" class="form-group">
@@ -223,12 +265,21 @@ onMounted(async () => {
   color: var(--text-primary);
 }
 
-input {
+input,
+.form-select {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
+  background: white;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
 }
 
 /* Custom switch size (60px × 34px) for larger prominence */

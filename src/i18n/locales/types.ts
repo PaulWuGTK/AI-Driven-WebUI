@@ -520,6 +520,8 @@ export interface Translations {
     ipRequired: string;
     invalidIpFormat: string;
     ipNotInLanSubnet: string;
+    selectDevice: string;
+    selectDevicePlaceholder: string;
   };
   ddns: {
     title: string;
