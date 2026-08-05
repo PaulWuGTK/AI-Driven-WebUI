@@ -1022,7 +1022,8 @@ const translations = {
     rebooting: '재부팅 중…',
     powerOffWarning: '전원을 끄지 마세요.',
     rebootWarning: '활성화 후 장치가 재부팅됩니다.',
-    upgradeFail: '펌웨어 업그레이드에 실패했습니다'
+    upgradeFail: '펌웨어 업그레이드에 실패했습니다',
+    verifying: '펌웨어를 확인 중입니다. 잠시 기다려 주세요...'
   },
   reset: {
     title: '장치 초기화',
