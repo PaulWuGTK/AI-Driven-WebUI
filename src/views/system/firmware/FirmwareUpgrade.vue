@@ -262,11 +262,11 @@ const handleUpgrade = async () => {
       uploadedFileName.value = await uploadFirmware(selectedFile.value);
     }
 
+    // Show verifying overlay before sending upgrade command
+    isVerifying.value = true;
+
     // Then perform the upgrade with autoActivate always true
     await upgradeFirmware(uploadedFileName.value, true);
-
-    // Show verifying state while checking firmware
-    isVerifying.value = true;
 
     // Check for upgrade errors after a short delay
     // Use a Promise-based approach to ensure proper sequencing
@@ -442,11 +442,6 @@ onDeactivated(stopUpgradeTimers);
               accept=".bin,.img,.swu"
             >
 
-            <div v-if="isVerifying" class="verifying-banner" :data-testid="qa('firmware-verifying-banner')">
-              <div class="verifying-spinner"></div>
-              <span>{{ t('firmware.verifying') }}</span>
-            </div>
-
             <div v-if="error" class="error-message" :data-testid="qa('firmware-upload-error-message')">
               {{ error }}
             </div>
@@ -466,6 +461,15 @@ onDeactivated(stopUpgradeTimers);
         </div>
       </div>
     </div>
+
+    <BlockingOverlay
+      :is-visible="isVerifying"
+      :message="t('firmware.verifying')"
+      :auto-complete="false"
+      :show-countdown="false"
+      :show-progress="false"
+      :data-testid="qa('firmware-verifying-overlay')"
+    />
 
     <BlockingOverlay
       :is-visible="isUpgrading"
@@ -607,30 +611,6 @@ onDeactivated(stopUpgradeTimers);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.verifying-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background-color: rgba(0, 120, 212, 0.1);
-  border: 1px solid rgba(0, 120, 212, 0.3);
-  border-radius: 4px;
-  color: var(--primary-color);
-  font-size: 0.95rem;
-}
-
-.verifying-spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(0, 120, 212, 0.2);
-  border-top: 3px solid var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  flex-shrink: 0;
 }
 
 .error-message {
