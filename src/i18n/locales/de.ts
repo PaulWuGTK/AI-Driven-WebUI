@@ -1657,7 +1657,8 @@ const translations = {
     validationInvalidIPv6: 'Ungültiges IPv6-Adressformat.',
     validationIdleTimeRange: 'Leerlaufzeit muss zwischen 0 und 65535 liegen.',
     validationPrefixLengthRange: 'Präfixlänge muss zwischen 1 und 128 liegen.',
-    duplicateUntagged: 'Es ist nur eine untagged-Schnittstelle zulässig.'
+    duplicateUntagged: 'Es ist nur eine untagged-Schnittstelle zulässig.',
+    duplicatePppoe: 'Es ist nur eine PPPoE-Schnittstelle zulässig. {iface} verwendet bereits PPPoE.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP-Filterung aktivieren',

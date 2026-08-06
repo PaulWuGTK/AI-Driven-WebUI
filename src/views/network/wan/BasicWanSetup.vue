@@ -95,10 +95,8 @@ const validateForm = (): boolean => {
       if (d.ServiceName && d.ServiceName.length > 64) {
         formErrors.value.ServiceName = t('basicWan.validationMaxLength', { field: t('basicWan.serviceName'), max: 64 });
       }
-      if (d.Contrigger === 'OnDemand') {
-        if (!isInteger(d.IdleTime) || d.IdleTime < 0 || d.IdleTime > 65535) {
-          formErrors.value.IdleTime = t('basicWan.validationIdleTimeRange');
-        }
+      if (!isInteger(d.IdleTime) || d.IdleTime < 0 || d.IdleTime > 65535) {
+        formErrors.value.IdleTime = t('basicWan.validationIdleTimeRange');
       }
     }
 
@@ -253,6 +251,17 @@ const handleSave = () => {
   if (draft.value === null || editIndex.value === null) return;
   // Run form validation
   if (!validateForm()) return;
+  // Validate PPPoE uniqueness: only one interface can use ppp4
+  if (draft.value.IPv4Mode === 'ppp4') {
+    const otherPppoe = interfaces.value.find(
+      (iface, idx) => idx !== editIndex.value && iface.IPv4Mode === 'ppp4'
+    );
+    if (otherPppoe) {
+      errorToastMessage.value = t('basicWan.duplicatePppoe', { iface: otherPppoe.Interface });
+      triggerErrorToast();
+      return;
+    }
+  }
   // Validate VLAN ID uniqueness for tagged interfaces
   if (draft.value.VLANType === 'tagged') {
     const duplicate = interfaces.value.find(
@@ -282,6 +291,13 @@ const handleEditCancel = () => {
 
 const handleApply = async () => {
   if (loading.value) return;
+  // Block if two PPPoE interfaces exist
+  const pppoeCount = interfaces.value.filter(i => i.IPv4Mode === 'ppp4').length;
+  if (pppoeCount > 1) {
+    errorToastMessage.value = t('basicWan.duplicatePppoe', { iface: '' });
+    triggerErrorToast();
+    return;
+  }
   // Block if two untagged interfaces exist
   const untaggedCount = interfaces.value.filter(i => i.VLANType === 'untagged').length;
   if (untaggedCount > 1) {
@@ -567,7 +583,7 @@ onMounted(fetchData);
                     <option v-for="ct in listConnectionTrigger" :key="ct" :value="ct">{{ ct }}</option>
                   </select>
                 </div>
-                <div v-if="draft.Contrigger === 'OnDemand'" class="form-group">
+                <div class="form-group">
                   <label :data-testid="qa('basic-wan-idle-time-label')">{{ t('basicWan.idleTime') }}</label>
                   <input type="number" v-model.number="draft.IdleTime" min="0" max="65535" :class="{ error: formErrors.IdleTime }" @input="clearFieldError('IdleTime')" :data-testid="qa('basic-wan-idle-time-input')" />
                   <span v-if="formErrors.IdleTime" class="error-message">{{ formErrors.IdleTime }}</span>
@@ -644,6 +660,21 @@ onMounted(fetchData);
                 <div class="info-banner" :data-testid="qa('basic-wan-pppv6-hint')">
                   <span class="material-icons">info</span>
                   <span>{{ t('basicWan.pppv6SharesCredentials') }}</span>
+                </div>
+                <div class="switch-label">
+                  <span :data-testid="qa('basic-wan-ppp6-slaac-label')">{{ t('basicWan.slaac') }}</span>
+                  <BaseSwitch v-model="draft.SLAAC" :true-value="1" :false-value="0"
+                    :data-testid="qa('basic-wan-ppp6-slaac-toggle')" :slider-data-testid="qa('basic-wan-ppp6-slaac-slider')" />
+                </div>
+                <div class="switch-label">
+                  <span :data-testid="qa('basic-wan-ppp6-iana-label')">{{ t('basicWan.iana') }}</span>
+                  <BaseSwitch v-model="draft.IANA" :true-value="1" :false-value="0"
+                    :data-testid="qa('basic-wan-ppp6-iana-toggle')" :slider-data-testid="qa('basic-wan-ppp6-iana-slider')" />
+                </div>
+                <div class="switch-label">
+                  <span :data-testid="qa('basic-wan-ppp6-iapd-label')">{{ t('basicWan.iapd') }}</span>
+                  <BaseSwitch v-model="draft.IAPD" :true-value="1" :false-value="0"
+                    :data-testid="qa('basic-wan-ppp6-iapd-toggle')" :slider-data-testid="qa('basic-wan-ppp6-iapd-slider')" />
                 </div>
               </template>
 
@@ -837,6 +868,18 @@ onMounted(fetchData);
                 <div class="detail-row detail-hint">
                   <span class="material-icons">info</span>
                   <span>{{ t('basicWan.pppv6SharesCredentials') }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">{{ t('basicWan.slaac') }}</span>
+                  <span class="detail-value">{{ detailItem.SLAAC ? 'Enabled' : 'Disabled' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">{{ t('basicWan.iana') }}</span>
+                  <span class="detail-value">{{ detailItem.IANA ? 'Enabled' : 'Disabled' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">{{ t('basicWan.iapd') }}</span>
+                  <span class="detail-value">{{ detailItem.IAPD ? 'Enabled' : 'Disabled' }}</span>
                 </div>
               </template>
               <!-- Static IPv6 details -->

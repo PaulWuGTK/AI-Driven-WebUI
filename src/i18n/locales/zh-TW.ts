@@ -1658,7 +1658,8 @@ const translations = {
     validationInvalidIPv6: '無效的 IPv6 位址格式。',
     validationIdleTimeRange: '閒置時間必須介於 0 到 65535 之間。',
     validationPrefixLengthRange: '前綴長度必須介於 1 到 128 之間。',
-    duplicateUntagged: '僅允許一筆 untagged 介面。'
+    duplicateUntagged: '僅允許一筆 untagged 介面。',
+    duplicatePppoe: '僅允許一筆 PPPoE 介面。{iface} 已使用 PPPoE。'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',

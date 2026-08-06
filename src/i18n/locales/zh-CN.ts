@@ -1657,7 +1657,8 @@ const translations = {
     validationInvalidIPv6: '无效的 IPv6 地址格式。',
     validationIdleTimeRange: '空闲时间必须介于 0 到 65535 之间。',
     validationPrefixLengthRange: '前缀长度必须介于 1 到 128 之间。',
-    duplicateUntagged: '仅允许一条 untagged 接口。'
+    duplicateUntagged: '仅允许一条 untagged 接口。',
+    duplicatePppoe: '仅允许一条 PPPoE 接口。{iface} 已使用 PPPoE。'
   },
   ipFiltering: {
     enableIpFiltering: '启用 IP 过滤',

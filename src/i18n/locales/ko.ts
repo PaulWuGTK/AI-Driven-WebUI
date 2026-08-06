@@ -1657,7 +1657,8 @@ const translations = {
     validationInvalidIPv6: '잘못된 IPv6 주소 형식입니다.',
     validationIdleTimeRange: '유휴 시간은 0에서 65535 사이여야 합니다.',
     validationPrefixLengthRange: '접두사 길이는 1에서 128 사이여야 합니다.',
-    duplicateUntagged: 'untagged 인터페이스는 하나만 허용됩니다.'
+    duplicateUntagged: 'untagged 인터페이스는 하나만 허용됩니다.',
+    duplicatePppoe: 'PPPoE 인터페이스는 하나만 허용됩니다. {iface}이(가) 이미 PPPoE를 사용 중입니다.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP 필터링 사용',
