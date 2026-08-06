@@ -1148,6 +1148,7 @@ export interface Translations {
     validationIdleTimeRange: string;
     validationPrefixLengthRange: string;
     duplicateUntagged: string;
+    duplicatePppoe: string;
   };
   ipFiltering: {
     enableIpFiltering: string;

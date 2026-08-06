@@ -1658,7 +1658,8 @@ const translations = {
     validationInvalidIPv6: 'Invalid IPv6 address format.',
     validationIdleTimeRange: 'Idle Time must be between 0 and 65535.',
     validationPrefixLengthRange: 'Prefix Length must be between 1 and 128.',
-    duplicateUntagged: 'Only one untagged interface is allowed.'
+    duplicateUntagged: 'Only one untagged interface is allowed.',
+    duplicatePppoe: 'Only one PPPoE interface is allowed. {iface} is already using PPPoE.'
   },
   ipFiltering: {
     enableIpFiltering: 'Enable IP Filtering',
