@@ -1147,6 +1147,7 @@ export interface Translations {
     validationInvalidIPv6: string;
     validationIdleTimeRange: string;
     validationPrefixLengthRange: string;
+    duplicateUntagged: string;
   };
   ipFiltering: {
     enableIpFiltering: string;

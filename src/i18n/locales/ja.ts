@@ -1656,7 +1656,8 @@ const translations = {
     validationInvalidIPv4: '無効な IPv4 アドレス形式です。',
     validationInvalidIPv6: '無効な IPv6 アドレス形式です。',
     validationIdleTimeRange: 'アイドルタイムは 0 から 65535 の間で入力してください。',
-    validationPrefixLengthRange: 'プレフィックス長は 1 から 128 の間で入力してください。'
+    validationPrefixLengthRange: 'プレフィックス長は 1 から 128 の間で入力してください。',
+    duplicateUntagged: 'untagged インターフェースは 1 つのみ許可されています。'
   },
   ipFiltering: {
     enableIpFiltering: 'IP フィルタリングを有効にする',

@@ -1656,7 +1656,8 @@ const translations = {
     validationInvalidIPv4: 'Ungültiges IPv4-Adressformat.',
     validationInvalidIPv6: 'Ungültiges IPv6-Adressformat.',
     validationIdleTimeRange: 'Leerlaufzeit muss zwischen 0 und 65535 liegen.',
-    validationPrefixLengthRange: 'Präfixlänge muss zwischen 1 und 128 liegen.'
+    validationPrefixLengthRange: 'Präfixlänge muss zwischen 1 und 128 liegen.',
+    duplicateUntagged: 'Es ist nur eine untagged-Schnittstelle zulässig.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP-Filterung aktivieren',
