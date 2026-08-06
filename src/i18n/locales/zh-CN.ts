@@ -1645,7 +1645,18 @@ const translations = {
     ipv6DnsServers: 'IPv6 DNS 服务器',
     save: '保存',
     deleteConfirm: '确定要删除此接口吗？',
-    applyFailed: 'WAN 设置应用失败'
+    applyFailed: 'WAN 设置应用失败',
+    vlanIdDuplicate: 'VLAN ID {id} 已被 {iface} 使用。',
+    detail: '详细信息',
+    validationMtuRange: 'MTU 必须介于 576 到 1500 之间。',
+    validationVlanIdRange: 'VLAN ID 必须介于 1 到 4094 之间。',
+    validationVlanPriorityRange: 'VLAN Priority 必须介于 0 到 7 之间。',
+    validationRequired: '{field} 为必填字段。',
+    validationMaxLength: '{field} 不得超过 {max} 个字符。',
+    validationInvalidIPv4: '无效的 IPv4 地址格式。',
+    validationInvalidIPv6: '无效的 IPv6 地址格式。',
+    validationIdleTimeRange: '空闲时间必须介于 0 到 65535 之间。',
+    validationPrefixLengthRange: '前缀长度必须介于 1 到 128 之间。'
   },
   ipFiltering: {
     enableIpFiltering: '启用 IP 过滤',

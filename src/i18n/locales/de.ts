@@ -1645,7 +1645,18 @@ const translations = {
     ipv6DnsServers: 'IPv6-DNS-Server',
     save: 'Speichern',
     deleteConfirm: 'Möchten Sie diese Schnittstelle wirklich löschen?',
-    applyFailed: 'WAN-Einstellungen konnten nicht angewendet werden'
+    applyFailed: 'WAN-Einstellungen konnten nicht angewendet werden',
+    vlanIdDuplicate: 'VLAN-ID {id} wird bereits von {iface} verwendet.',
+    detail: 'Detail',
+    validationMtuRange: 'MTU muss zwischen 576 und 1500 liegen.',
+    validationVlanIdRange: 'VLAN-ID muss zwischen 1 und 4094 liegen.',
+    validationVlanPriorityRange: 'VLAN-Priorität muss zwischen 0 und 7 liegen.',
+    validationRequired: '{field} ist erforderlich.',
+    validationMaxLength: '{field} darf {max} Zeichen nicht überschreiten.',
+    validationInvalidIPv4: 'Ungültiges IPv4-Adressformat.',
+    validationInvalidIPv6: 'Ungültiges IPv6-Adressformat.',
+    validationIdleTimeRange: 'Leerlaufzeit muss zwischen 0 und 65535 liegen.',
+    validationPrefixLengthRange: 'Präfixlänge muss zwischen 1 und 128 liegen.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP-Filterung aktivieren',

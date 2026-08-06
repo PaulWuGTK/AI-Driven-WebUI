@@ -1645,7 +1645,18 @@ const translations = {
     ipv6DnsServers: 'IPv6 DNS サーバー',
     save: '保存',
     deleteConfirm: 'このインターフェースを削除してもよろしいですか？',
-    applyFailed: 'WAN 設定の適用に失敗しました'
+    applyFailed: 'WAN 設定の適用に失敗しました',
+    vlanIdDuplicate: 'VLAN ID {id} は既に {iface} で使用されています。',
+    detail: '詳細',
+    validationMtuRange: 'MTU は 576 から 1500 の間で入力してください。',
+    validationVlanIdRange: 'VLAN ID は 1 から 4094 の間で入力してください。',
+    validationVlanPriorityRange: 'VLAN プライオリティは 0 から 7 の間で入力してください。',
+    validationRequired: '{field} は必須です。',
+    validationMaxLength: '{field} は {max} 文字以内で入力してください。',
+    validationInvalidIPv4: '無効な IPv4 アドレス形式です。',
+    validationInvalidIPv6: '無効な IPv6 アドレス形式です。',
+    validationIdleTimeRange: 'アイドルタイムは 0 から 65535 の間で入力してください。',
+    validationPrefixLengthRange: 'プレフィックス長は 1 から 128 の間で入力してください。'
   },
   ipFiltering: {
     enableIpFiltering: 'IP フィルタリングを有効にする',
