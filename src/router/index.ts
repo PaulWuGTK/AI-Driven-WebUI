@@ -21,6 +21,7 @@ if (typeof window !== 'undefined') {
 const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
   { pathPrefix: '/status/wan-failover', menuKey: 'status.wanFailover' },
 
+  { pathPrefix: '/basic/wan-setup', menuKey: 'basicSetup.wan' },
   { pathPrefix: '/basic/backup-wan', menuKey: 'basicSetup.backupWan' },
   { pathPrefix: '/network/lan/ipv4', menuKey: 'basicSetup.lan.ipv4' },
   { pathPrefix: '/network/lan/devices', menuKey: 'basicSetup.lan.deviceConnected' },
@@ -265,6 +266,12 @@ const router = createRouter({
       path: '/network/wan',
       name: 'NetworkWan',
       component: () => import('../views/network/wan/WanConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/basic/wan-setup',
+      name: 'BasicWanSetup',
+      component: () => import('../views/network/wan/BasicWanSetup.vue'),
       beforeEnter: requireAuth
     },
     {
