@@ -1645,7 +1645,18 @@ const translations = {
     ipv6DnsServers: 'IPv6 DNS 서버',
     save: '저장',
     deleteConfirm: '이 인터페이스를 삭제하시겠습니까?',
-    applyFailed: 'WAN 설정 적용 실패'
+    applyFailed: 'WAN 설정 적용 실패',
+    vlanIdDuplicate: 'VLAN ID {id}은(는) 이미 {iface}에서 사용 중입니다.',
+    detail: '상세 정보',
+    validationMtuRange: 'MTU는 576에서 1500 사이여야 합니다.',
+    validationVlanIdRange: 'VLAN ID는 1에서 4094 사이여야 합니다.',
+    validationVlanPriorityRange: 'VLAN 우선순위는 0에서 7 사이여야 합니다.',
+    validationRequired: '{field}은(는) 필수 항목입니다.',
+    validationMaxLength: '{field}은(는) {max}자를 초과할 수 없습니다.',
+    validationInvalidIPv4: '잘못된 IPv4 주소 형식입니다.',
+    validationInvalidIPv6: '잘못된 IPv6 주소 형식입니다.',
+    validationIdleTimeRange: '유휴 시간은 0에서 65535 사이여야 합니다.',
+    validationPrefixLengthRange: '접두사 길이는 1에서 128 사이여야 합니다.'
   },
   ipFiltering: {
     enableIpFiltering: 'IP 필터링 사용',

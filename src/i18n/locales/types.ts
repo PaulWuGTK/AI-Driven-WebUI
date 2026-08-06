@@ -1136,6 +1136,17 @@ export interface Translations {
     save: string;
     deleteConfirm: string;
     applyFailed: string;
+    vlanIdDuplicate: string;
+    detail: string;
+    validationMtuRange: string;
+    validationVlanIdRange: string;
+    validationVlanPriorityRange: string;
+    validationRequired: string;
+    validationMaxLength: string;
+    validationInvalidIPv4: string;
+    validationInvalidIPv6: string;
+    validationIdleTimeRange: string;
+    validationPrefixLengthRange: string;
   };
   ipFiltering: {
     enableIpFiltering: string;

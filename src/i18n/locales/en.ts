@@ -1646,7 +1646,18 @@ const translations = {
     ipv6DnsServers: 'IPv6 DNS Servers',
     save: 'Save',
     deleteConfirm: 'Are you sure you want to delete this interface?',
-    applyFailed: 'Failed to apply WAN settings'
+    applyFailed: 'Failed to apply WAN settings',
+    vlanIdDuplicate: 'VLAN ID {id} is already used by {iface}.',
+    detail: 'Detail',
+    validationMtuRange: 'MTU must be between 576 and 1500.',
+    validationVlanIdRange: 'VLAN ID must be between 1 and 4094.',
+    validationVlanPriorityRange: 'VLAN Priority must be between 0 and 7.',
+    validationRequired: '{field} is required.',
+    validationMaxLength: '{field} must not exceed {max} characters.',
+    validationInvalidIPv4: 'Invalid IPv4 address format.',
+    validationInvalidIPv6: 'Invalid IPv6 address format.',
+    validationIdleTimeRange: 'Idle Time must be between 0 and 65535.',
+    validationPrefixLengthRange: 'Prefix Length must be between 1 and 128.'
   },
   ipFiltering: {
     enableIpFiltering: 'Enable IP Filtering',

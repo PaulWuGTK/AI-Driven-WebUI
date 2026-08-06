@@ -1646,7 +1646,18 @@ const translations = {
     ipv6DnsServers: 'IPv6 DNS 伺服器',
     save: '儲存',
     deleteConfirm: '確定要刪除此介面嗎？',
-    applyFailed: 'WAN 設定套用失敗'
+    applyFailed: 'WAN 設定套用失敗',
+    vlanIdDuplicate: 'VLAN ID {id} 已被 {iface} 使用。',
+    detail: '詳細資訊',
+    validationMtuRange: 'MTU 必須介於 576 到 1500 之間。',
+    validationVlanIdRange: 'VLAN ID 必須介於 1 到 4094 之間。',
+    validationVlanPriorityRange: 'VLAN Priority 必須介於 0 到 7 之間。',
+    validationRequired: '{field} 為必填欄位。',
+    validationMaxLength: '{field} 不得超過 {max} 個字元。',
+    validationInvalidIPv4: '無效的 IPv4 位址格式。',
+    validationInvalidIPv6: '無效的 IPv6 位址格式。',
+    validationIdleTimeRange: '閒置時間必須介於 0 到 65535 之間。',
+    validationPrefixLengthRange: '前綴長度必須介於 1 到 128 之間。'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',
