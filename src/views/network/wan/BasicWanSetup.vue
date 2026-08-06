@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BasicWanInterface, BasicWanResponse } from '../../../types/basicWan';
 import { getBasicWan, updateBasicWan } from '../../../services/api/basicWan';
@@ -53,21 +53,20 @@ const validateForm = (): boolean => {
   if (!isInteger(d.MTU) || d.MTU < 576 || d.MTU > 1500) {
     formErrors.value.MTU = t('basicWan.validationMtuRange');
   }
-  // Common: VLAN Priority (0-7)
-  if (!isInteger(d.VLANPriority) || d.VLANPriority < 0 || d.VLANPriority > 7) {
-    formErrors.value.VLANPriority = t('basicWan.validationVlanPriorityRange');
-  }
-  // Common: VLAN ID (1-4094) when tagged
+  // Common: VLAN ID & Priority (only when tagged)
   if (d.VLANType === 'tagged') {
     if (!isInteger(d.VLANID) || d.VLANID < 1 || d.VLANID > 4094) {
       formErrors.value.VLANID = t('basicWan.validationVlanIdRange');
+    }
+    if (!isInteger(d.VLANPriority) || d.VLANPriority < 0 || d.VLANPriority > 7) {
+      formErrors.value.VLANPriority = t('basicWan.validationVlanPriorityRange');
     }
   }
 
   // IPv4 validation
   if (d.IPv4Enable) {
     if (d.IPv4Mode === 'dhcp4') {
-      if (d.HostName && d.HostName.length > 64) {
+      if (d.Option12 && d.HostName && d.HostName.length > 64) {
         formErrors.value.HostName = t('basicWan.validationMaxLength', { field: t('basicWan.hostName'), max: 64 });
       }
       if (d.Option60 && !d.VendorClassID.trim()) {
@@ -156,6 +155,13 @@ const listIPv6Mode = computed(() => originalData.value?.BasicWan.ListIPv6Mode ??
 const listVLANType = computed(() => originalData.value?.BasicWan.ListVLANType ?? []);
 const listConnectionTrigger = computed(() => originalData.value?.BasicWan.ListConnectionTrigger ?? []);
 
+// Auto-set Connection Trigger default when entering ppp4 mode
+watch(() => draft.value?.IPv4Mode, (mode) => {
+  if (draft.value && mode === 'ppp4' && !draft.value.Contrigger) {
+    draft.value.Contrigger = 'AlwaysOn';
+  }
+});
+
 const createDefaultInterface = (name: string): BasicWanInterface => ({
   Interface: name,
   VLANType: 'untagged',
@@ -214,6 +220,10 @@ const handleEdit = (index: number) => {
   editIndex.value = index;
   draft.value = JSON.parse(JSON.stringify(interfaces.value[index]));
   isNew.value = false;
+  // Ensure Connection Trigger has a default for ppp4 mode
+  if (draft.value && draft.value.IPv4Mode === 'ppp4' && !draft.value.Contrigger) {
+    draft.value.Contrigger = 'AlwaysOn';
+  }
 };
 
 const handleDetail = (index: number) => {
@@ -272,6 +282,13 @@ const handleEditCancel = () => {
 
 const handleApply = async () => {
   if (loading.value) return;
+  // Block if two untagged interfaces exist
+  const untaggedCount = interfaces.value.filter(i => i.VLANType === 'untagged').length;
+  if (untaggedCount > 1) {
+    errorToastMessage.value = t('basicWan.duplicateUntagged');
+    triggerErrorToast();
+    return;
+  }
   loading.value = true;
   error.value = null;
   try {
@@ -344,7 +361,7 @@ onMounted(fetchData);
               class="btn btn-primary"
               :data-testid="qa('basic-wan-add-button')"
               @click="handleAdd"
-              :disabled="loading"
+              :disabled="loading || interfaces.length >= 2"
             >
               <span class="material-icons">add</span>
               {{ t('basicWan.addInterface') }}
@@ -359,7 +376,6 @@ onMounted(fetchData);
                   <th :data-testid="qa('basic-wan-header-interface')">{{ t('basicWan.interface') }}</th>
                   <th :data-testid="qa('basic-wan-header-ipv4-mode')">{{ t('basicWan.ipv4Mode') }}</th>
                   <th :data-testid="qa('basic-wan-header-ipv6-mode')">{{ t('basicWan.ipv6Mode') }}</th>
-                  <th :data-testid="qa('basic-wan-header-vlan-type')">{{ t('basicWan.vlanType') }}</th>
                   <th :data-testid="qa('basic-wan-header-vlan-id')">{{ t('basicWan.vlanId') }}</th>
                   <th :data-testid="qa('basic-wan-header-mtu')">{{ t('basicWan.mtu') }}</th>
                   <th :data-testid="qa('basic-wan-header-actions')">{{ t('basicWan.actions') }}</th>
@@ -370,8 +386,7 @@ onMounted(fetchData);
                   <td :data-testid="qa(`basic-wan-interface-${idx}`)">{{ iface.Interface }}</td>
                   <td :data-testid="qa(`basic-wan-ipv4-mode-${idx}`)">{{ modeLabel(iface.IPv4Mode) }}</td>
                   <td :data-testid="qa(`basic-wan-ipv6-mode-${idx}`)">{{ modeLabel(iface.IPv6Mode) }}</td>
-                  <td :data-testid="qa(`basic-wan-vlan-type-${idx}`)">{{ iface.VLANType }}</td>
-                  <td :data-testid="qa(`basic-wan-vlan-id-${idx}`)">{{ iface.VLANID }}</td>
+                  <td :data-testid="qa(`basic-wan-vlan-id-${idx}`)">{{ iface.VLANType === 'tagged' ? iface.VLANID : 'untagged' }}</td>
                   <td :data-testid="qa(`basic-wan-mtu-${idx}`)">{{ iface.MTU }}</td>
                   <td>
                     <div class="action-buttons">
@@ -423,12 +438,8 @@ onMounted(fetchData);
                 <span class="card-value">{{ modeLabel(iface.IPv6Mode) }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label">{{ t('basicWan.vlanType') }}</span>
-                <span class="card-value">{{ iface.VLANType }}</span>
-              </div>
-              <div class="card-row">
                 <span class="card-label">{{ t('basicWan.vlanId') }}</span>
-                <span class="card-value">{{ iface.VLANID }}</span>
+                <span class="card-value">{{ iface.VLANType === 'tagged' ? iface.VLANID : 'untagged' }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label">{{ t('basicWan.mtu') }}</span>
@@ -501,11 +512,6 @@ onMounted(fetchData);
 
               <!-- DHCP4 -->
               <template v-if="draft.IPv4Mode === 'dhcp4'">
-                <div class="form-group">
-                  <label :data-testid="qa('basic-wan-hostname-label')">{{ t('basicWan.hostName') }}</label>
-                  <input type="text" v-model="draft.HostName" :class="{ error: formErrors.HostName }" @input="clearFieldError('HostName')" :data-testid="qa('basic-wan-hostname-input')" />
-                  <span v-if="formErrors.HostName" class="error-message">{{ formErrors.HostName }}</span>
-                </div>
                 <div class="switch-label">
                   <span :data-testid="qa('basic-wan-option60-label')">{{ t('basicWan.option60') }}</span>
                   <BaseSwitch v-model="draft.Option60" :true-value="1" :false-value="0"
@@ -530,6 +536,11 @@ onMounted(fetchData);
                   <span :data-testid="qa('basic-wan-option12-label')">{{ t('basicWan.option12') }}</span>
                   <BaseSwitch v-model="draft.Option12" :true-value="1" :false-value="0"
                     :data-testid="qa('basic-wan-option12-toggle')" :slider-data-testid="qa('basic-wan-option12-slider')" />
+                </div>
+                <div v-if="draft.Option12" class="form-group">
+                  <label :data-testid="qa('basic-wan-hostname-label')">{{ t('basicWan.hostName') }}</label>
+                  <input type="text" v-model="draft.HostName" :class="{ error: formErrors.HostName }" @input="clearFieldError('HostName')" :data-testid="qa('basic-wan-hostname-input')" />
+                  <span v-if="formErrors.HostName" class="error-message">{{ formErrors.HostName }}</span>
                 </div>
               </template>
 
@@ -674,7 +685,7 @@ onMounted(fetchData);
               <input type="number" v-model.number="draft.VLANID" min="1" max="4094" :class="{ error: formErrors.VLANID }" @input="clearFieldError('VLANID')" :data-testid="qa('basic-wan-vlan-id-input')" />
               <span v-if="formErrors.VLANID" class="error-message">{{ formErrors.VLANID }}</span>
             </div>
-            <div class="form-group">
+            <div v-if="draft.VLANType === 'tagged'" class="form-group">
               <label :data-testid="qa('basic-wan-vlan-priority-label')">{{ t('basicWan.vlanPriority') }}</label>
               <input type="number" v-model.number="draft.VLANPriority" min="0" max="7" :class="{ error: formErrors.VLANPriority }" @input="clearFieldError('VLANPriority')" :data-testid="qa('basic-wan-vlan-priority-input')" />
               <span v-if="formErrors.VLANPriority" class="error-message">{{ formErrors.VLANPriority }}</span>
@@ -731,10 +742,6 @@ onMounted(fetchData);
               <!-- DHCP4 details -->
               <template v-if="detailItem.IPv4Mode === 'dhcp4'">
                 <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.hostName') }}</span>
-                  <span class="detail-value">{{ detailItem.HostName || '-' }}</span>
-                </div>
-                <div class="detail-row">
                   <span class="detail-label">{{ t('basicWan.option60') }}</span>
                   <span class="detail-value">{{ detailItem.Option60 ? 'Enabled' : 'Disabled' }}</span>
                 </div>
@@ -753,6 +760,10 @@ onMounted(fetchData);
                 <div class="detail-row">
                   <span class="detail-label">{{ t('basicWan.option12') }}</span>
                   <span class="detail-value">{{ detailItem.Option12 ? 'Enabled' : 'Disabled' }}</span>
+                </div>
+                <div v-if="detailItem.Option12" class="detail-row">
+                  <span class="detail-label">{{ t('basicWan.hostName') }}</span>
+                  <span class="detail-value">{{ detailItem.HostName || '-' }}</span>
                 </div>
               </template>
               <!-- PPP4 details -->
@@ -859,7 +870,7 @@ onMounted(fetchData);
               <span class="detail-label">{{ t('basicWan.vlanId') }}</span>
               <span class="detail-value" :data-testid="qa('basic-wan-detail-vlan-id')">{{ detailItem.VLANID }}</span>
             </div>
-            <div class="detail-row">
+            <div v-if="detailItem.VLANType === 'tagged'" class="detail-row">
               <span class="detail-label">{{ t('basicWan.vlanPriority') }}</span>
               <span class="detail-value" :data-testid="qa('basic-wan-detail-vlan-priority')">{{ detailItem.VLANPriority }}</span>
             </div>

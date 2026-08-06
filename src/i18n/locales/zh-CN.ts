@@ -1656,7 +1656,8 @@ const translations = {
     validationInvalidIPv4: '无效的 IPv4 地址格式。',
     validationInvalidIPv6: '无效的 IPv6 地址格式。',
     validationIdleTimeRange: '空闲时间必须介于 0 到 65535 之间。',
-    validationPrefixLengthRange: '前缀长度必须介于 1 到 128 之间。'
+    validationPrefixLengthRange: '前缀长度必须介于 1 到 128 之间。',
+    duplicateUntagged: '仅允许一条 untagged 接口。'
   },
   ipFiltering: {
     enableIpFiltering: '启用 IP 过滤',

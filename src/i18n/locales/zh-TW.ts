@@ -1657,7 +1657,8 @@ const translations = {
     validationInvalidIPv4: '無效的 IPv4 位址格式。',
     validationInvalidIPv6: '無效的 IPv6 位址格式。',
     validationIdleTimeRange: '閒置時間必須介於 0 到 65535 之間。',
-    validationPrefixLengthRange: '前綴長度必須介於 1 到 128 之間。'
+    validationPrefixLengthRange: '前綴長度必須介於 1 到 128 之間。',
+    duplicateUntagged: '僅允許一筆 untagged 介面。'
   },
   ipFiltering: {
     enableIpFiltering: '啟用 IP 過濾',
