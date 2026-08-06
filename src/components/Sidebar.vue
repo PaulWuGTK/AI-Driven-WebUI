@@ -89,7 +89,7 @@ const baseMenuItems: MenuItem[] = [
     translationKey: 'menu.basicSetup',
     menuKey: 'basicSetup',
     subItems: [
-      { name: 'WAN', path: '/basic/wan', translationKey: 'menu.wan', menuKey: 'basicSetup.wan' },
+      { name: 'WAN', path: '/basic/wan-setup', translationKey: 'menu.wan', menuKey: 'basicSetup.wan' },
       { name: 'WAN Cht', path: '/basic/wan-cht', translationKey: 'menu.wan', menuKey: 'basicSetup.wanCht' },
       { name: 'Backup WAN', path: '/basic/backup-wan', translationKey: 'menu.backupWan', menuKey: 'basicSetup.backupWan' },
       {
@@ -426,7 +426,7 @@ watch(() => route.path, (newPath) => {
 
   // Path mapping for redirects: maps menu paths to their actual routes
   const pathRedirects: Record<string, string[]> = {
-    '/basic/wan': ['/network/wan'],
+    '/basic/wan-setup': ['/basic/wan-setup'],
     '/basic/lan': ['/network/lan'],
     '/basic/lan/ipv4': ['/network/lan/ipv4'],
     '/basic/lan/devices': ['/network/lan/devices'],
