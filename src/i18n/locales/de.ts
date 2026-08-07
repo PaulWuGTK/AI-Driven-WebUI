@@ -1814,6 +1814,7 @@ const translations = {
     invalidPrefixLength: 'Ungültige Präfixlänge (muss zwischen 0 und 128 liegen)',
     invalidGatewayIPv4: 'Ungültige Gateway-IPv4-Adresse',
     invalidGatewayIPv6: 'Ungültige Gateway-IPv6-Adresse',
+    reservedDestinationIp: 'Diese IP-Adresse ist reserviert (z. B. Broadcast, Loopback, Multicast) und kann nicht als Ziel verwendet werden.',
     prefixLengthRequired: 'Präfixlänge ist erforderlich',
     duplicateAlias: 'Routenname existiert bereits. Bitte verwenden Sie einen anderen Namen',
     comingSoon: 'Demnächst verfügbar',

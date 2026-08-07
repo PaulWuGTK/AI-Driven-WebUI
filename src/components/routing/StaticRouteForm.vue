@@ -101,6 +101,33 @@ const validateIPv6 = (ip: string): boolean => {
   return ipv6Regex.test(ip);
 };
 
+const isReservedIPv4 = (ip: string): boolean => {
+  const parts = ip.split('.').map(p => parseInt(p, 10));
+  const first = parts[0];
+  // 0.0.0.0 — unspecified
+  if (parts.every(p => p === 0)) return true;
+  // 255.255.255.255 — limited broadcast
+  if (parts.every(p => p === 255)) return true;
+  // 127.x.x.x — loopback
+  if (first === 127) return true;
+  // 224–239.x.x.x — multicast (Class D)
+  if (first >= 224 && first <= 239) return true;
+  // 240–255.x.x.x — reserved (Class E)
+  if (first >= 240) return true;
+  return false;
+};
+
+const isReservedIPv6 = (ip: string): boolean => {
+  const normalized = ip.toLowerCase();
+  // :: — unspecified
+  if (normalized === '::') return true;
+  // ::1 — loopback
+  if (normalized === '::1') return true;
+  // ff00::/8 — multicast
+  if (normalized.startsWith('ff')) return true;
+  return false;
+};
+
 const validateForm = (): boolean => {
   formErrors.value = {
     Alias: '',
@@ -147,10 +174,16 @@ const validateForm = (): boolean => {
       if (!validateIPv4(formData.value.DestIp)) {
         formErrors.value.DestIp = t('routing.invalidIPv4');
         isValid = false;
+      } else if (isReservedIPv4(formData.value.DestIp)) {
+        formErrors.value.DestIp = t('routing.reservedDestinationIp');
+        isValid = false;
       }
     } else {
       if (!validateIPv6(formData.value.DestIp)) {
         formErrors.value.DestIp = t('routing.invalidIPv6');
+        isValid = false;
+      } else if (isReservedIPv6(formData.value.DestIp)) {
+        formErrors.value.DestIp = t('routing.reservedDestinationIp');
         isValid = false;
       }
     }

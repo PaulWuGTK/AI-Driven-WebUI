@@ -1814,6 +1814,7 @@ const translations = {
     invalidPrefixLength: 'Longueur de préfixe invalide (doit être comprise entre 0 et 128)',
     invalidGatewayIPv4: 'Adresse IPv4 de passerelle invalide',
     invalidGatewayIPv6: 'Adresse IPv6 de passerelle invalide',
+    reservedDestinationIp: 'Cette adresse IP est réservée (diffusion, bouclage, multidiffusion, etc.) et ne peut pas être utilisée comme destination.',
     prefixLengthRequired: 'La longueur du préfixe est requise',
     duplicateAlias: 'Le nom de route existe déjà. Veuillez utiliser un nom différent',
     comingSoon: 'Bientôt disponible',
