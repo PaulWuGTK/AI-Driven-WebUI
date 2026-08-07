@@ -83,13 +83,6 @@ const band6gSecurityOptions = computed(() => {
   return commonSecurityOptions.value;
 });
 
-// When Mesh is enabled, enforce Smart Connect (Common SSID) on
-watch(() => props.config.mesh.enable, (meshEnabled) => {
-  if (meshEnabled) {
-    props.config.wifi.smartConnect = true;
-  }
-}, { immediate: true });
-
 watch(() => props.config.wifi.smartConnect, (isEnabled) => {
   if (isEnabled) {
     savedBandPasswords.value['2g'] = props.config.wifi.bands['2g'].password;
@@ -285,7 +278,6 @@ const handleNext = () => {
           <BaseSwitch
             v-model="config.wifi.smartConnect"
             class="toggle-switch"
-            :disabled="config.mesh.enable"
             :data-testid="qa('wizard-wifi-smart-connect-toggle')"
             :slider-data-testid="qa('wizard-wifi-smart-connect-toggle-slider')"
           />
@@ -309,10 +301,6 @@ const handleNext = () => {
           />
         </div>
 
-        <div v-if="config.mesh.enable" class="enforce-hint" :data-testid="qa('wizard-wifi-mesh-enforce-hint')">
-          <span class="material-icons enforce-hint-icon">info</span>
-          <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
-        </div>
       </div>
 
       <div v-if="config.wifi.smartConnect" class="form-container">
