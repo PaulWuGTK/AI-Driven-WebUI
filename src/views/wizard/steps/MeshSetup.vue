@@ -49,10 +49,6 @@ const { qa } = useQA();
           :slider-data-testid="qa('wizard-mesh-enable-slider')"
         />
       </div>
-      <div v-if="config.mesh.enable" class="warning-message" :data-testid="qa('wizard-mesh-enforce-hint')">
-        <span class="material-icons warning-icon">info</span>
-        <span>{{ t('wizard.meshEnforcesCommonSsid') }}</span>
-      </div>
     </div>
 
     <div class="button-container">
