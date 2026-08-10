@@ -123,6 +123,26 @@ const validateForm = (): boolean => {
     }
   }
 
+  // IPv6 PPPoEv6 validation: validate credentials when IPv4 is not PPPoE
+  if (d.IPv6Enable && d.IPv6Mode === 'ppp6' && d.IPv4Mode !== 'ppp4') {
+    if (!d.UserName.trim()) {
+      formErrors.value.UserName = t('basicWan.validationRequired', { field: t('basicWan.userName') });
+    } else if (d.UserName.length > 64) {
+      formErrors.value.UserName = t('basicWan.validationMaxLength', { field: t('basicWan.userName'), max: 64 });
+    }
+    if (!d.Password.trim()) {
+      formErrors.value.Password = t('basicWan.validationRequired', { field: t('basicWan.password') });
+    } else if (d.Password.length > 64) {
+      formErrors.value.Password = t('basicWan.validationMaxLength', { field: t('basicWan.password'), max: 64 });
+    }
+    if (d.ServiceName && d.ServiceName.length > 64) {
+      formErrors.value.ServiceName = t('basicWan.validationMaxLength', { field: t('basicWan.serviceName'), max: 64 });
+    }
+    if (!isInteger(d.IdleTime) || d.IdleTime < 0 || d.IdleTime > 65535) {
+      formErrors.value.IdleTime = t('basicWan.validationIdleTimeRange');
+    }
+  }
+
   // IPv6 validation
   if (d.IPv6Enable && d.IPv6Mode === 'static') {
     if (!d.IPv6Address.trim()) {
@@ -153,9 +173,14 @@ const listIPv6Mode = computed(() => originalData.value?.BasicWan.ListIPv6Mode ??
 const listVLANType = computed(() => originalData.value?.BasicWan.ListVLANType ?? []);
 const listConnectionTrigger = computed(() => originalData.value?.BasicWan.ListConnectionTrigger ?? []);
 
-// Auto-set Connection Trigger default when entering ppp4 mode
+// Auto-set Connection Trigger default when entering PPPoE mode (IPv4 or IPv6)
 watch(() => draft.value?.IPv4Mode, (mode) => {
   if (draft.value && mode === 'ppp4' && !draft.value.Contrigger) {
+    draft.value.Contrigger = 'AlwaysOn';
+  }
+});
+watch(() => draft.value?.IPv6Mode, (mode) => {
+  if (draft.value && mode === 'ppp6' && draft.value.IPv4Mode !== 'ppp4' && !draft.value.Contrigger) {
     draft.value.Contrigger = 'AlwaysOn';
   }
 });
@@ -218,8 +243,8 @@ const handleEdit = (index: number) => {
   editIndex.value = index;
   draft.value = JSON.parse(JSON.stringify(interfaces.value[index]));
   isNew.value = false;
-  // Ensure Connection Trigger has a default for ppp4 mode
-  if (draft.value && draft.value.IPv4Mode === 'ppp4' && !draft.value.Contrigger) {
+  // Ensure Connection Trigger has a default for PPPoE mode (IPv4 or IPv6)
+  if (draft.value && (draft.value.IPv4Mode === 'ppp4' || (draft.value.IPv6Enable && draft.value.IPv6Mode === 'ppp6')) && !draft.value.Contrigger) {
     draft.value.Contrigger = 'AlwaysOn';
   }
 };
@@ -251,10 +276,10 @@ const handleSave = () => {
   if (draft.value === null || editIndex.value === null) return;
   // Run form validation
   if (!validateForm()) return;
-  // Validate PPPoE uniqueness: only one interface can use ppp4
-  if (draft.value.IPv4Mode === 'ppp4') {
+  // Validate PPPoE uniqueness: only one interface can use PPPoE (IPv4 ppp4 or IPv6 ppp6)
+  if (draft.value.IPv4Mode === 'ppp4' || (draft.value.IPv6Enable && draft.value.IPv6Mode === 'ppp6')) {
     const otherPppoe = interfaces.value.find(
-      (iface, idx) => idx !== editIndex.value && iface.IPv4Mode === 'ppp4'
+      (iface, idx) => idx !== editIndex.value && (iface.IPv4Mode === 'ppp4' || (iface.IPv6Enable && iface.IPv6Mode === 'ppp6'))
     );
     if (otherPppoe) {
       errorToastMessage.value = t('basicWan.duplicatePppoe', { iface: otherPppoe.Interface });
@@ -291,8 +316,8 @@ const handleEditCancel = () => {
 
 const handleApply = async () => {
   if (loading.value) return;
-  // Block if two PPPoE interfaces exist
-  const pppoeCount = interfaces.value.filter(i => i.IPv4Mode === 'ppp4').length;
+  // Block if two PPPoE interfaces exist (IPv4 ppp4 or IPv6 ppp6)
+  const pppoeCount = interfaces.value.filter(i => i.IPv4Mode === 'ppp4' || (i.IPv6Enable && i.IPv6Mode === 'ppp6')).length;
   if (pppoeCount > 1) {
     errorToastMessage.value = t('basicWan.duplicatePppoe', { iface: '' });
     triggerErrorToast();
@@ -657,10 +682,40 @@ onMounted(fetchData);
 
               <!-- PPPoEv6 -->
               <template v-if="draft.IPv6Mode === 'ppp6'">
-                <div class="info-banner" :data-testid="qa('basic-wan-pppv6-hint')">
+                <!-- When IPv4 is also PPPoE, credentials are shared -->
+                <div v-if="draft.IPv4Mode === 'ppp4'" class="info-banner" :data-testid="qa('basic-wan-pppv6-hint')">
                   <span class="material-icons">info</span>
                   <span>{{ t('basicWan.pppv6SharesCredentials') }}</span>
                 </div>
+                <!-- When IPv4 is NOT PPPoE, show credential fields here -->
+                <template v-else>
+                  <div class="form-group">
+                    <label :data-testid="qa('basic-wan-ppp6-username-label')">{{ t('basicWan.userName') }}</label>
+                    <input type="text" v-model="draft.UserName" :class="{ error: formErrors.UserName }" @input="clearFieldError('UserName')" :data-testid="qa('basic-wan-ppp6-username-input')" />
+                    <span v-if="formErrors.UserName" class="error-message">{{ formErrors.UserName }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label :data-testid="qa('basic-wan-ppp6-password-label')">{{ t('basicWan.password') }}</label>
+                    <BaseSecretInput v-model="draft.Password" :input-data-testid="qa('basic-wan-ppp6-password-input')" />
+                    <span v-if="formErrors.Password" class="error-message">{{ formErrors.Password }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label :data-testid="qa('basic-wan-ppp6-service-name-label')">{{ t('basicWan.serviceName') }}</label>
+                    <input type="text" v-model="draft.ServiceName" :class="{ error: formErrors.ServiceName }" @input="clearFieldError('ServiceName')" :data-testid="qa('basic-wan-ppp6-service-name-input')" />
+                    <span v-if="formErrors.ServiceName" class="error-message">{{ formErrors.ServiceName }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label :data-testid="qa('basic-wan-ppp6-trigger-label')">{{ t('basicWan.connectionTrigger') }}</label>
+                    <select v-model="draft.Contrigger" :data-testid="qa('basic-wan-ppp6-trigger-select')">
+                      <option v-for="ct in listConnectionTrigger" :key="ct" :value="ct">{{ ct }}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label :data-testid="qa('basic-wan-ppp6-idle-time-label')">{{ t('basicWan.idleTime') }}</label>
+                    <input type="number" v-model.number="draft.IdleTime" min="0" max="65535" :class="{ error: formErrors.IdleTime }" @input="clearFieldError('IdleTime')" :data-testid="qa('basic-wan-ppp6-idle-time-input')" />
+                    <span v-if="formErrors.IdleTime" class="error-message">{{ formErrors.IdleTime }}</span>
+                  </div>
+                </template>
                 <div class="switch-label">
                   <span :data-testid="qa('basic-wan-ppp6-slaac-label')">{{ t('basicWan.slaac') }}</span>
                   <BaseSwitch v-model="draft.SLAAC" :true-value="1" :false-value="0"
