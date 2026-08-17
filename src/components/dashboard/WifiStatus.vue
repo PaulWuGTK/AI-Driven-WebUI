@@ -35,9 +35,9 @@ const enabledBands = computed(() => {
 // Check if any WiFi is enabled
 const hasEnabledWifi = computed(() => enabledBands.value.length > 0);
 
-// Check if a security mode requires a password (is not "None")
+// Check if a security mode requires a password (is not "None" or "OWE")
 const requiresPassword = (securityMode: string): boolean => {
-  return securityMode !== "None";
+  return securityMode !== "None" && securityMode !== "OWE";
 }
 </script>
 

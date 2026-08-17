@@ -79,6 +79,14 @@ const formatAssociatedApBssid = (band: WlanBand, device: WlanAssociatedDevice): 
   return interfaceName ? `${device.BSSID} (${interfaceName})` : device.BSSID;
 };
 
+const shouldShowPassword = (authentication: string): boolean => {
+  return authentication !== 'None' && authentication !== 'OWE';
+};
+
+const formatPassword = (authentication: string, password: string): string => {
+  return shouldShowPassword(authentication) ? password : 'N/A';
+};
+
 onMounted(() => {
   fetchWlanStatus();
 });
@@ -117,7 +125,7 @@ onMounted(() => {
                   <td :data-testid="qa(`wlan-interface-ssid-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.SSID }}</td>
                   <td :data-testid="qa(`wlan-interface-authentication-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Authentication }}</td>
                   <td :data-testid="qa(`wlan-interface-encryption-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Encryption }}</td>
-                  <td :data-testid="qa(`wlan-interface-password-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Password }}</td>
+                  <td :data-testid="qa(`wlan-interface-password-${slug(band.Band)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.Password) }}</td>
                   <td :data-testid="qa(`wlan-interface-bssid-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.BSSID }}</td>
                 </tr>
               </tbody>
@@ -152,7 +160,7 @@ onMounted(() => {
               </div>
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`wlan-interface-card-password-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.password') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-password-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Password }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-password-value-${slug(band.Band)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.Password) }}</span>
               </div>
               <div class="card-row">
                 <span class="card-label" :data-testid="qa(`wlan-interface-card-bssid-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.bssid') }}</span>
