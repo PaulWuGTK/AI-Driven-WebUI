@@ -1812,6 +1812,7 @@ const translations = {
     invalidIPv6: '無効な IPv6 アドレス形式です',
     invalidSubnetMask: '無効なサブネットマスク形式です',
     invalidPrefixLength: '無効なプレフィックス長です（0〜128 の範囲で指定してください）',
+    gatewayIpRequired: 'ゲートウェイ IP アドレスは必須です',
     invalidGatewayIPv4: '無効なゲートウェイ IPv4 アドレスです',
     invalidGatewayIPv6: '無効なゲートウェイ IPv6 アドレスです',
     reservedDestinationIp: 'この IP アドレスは予約済み（ブロードキャスト、ループバック、マルチキャストなど）のため、宛先として使用できません。',

@@ -1812,6 +1812,7 @@ const translations = {
     invalidIPv6: 'Format d’adresse IPv6 invalide',
     invalidSubnetMask: 'Format de masque de sous-réseau invalide',
     invalidPrefixLength: 'Longueur de préfixe invalide (doit être comprise entre 0 et 128)',
+    gatewayIpRequired: "L'adresse IP de la passerelle est requise",
     invalidGatewayIPv4: 'Adresse IPv4 de passerelle invalide',
     invalidGatewayIPv6: 'Adresse IPv6 de passerelle invalide',
     reservedDestinationIp: 'Cette adresse IP est réservée (diffusion, bouclage, multidiffusion, etc.) et ne peut pas être utilisée comme destination.',
