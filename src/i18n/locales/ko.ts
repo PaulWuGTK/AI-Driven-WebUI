@@ -1812,6 +1812,7 @@ const translations = {
     invalidIPv6: '잘못된 IPv6 주소 형식입니다',
     invalidSubnetMask: '잘못된 서브넷 마스크 형식입니다',
     invalidPrefixLength: '잘못된 프리픽스 길이입니다 (0~128 사이여야 합니다)',
+    gatewayIpRequired: '게이트웨이 IP 주소는 필수 항목입니다',
     invalidGatewayIPv4: '잘못된 게이트웨이 IPv4 주소입니다',
     invalidGatewayIPv6: '잘못된 게이트웨이 IPv6 주소입니다',
     reservedDestinationIp: '이 IP 주소는 예약된 주소(브로드캐스트, 루프백, 멀티캐스트 등)이므로 목적지로 사용할 수 없습니다.',

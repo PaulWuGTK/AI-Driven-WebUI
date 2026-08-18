@@ -1813,6 +1813,7 @@ const translations = {
     invalidIPv6: 'Invalid IPv6 address format',
     invalidSubnetMask: 'Invalid subnet mask format',
     invalidPrefixLength: 'Invalid prefix length (must be between 0 and 128)',
+    gatewayIpRequired: 'Gateway IP address is required',
     invalidGatewayIPv4: 'Invalid gateway IPv4 address',
     invalidGatewayIPv6: 'Invalid gateway IPv6 address',
     reservedDestinationIp: 'This IP address is reserved (e.g. broadcast, loopback, multicast) and cannot be used as a destination.',

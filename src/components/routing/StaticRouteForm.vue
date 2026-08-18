@@ -70,12 +70,6 @@ if (props.editingItem) {
   };
 }
 
-watch(() => formData.value.UsedGWIp, (newVal) => {
-  if (newVal === 0) {
-    formData.value.GatewayIp = '';
-  }
-});
-
 // Auto-fill subnet mask based on destination IP:
 // host IP (last octet != 0) → 255.255.255.255
 // network IP (last octet == 0) → 255.255.255.0
@@ -207,17 +201,18 @@ const validateForm = (): boolean => {
     }
   }
 
-  if (formData.value.UsedGWIp === 1 && formData.value.GatewayIp.trim()) {
-    if (formData.value.IpType === 'IPv4') {
-      if (!validateIPv4(formData.value.GatewayIp)) {
-        formErrors.value.GatewayIp = t('routing.invalidGatewayIPv4');
-        isValid = false;
-      }
-    } else {
-      if (!validateIPv6(formData.value.GatewayIp)) {
-        formErrors.value.GatewayIp = t('routing.invalidGatewayIPv6');
-        isValid = false;
-      }
+  if (!formData.value.GatewayIp.trim()) {
+    formErrors.value.GatewayIp = t('routing.gatewayIpRequired');
+    isValid = false;
+  } else if (formData.value.IpType === 'IPv4') {
+    if (!validateIPv4(formData.value.GatewayIp)) {
+      formErrors.value.GatewayIp = t('routing.invalidGatewayIPv4');
+      isValid = false;
+    }
+  } else {
+    if (!validateIPv6(formData.value.GatewayIp)) {
+      formErrors.value.GatewayIp = t('routing.invalidGatewayIPv6');
+      isValid = false;
     }
   }
 
@@ -366,21 +361,9 @@ const handleClose = () => {
           </div>
 
           <div class="form-group">
-            <label class="toggle-label">
-              {{ t('routing.useGatewayIpAddress') }}
-              <BaseSwitch
-                v-model="formData.UsedGWIp"
-                :true-value="1"
-                :false-value="0"
-                :data-testid="qa('static-route-form-use-gw-ip')"
-                :slider-data-testid="qa('static-route-form-use-gw-ip-slider')"
-              />
-            </label>
-          </div>
-
-          <div class="form-group" v-if="formData.UsedGWIp === 1">
             <label>
               {{ t('routing.gatewayIpAddress') }}
+              <span class="required">*</span>
             </label>
             <input
               type="text"

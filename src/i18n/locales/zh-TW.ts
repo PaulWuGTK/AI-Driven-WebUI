@@ -1813,6 +1813,7 @@ const translations = {
     invalidIPv6: '無效的 IPv6 位址格式',
     invalidSubnetMask: '無效的子網路遮罩格式',
     invalidPrefixLength: '無效的前綴長度（必須介於 0 到 128 之間）',
+    gatewayIpRequired: '閘道 IP 位址為必填項',
     invalidGatewayIPv4: '無效的閘道 IPv4 位址',
     invalidGatewayIPv6: '無效的閘道 IPv6 位址',
     reservedDestinationIp: '此 IP 位址為保留位址（如廣播、迴路、多播），無法作為目的地使用。',

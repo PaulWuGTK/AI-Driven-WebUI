@@ -1812,6 +1812,7 @@ const translations = {
     invalidIPv6: 'Ungültiges IPv6-Adressformat',
     invalidSubnetMask: 'Ungültiges Subnetzmaskenformat',
     invalidPrefixLength: 'Ungültige Präfixlänge (muss zwischen 0 und 128 liegen)',
+    gatewayIpRequired: 'Gateway-IP-Adresse ist erforderlich',
     invalidGatewayIPv4: 'Ungültige Gateway-IPv4-Adresse',
     invalidGatewayIPv6: 'Ungültige Gateway-IPv6-Adresse',
     reservedDestinationIp: 'Diese IP-Adresse ist reserviert (z. B. Broadcast, Loopback, Multicast) und kann nicht als Ziel verwendet werden.',
