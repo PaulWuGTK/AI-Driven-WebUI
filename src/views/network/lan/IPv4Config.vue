@@ -46,11 +46,7 @@ const showIPv6Settings = computed(() => lanData.value?.LanBasic.LANIPSetting.IPv
 const showIPv6AddressField = computed(() =>
   showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv6Protocol === 'Static'
 );
-const showIPv6PrefixField = computed(() =>
-  showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv6PrefixProtocol === 'Static'
-);
 const ipv6ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6Protocol ?? ['AutoConfigured', 'Static']);
-const ipv6PrefixProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6PrefixProtocol ?? ['AutoConfigured', 'Static']);
 const dnsOriginOptions = computed(() => lanData.value?.LanBasic.DHCPv4Setting.ListDNSServersOrigin ?? ['Static']);
 const showDnsServersInput = computed(() => lanData.value?.LanBasic.DHCPv4Setting.DNSServersOrigin === 'Static');
 const protocolLabelMap: Record<string, string> = {
@@ -692,25 +688,7 @@ onMounted(fetchLanBasic);
               />
             </div>
 
-            <div class="form-group">
-              <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-protocol-label')">{{ t('lanBasic.ipv6PrefixProtocol') }}</label>
-              <select
-                v-model="lanData.LanBasic.LANIPSetting.IPv6PrefixProtocol"
-                :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-protocol-select')"
-                class="form-select"
-              >
-                <option
-                  v-for="protocol in ipv6PrefixProtocolOptions"
-                  :key="protocol"
-                  :value="protocol"
-                  :data-testid="qa(`ipv4-configuration-lan-ipv6-prefix-protocol-option-${protocol.toLowerCase()}`)"
-                >
-                  {{ getProtocolLabel(protocol) }}
-                </option>
-              </select>
-            </div>
-
-            <div v-if="showIPv6PrefixField" class="form-group">
+            <div v-if="showIPv6AddressField" class="form-group">
               <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-label')">{{ t('lanBasic.ipv6Prefix') }}</label>
               <input
                 type="text"
