@@ -43,8 +43,11 @@ const showIPv4StaticFields = computed(() =>
 );
 const ipv4ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv4Protocol ?? ['DHCP', 'Static']);
 const showIPv6Settings = computed(() => lanData.value?.LanBasic.LANIPSetting.IPv6Enable === 1);
+const showULASettings = computed(() =>
+  showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.ULAEnable === 1
+);
 const showIPv6AddressField = computed(() =>
-  showIPv6Settings.value && lanData.value?.LanBasic.LANIPSetting.IPv6Protocol === 'Static'
+  showULASettings.value && lanData.value?.LanBasic.LANIPSetting.IPv6Protocol === 'Static'
 );
 const ipv6ProtocolOptions = computed(() => lanData.value?.LanBasic.LANIPSetting.ListIPv6Protocol ?? ['AutoConfigured', 'Static']);
 const dnsOriginOptions = computed(() => lanData.value?.LanBasic.DHCPv4Setting.ListDNSServersOrigin ?? ['Static']);
@@ -661,42 +664,57 @@ onMounted(fetchLanBasic);
 
           <template v-if="showIPv6Settings">
             <div class="form-group">
-              <label :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-label')">{{ t('lanBasic.ipv6Protocol') }}</label>
-              <select
-                v-model="lanData.LanBasic.LANIPSetting.IPv6Protocol"
-                :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-select')"
-                class="form-select"
-              >
-                <option
-                  v-for="protocol in ipv6ProtocolOptions"
-                  :key="protocol"
-                  :value="protocol"
-                  :data-testid="qa(`ipv4-configuration-lan-ipv6-protocol-option-${protocol.toLowerCase()}`)"
+              <div class="switch-label">
+                <span :data-testid="qa('ipv4-configuration-lan-ula-enable-label')">{{ t('lanBasic.ulaEnable') }}</span>
+                <BaseSwitch
+                  v-model="lanData.LanBasic.LANIPSetting.ULAEnable"
+                  :true-value="1"
+                  :false-value="0"
+                  :data-testid="qa('ipv4-configuration-lan-ula-enable-toggle')"
+                  :slider-data-testid="qa('ipv4-configuration-lan-ula-enable-slider')"
+                />
+              </div>
+            </div>
+
+            <template v-if="showULASettings">
+              <div class="form-group">
+                <label :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-label')">{{ t('lanBasic.ipv6Protocol') }}</label>
+                <select
+                  v-model="lanData.LanBasic.LANIPSetting.IPv6Protocol"
+                  :data-testid="qa('ipv4-configuration-lan-ipv6-protocol-select')"
+                  class="form-select"
                 >
-                  {{ getProtocolLabel(protocol) }}
-                </option>
-              </select>
-            </div>
+                  <option
+                    v-for="protocol in ipv6ProtocolOptions"
+                    :key="protocol"
+                    :value="protocol"
+                    :data-testid="qa(`ipv4-configuration-lan-ipv6-protocol-option-${protocol.toLowerCase()}`)"
+                  >
+                    {{ getProtocolLabel(protocol) }}
+                  </option>
+                </select>
+              </div>
 
-            <div v-if="showIPv6AddressField" class="form-group">
-              <label :data-testid="qa('ipv4-configuration-lan-ipv6-address-label')">{{ t('lanBasic.ipv6Address') }}</label>
-              <input
-                type="text"
-                :data-testid="qa('ipv4-configuration-lan-ipv6-address-input')"
-                v-model="lanData.LanBasic.LANIPSetting.IPv6Address"
-                placeholder=""
-              />
-            </div>
+              <div v-if="showIPv6AddressField" class="form-group">
+                <label :data-testid="qa('ipv4-configuration-lan-ipv6-address-label')">{{ t('lanBasic.ipv6Address') }}</label>
+                <input
+                  type="text"
+                  :data-testid="qa('ipv4-configuration-lan-ipv6-address-input')"
+                  v-model="lanData.LanBasic.LANIPSetting.IPv6Address"
+                  placeholder=""
+                />
+              </div>
 
-            <div v-if="showIPv6AddressField" class="form-group">
-              <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-label')">{{ t('lanBasic.ipv6Prefix') }}</label>
-              <input
-                type="text"
-                :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-input')"
-                v-model="lanData.LanBasic.LANIPSetting.IPv6Prefix"
-                placeholder=""
-              />
-            </div>
+              <div v-if="showIPv6AddressField" class="form-group">
+                <label :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-label')">{{ t('lanBasic.ipv6Prefix') }}</label>
+                <input
+                  type="text"
+                  :data-testid="qa('ipv4-configuration-lan-ipv6-prefix-input')"
+                  v-model="lanData.LanBasic.LANIPSetting.IPv6Prefix"
+                  placeholder=""
+                />
+              </div>
+            </template>
           </template>
         </div>
       </div>

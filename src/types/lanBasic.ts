@@ -4,13 +4,12 @@ export interface LANIPSetting {
   IPv4IPAddress: string;
   SubnetMask: string;
   IPv6Enable: 0 | 1;
+  ULAEnable: 0 | 1;
   IPv6Protocol: string;
   IPv6Address: string;
-  IPv6PrefixProtocol: string;
   IPv6Prefix: string;
   ListIPv4Protocol?: string[];
   ListIPv6Protocol?: string[];
-  ListIPv6PrefixProtocol?: string[];
   IPv4SegmentList?: [string, string][];
 }
 

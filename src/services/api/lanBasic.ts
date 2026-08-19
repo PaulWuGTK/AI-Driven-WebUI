@@ -6,7 +6,6 @@ const isDevelopment = import.meta.env.DEV;
 
 const DEFAULT_IPV4_PROTOCOL_LIST = ['DHCP', 'Static'];
 const DEFAULT_IPV6_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
-const DEFAULT_IPV6_PREFIX_PROTOCOL_LIST = ['AutoConfigured', 'Static'];
 const DEFAULT_DNS_SERVERS_ORIGIN_LIST = ['Static', 'Relay', 'Proxy'];
 
 const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
@@ -23,9 +22,9 @@ const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
         IPv4IPAddress: String(lanIp.IPv4IPAddress ?? lanIp.IPAddress ?? '192.168.1.1'),
         SubnetMask: String(lanIp.SubnetMask ?? '255.255.255.0'),
         IPv6Enable: toFlag01(lanIp.IPv6Enable, 0),
+        ULAEnable: toFlag01(lanIp.ULAEnable, 0),
         IPv6Protocol: String(lanIp.IPv6Protocol ?? 'AutoConfigured'),
         IPv6Address: String(lanIp.IPv6Address ?? ''),
-        IPv6PrefixProtocol: String(lanIp.IPv6PrefixProtocol ?? 'AutoConfigured'),
         IPv6Prefix: String(lanIp.IPv6Prefix ?? ''),
         ListIPv4Protocol: Array.isArray(lanIp.ListIPv4Protocol) && lanIp.ListIPv4Protocol.length > 0
           ? lanIp.ListIPv4Protocol
@@ -33,9 +32,6 @@ const normalizeLanBasicResponse = (response: any): LanBasicResponse => {
         ListIPv6Protocol: Array.isArray(lanIp.ListIPv6Protocol) && lanIp.ListIPv6Protocol.length > 0
           ? lanIp.ListIPv6Protocol
           : DEFAULT_IPV6_PROTOCOL_LIST,
-        ListIPv6PrefixProtocol: Array.isArray(lanIp.ListIPv6PrefixProtocol) && lanIp.ListIPv6PrefixProtocol.length > 0
-          ? lanIp.ListIPv6PrefixProtocol
-          : DEFAULT_IPV6_PREFIX_PROTOCOL_LIST,
         ...(Array.isArray(lanIp.IPv4SegmentList) ? { IPv4SegmentList: lanIp.IPv4SegmentList } : {}),
       },
       DHCPv4Setting: {
@@ -75,13 +71,12 @@ export const getLanBasic = async (): Promise<LanBasicResponse> => {
           IPv4IPAddress: '192.168.1.1',
           SubnetMask: '255.255.255.0',
           IPv6Enable: 0,
+          ULAEnable: 0,
           IPv6Protocol: 'AutoConfigured',
           IPv6Address: '',
-          IPv6PrefixProtocol: 'AutoConfigured',
           IPv6Prefix: '',
           ListIPv4Protocol: DEFAULT_IPV4_PROTOCOL_LIST,
           ListIPv6Protocol: DEFAULT_IPV6_PROTOCOL_LIST,
-          ListIPv6PrefixProtocol: DEFAULT_IPV6_PREFIX_PROTOCOL_LIST,
           IPv4SegmentList: [['192.168.2.1', '255.255.255.0']],
         },
         DHCPv4Setting: {
@@ -141,9 +136,9 @@ export const updateLanBasic = async (data: LanBasicUpdateRequest): Promise<LanBa
         IPv4IPAddress: data.LanBasic.LANIPSetting.IPv4IPAddress,
         SubnetMask: data.LanBasic.LANIPSetting.SubnetMask,
         IPv6Enable: toFlag01(data.LanBasic.LANIPSetting.IPv6Enable),
+        ULAEnable: toFlag01(data.LanBasic.LANIPSetting.ULAEnable),
         IPv6Protocol: data.LanBasic.LANIPSetting.IPv6Protocol,
         IPv6Address: data.LanBasic.LANIPSetting.IPv6Address,
-        IPv6PrefixProtocol: data.LanBasic.LANIPSetting.IPv6PrefixProtocol,
         IPv6Prefix: data.LanBasic.LANIPSetting.IPv6Prefix
       },
       DHCPv4Setting: {
