@@ -664,16 +664,6 @@ onMounted(fetchData);
               <!-- DHCPv6 -->
               <template v-if="draft.IPv6Mode === 'dhcp6'">
                 <div class="switch-label">
-                  <span :data-testid="qa('basic-wan-slaac-label')">{{ t('basicWan.slaac') }}</span>
-                  <BaseSwitch v-model="draft.SLAAC" :true-value="1" :false-value="0"
-                    :data-testid="qa('basic-wan-slaac-toggle')" :slider-data-testid="qa('basic-wan-slaac-slider')" />
-                </div>
-                <div class="switch-label">
-                  <span :data-testid="qa('basic-wan-iana-label')">{{ t('basicWan.iana') }}</span>
-                  <BaseSwitch v-model="draft.IANA" :true-value="1" :false-value="0"
-                    :data-testid="qa('basic-wan-iana-toggle')" :slider-data-testid="qa('basic-wan-iana-slider')" />
-                </div>
-                <div class="switch-label">
                   <span :data-testid="qa('basic-wan-iapd-label')">{{ t('basicWan.iapd') }}</span>
                   <BaseSwitch v-model="draft.IAPD" :true-value="1" :false-value="0"
                     :data-testid="qa('basic-wan-iapd-toggle')" :slider-data-testid="qa('basic-wan-iapd-slider')" />
@@ -716,16 +706,6 @@ onMounted(fetchData);
                     <span v-if="formErrors.IdleTime" class="error-message">{{ formErrors.IdleTime }}</span>
                   </div>
                 </template>
-                <div class="switch-label">
-                  <span :data-testid="qa('basic-wan-ppp6-slaac-label')">{{ t('basicWan.slaac') }}</span>
-                  <BaseSwitch v-model="draft.SLAAC" :true-value="1" :false-value="0"
-                    :data-testid="qa('basic-wan-ppp6-slaac-toggle')" :slider-data-testid="qa('basic-wan-ppp6-slaac-slider')" />
-                </div>
-                <div class="switch-label">
-                  <span :data-testid="qa('basic-wan-ppp6-iana-label')">{{ t('basicWan.iana') }}</span>
-                  <BaseSwitch v-model="draft.IANA" :true-value="1" :false-value="0"
-                    :data-testid="qa('basic-wan-ppp6-iana-toggle')" :slider-data-testid="qa('basic-wan-ppp6-iana-slider')" />
-                </div>
                 <div class="switch-label">
                   <span :data-testid="qa('basic-wan-ppp6-iapd-label')">{{ t('basicWan.iapd') }}</span>
                   <BaseSwitch v-model="draft.IAPD" :true-value="1" :false-value="0"
@@ -906,14 +886,6 @@ onMounted(fetchData);
               <!-- DHCPv6 details -->
               <template v-if="detailItem.IPv6Mode === 'dhcp6'">
                 <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.slaac') }}</span>
-                  <span class="detail-value">{{ detailItem.SLAAC ? 'Enabled' : 'Disabled' }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.iana') }}</span>
-                  <span class="detail-value">{{ detailItem.IANA ? 'Enabled' : 'Disabled' }}</span>
-                </div>
-                <div class="detail-row">
                   <span class="detail-label">{{ t('basicWan.iapd') }}</span>
                   <span class="detail-value">{{ detailItem.IAPD ? 'Enabled' : 'Disabled' }}</span>
                 </div>
@@ -923,14 +895,6 @@ onMounted(fetchData);
                 <div class="detail-row detail-hint">
                   <span class="material-icons">info</span>
                   <span>{{ t('basicWan.pppv6SharesCredentials') }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.slaac') }}</span>
-                  <span class="detail-value">{{ detailItem.SLAAC ? 'Enabled' : 'Disabled' }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.iana') }}</span>
-                  <span class="detail-value">{{ detailItem.IANA ? 'Enabled' : 'Disabled' }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">{{ t('basicWan.iapd') }}</span>
