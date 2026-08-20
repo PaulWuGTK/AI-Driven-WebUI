@@ -95,9 +95,6 @@ const validateForm = (): boolean => {
       if (d.ServiceName && d.ServiceName.length > 64) {
         formErrors.value.ServiceName = t('basicWan.validationMaxLength', { field: t('basicWan.serviceName'), max: 64 });
       }
-      if (!isInteger(d.IdleTime) || d.IdleTime < 0 || d.IdleTime > 65535) {
-        formErrors.value.IdleTime = t('basicWan.validationIdleTimeRange');
-      }
     }
 
     if (d.IPv4Mode === 'static') {
@@ -137,9 +134,6 @@ const validateForm = (): boolean => {
     }
     if (d.ServiceName && d.ServiceName.length > 64) {
       formErrors.value.ServiceName = t('basicWan.validationMaxLength', { field: t('basicWan.serviceName'), max: 64 });
-    }
-    if (!isInteger(d.IdleTime) || d.IdleTime < 0 || d.IdleTime > 65535) {
-      formErrors.value.IdleTime = t('basicWan.validationIdleTimeRange');
     }
   }
 
@@ -602,17 +596,6 @@ onMounted(fetchData);
                   <input type="text" v-model="draft.ServiceName" :class="{ error: formErrors.ServiceName }" @input="clearFieldError('ServiceName')" :data-testid="qa('basic-wan-service-name-input')" />
                   <span v-if="formErrors.ServiceName" class="error-message">{{ formErrors.ServiceName }}</span>
                 </div>
-                <div class="form-group">
-                  <label :data-testid="qa('basic-wan-trigger-label')">{{ t('basicWan.connectionTrigger') }}</label>
-                  <select v-model="draft.Contrigger" :data-testid="qa('basic-wan-trigger-select')">
-                    <option v-for="ct in listConnectionTrigger" :key="ct" :value="ct">{{ ct }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label :data-testid="qa('basic-wan-idle-time-label')">{{ t('basicWan.idleTime') }}</label>
-                  <input type="number" v-model.number="draft.IdleTime" min="0" max="65535" :class="{ error: formErrors.IdleTime }" @input="clearFieldError('IdleTime')" :data-testid="qa('basic-wan-idle-time-input')" />
-                  <span v-if="formErrors.IdleTime" class="error-message">{{ formErrors.IdleTime }}</span>
-                </div>
               </template>
 
               <!-- Static IPv4 -->
@@ -693,17 +676,6 @@ onMounted(fetchData);
                     <label :data-testid="qa('basic-wan-ppp6-service-name-label')">{{ t('basicWan.serviceName') }}</label>
                     <input type="text" v-model="draft.ServiceName" :class="{ error: formErrors.ServiceName }" @input="clearFieldError('ServiceName')" :data-testid="qa('basic-wan-ppp6-service-name-input')" />
                     <span v-if="formErrors.ServiceName" class="error-message">{{ formErrors.ServiceName }}</span>
-                  </div>
-                  <div class="form-group">
-                    <label :data-testid="qa('basic-wan-ppp6-trigger-label')">{{ t('basicWan.connectionTrigger') }}</label>
-                    <select v-model="draft.Contrigger" :data-testid="qa('basic-wan-ppp6-trigger-select')">
-                      <option v-for="ct in listConnectionTrigger" :key="ct" :value="ct">{{ ct }}</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label :data-testid="qa('basic-wan-ppp6-idle-time-label')">{{ t('basicWan.idleTime') }}</label>
-                    <input type="number" v-model.number="draft.IdleTime" min="0" max="65535" :class="{ error: formErrors.IdleTime }" @input="clearFieldError('IdleTime')" :data-testid="qa('basic-wan-ppp6-idle-time-input')" />
-                    <span v-if="formErrors.IdleTime" class="error-message">{{ formErrors.IdleTime }}</span>
                   </div>
                 </template>
                 <div class="switch-label">
@@ -841,14 +813,6 @@ onMounted(fetchData);
                 <div class="detail-row">
                   <span class="detail-label">{{ t('basicWan.serviceName') }}</span>
                   <span class="detail-value">{{ detailItem.ServiceName || '-' }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.connectionTrigger') }}</span>
-                  <span class="detail-value">{{ detailItem.Contrigger || '-' }}</span>
-                </div>
-                <div v-if="detailItem.Contrigger === 'OnDemand'" class="detail-row">
-                  <span class="detail-label">{{ t('basicWan.idleTime') }}</span>
-                  <span class="detail-value">{{ detailItem.IdleTime }}</span>
                 </div>
               </template>
               <!-- Static IPv4 details -->
