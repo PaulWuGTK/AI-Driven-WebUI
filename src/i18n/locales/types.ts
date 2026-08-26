@@ -292,6 +292,7 @@ export interface Translations {
     mloMeshDisabled: string;
     meshMloDisabled: string;
     mloMeshWarning: string;
+    securityNone6GWarning: string;
   };
   guest: {
     title: string;

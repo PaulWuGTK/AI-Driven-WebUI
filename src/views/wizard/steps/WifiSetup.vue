@@ -123,6 +123,24 @@ watch(() => props.config.wifi.common.security, (newSecurity) => {
   if (props.config.wifi.smartConnect) {
     syncBandSecurityFromCommon(newSecurity);
   }
+  // Force-disable 6G and MLO when security is None
+  if (newSecurity === 'None') {
+    props.config.wifi.mloEnable = false;
+    props.config.wifi.bands['6g'].enabled = false;
+  }
+});
+
+// Force-disable 6G when any non-6G band sets SecurityMode to None (per-band mode)
+watch(() => props.config.wifi.bands['2g'].security, (newSecurity) => {
+  if (newSecurity === 'None' && !props.config.wifi.smartConnect) {
+    props.config.wifi.bands['6g'].enabled = false;
+  }
+});
+
+watch(() => props.config.wifi.bands['5g'].security, (newSecurity) => {
+  if (newSecurity === 'None' && !props.config.wifi.smartConnect) {
+    props.config.wifi.bands['6g'].enabled = false;
+  }
 });
 
 watch(() => props.config.wifi.bands['2g'].enabled, (enabled) => {
@@ -153,6 +171,15 @@ const showWpa3Warning = computed(() => {
   return props.config.wifi.smartConnect &&
          props.config.wifi.common.security &&
          (props.config.wifi.common.security.indexOf('WPA2') !== -1);
+});
+
+// 6G AP must be force-disabled when any AP's SecurityMode = "None"
+const is6GDisabledBySecurityNone = computed((): boolean => {
+  if (props.config.wifi.smartConnect) {
+    return props.config.wifi.common.security === 'None';
+  }
+  return props.config.wifi.bands['2g'].security === 'None' ||
+         props.config.wifi.bands['5g'].security === 'None';
 });
 
 const securityRequiresPassword = (securityMode?: string): boolean => {
@@ -328,6 +355,11 @@ const handleNext = () => {
           <p v-if="showWpa3Warning" class="warning-text">{{ t('wizard.wpa3Warning') }}</p>
         </div>
 
+        <div v-if="is6GDisabledBySecurityNone" class="security-none-warning">
+          <span class="material-icons security-none-warning-icon">warning</span>
+          {{ t('wireless.securityNone6GWarning') }}
+        </div>
+
         <div
           v-if="securityRequiresPassword(config.wifi.common.security)"
           class="form-group"
@@ -444,13 +476,19 @@ const handleNext = () => {
           </div>
         </div>
 
-        <div class="band-section">
+        <div v-if="is6GDisabledBySecurityNone" class="security-none-warning">
+          <span class="material-icons security-none-warning-icon">warning</span>
+          {{ t('wireless.securityNone6GWarning') }}
+        </div>
+
+        <div class="band-section" :class="{ 'band-section-disabled': is6GDisabledBySecurityNone }">
           <h3>{{ t('wizard.band6ghz') }}</h3>
           <div class="band-toggle">
             <label>{{ t('wizard.enable6ghz') }}</label>
             <BaseSwitch
               v-model="config.wifi.bands['6g'].enabled"
               class="toggle-switch"
+              :disabled="is6GDisabledBySecurityNone"
               :data-testid="qa('wizard-wifi-band-6g-enable-toggle')"
               :slider-data-testid="qa('wizard-wifi-band-6g-enable-toggle-slider')"
             />
@@ -885,6 +923,29 @@ const handleNext = () => {
   border-radius: 8px;
   padding: 1.5rem;
   background: #f8f9fa;
+}
+
+.band-section-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.security-none-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.security-none-warning-icon {
+  font-size: 16px;
+  color: #856404;
 }
 
 .band-section h3 {

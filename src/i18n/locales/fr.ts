@@ -504,6 +504,7 @@ const translations = {
     commonSsidDisabled: 'Le SSID commun est désactivé – les paramètres MLO ne peuvent pas être modifiés.',
     mloSecurityNoneHint: 'Remarque : MLO n\'est pas disponible lorsque le mode de sécurité est défini sur « None ».',
     mloMeshWarning: 'Le MLO est actuellement activé sur un ou plusieurs points d\'accès (principal ou invité). Il sera automatiquement désactivé lors de l\'application des paramètres Mesh.',
+    securityNone6GWarning: 'Le point d\'accès 6 GHz sera désactivé lorsque le mode de sécurité d\'un AP est défini sur None.',
     ssidGroupName: 'Nom du groupe SSID',
     noSsidGroups: 'Aucun groupe SSID disponible',
     groupDefaultName: 'Home',

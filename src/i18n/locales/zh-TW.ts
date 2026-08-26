@@ -505,6 +505,7 @@ const translations = {
     commonSsidDisabled: '通用 SSID 已停用 – 無法變更 MLO 設定。',
     mloSecurityNoneHint: '注意：當安全模式設定為「None」時，MLO 無法使用。',
     mloMeshWarning: '一或多個 AP（主要或來賓）已啟用 MLO。套用 Mesh 設定時將會自動關閉 MLO。',
+    securityNone6GWarning: '當任何 AP 的安全模式設定為 None 時，6GHz AP 將會被停用。',
     ssidGroupName: 'SSID 群組名稱',
     noSsidGroups: '目前沒有可用的 SSID 群組',
     groupDefaultName: 'Home',

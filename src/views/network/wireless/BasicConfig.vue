@@ -297,6 +297,17 @@ const securityModeOptionsForCommonSsid = computed((): string[] => {
     .filter(Boolean);
 });
 
+// 6G AP must be force-disabled when any AP in the SSID group has SecurityMode = "None"
+const is6GDisabledBySecurityNone = computed((): boolean => {
+  if (!draft.value) return false;
+  if (Number(draft.value.CommonSSIDEnable) === 1) {
+    return commonSsidConfig.value?.SecurityMode === 'None';
+  }
+  return draft.value.Interface?.some(
+    (i) => i.Band !== '6GHz' && i.SecurityMode === 'None'
+  ) ?? false;
+});
+
 const getInterfaceByBand = (band: string): WlanGroupInterface | undefined => {
   return draft.value?.Interface?.find((x) => x.Band === band);
 };
@@ -416,9 +427,23 @@ const onCommonSsidToggle = () => {
 const onCommonSsidSecurityModeChange = () => {
   if (!commonSsidConfig.value || !draft.value) return;
   validatePasswordField(commonSsidConfig.value.KeyPassPhrase, 'CommonSSID', commonSsidConfig.value.SecurityMode);
-  // MLO is not supported on open networks (Security: None) – auto-disable
   if (commonSsidConfig.value.SecurityMode === 'None') {
+    // MLO is not supported on open networks – auto-disable
     draft.value.MLOEnable = 0;
+    // 6G AP is not supported when security mode is None – force-disable
+    const iface6g = getInterfaceByBand('6GHz');
+    if (iface6g) iface6g.Enable = 0;
+  }
+};
+
+const onPerBandSecurityModeChange = (band: string) => {
+  const iface = getInterfaceByBand(band);
+  if (!iface || !draft.value) return;
+  validatePasswordField(String(iface.KeyPassPhrase ?? ''), band, iface.SecurityMode);
+  // If any non-6G band sets SecurityMode to None, force-disable 6G
+  if (band !== '6GHz' && iface.SecurityMode === 'None') {
+    const iface6g = getInterfaceByBand('6GHz');
+    if (iface6g) iface6g.Enable = 0;
   }
 };
 
@@ -675,6 +700,11 @@ onMounted(() => {
         >
           <div class="section-title">{{ t('wireless.commonSsidBandSettings') }}</div>
 
+          <div v-if="is6GDisabledBySecurityNone" class="security-none-warning">
+            <span class="material-icons security-none-warning-icon">warning</span>
+            {{ t('wireless.securityNone6GWarning') }}
+          </div>
+
           <!-- Requirement: In Common SSID mode, this section must have ONLY its own Enable toggle. -->
 
 
@@ -788,8 +818,13 @@ onMounted(() => {
         >
           <div class="section-title">{{ t('wireless.perBandInterfaces') }}</div>
 
+          <div v-if="is6GDisabledBySecurityNone" class="security-none-warning">
+            <span class="material-icons security-none-warning-icon">warning</span>
+            {{ t('wireless.securityNone6GWarning') }}
+          </div>
+
           <div class="interfaces-rows">
-            <div v-for="b in bands" :key="b" class="iface-row" :data-testid="qa(`wlan-basic-multi-iface-${slug(b)}`)">
+            <div v-for="b in bands" :key="b" class="iface-row" :class="{ 'iface-row-disabled': b === '6GHz' && is6GDisabledBySecurityNone }" :data-testid="qa(`wlan-basic-multi-iface-${slug(b)}`)">
               <div class="row-head">
                 <div class="row-title">{{ b }}</div>
                 <div class="row-right">
@@ -799,6 +834,7 @@ onMounted(() => {
                       :model-value="Number(getInterfaceByBand(b)!.Enable)"
                       :true-value="1"
                       :false-value="0"
+                      :disabled="b === '6GHz' && is6GDisabledBySecurityNone"
                       :data-testid="qa(`wlan-basic-multi-iface-enable-toggle-${slug(b)}`)"
                       :slider-data-testid="qa(`wlan-basic-multi-iface-enable-toggle-slider-${slug(b)}`)"
                       @update:model-value="(value) => { getInterfaceByBand(b)!.Enable = value === 1 || value === '1' || value === true ? 1 : 0; }"
@@ -831,7 +867,7 @@ onMounted(() => {
                     :options="securityModeOptionsForInterface(getInterfaceByBand(b)!).map((m) => ({ label: m, value: m }))"
                     :disabled="Number(getInterfaceByBand(b)!.Enable) === 0"
                     :data-testid="qa(`wlan-basic-multi-iface-security-${slug(b)}`)"
-                    @update:model-value="() => validatePasswordField(String(getInterfaceByBand(b)!.KeyPassPhrase ?? ''), b, getInterfaceByBand(b)!.SecurityMode)"
+                    @update:model-value="() => onPerBandSecurityModeChange(b)"
                   />
                 </div>
 
@@ -1071,7 +1107,8 @@ onMounted(() => {
   color: var(--text-secondary);
 }
 
-.mesh-enforce-hint {
+.mesh-enforce-hint,
+.security-none-warning {
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -1083,9 +1120,20 @@ onMounted(() => {
   font-size: 12px;
 }
 
-.mesh-enforce-hint-icon {
+.security-none-warning {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mesh-enforce-hint-icon,
+.security-none-warning-icon {
   font-size: 16px;
   color: #856404;
+}
+
+.iface-row-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .row-head {
