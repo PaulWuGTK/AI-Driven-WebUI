@@ -504,6 +504,7 @@ const translations = {
     commonSsidDisabled: '共通 SSID が無効です – MLO 設定は変更できません。',
     mloSecurityNoneHint: '注意：セキュリティモードが「None」に設定されている場合、MLO は使用できません。',
     mloMeshWarning: 'MLO が 1 つ以上の AP（基本またはゲスト）で有効になっています。Mesh 設定を適用すると、自動的に無効化されます。',
+    securityNone6GWarning: 'いずれかの AP のセキュリティモードが None に設定されている場合、6GHz AP は無効になります。',
     ssidGroupName: 'SSID グループ名',
     noSsidGroups: '利用可能な SSID グループはありません',
     groupDefaultName: 'Home',

@@ -92,33 +92,84 @@ When continuing from a previous session:
 3. 其他
 ```
 
+## Self-Learning Protocol
+
+When encountering an error during a task and subsequently finding a solution, **proactively ask the user** whether to record the lesson in this file.
+
+### When to ask:
+
+- SSH/SCP connection failures resolved by a workaround
+- Build or deploy errors caused by environment/config issues
+- API call failures due to authentication, encoding, or format issues
+- Any repeated mistake that a future session would benefit from knowing
+
+### How to ask:
+
+```
+剛剛遇到 [問題描述]，已透過 [解法] 解決。
+是否要記錄到 CLAUDE.md 的「Known Issues & Solutions」中，避免下次再發生？
+```
+
+### How to record:
+
+Append to the `Known Issues & Solutions` section below with format:
+
+```markdown
+#### Issue Title
+- **Symptom**: What went wrong
+- **Cause**: Why it happened
+- **Solution**: How to fix it
+```
+
+## Known Issues & Solutions
+
+#### DUT SSH host key changes after reflash/reboot
+- **Symptom**: `REMOTE HOST IDENTIFICATION HAS CHANGED` error during scp/ssh
+- **Cause**: DUT regenerates SSH host keys on reflash; old key in `~/.ssh/known_hosts` no longer matches
+- **Solution**: `ssh-keygen -R 192.168.1.1` then retry with `-o StrictHostKeyChecking=accept-new`
+
+#### Jira API curl fails with "URL rejected: Malformed input"
+- **Symptom**: `curl` with `$JIRA_API_TOKEN` env var fails with malformed URL error
+- **Cause**: Token contains `=` and special chars; shell variable expansion inside double quotes corrupts the value
+- **Solution**: Use single-quoted inline credentials instead of env var expansion (see Jira API section below)
+
+#### Locale files must be read before parallel editing
+- **Symptom**: `File has not been read yet` error when editing multiple locale files in parallel
+- **Cause**: The Edit tool requires a file to be Read at least once in the conversation before editing
+- **Solution**: Read all 7 locale files first (can be parallel), then edit them (can be parallel)
+
+#### v-if condition hides field when default value changes
+- **Symptom**: A field "disappears" from the UI after changing a default value elsewhere
+- **Cause**: Field visibility controlled by `v-if` on a value that changed (e.g., Idle Time shown only when `Contrigger === 'OnDemand'`, but default changed to `'AlwaysOn'`)
+- **Solution**: Review all `v-if` conditions that depend on the changed value; adjust or remove conditions as needed
+
 ## Jira API
 
 **Base URL:** `https://gemteks-jira.atlassian.net`
 **API Version:** `/rest/api/3/` (NOT v2)
-**Authentication:** Uses environment variables
 
-### Environment Variables (already configured)
+**IMPORTANT**: Environment variables do NOT persist across sessions. Always use single-quoted inline credentials in curl commands.
 
-```bash
-JIRA_BASE_URL="https://gemteks-jira.atlassian.net"
-JIRA_USER_EMAIL="paul_wu@gemteks.com"
-JIRA_API_TOKEN="ATATT3xFfG..." # Atlassian API token
+### Credentials
+
+```
+User:  paul_wu@gemteks.com
+Token: ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468
 ```
 
 ### Fetch Single Issue
 
 ```bash
-curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
-  "$JIRA_BASE_URL/rest/api/3/issue/PCSDW1-XXX" | \
+curl -s -u 'paul_wu@gemteks.com:ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468' \
+  'https://gemteks-jira.atlassian.net/rest/api/3/issue/PCSDW1-XXX' | \
   python -c "import sys, json; data = json.load(sys.stdin); print(json.dumps({'key': data['key'], 'summary': data['fields']['summary'], 'description': data['fields']['description'], 'status': data['fields']['status']['name']}, indent=2, ensure_ascii=False))"
 ```
 
 ### Query Multiple Issues
 
 ```bash
-curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
-  "$JIRA_BASE_URL/rest/api/3/search?jql=project=PCSDW1+AND+status+not+in+(Done)&maxResults=20&fields=summary,status,assignee" | \
+curl -s -u 'paul_wu@gemteks.com:ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468' \
+  'https://gemteks-jira.atlassian.net/rest/api/3/search?jql=project=PCSDW1+AND+status+not+in+(Done)&maxResults=20&fields=summary,status,assignee' | \
   python -c "import sys, json; data = json.load(sys.stdin); [print(f\"{issue['key']}: {issue['fields']['summary']}\") for issue in data['issues']]"
 ```
 
@@ -127,4 +178,5 @@ curl -s -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" \
 - Use `/rest/api/3/` (not `/rest/api/2/`)
 - For JQL queries, use `status not in (Done)` (NOT `status != Done`)
 - The old internal Jira URL `jira.gemteksolutions.com` is deprecated
+- Always use single-quoted `-u 'email:token'` syntax — do NOT use env var expansion with this token
 
