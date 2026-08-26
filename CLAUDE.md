@@ -148,29 +148,15 @@ Append to the `Known Issues & Solutions` section below with format:
 **Base URL:** `https://gemteks-jira.atlassian.net`
 **API Version:** `/rest/api/3/` (NOT v2)
 
-**IMPORTANT**: Environment variables do NOT persist across sessions. Always use single-quoted inline credentials in curl commands.
-
-### Credentials
-
-```
-User:  paul_wu@gemteks.com
-Token: ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468
-```
+**IMPORTANT**: Credentials are stored in environment variables (`JIRA_USER_EMAIL`, `JIRA_API_TOKEN`), NOT in this file. See the check-jira skill for setup instructions.
 
 ### Fetch Single Issue
 
 ```bash
-curl -s -u 'paul_wu@gemteks.com:ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468' \
+# Read credentials from env vars first, then use actual values in single quotes
+curl -s -u '<JIRA_USER_EMAIL>:<JIRA_API_TOKEN>' \
   'https://gemteks-jira.atlassian.net/rest/api/3/issue/PCSDW1-XXX' | \
   python -c "import sys, json; data = json.load(sys.stdin); print(json.dumps({'key': data['key'], 'summary': data['fields']['summary'], 'description': data['fields']['description'], 'status': data['fields']['status']['name']}, indent=2, ensure_ascii=False))"
-```
-
-### Query Multiple Issues
-
-```bash
-curl -s -u 'paul_wu@gemteks.com:ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARyQ-LdeCjUq6oZsGTTEdrf7I6o8Fy4eKuR86kspiiZJTwgSqjvrE20fw4jrGXuszOQHT_ajXu1HCkOM2ShoQCFyyQ-8BHlZhMNhat2C65GrZZYxDI-XknxdfQrRKJbOVQn2Y7NCoc=48BEA468' \
-  'https://gemteks-jira.atlassian.net/rest/api/3/search?jql=project=PCSDW1+AND+status+not+in+(Done)&maxResults=20&fields=summary,status,assignee' | \
-  python -c "import sys, json; data = json.load(sys.stdin); [print(f\"{issue['key']}: {issue['fields']['summary']}\") for issue in data['issues']]"
 ```
 
 ### Important Notes
@@ -179,4 +165,5 @@ curl -s -u 'paul_wu@gemteks.com:ATATT3xFfGF06-V0qXz68GeUmhEzIAcJuG0ajCQEV-xKKARy
 - For JQL queries, use `status not in (Done)` (NOT `status != Done`)
 - The old internal Jira URL `jira.gemteksolutions.com` is deprecated
 - Always use single-quoted `-u 'email:token'` syntax — do NOT use env var expansion with this token
+- **NEVER commit credentials to this file** — use environment variables instead
 
