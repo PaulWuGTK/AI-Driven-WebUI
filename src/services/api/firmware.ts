@@ -54,9 +54,12 @@ function normalizeErrorValue(value: unknown): string | null {
   return null;
 }
 
-function isAsyncDownloadTimeout(failureCode: string | null, failureMessage: string | null): boolean {
-  // Some targets return errcode 27 while firmware validation/upgrade keeps running asynchronously.
-  return failureCode === '27' && !failureMessage;
+function isNonFatalFailureCode(failureCode: string | null, failureMessage: string | null): boolean {
+  // errcode 0 = success, errcode 1 = unknown (command dispatched), errcode 27 = async timeout
+  if (failureCode === '0') return true;
+  if (failureCode === '1' && !failureMessage) return true;
+  if (failureCode === '27' && !failureMessage) return true;
+  return false;
 }
 
 function sanitizeFirmwareFileName(fileName: string): string {
@@ -200,7 +203,7 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
 
   const payload: FirmwareUpgradeRequest = {
     command: "Device.DeviceInfo.FirmwareImage.[Alias=='active'].Download()",
-    commandKey: "",
+    commandKey: `webui_fw_${Date.now()}`,
     sendresp: true,
     inputArgs: {
       URL: `file:///tmp/upload/${firmwareFile}`,
@@ -231,7 +234,7 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
   const nokMessage = extractNokMessage(resultPayload);
   const failureCode = normalizeErrorValue(commandResult?.failure?.errcode);
   const failureMessage = normalizeErrorValue(commandResult?.failure?.errmsg);
-  const isTimeoutInProgress = isAsyncDownloadTimeout(failureCode, failureMessage);
+  const isTimeoutInProgress = isNonFatalFailureCode(failureCode, failureMessage);
   const status = commandResult?.outputArgs?.Status;
   const statusMessage = typeof status === 'string' ? status.trim() : '';
   const fallbackBodyMessage = rawBody.trim();
