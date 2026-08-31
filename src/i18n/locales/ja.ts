@@ -78,7 +78,9 @@ const translations = {
     matterEevsecontrol: 'EEVSE制御',
     matterQrscanner: 'QRスキャナー',
     matterQuickSetup: 'クイックセットアップ',
-    matterManualPairing: '手動ペアリング'
+    matterManualPairing: '手動ペアリング',
+    systemDebug: 'システムデバッグ',
+    networkTopology: 'ネットワークトポロジー'
   },
   header: {
     account: 'アカウント',
@@ -1860,6 +1862,7 @@ const translations = {
       process: 'プロセス',
       memory: 'メモリ',
       log: 'ログ',
+      apps: 'LCM コンテナ',
       service: 'サービス'
     },
     downloadCategoryDesc: {
@@ -1869,8 +1872,29 @@ const translations = {
       process: '実行中のプロセス情報',
       memory: 'メモリとストレージの使用状況',
       log: 'カーネルとシステムログ',
+      apps: 'LCM コンテナログ',
       service: 'サービスデバッグ情報'
     }
+  },
+  networkTopology: {
+    title: 'ネットワークトポロジー',
+    treeView: 'ツリー表示',
+    deviceList: 'デバイス一覧',
+    textView: 'テキスト表示',
+    totalNodes: 'ノード総数',
+    connectedDevices: '接続済みデバイス',
+    noDevices: '接続デバイスなし',
+    fetchError: 'ネットワークトポロジーの取得に失敗しました',
+    name: '名前',
+    ipAddress: 'IPアドレス',
+    macAddress: 'MACアドレス',
+    mediaType: 'メディアタイプ',
+    status: 'ステータス',
+    connectedVia: '接続インターフェース',
+    typeGateway: 'ゲートウェイ',
+    typeDevice: 'デバイス',
+    typeInterface: 'インターフェース',
+    typeUnknown: '不明'
   }
 };
 

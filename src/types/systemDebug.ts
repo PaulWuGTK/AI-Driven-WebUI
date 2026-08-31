@@ -3,9 +3,21 @@
  * Hidden debug page for downloading system debug information
  */
 
-// Download types
-export type DebugDownloadCategory = 'all' | 'network' | 'wifi' | 'process' | 'memory' | 'log' | 'service';
+// Category value — dynamic from backend, no longer a fixed union
+export type DebugDownloadCategory = string;
 
+// Category info returned by backend GET
+export interface DebugCategoryInfo {
+  value: string;
+  label: string;
+}
+
+// GET response: available categories
+export interface DebugCategoriesResponse {
+  categories: DebugCategoryInfo[];
+}
+
+// POST response: download result
 export interface DebugDownloadResponse {
   success: boolean;
   url?: string;
@@ -14,6 +26,7 @@ export interface DebugDownloadResponse {
   error?: string;
 }
 
+// Dropdown option for BaseSelect
 export interface DownloadCategoryOption {
   value: DebugDownloadCategory;
   label: string;

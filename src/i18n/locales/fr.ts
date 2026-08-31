@@ -78,7 +78,9 @@ const translations = {
     matterEevsecontrol: 'Contrôle EEVSE',
     matterQrscanner: 'Scanner QR',
     matterQuickSetup: 'Configuration rapide',
-    matterManualPairing: 'Appairage manuel'
+    matterManualPairing: 'Appairage manuel',
+    systemDebug: 'Débogage système',
+    networkTopology: 'Topologie réseau'
   },
   header: {
     account: 'Compte',
@@ -1860,6 +1862,7 @@ const translations = {
       process: 'Processus',
       memory: 'Mémoire',
       log: 'Journal',
+      apps: 'Conteneurs LCM',
       service: 'Service'
     },
     downloadCategoryDesc: {
@@ -1869,8 +1872,29 @@ const translations = {
       process: 'Informations sur les processus en cours',
       memory: "Détails d'utilisation de la mémoire et du stockage",
       log: 'Journaux du noyau et du système',
+      apps: 'Journaux des conteneurs LCM',
       service: 'Informations de débogage des services'
     }
+  },
+  networkTopology: {
+    title: 'Topologie réseau',
+    treeView: 'Vue arborescente',
+    deviceList: 'Liste des appareils',
+    textView: 'Vue texte',
+    totalNodes: 'Nombre de nœuds',
+    connectedDevices: 'Appareils connectés',
+    noDevices: 'Aucun appareil connecté',
+    fetchError: 'Impossible de récupérer la topologie réseau',
+    name: 'Nom',
+    ipAddress: 'Adresse IP',
+    macAddress: 'Adresse MAC',
+    mediaType: 'Type de média',
+    status: 'Statut',
+    connectedVia: 'Interface de connexion',
+    typeGateway: 'Passerelle',
+    typeDevice: 'Appareil',
+    typeInterface: 'Interface',
+    typeUnknown: 'Inconnu'
   }
 };
 
