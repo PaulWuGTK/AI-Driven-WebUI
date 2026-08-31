@@ -6,10 +6,43 @@
 import { callApi } from '../apiClient';
 import type {
   DebugDownloadCategory,
-  DebugDownloadResponse
+  DebugDownloadResponse,
+  DebugCategoriesResponse
 } from '../../types/systemDebug';
 
+const isDevelopment = import.meta.env.DEV;
 const API_BASE_URL = '/API';
+
+// Fallback categories used in dev mode or when backend GET fails
+const FALLBACK_CATEGORIES: DebugCategoriesResponse = {
+  categories: [
+    { value: 'all', label: 'All (tar.gz)' },
+    { value: 'network', label: 'Network' },
+    { value: 'wifi', label: 'WiFi' },
+    { value: 'process', label: 'Process' },
+    { value: 'memory', label: 'Memory' },
+    { value: 'log', label: 'Log' },
+    { value: 'apps', label: 'LCM Containers' },
+    { value: 'service', label: 'Service' }
+  ]
+};
+
+/**
+ * Fetch available download categories from backend
+ * GET /API/info?list=SystemDebug → { categories: [...] }
+ */
+export async function getDebugCategories(): Promise<DebugCategoriesResponse> {
+  if (isDevelopment) {
+    return FALLBACK_CATEGORIES;
+  }
+  try {
+    return await callApi<DebugCategoriesResponse>(
+      `${API_BASE_URL}/info?list=SystemDebug`
+    );
+  } catch {
+    return FALLBACK_CATEGORIES;
+  }
+}
 
 /**
  * Request debug info file generation and return download metadata

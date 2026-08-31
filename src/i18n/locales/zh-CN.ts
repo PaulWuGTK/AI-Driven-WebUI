@@ -78,7 +78,9 @@ const translations = {
     matterEevsecontrol: 'EEVSE 控制',
     matterQrscanner: 'QR 扫描器',
     matterQuickSetup: '快速设置',
-    matterManualPairing: '手动配对'
+    matterManualPairing: '手动配对',
+    systemDebug: '系统调试',
+    networkTopology: '网络拓扑'
   },
   header: {
     account: '帐户',
@@ -1860,6 +1862,7 @@ const translations = {
       process: '进程',
       memory: '内存',
       log: '日志',
+      apps: 'LCM 容器',
       service: '服务'
     },
     downloadCategoryDesc: {
@@ -1869,8 +1872,29 @@ const translations = {
       process: '运行中的进程信息',
       memory: '内存和存储使用详情',
       log: '内核和系统日志',
+      apps: 'LCM 容器日志',
       service: '服务调试信息'
     }
+  },
+  networkTopology: {
+    title: '网络拓扑',
+    treeView: '树状视图',
+    deviceList: '设备列表',
+    textView: '文本视图',
+    totalNodes: '节点总数',
+    connectedDevices: '已连接设备',
+    noDevices: '无已连接设备',
+    fetchError: '无法获取网络拓扑信息',
+    name: '名称',
+    ipAddress: 'IP 地址',
+    macAddress: 'MAC 地址',
+    mediaType: '媒体类型',
+    status: '状态',
+    connectedVia: '连接接口',
+    typeGateway: '网关',
+    typeDevice: '设备',
+    typeInterface: '接口',
+    typeUnknown: '未知'
   }
 };
 

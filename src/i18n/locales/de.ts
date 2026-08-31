@@ -78,7 +78,9 @@ const translations = {
     matterEevsecontrol: 'EEVSE-Steuerung',
     matterQrscanner: 'QR-Scanner',
     matterQuickSetup: 'Schnelleinrichtung',
-    matterManualPairing: 'Manuelle Kopplung'
+    matterManualPairing: 'Manuelle Kopplung',
+    systemDebug: 'System-Debugging',
+    networkTopology: 'Netzwerktopologie'
   },
   header: {
     account: 'Konto',
@@ -1860,6 +1862,7 @@ const translations = {
       process: 'Prozesse',
       memory: 'Speicher',
       log: 'Protokoll',
+      apps: 'LCM-Container',
       service: 'Dienste'
     },
     downloadCategoryDesc: {
@@ -1869,8 +1872,29 @@ const translations = {
       process: 'Informationen zu laufenden Prozessen',
       memory: 'Details zur Speicher- und Flash-Nutzung',
       log: 'Kernel- und Systemprotokolle',
+      apps: 'LCM-Container-Protokolle',
       service: 'Service-Debug-Informationen'
     }
+  },
+  networkTopology: {
+    title: 'Netzwerktopologie',
+    treeView: 'Baumansicht',
+    deviceList: 'Geräteliste',
+    textView: 'Textansicht',
+    totalNodes: 'Gesamtknoten',
+    connectedDevices: 'Verbundene Geräte',
+    noDevices: 'Keine verbundenen Geräte',
+    fetchError: 'Netzwerktopologie konnte nicht abgerufen werden',
+    name: 'Name',
+    ipAddress: 'IP-Adresse',
+    macAddress: 'MAC-Adresse',
+    mediaType: 'Medientyp',
+    status: 'Status',
+    connectedVia: 'Verbindungsschnittstelle',
+    typeGateway: 'Gateway',
+    typeDevice: 'Gerät',
+    typeInterface: 'Schnittstelle',
+    typeUnknown: 'Unbekannt'
   }
 };
 

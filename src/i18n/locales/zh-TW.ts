@@ -79,7 +79,8 @@ const translations = {
     matterQrscanner: 'QR 掃描器',
     matterQuickSetup: '快速設定',
     matterManualPairing: '手動配對',
-    systemDebug: '系統除錯'
+    systemDebug: '系統除錯',
+    networkTopology: '網路拓撲'
   },
   header: {
     account: '帳號',
@@ -1861,6 +1862,7 @@ const translations = {
       process: '程序',
       memory: '記憶體',
       log: '日誌',
+      apps: 'LCM 容器',
       service: '服務'
     },
     downloadCategoryDesc: {
@@ -1870,8 +1872,29 @@ const translations = {
       process: '執行中的程序資訊',
       memory: '記憶體與儲存空間使用詳情',
       log: '核心與系統日誌',
+      apps: 'LCM 容器日誌',
       service: '服務除錯資訊'
     }
+  },
+  networkTopology: {
+    title: '網路拓撲',
+    treeView: '樹狀檢視',
+    deviceList: '裝置列表',
+    textView: '文字檢視',
+    totalNodes: '節點總數',
+    connectedDevices: '已連線裝置',
+    noDevices: '無已連線裝置',
+    fetchError: '無法取得網路拓撲資訊',
+    name: '名稱',
+    ipAddress: 'IP 位址',
+    macAddress: 'MAC 位址',
+    mediaType: '媒體類型',
+    status: '狀態',
+    connectedVia: '連線介面',
+    typeGateway: '閘道器',
+    typeDevice: '裝置',
+    typeInterface: '介面',
+    typeUnknown: '未知'
   }
 };
 

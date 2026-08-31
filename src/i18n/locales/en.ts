@@ -79,7 +79,8 @@ const translations = {
     matterQrscanner : 'QR Scanner',
     matterQuickSetup: 'Quick Setup',
     matterManualPairing: 'Manual Pairing',
-    systemDebug: 'System Debug'
+    systemDebug: 'System Debug',
+    networkTopology: 'Network Topology'
   },
   header: {
     account: 'Account',
@@ -1861,6 +1862,7 @@ const translations = {
       process: 'Process',
       memory: 'Memory',
       log: 'Log',
+      apps: 'LCM Containers',
       service: 'Service'
     },
     downloadCategoryDesc: {
@@ -1870,8 +1872,29 @@ const translations = {
       process: 'Running processes information',
       memory: 'Memory and flash usage details',
       log: 'Kernel and system logs',
+      apps: 'LCM container logs',
       service: 'Services debug information'
     }
+  },
+  networkTopology: {
+    title: 'Network Topology',
+    treeView: 'Tree View',
+    deviceList: 'Device List',
+    textView: 'Text View',
+    totalNodes: 'Total Nodes',
+    connectedDevices: 'Connected Devices',
+    noDevices: 'No devices connected',
+    fetchError: 'Failed to fetch network topology',
+    name: 'Name',
+    ipAddress: 'IP Address',
+    macAddress: 'MAC Address',
+    mediaType: 'Media Type',
+    status: 'Status',
+    connectedVia: 'Connected Via',
+    typeGateway: 'Gateway',
+    typeDevice: 'Device',
+    typeInterface: 'Interface',
+    typeUnknown: 'Unknown'
   }
 };
 

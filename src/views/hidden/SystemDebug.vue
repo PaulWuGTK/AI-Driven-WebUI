@@ -42,14 +42,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQA } from '../../utils/qa';
 import type {
   DebugDownloadCategory,
+  DebugCategoryInfo,
   DownloadCategoryOption
 } from '../../types/systemDebug';
-import { downloadDebugInfo } from '../../services/api/systemDebug';
+import { getDebugCategories, downloadDebugInfo } from '../../services/api/systemDebug';
 import { AuthService } from '../../services/auth';
 import SectionCard from '../../components/common/SectionCard.vue';
 import BaseSelect from '../../components/common/BaseSelect.vue';
@@ -57,7 +58,10 @@ import BaseButton from '../../components/common/BaseButton.vue';
 
 const { qa } = useQA();
 
-const { t } = useI18n();
+const { t, te } = useI18n();
+
+// Categories fetched from backend
+const categories = ref<DebugCategoryInfo[]>([]);
 
 // Download State
 const selectedDownloadCategory = ref<DebugDownloadCategory>('all');
@@ -65,48 +69,41 @@ const downloading = ref(false);
 const downloadError = ref<string>('');
 const downloadSuccess = ref<string>('');
 
-// Download category options
-const downloadCategoryOptions = computed<DownloadCategoryOption[]>(() => [
-  {
-    value: 'all',
-    label: t('systemDebug.downloadCategories.all'),
-    description: t('systemDebug.downloadCategoryDesc.all')
-  },
-  {
-    value: 'network',
-    label: t('systemDebug.downloadCategories.network'),
-    description: t('systemDebug.downloadCategoryDesc.network')
-  },
-  {
-    value: 'wifi',
-    label: t('systemDebug.downloadCategories.wifi'),
-    description: t('systemDebug.downloadCategoryDesc.wifi')
-  },
-  {
-    value: 'process',
-    label: t('systemDebug.downloadCategories.process'),
-    description: t('systemDebug.downloadCategoryDesc.process')
-  },
-  {
-    value: 'memory',
-    label: t('systemDebug.downloadCategories.memory'),
-    description: t('systemDebug.downloadCategoryDesc.memory')
-  },
-  {
-    value: 'log',
-    label: t('systemDebug.downloadCategories.log'),
-    description: t('systemDebug.downloadCategoryDesc.log')
-  },
-  {
-    value: 'service',
-    label: t('systemDebug.downloadCategories.service'),
-    description: t('systemDebug.downloadCategoryDesc.service')
-  }
-]);
+// Resolve label: use i18n if available, fall back to backend label
+function getCategoryLabel(cat: DebugCategoryInfo): string {
+  const i18nKey = `systemDebug.downloadCategories.${cat.value}`;
+  return te(i18nKey) ? t(i18nKey) : cat.label;
+}
+
+// Resolve description: use i18n if available, otherwise empty
+function getCategoryDescription(cat: DebugCategoryInfo): string {
+  const i18nKey = `systemDebug.downloadCategoryDesc.${cat.value}`;
+  return te(i18nKey) ? t(i18nKey) : '';
+}
+
+// Build dropdown options from backend categories
+const downloadCategoryOptions = computed<DownloadCategoryOption[]>(() =>
+  categories.value.map(cat => ({
+    value: cat.value,
+    label: getCategoryLabel(cat),
+    description: getCategoryDescription(cat)
+  }))
+);
 
 const currentDownloadCategoryDescription = computed(() => {
   const option = downloadCategoryOptions.value.find(opt => opt.value === selectedDownloadCategory.value);
   return option?.description || '';
+});
+
+// Fetch categories from backend on mount
+onMounted(async () => {
+  try {
+    const resp = await getDebugCategories();
+    categories.value = resp.categories;
+  } catch {
+    // Fallback: should not happen since getDebugCategories has its own fallback
+    categories.value = [];
+  }
 });
 
 // Download debug info

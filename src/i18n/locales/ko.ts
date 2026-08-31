@@ -78,7 +78,9 @@ const translations = {
     matterEevsecontrol: 'EEVSE 제어',
     matterQrscanner: 'QR 스캐너',
     matterQuickSetup: '빠른 설정',
-    matterManualPairing: '수동 페어링'
+    matterManualPairing: '수동 페어링',
+    systemDebug: '시스템 디버그',
+    networkTopology: '네트워크 토폴로지'
   },
   header: {
     account: '계정',
@@ -1860,6 +1862,7 @@ const translations = {
       process: '프로세스',
       memory: '메모리',
       log: '로그',
+      apps: 'LCM 컨테이너',
       service: '서비스'
     },
     downloadCategoryDesc: {
@@ -1869,8 +1872,29 @@ const translations = {
       process: '실행 중인 프로세스 정보',
       memory: '메모리 및 저장소 사용 정보',
       log: '커널 및 시스템 로그',
+      apps: 'LCM 컨테이너 로그',
       service: '서비스 디버그 정보'
     }
+  },
+  networkTopology: {
+    title: '네트워크 토폴로지',
+    treeView: '트리 보기',
+    deviceList: '장치 목록',
+    textView: '텍스트 보기',
+    totalNodes: '전체 노드',
+    connectedDevices: '연결된 장치',
+    noDevices: '연결된 장치 없음',
+    fetchError: '네트워크 토폴로지를 가져올 수 없습니다',
+    name: '이름',
+    ipAddress: 'IP 주소',
+    macAddress: 'MAC 주소',
+    mediaType: '미디어 유형',
+    status: '상태',
+    connectedVia: '연결 인터페이스',
+    typeGateway: '게이트웨이',
+    typeDevice: '장치',
+    typeInterface: '인터페이스',
+    typeUnknown: '알 수 없음'
   }
 };
 

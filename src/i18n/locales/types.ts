@@ -56,6 +56,8 @@ export interface Translations {
     matterQrscanner: string;
     matterQuickSetup: string;
     matterManualPairing: string;
+    systemDebug: string;
+    networkTopology: string;
   };
   header: {
     account: string;
@@ -1180,5 +1182,25 @@ export interface Translations {
     reservedIpNotAllowed: string;
     maxEntriesNote: string;
     maxEntriesReached: string;
+  };
+  networkTopology: {
+    title: string;
+    treeView: string;
+    deviceList: string;
+    textView: string;
+    totalNodes: string;
+    connectedDevices: string;
+    noDevices: string;
+    fetchError: string;
+    name: string;
+    ipAddress: string;
+    macAddress: string;
+    mediaType: string;
+    status: string;
+    connectedVia: string;
+    typeGateway: string;
+    typeDevice: string;
+    typeInterface: string;
+    typeUnknown: string;
   };
 }
