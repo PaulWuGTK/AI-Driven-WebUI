@@ -1,66 +1,9 @@
 import type { FirmwareResponse, FirmwareUpgradeRequest } from '../../types/firmware';
 import { AuthService } from '../auth';
-import { extractNokMessage } from '../../utils/apiUtils';
 
 const isDevelopment = import.meta.env.DEV;
 
-interface FirmwareUpgradeCommandResult {
-  outputArgs?: {
-    Status?: string;
-    [key: string]: unknown;
-  };
-  failure?: {
-    errcode?: unknown;
-    errmsg?: unknown;
-  };
-  [key: string]: unknown;
-}
-
-function extractCommandResult(payload: unknown): FirmwareUpgradeCommandResult | null {
-  if (Array.isArray(payload)) {
-    const first = payload[0];
-    return first && typeof first === 'object'
-      ? (first as FirmwareUpgradeCommandResult)
-      : null;
-  }
-
-  if (payload && typeof payload === 'object') {
-    return payload as FirmwareUpgradeCommandResult;
-  }
-
-  return null;
-}
-
-function hasErrorStatus(status: string): boolean {
-  const normalized = status.trim().toUpperCase();
-  return (
-    normalized.includes('NOK') ||
-    normalized.includes('FAIL') ||
-    normalized.includes('ERROR')
-  );
-}
-
-function normalizeErrorValue(value: unknown): string | null {
-  if (value == null) return null;
-  if (typeof value === 'string') {
-    const message = value.trim();
-    return message ? message : null;
-  }
-
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return String(value);
-  }
-
-  return null;
-}
-
-function isNonFatalFailureCode(failureCode: string | null, failureMessage: string | null): boolean {
-  // errcode 0 = success, errcode 1 = unknown (command dispatched), errcode 27 = async timeout
-  if (failureCode === '0') return true;
-  if (failureCode === '1' && !failureMessage) return true;
-  if (failureCode === '27' && !failureMessage) return true;
-  return false;
-}
+export const FAILURE_STATUSES = ['DownloadFailed', 'ValidationFailed', 'InstallationFailed', 'ActivationFailed'];
 
 function sanitizeFirmwareFileName(fileName: string): string {
   return fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -195,6 +138,12 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     return;
   }
 
+  // Device.DeviceInfo.FirmwareImage.[Alias=='active'].Download() rejects the
+  // call (amxd_status_invalid_function_argument) unless AutoActivate=true.
+  if (!autoActivate) {
+    throw new Error('AutoActivate must be true when upgrading the active firmware image');
+  }
+
   const auth = AuthService.getInstance();
   const sessionId = auth.getSessionId();
   if (!sessionId) {
@@ -220,52 +169,15 @@ export async function upgradeFirmware(firmwareFile: string, autoActivate: boolea
     body: JSON.stringify(payload)
   });
 
-  const rawBody = await response.text();
-  let resultPayload: unknown = null;
-  if (rawBody.trim()) {
-    try {
-      resultPayload = JSON.parse(rawBody);
-    } catch {
-      resultPayload = null;
-    }
+  // With a non-empty commandKey, amx-fcgi dispatches the call asynchronously
+  // (amxb_async_call) instead of blocking on a 5s amxb_call(). 201 means the
+  // device accepted and queued the operation; it says nothing about whether
+  // the upgrade itself will succeed, so the body is not parsed for a result.
+  if (response.status !== 201) {
+    const rawBody = await response.text();
+    throw new Error(`Firmware upgrade request was not accepted (status ${response.status}): ${rawBody}`);
   }
-
-  const commandResult = extractCommandResult(resultPayload);
-  const nokMessage = extractNokMessage(resultPayload);
-  const failureCode = normalizeErrorValue(commandResult?.failure?.errcode);
-  const failureMessage = normalizeErrorValue(commandResult?.failure?.errmsg);
-  const isTimeoutInProgress = isNonFatalFailureCode(failureCode, failureMessage);
-  const status = commandResult?.outputArgs?.Status;
-  const statusMessage = typeof status === 'string' ? status.trim() : '';
-  const fallbackBodyMessage = rawBody.trim();
-
-  if (!response.ok) {
-    throw new Error(
-      failureMessage ||
-      failureCode ||
-      nokMessage ||
-      (fallbackBodyMessage
-        ? `Firmware upgrade failed (${response.status}): ${fallbackBodyMessage}`
-        : `Firmware upgrade failed (${response.status})`)
-    );
-  }
-
-  if (failureMessage || (failureCode && !isTimeoutInProgress)) {
-    throw new Error(
-      failureMessage ||
-      (failureCode ? `Firmware upgrade failed (errcode: ${failureCode})` : 'Firmware upgrade failed')
-    );
-  }
-
-  if (nokMessage) {
-    throw new Error(nokMessage);
-  }
-
-  if (statusMessage && hasErrorStatus(statusMessage)) {
-    throw new Error(statusMessage);
-  }
-
-  if (resultPayload == null) {
-    throw new Error('Firmware upgrade failed: empty response from device');
-  }
+  // 201 means the device accepted and queued the operation. The actual
+  // upgrade progress is tracked by the Vue component via fixed countdowns
+  // + error-detection polling on getFirmwareStatus().
 }

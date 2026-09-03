@@ -3,7 +3,7 @@ import { computed, ref, onBeforeUnmount, onDeactivated, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { FirmwareBank } from '../../../../types/firmware';
-import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware } from '../../../../services/api/firmware';
+import { getFirmwareStatus, uploadFirmware, upgradeFirmware, activateFirmware, FAILURE_STATUSES } from '../../../../services/api/firmware';
 import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -25,7 +25,6 @@ const isActivating = ref(false);
 const isRebootPhase = ref(false);
 const upgradeError = ref<string | null>(null);
 const showUpgradeError = ref(false);
-const isVerifying = ref(false);
 const currentPhaseDuration = computed(() => (isRebootPhase.value ? 100 : 60));
 const progressPercent = computed(() => {
   const total = currentPhaseDuration.value;
@@ -57,83 +56,14 @@ const getStatusDisplay = (bank: FirmwareBank): string => {
   return bank.Status;
 };
 
-const isNonErrorFwUpgradeStatus = (status: string): boolean => {
-  const normalized = status.trim().toUpperCase();
-  return ['AVAILABLE', 'UPGRADING', 'SUCCESS', 'VALIDATING'].includes(normalized);
-};
-
-const isNonErrorBankStatus = (status: string): boolean => {
-  const normalized = status.trim().toUpperCase();
-  return ['ACTIVE', 'AVAILABLE', 'VALIDATING', 'UPGRADING', 'DOWNLOADING'].includes(normalized);
-};
-
-const getBankUpgradeError = (bank: FirmwareBank): string | null => {
-  const bootFailureLog = (bank.BootFailureLog || '').trim();
-  if (bootFailureLog) return bootFailureLog;
-
-  const fwUpgradeStatus = (bank.FW_UG_Status || '').trim();
-  if (fwUpgradeStatus && !isNonErrorFwUpgradeStatus(fwUpgradeStatus)) {
-    return fwUpgradeStatus;
-  }
-
-  const bankStatus = (bank.Status || '').trim();
-  if (bankStatus && !isNonErrorBankStatus(bankStatus)) {
-    return bankStatus;
-  }
-
-  return null;
-};
-
-const stopUpgradeStatusPolling = () => {
-  if (statusPollTimer.value) {
-    clearInterval(statusPollTimer.value);
-    statusPollTimer.value = null;
-  }
-};
-
 const stopUpgradeTimers = () => {
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
     countdownTimer.value = null;
   }
-  stopUpgradeStatusPolling();
-};
-
-const startUpgradeStatusPolling = () => {
   if (statusPollTimer.value) {
     clearInterval(statusPollTimer.value);
-  }
-
-  statusPollTimer.value = window.setInterval(async () => {
-    await checkUpgradeError();
-  }, 3000);
-};
-
-const checkUpgradeError = async (): Promise<boolean> => {
-  try {
-    const response = await getFirmwareStatus();
-    const banks = Object.values(response.UpgradeFw.UpgradeFw) as FirmwareBank[];
-    firmwareBanks.value = banks;
-
-    const errorBank = banks.find((bank) => getBankUpgradeError(bank));
-
-    if (errorBank) {
-      upgradeError.value = getBankUpgradeError(errorBank) || 'Firmware upgrade failed';
-      showUpgradeError.value = true;
-      isUpgrading.value = false;
-      isActivating.value = false;
-      isRebootPhase.value = false;
-      stopUpgradeTimers();
-      return true;
-    }
-
-    return false;
-  } catch (err) {
-//    console.error('Error checking upgrade status:', err);
-    if (isUpgrading.value) {
-      stopUpgradeStatusPolling();
-    }
-    return false;
+    statusPollTimer.value = null;
   }
 };
 
@@ -164,45 +94,71 @@ const handleDragLeave = (event: DragEvent) => {
   isDragging.value = false;
 };
 
-const startUpgradeCountdown = () => {
+const hardNavigateToLogin = () => {
+  const ui = Date.now().toString();
+  window.location.replace(`/login?ui=${encodeURIComponent(ui)}&t=${Date.now()}`);
+};
+
+// Poll getFirmwareStatus() every 3s during the upgrade phase for early error
+// detection only. Network errors are silently ignored — the device will go
+// offline once it starts rebooting, and the fixed countdown handles that.
+const startErrorPolling = () => {
+  statusPollTimer.value = window.setInterval(async () => {
+    try {
+      const response = await getFirmwareStatus();
+      const banks = Object.values(response?.UpgradeFw?.UpgradeFw ?? {});
+      const bank = banks.find((b) => b.Alias === 'active');
+      const status = bank?.Status?.trim();
+
+      if (status && FAILURE_STATUSES.includes(status)) {
+        upgradeError.value = bank?.BootFailureLog || `Firmware upgrade failed: ${status}`;
+        showUpgradeError.value = true;
+        clearUpgradeState();
+      }
+    } catch {
+      // Network errors silently ignored — device may be writing firmware or rebooting
+    }
+  }, 3000);
+};
+
+const startRebootCountdown = () => {
   isUpgrading.value = true;
+  isRebootPhase.value = true;
+  countdown.value = 100;
 
-  // 如果是「啟用分割槽」流程，直接進入重開機階段；否則先跑升級階段
-  isRebootPhase.value = isActivating.value;
-
-  // 先清掉舊的計時器（避免多重計時）
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value);
     countdownTimer.value = null;
   }
 
-  // 第一階段 60s（升級）→ 第二階段 100s（重開機）
-  countdown.value = isRebootPhase.value ? 100 : 60;
-
-  const tick = () => {
+  countdownTimer.value = window.setInterval(() => {
     countdown.value--;
     if (countdown.value <= 0) {
-      if (countdownTimer.value) {
-        clearInterval(countdownTimer.value);
-        countdownTimer.value = null;
-      }
-
-      if (!isRebootPhase.value) {
-        // 第一段結束 → 進入「重開機」第二段 100 秒
-        isRebootPhase.value = true;
-        stopUpgradeStatusPolling();
-        countdown.value = 100;
-        countdownTimer.value = window.setInterval(tick, 1000);
-      } else {
-        // 第二段結束 → 導回登入（或你要的頁面）
-        stopUpgradeTimers();
-        router.push(`/login?t=${Date.now()}`);
-      }
+      stopUpgradeTimers();
+      hardNavigateToLogin();
     }
-  };
+  }, 1000);
+};
 
-  countdownTimer.value = window.setInterval(tick, 1000);
-  startUpgradeStatusPolling();
+// Two-phase countdown: 60s upgrade (with error polling) → 100s reboot
+const startUpgradeCountdown = () => {
+  isUpgrading.value = true;
+  isRebootPhase.value = false;
+  countdown.value = 60;
+
+  startErrorPolling();
+
+  countdownTimer.value = window.setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      // Upgrade phase done — stop error polling, start reboot phase
+      if (statusPollTimer.value) {
+        clearInterval(statusPollTimer.value);
+        statusPollTimer.value = null;
+      }
+      startRebootCountdown();
+    }
+  }, 1000);
 };
 
 const clearUpgradeState = () => {
@@ -231,8 +187,8 @@ const handleActivate = async (bank: FirmwareBank) => {
     }
 
     await activateFirmware(parseInt(bankNumber)+1);
-    
-    startUpgradeCountdown();
+
+    startRebootCountdown();
     await fetchFirmwareStatus();
   } catch (err) {
 //    console.error('Error activating firmware:', err);
@@ -245,54 +201,33 @@ const handleActivate = async (bank: FirmwareBank) => {
 
 const handleUpgrade = async () => {
   if (!selectedFile.value) return;
-  
+
   loading.value = true;
   error.value = null;
   upgradeError.value = null;
   showUpgradeError.value = false;
   isActivating.value = false;
-  
+
   try {
     // First upload the firmware file
     if (!uploadedFileName.value) {
       uploadedFileName.value = await uploadFirmware(selectedFile.value);
     }
 
-    // Show verifying overlay before sending upgrade command
-    isVerifying.value = true;
-
-    // Then perform the upgrade with autoActivate always true
+    // Send upgrade command — returns once HTTP 201 is confirmed
     await upgradeFirmware(uploadedFileName.value, true);
 
-    // Check for upgrade errors after a short delay
-    // Use a Promise-based approach to ensure proper sequencing
-    await new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        await checkUpgradeError();
-
-        isVerifying.value = false;
-
-        // Only start countdown if no upgrade error
-        if (!showUpgradeError.value) {
-          // Clear file selection after successful upgrade
-          selectedFile.value = null;
-          uploadedFileName.value = null;
-          startUpgradeCountdown();
-        }
-        resolve();
-      }, 3000);
-    });
-    
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to process firmware';
-    isVerifying.value = false;
-    clearUpgradeState();
-  } finally {
+    // Command accepted — start two-phase countdown (60s upgrade + 100s reboot)
+    selectedFile.value = null;
+    uploadedFileName.value = null;
     loading.value = false;
-    // Refresh firmware status after everything
-    if (!isUpgrading.value) {
-    await fetchFirmwareStatus();
-    }
+    startUpgradeCountdown();
+
+  } catch (err) {
+    upgradeError.value = err instanceof Error ? err.message : 'Failed to process firmware';
+    showUpgradeError.value = true;
+    clearUpgradeState();
+    loading.value = false;
   }
 };
 
@@ -454,15 +389,6 @@ onDeactivated(stopUpgradeTimers);
         </div>
       </div>
     </div>
-
-    <BlockingOverlay
-      :is-visible="isVerifying"
-      :message="t('firmware.verifying')"
-      :auto-complete="false"
-      :show-countdown="false"
-      :show-progress="false"
-      :data-testid="qa('firmware-verifying-overlay')"
-    />
 
     <BlockingOverlay
       :is-visible="isUpgrading"
