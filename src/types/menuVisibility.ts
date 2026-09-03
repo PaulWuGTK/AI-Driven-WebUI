@@ -20,7 +20,8 @@ export interface MenuVisibilityRule {
     Extender: boolean;
   };
   roles?: RoleVisibilityRule;
-  qaOnly?: boolean;
+  /** true = QA-only in all modes; per-mode object = QA-only in specified modes */
+  qaOnly?: boolean | Partial<Record<OperationMode, boolean>>;
 }
 
 export interface MenuVisibilityRules {
@@ -79,6 +80,11 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   'status.meshInfo': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: false }
+  },
+  'status.networkTopology': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true },
+    qaOnly: true
   },
   'status.lcm': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
@@ -167,7 +173,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   'basicSetup.wlan.wirelessExtender': {
     netLayoutTypes: { prpl: false, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: false, Extender: true },
-    qaOnly: true
+    qaOnly: { Gateway: true }
   },
   'basicSetup.wlan.wirelessMacFilter': {
     netLayoutTypes: { prpl: false, genix: true, cht: false },
@@ -392,9 +398,10 @@ export function isMenuVisible(
     return false;
   }
 
-  // Check if menu item is QA-only
+  // Check if menu item is QA-only (global or per-mode)
   if (rule.qaOnly && !isQAMode) {
-    return false;
+    if (rule.qaOnly === true) return false;
+    if (typeof rule.qaOnly === 'object' && rule.qaOnly[operationMode]) return false;
   }
 
   const netLayoutVisible = rule.netLayoutTypes[netLayoutType];

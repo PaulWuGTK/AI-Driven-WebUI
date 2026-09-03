@@ -1381,7 +1381,9 @@ const translations = {
     placeholder: '请输入值',
     action: '操作',
     operationSuccessful: '操作已成功完成',
-    inProgress: '进行中'
+    inProgress: '进行中',
+    connected: '已连接',
+    disconnected: '已断开'
   },
   logs: {
     title: '系统日志',

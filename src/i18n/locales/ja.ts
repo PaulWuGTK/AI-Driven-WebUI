@@ -1381,7 +1381,9 @@ const translations = {
     placeholder: '値を入力してください',
     action: '操作',
     operationSuccessful: '操作が正常に完了しました',
-    inProgress: '処理中'
+    inProgress: '処理中',
+    connected: '接続済み',
+    disconnected: '未接続'
   },
   logs: {
     title: 'システムログ',

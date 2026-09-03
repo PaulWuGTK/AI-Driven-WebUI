@@ -46,6 +46,7 @@ export interface SidebarMenuUpdateRequest {
 const normalizeNetLayoutType = (value: unknown): SidebarMenuResponse['SidebarMenu']['NetLayoutType'] => {
   if (typeof value !== 'string') return 'prpl';
   const normalized = value.trim().toLowerCase();
+  if (normalized === 'generic') return 'genix';
   return normalized === 'prpl' || normalized === 'genix' || normalized === 'cht' ? normalized : 'prpl';
 };
 

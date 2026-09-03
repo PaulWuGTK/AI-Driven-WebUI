@@ -1,4 +1,4 @@
-import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, StatisticsResponse, NtpResponse, NtpUpdateRequest } from '../types';
+import type { WanStatusResponse, LanStatusResponse, WlanStatusResponse, StatisticsResponse, NtpResponse, NtpUpdateRequest, NetworkTopologyResponse } from '../types';
 import type { TimezoneResponse, TimezoneUpdateRequest } from '../types/timezone';
 import type { DdnsResponse, DdnsUpdateRequest } from '../types/ddns';
 import type { DualImageResponse } from '../types/dualImage';
@@ -16,6 +16,7 @@ import { ddnsData } from './mockData/ddnsData';
 import { dualImageMockData } from './mockData/dualImageMockData';
 import { sshServerData,sshAuthorizedKeyData, sshSessionData } from './mockData/sshData';
 import { qosBandwidthMockData, qosRuleMockData } from './mockData/qosMockData';
+import { networkTopologyMockData } from './mockData/networkTopologyMockData';
 import { handleApiResponse } from '../utils/apiUtils';
 import { callApi } from './apiClient';
 import { toFlag01 } from './flag01';
@@ -262,4 +263,11 @@ export async function updateQosRule(data: QosRuleRequest): Promise<QosRuleRespon
     method: 'POST',
     body: JSON.stringify(data),
   });
+}
+
+export async function getNetworkTopology(): Promise<NetworkTopologyResponse> {
+  if (isDevelopment) {
+    return networkTopologyMockData;
+  }
+  return callApi<NetworkTopologyResponse>(`${API_BASE_URL}/info?list=NetworkTopology`);
 }

@@ -1381,7 +1381,9 @@ const translations = {
     placeholder: 'Bitte geben Sie den Wert ein',
     action: 'Aktion',
     operationSuccessful: 'Vorgang erfolgreich abgeschlossen',
-    inProgress: 'In Bearbeitung'
+    inProgress: 'In Bearbeitung',
+    connected: 'Verbunden',
+    disconnected: 'Getrennt'
   },
   logs: {
     title: 'Systemprotokolle',

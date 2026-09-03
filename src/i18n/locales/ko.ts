@@ -1381,7 +1381,9 @@ const translations = {
     placeholder: '값을 입력해주세요',
     action: '작업',
     operationSuccessful: '작업이 성공적으로 완료되었습니다',
-    inProgress: '진행 중'
+    inProgress: '진행 중',
+    connected: '연결됨',
+    disconnected: '해제됨'
   },
   logs: {
     title: '시스템 로그',
