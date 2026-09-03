@@ -1443,6 +1443,8 @@ const translations = {
     action: 'Action',
     operationSuccessful: 'Operation completed successfully',
     inProgress: 'In Progress',
+    connected: 'Connected',
+    disconnected: 'Disconnected',
   },
   logs: {
     title: 'System Logs',

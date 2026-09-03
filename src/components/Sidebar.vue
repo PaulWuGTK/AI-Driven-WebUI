@@ -77,6 +77,7 @@ const baseMenuItems: MenuItem[] = [
       { name: 'Throughput', path: '/status/system-stats', translationKey: 'menu.throughput', menuKey: 'status.throughput' },
       { name: 'WiFi Neighbor', path: '/status/wifi-neighbor', translationKey: 'menu.wifiNeighbor', menuKey: 'status.wifiNeighbor' },
       { name: 'Mesh Information', path: '/status/mesh', translationKey: 'menu.meshInfo', menuKey: 'status.meshInfo' },
+      { name: 'Network Topology', path: '/status/network-topology', translationKey: 'menu.networkTopology', menuKey: 'status.networkTopology' },
       { name: 'LCM', path: '/status/lcm', translationKey: 'menu.lcm', menuKey: 'status.lcm' },
       { name: 'Dual Image', path: '/status/dual-image', translationKey: 'menu.dualImage', menuKey: 'status.dualImage' },
       { name: 'Cellular', path: '/status/cellular', translationKey: 'menu.cellular', menuKey: 'status.cellular' },

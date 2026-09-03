@@ -12,6 +12,7 @@ export * from './basicBridgeLan';
 export * from './lcm';
 export * from './lcmMonitor';
 export * from './mesh';
+export * from './networkTopology';
 export * from './menuVisibility';
 export * from './ntp';
 export * from './operationMode';

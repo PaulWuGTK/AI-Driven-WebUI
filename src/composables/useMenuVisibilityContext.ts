@@ -26,9 +26,15 @@ export function useMenuVisibilityContext(defaultRole: UserRole = 'super') {
         Bridge: 'Bridge',
         Extender: 'Extender'
       };
+      const layoutMapping: Record<string, NetLayoutType> = {
+        prpl: 'prpl',
+        genix: 'genix',
+        generic: 'genix',
+        cht: 'cht'
+      };
 
       operationMode.value = modeMapping[response.SidebarMenu.mode] || 'Gateway';
-      netLayoutType.value = response.SidebarMenu.NetLayoutType || 'prpl';
+      netLayoutType.value = layoutMapping[response.SidebarMenu.NetLayoutType] || 'prpl';
       userRole.value = response.SidebarMenu.user || defaultRole;
       features.value = response.SidebarMenu.features || {};
     } catch (error) {

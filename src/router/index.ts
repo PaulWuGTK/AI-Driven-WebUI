@@ -233,6 +233,11 @@ const router = createRouter({
       beforeEnter: requireAuth
     },
     {
+      path: '/status/network-topology',
+      component: () => import('../views/status/NetworkTopology.vue'),
+      beforeEnter: requireAuth
+    },
+    {
       path: '/status/lcm',
       component: () => import('../views/status/LcmStatus.vue'),
       beforeEnter: requireAuth

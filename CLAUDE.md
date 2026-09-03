@@ -138,6 +138,16 @@ Append to the `Known Issues & Solutions` section below with format:
 - **Cause**: The Edit tool requires a file to be Read at least once in the conversation before editing
 - **Solution**: Read all 7 locale files first (can be parallel), then edit them (can be parallel)
 
+#### CLAUDE.md must NEVER contain credentials or secrets
+- **Symptom**: Jira API token and email were accidentally committed to CLAUDE.md and pushed to both branches
+- **Cause**: Credentials were stored directly in CLAUDE.md for convenience; `git add CLAUDE.md` included them in the commit
+- **Solution**: Store all credentials in **environment variables** only (`~/.bashrc` or `~/.zshrc`). CLAUDE.md should reference env var names (e.g., `$JIRA_USER_EMAIL`) but NEVER contain actual values. After an accidental leak, immediately rotate the token at https://id.atlassian.com/manage-profile/security/api-tokens
+
+#### Jira search API endpoint deprecated
+- **Symptom**: `/rest/api/3/search` returns error about migration
+- **Cause**: Atlassian deprecated the `/rest/api/3/search` endpoint
+- **Solution**: Use `/rest/api/3/search/jql` instead. Same parameters (jql, maxResults, fields, startAt) but different base path
+
 #### v-if condition hides field when default value changes
 - **Symptom**: A field "disappears" from the UI after changing a default value elsewhere
 - **Cause**: Field visibility controlled by `v-if` on a value that changed (e.g., Idle Time shown only when `Contrigger === 'OnDemand'`, but default changed to `'AlwaysOn'`)
@@ -159,9 +169,29 @@ curl -s -u '<JIRA_USER_EMAIL>:<JIRA_API_TOKEN>' \
   python -c "import sys, json; data = json.load(sys.stdin); print(json.dumps({'key': data['key'], 'summary': data['fields']['summary'], 'description': data['fields']['description'], 'status': data['fields']['status']['name']}, indent=2, ensure_ascii=False))"
 ```
 
+### Query Multiple Issues (JQL)
+
+```bash
+# NOTE: /rest/api/3/search is DEPRECATED — use /rest/api/3/search/jql instead
+curl -s -u '<JIRA_USER_EMAIL>:<JIRA_API_TOKEN>' \
+  'https://gemteks-jira.atlassian.net/rest/api/3/search/jql?jql=project%3DPCSDW1%20AND%20status%20not%20in%20(Done)&maxResults=50&fields=summary,status,assignee,priority'
+```
+
+### Jira Project Statuses
+
+PCSDW1 uses Chinese status names:
+- `待辦事項` = To Do / Open
+- `進行中` = In Progress
+- `Ready for Verification`
+- `Need Info`
+- `Done`
+
+When querying by status, use `status not in (Done)` to get all open issues. There is no "Open" status.
+
 ### Important Notes
 
 - Use `/rest/api/3/` (not `/rest/api/2/`)
+- **Search endpoint**: Use `/rest/api/3/search/jql` (NOT the old `/rest/api/3/search` which is deprecated)
 - For JQL queries, use `status not in (Done)` (NOT `status != Done`)
 - The old internal Jira URL `jira.gemteksolutions.com` is deprecated
 - Always use single-quoted `-u 'email:token'` syntax — do NOT use env var expansion with this token

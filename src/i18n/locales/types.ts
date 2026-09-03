@@ -1036,6 +1036,8 @@ export interface Translations {
     underDevelopment: string;
     underDevelopmentDesc: string;
     placeholder: string;
+    connected: string;
+    disconnected: string;
   };
   logs: {
     title: string;
