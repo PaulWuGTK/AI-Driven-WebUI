@@ -12,6 +12,8 @@ interface LNode {
   x: number;
   y: number;
   children: LNode[];
+  hasChildren: boolean;
+  isCollapsed: boolean;
 }
 
 interface Edge {
@@ -26,38 +28,56 @@ const props = defineProps<{
 }>();
 
 const hoveredAlias = ref<string | null>(null);
+const collapsed = ref<Set<string>>(new Set());
 
 const H_GAP = 200;
 const V_GAP = 54;
 const PAD = { t: 50, r: 150, b: 50, l: 60 };
 
-function countLeaves(n: TreeNode): number {
-  if (n.children.length === 0) return 1;
-  return n.children.reduce((s, c) => s + countLeaves(c), 0);
-}
+function toggleCollapse(alias: string, hasChildren: boolean) {
+  if (!hasChildren) return;
 
-function treeDepth(n: TreeNode): number {
-  if (n.children.length === 0) return 0;
-  return 1 + Math.max(...n.children.map(treeDepth));
-}
-
-function layout(n: TreeNode, level: number, yMin: number, yMax: number): LNode {
-  const x = PAD.l + level * H_GAP;
-  if (n.children.length === 0) {
-    return { node: n.node, x, y: (yMin + yMax) / 2, children: [] };
+  if (collapsed.value.has(alias)) {
+    collapsed.value.delete(alias);
+  } else {
+    collapsed.value.add(alias);
   }
-  const total = countLeaves(n);
+}
+
+function countLeaves(n: TreeNode, collapsedSet: Set<string>): number {
+  if (n.children.length === 0) return 1;
+  if (collapsedSet.has(n.node.Alias)) return 1;
+  return n.children.reduce((s, c) => s + countLeaves(c, collapsedSet), 0);
+}
+
+function treeDepth(n: TreeNode, collapsedSet: Set<string>): number {
+  if (n.children.length === 0) return 0;
+  if (collapsedSet.has(n.node.Alias)) return 0;
+  return 1 + Math.max(...n.children.map(c => treeDepth(c, collapsedSet)));
+}
+
+function layout(n: TreeNode, level: number, yMin: number, yMax: number, collapsedSet: Set<string>): LNode {
+  const x = PAD.l + level * H_GAP;
+  const hasChildren = n.children.length > 0;
+  const isCollapsed = collapsedSet.has(n.node.Alias);
+
+  // If node is collapsed or has no children, render as leaf
+  if (n.children.length === 0 || isCollapsed) {
+    return { node: n.node, x, y: (yMin + yMax) / 2, children: [], hasChildren, isCollapsed };
+  }
+
+  const total = countLeaves(n, collapsedSet);
   const range = yMax - yMin;
   let cur = yMin;
   const kids: LNode[] = [];
   for (const ch of n.children) {
-    const leaves = countLeaves(ch);
+    const leaves = countLeaves(ch, collapsedSet);
     const h = (leaves / total) * range;
-    kids.push(layout(ch, level + 1, cur, cur + h));
+    kids.push(layout(ch, level + 1, cur, cur + h, collapsedSet));
     cur += h;
   }
   const y = (kids[0].y + kids[kids.length - 1].y) / 2;
-  return { node: n.node, x, y, children: kids };
+  return { node: n.node, x, y, children: kids, hasChildren, isCollapsed };
 }
 
 function collect(ln: LNode): { nodes: LNode[]; edges: Edge[] } {
@@ -73,11 +93,12 @@ function collect(ln: LNode): { nodes: LNode[]; edges: Edge[] } {
 }
 
 const graph = computed(() => {
-  const depth = treeDepth(props.root);
-  const leaves = countLeaves(props.root);
+  const collapsedSet = collapsed.value;
+  const depth = treeDepth(props.root, collapsedSet);
+  const leaves = countLeaves(props.root, collapsedSet);
   const h = Math.max(420, leaves * V_GAP + PAD.t + PAD.b);
   const w = Math.max(600, (depth + 1) * H_GAP + PAD.l + PAD.r);
-  const tree = layout(props.root, 0, PAD.t, h - PAD.b);
+  const tree = layout(props.root, 0, PAD.t, h - PAD.b, collapsedSet);
   const { nodes, edges } = collect(tree);
   return { nodes, edges, w, h };
 });
@@ -157,8 +178,10 @@ function curve(e: Edge): string {
         :key="n.node.Alias"
         :transform="`translate(${n.x},${n.y})`"
         class="gnode"
+        :class="{ 'has-children': n.hasChildren }"
         @pointerenter="hoveredAlias = n.node.Alias"
         @pointerleave="hoveredAlias = null"
+        @click="toggleCollapse(n.node.Alias, n.hasChildren)"
       >
         <!-- Glow ring on hover -->
         <circle
@@ -183,6 +206,27 @@ function curve(e: Edge): string {
           :font-size="n.node.NodeType === 'self' ? 16 : 12"
           class="nicon"
         >{{ icon(n.node) }}</text>
+        <!-- Expand/Collapse indicator -->
+        <g v-if="n.hasChildren" class="collapse-indicator">
+          <circle
+            :cx="r(n.node.NodeType) + 2"
+            :cy="-r(n.node.NodeType) - 2"
+            r="8"
+            fill="white"
+            stroke="#64748b"
+            stroke-width="1.5"
+          />
+          <text
+            :x="r(n.node.NodeType) + 2"
+            :y="-r(n.node.NodeType) - 2"
+            text-anchor="middle"
+            dy="0.35em"
+            font-size="10"
+            font-weight="bold"
+            fill="#64748b"
+            class="expand-icon"
+          >{{ n.isCollapsed ? '+' : '−' }}</text>
+        </g>
         <!-- Label to the right -->
         <text
           :x="r(n.node.NodeType) + 8"
@@ -239,12 +283,26 @@ function curve(e: Edge): string {
   cursor: pointer;
 }
 
+.gnode.has-children {
+  cursor: pointer;
+}
+
 .ncircle {
   transition: filter 0.15s;
 }
 
 .gnode:hover .ncircle {
   filter: brightness(1.1);
+}
+
+.collapse-indicator {
+  pointer-events: none;
+  user-select: none;
+}
+
+.expand-icon {
+  pointer-events: none;
+  user-select: none;
 }
 
 .nicon {
