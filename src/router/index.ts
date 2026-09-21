@@ -65,6 +65,7 @@ const routeVisibilityRules: Array<{ pathPrefix: string; menuKey: string }> = [
   { pathPrefix: '/system/diagnostics', menuKey: 'management.tools' },
 
   { pathPrefix: '/system/account', menuKey: 'management.account' },
+  { pathPrefix: '/system/syslog', menuKey: 'management.syslog' },
   { pathPrefix: '/system/device/tr069', menuKey: 'management.tr069' },
   { pathPrefix: '/system/device/tr369', menuKey: 'management.tr369' },
   { pathPrefix: '/system/device', menuKey: 'management.tr069' }
@@ -542,6 +543,16 @@ const router = createRouter({
     {
       path: '/management/ntp',
       redirect: '/system/ntp'
+    },
+    {
+      path: '/system/syslog',
+      name: 'SystemSyslog',
+      component: () => import('../views/system/syslog/RemoteSyslogConfig.vue'),
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/management/syslog',
+      redirect: '/system/syslog'
     },
     {
       path: '/system/reboot',

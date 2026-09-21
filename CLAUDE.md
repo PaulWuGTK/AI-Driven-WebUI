@@ -153,6 +153,53 @@ Append to the `Known Issues & Solutions` section below with format:
 - **Cause**: Field visibility controlled by `v-if` on a value that changed (e.g., Idle Time shown only when `Contrigger === 'OnDemand'`, but default changed to `'AlwaysOn'`)
 - **Solution**: Review all `v-if` conditions that depend on the changed value; adjust or remove conditions as needed
 
+#### syslog-ng persist-name conflict with multiple remote destinations (BACKEND BUG)
+- **Symptom**: syslog-ng fails to start after configuring remote syslog. Error message: `conflicting persist-names were found; persist_name='afsocket_dd.(dgram,192.168.1.168:514)'`. DUT sends no syslog packets to remote server (verified via tcpdump). Occurs when multiple log types (messages_remote, wifi, hostapd) are configured to send to the same IP:port.
+- **Cause**: The `mod-syslogng.so` module (part of tr181-syslog system component) auto-generates `/etc/syslog-ng.conf` but does not add unique `persist-name` options when multiple network destinations point to the same host:port. syslog-ng requires each destination to have a unique persist-name identifier. This is a **backend system bug in the SDK/firmware**, not a WebUI issue.
+- **Root cause file**: `/usr/lib/amx/tr181-syslog/mod-syslogng.so` (compiled binary)
+- **When it happens**: Configuration is regenerated whenever LogRemote parameters change (Enable, Address, Port, Protocol) via WebUI or ba-cli
+- **Temporary workaround** (manual fix after each config change):
+  ```bash
+  ssh root@192.168.1.1
+
+  # Backup current config
+  cp /etc/syslog-ng.conf /etc/syslog-ng.conf.backup
+
+  # Add unique persist-name to each network destination
+  sed -i '
+  /destination d_action_1_network/,/);/ {
+      /);/i\		persist-name("remote_wifi")
+  }
+  /destination d_action_5_network/,/);/ {
+      /);/i\		persist-name("remote_hostapd")
+  }
+  /destination d_action_8_network/,/);/ {
+      /);/i\		persist-name("remote_messages")
+  }
+  ' /etc/syslog-ng.conf
+
+  # Restart syslog-ng
+  killall syslog-ng
+  sleep 1
+  syslog-ng
+
+  # Verify it started successfully
+  ps | grep syslog-ng
+  ```
+- **Verification**: Use tcpdump to confirm packets are being sent: `tcpdump -i any -n 'udp and port 514' -c 3 -X`
+- **Long-term solution**: This bug must be fixed in the tr181-syslog module at the SDK/firmware level. The config generator should automatically add unique persist-names when multiple destinations share the same host:port combination. Report to backend/SDK team.
+- **Note**: The Remote Syslog WebUI feature itself works correctly. The DeviceSyslogAction.lua and frontend code do not need any changes. This is purely a backend system configuration generation issue.
+
+#### Windows Firewall blocks syslog UDP 514 inbound
+- **Symptom**: DUT is sending syslog packets (verified via tcpdump on DUT), but Python syslog server on Windows PC receives nothing
+- **Cause**: Windows Firewall blocks inbound UDP traffic on port 514 by default
+- **Solution**: Add firewall rule with administrator privileges:
+  ```powershell
+  # Run PowerShell as Administrator, then:
+  netsh advfirewall firewall add rule name="Syslog UDP 514" protocol=UDP dir=in localport=514 action=allow
+  ```
+- **Verification**: `netsh advfirewall firewall show rule name="Syslog UDP 514"`
+
 ## Jira API
 
 **Base URL:** `https://gemteks-jira.atlassian.net`
