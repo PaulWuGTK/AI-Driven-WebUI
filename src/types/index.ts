@@ -16,6 +16,7 @@ export * from './networkTopology';
 export * from './menuVisibility';
 export * from './ntp';
 export * from './operationMode';
+export * from './remoteSyslog';
 export * from './ssh';
 export * from './staticRoute';
 export * from './statistics';

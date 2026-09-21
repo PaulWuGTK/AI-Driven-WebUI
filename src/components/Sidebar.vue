@@ -179,6 +179,7 @@ const baseMenuItems: MenuItem[] = [
       { name: 'Account Management', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.account' },
       { name: 'Account Management CHT', path: '/management/account', translationKey: 'menu.account', menuKey: 'management.accountCht' },
       { name: 'NTP', path: '/management/ntp', translationKey: 'menu.ntp', menuKey: 'management.ntp' },
+      { name: 'Remote Syslog', path: '/management/syslog', translationKey: 'menu.remoteSyslog', menuKey: 'management.syslog' },
       { name: 'TR-069', path: '/management/tr069', translationKey: 'menu.tr069', menuKey: 'management.tr069' },
       { name: 'TR-369', path: '/management/tr369', translationKey: 'menu.tr369', menuKey: 'management.tr369' },
       {
@@ -452,6 +453,7 @@ watch(() => route.path, (newPath) => {
     '/management/tools/dns': ['/system/diagnostics/dns'],
     '/management/reboot': ['/system/reboot'],
     '/management/ntp': ['/system/ntp'],
+    '/management/syslog': ['/system/syslog'],
     '/management/settings': ['/system/settings'],
     '/management/settings/reset': ['/system/settings/reset'],
     '/management/settings/backup': ['/system/settings/backup'],

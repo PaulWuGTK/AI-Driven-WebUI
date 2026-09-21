@@ -287,6 +287,10 @@ export const menuVisibilityRules: MenuVisibilityRules = {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
+  'management.syslog': {
+    netLayoutTypes: { prpl: true, genix: true, cht: true },
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
+  },
   'management.device': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
     operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
