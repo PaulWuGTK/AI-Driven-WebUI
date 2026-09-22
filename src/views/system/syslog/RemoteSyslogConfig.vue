@@ -12,7 +12,7 @@ import { remoteSyslogApi } from '../../../services/api/remoteSyslog';
 import { useQA } from '../../../utils/qa';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
-import { BaseTable, BaseModal, BaseInput, BaseSelect, BaseSwitch, BaseToast, SectionCard } from '../../../components/common';
+import { ActionButtons, BaseTable, BaseModal, BaseInput, BaseSelect, BaseSwitch, BaseToast, SectionCard } from '../../../components/common';
 
 const { qa } = useQA();
 const { t } = useI18n();
@@ -418,7 +418,15 @@ onMounted(loadData);
       size="md"
       :data-testid="qa('remote-syslog-modal')"
     >
-      <form @submit.prevent="handleSubmit">
+      <div class="modal-form">
+        <div
+          v-if="formError"
+          class="modal-error-banner"
+          :data-testid="qa('modal-error')"
+        >
+          {{ formError }}
+        </div>
+
         <div class="form-group">
           <BaseSwitch
             v-model="formData.Enable"
@@ -429,11 +437,12 @@ onMounted(loadData);
           />
         </div>
 
+        <!-- Log Type uses raw select for per-option :disabled support -->
         <div class="form-group">
-          <label class="form-label">{{ t('remoteSyslog.logType') }} <span class="required">*</span></label>
+          <label class="form-label form-label-required">{{ t('remoteSyslog.logType') }}</label>
           <select
             v-model="formData.Type"
-            class="form-control"
+            class="form-select"
             :disabled="!!editingEntry"
             :data-testid="qa('modal-type-select')"
           >
@@ -450,64 +459,42 @@ onMounted(loadData);
         </div>
 
         <div class="form-group">
-          <label class="form-label">{{ t('remoteSyslog.address') }} <span class="required">*</span></label>
-          <input
+          <label class="form-label form-label-required">{{ t('remoteSyslog.address') }}</label>
+          <BaseInput
             v-model="formData.Address"
-            type="text"
-            class="form-control"
             placeholder="192.168.1.100"
             :data-testid="qa('modal-address-input')"
           />
         </div>
 
         <div class="form-group">
-          <label class="form-label">{{ t('remoteSyslog.port') }} <span class="required">*</span></label>
-          <input
-            v-model.number="formData.Port"
+          <label class="form-label form-label-required">{{ t('remoteSyslog.port') }}</label>
+          <BaseInput
+            v-model="formData.Port"
             type="number"
-            class="form-control"
-            min="1"
-            max="65535"
             :data-testid="qa('modal-port-input')"
           />
         </div>
 
         <div class="form-group">
           <label class="form-label">{{ t('remoteSyslog.protocol') }}</label>
-          <select
+          <BaseSelect
             v-model="formData.Protocol"
-            class="form-control"
+            :options="protocolOptions"
             :data-testid="qa('modal-protocol-select')"
-          >
-            <option v-for="opt in protocolOptions" :key="opt.value" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
+          />
         </div>
 
-        <div v-if="formError" class="form-error" :data-testid="qa('modal-error')">
-          {{ formError }}
-        </div>
-
-        <div class="form-actions">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            :data-testid="qa('modal-cancel')"
-            @click="showModal = false"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            :disabled="saving"
-            :data-testid="qa('modal-save')"
-          >
-            {{ saving ? t('common.saving') : t('common.save') }}
-          </button>
-        </div>
-      </form>
+        <ActionButtons
+          class="modal-actions"
+          :apply-text="editingEntry ? t('common.save') : t('common.add')"
+          :apply-loading="saving"
+          :cancel-data-testid="qa('modal-cancel')"
+          :apply-data-testid="qa('modal-save')"
+          @cancel="showModal = false"
+          @apply="handleSubmit"
+        />
+      </div>
     </BaseModal>
 
     <BaseToast
@@ -579,58 +566,37 @@ onMounted(loadData);
   color: #721c24;
 }
 
-.form-group {
-  margin-bottom: var(--space-4);
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: var(--space-2);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-primary);
+.modal-form .form-group {
+  margin-bottom: 0;
 }
 
-.required {
-  color: var(--color-error);
+.modal-form :deep(.form-group) {
+  margin-bottom: 0;
 }
 
-.form-control {
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 112, 187, 0.1);
-}
-
-.form-control:disabled {
-  background-color: var(--bg-disabled);
-  cursor: not-allowed;
-}
-
-.form-control option:disabled {
-  color: var(--text-disabled, #aaa);
-}
-
-.form-error {
+.modal-error-banner {
   padding: var(--space-3);
-  margin-bottom: var(--space-4);
   background-color: var(--color-error-light, #f8d7da);
   color: var(--color-error);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
 }
 
-.form-actions {
+.modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.form-select option:disabled {
+  color: var(--text-disabled, #aaa);
 }
 
 .loading-state {
