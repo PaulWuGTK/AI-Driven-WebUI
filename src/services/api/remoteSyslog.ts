@@ -18,15 +18,13 @@ export const remoteSyslogApi = {
 
   async updateConfig(data: RemoteSyslogUpdateRequest): Promise<RemoteSyslogApiResponse> {
     if (isDevelopment) {
-      // Update mock data in-place for dev mode
       console.log('Mock update:', data);
-      // Return unwrapped success response (following Ddns.lua pattern)
-      return Promise.resolve({
-        messages_remote: { LogRemote: { Enable: 0, Address: '', Port: 514, Protocol: 'UDP', Status: 'Disabled' } },
-        wifi: { LogRemote: { Enable: 0, Address: '', Port: 514, Protocol: 'UDP', Status: 'Disabled' } },
-        hostapd: { LogRemote: { Enable: 0, Address: '', Port: 514, Protocol: 'UDP', Status: 'Disabled' } },
-      });
+      return Promise.resolve({ ...remoteSyslogMockData.DeviceSyslogAction });
     }
-    return apiClient.post<RemoteSyslogApiResponse>('/API/info?list=DeviceSyslogAction', data);
+    // Wrap in DeviceSyslogAction for HTTP handler to unwrap before passing to Lua
+    return apiClient.post<RemoteSyslogApiResponse>(
+      '/API/info?list=DeviceSyslogAction',
+      { DeviceSyslogAction: data }
+    );
   },
 };

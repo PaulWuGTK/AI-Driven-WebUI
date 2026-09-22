@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { RemoteSyslogResponse } from '../../../types/remoteSyslog';
+import type {
+  RemoteSyslogResponse,
+  RemoteSyslogEntry,
+  RemoteSyslogFormData,
+  RemoteSyslogUpdateRequest
+} from '../../../types/remoteSyslog';
+import { PROTOCOL_OPTIONS, formatActionLabel } from '../../../types/remoteSyslog';
 import { remoteSyslogApi } from '../../../services/api/remoteSyslog';
 import { useQA } from '../../../utils/qa';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
 import { extractNokMessage } from '../../../utils/apiUtils';
-import { BaseInput, BaseSelect, BaseSwitch, ActionButtons, BaseToast } from '../../../components/common';
+import { BaseTable, BaseModal, BaseInput, BaseSelect, BaseSwitch, BaseToast, SectionCard } from '../../../components/common';
 
 const { qa } = useQA();
 const { t } = useI18n();
@@ -21,49 +27,174 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref<string | null>(null);
 
-// System Messages form fields
-const messagesEnable = ref<0 | 1>(0);
-const messagesAddress = ref('');
-const messagesPort = ref(514);
-const messagesProtocol = ref<'UDP' | 'TCP' | 'TLS'>('UDP');
+const showModal = ref(false);
+const editingEntry = ref<RemoteSyslogEntry | null>(null);
+const formError = ref<string | null>(null);
 
-// WiFi Logs form fields
-const wifiEnable = ref<0 | 1>(0);
-const wifiAddress = ref('');
-const wifiPort = ref(514);
-const wifiProtocol = ref<'UDP' | 'TCP' | 'TLS'>('UDP');
+// Form state
+const formData = ref<RemoteSyslogFormData>({
+  Type: '',
+  Enable: 1,
+  Address: '',
+  Port: 514,
+  Protocol: 'UDP'
+});
 
-// Hostapd Logs form fields
-const hostapdEnable = ref<0 | 1>(0);
-const hostapdAddress = ref('');
-const hostapdPort = ref(514);
-const hostapdProtocol = ref<'UDP' | 'TCP' | 'TLS'>('UDP');
+// Log type labels — use alias directly since types are dynamic from the data model
+const getLogTypeLabel = (alias: string): string => {
+  return formatActionLabel(alias);
+};
+
+// Transform backend response to table entries — only show entries with a configured Address
+const tableEntries = computed<RemoteSyslogEntry[]>(() => {
+  if (!data.value) return [];
+
+  const actions = data.value.DeviceSyslogAction;
+  const entries: RemoteSyslogEntry[] = [];
+
+  for (const [actionName, actionData] of Object.entries(actions)) {
+    // Only show types that have LogFile.Enable=1 AND a non-empty Address configured
+    if (actionData.LogFile.Enable === 1 && actionData.LogRemote.Address) {
+      entries.push({
+        Type: actionName,
+        TypeLabel: getLogTypeLabel(actionName),
+        Enable: actionData.LogRemote.Enable,
+        Address: actionData.LogRemote.Address,
+        Port: actionData.LogRemote.Port,
+        Protocol: actionData.LogRemote.Protocol as 'UDP' | 'TCP',
+        Status: actionData.LogRemote.Status,
+        LogFileEnabled: true
+      });
+    }
+  }
+
+  return entries;
+});
+
+// Available log types for dropdown — all LogFile.Enable=1 types, already-configured ones disabled
+const availableTypes = computed(() => {
+  if (!data.value) return [];
+
+  const actions = data.value.DeviceSyslogAction;
+  const configuredTypes = new Set(tableEntries.value.map(e => e.Type));
+
+  const available: Array<{ value: string; label: string; disabled: boolean }> = [];
+
+  for (const [actionName, actionData] of Object.entries(actions)) {
+    if (actionData.LogFile.Enable === 1) {
+      // When editing, the current type is always selectable
+      const isCurrentEdit = editingEntry.value?.Type === actionName;
+      available.push({
+        value: actionName,
+        label: getLogTypeLabel(actionName),
+        disabled: !isCurrentEdit && configuredTypes.has(actionName)
+      });
+    }
+  }
+
+  return available;
+});
 
 // Protocol options
-const protocolOptions = computed(() => [
-  { label: t('remoteSyslog.protocolUDP'), value: 'UDP' },
-  { label: t('remoteSyslog.protocolTCP'), value: 'TCP' },
-  { label: t('remoteSyslog.protocolTLS'), value: 'TLS' },
+const protocolOptions = computed(() =>
+  PROTOCOL_OPTIONS.map(opt => ({ label: opt.label, value: opt.value }))
+);
+
+// Table columns
+const columns = computed(() => [
+  {
+    key: 'Enable',
+    label: t('remoteSyslog.enable'),
+    sortable: false,
+    headerDataTestid: qa('remote-syslog-header-enable')
+  },
+  {
+    key: 'TypeLabel',
+    label: t('remoteSyslog.logType'),
+    sortable: true,
+    headerDataTestid: qa('remote-syslog-header-type')
+  },
+  {
+    key: 'Address',
+    label: t('remoteSyslog.address'),
+    sortable: true,
+    headerDataTestid: qa('remote-syslog-header-address')
+  },
+  {
+    key: 'Port',
+    label: t('remoteSyslog.port'),
+    sortable: true,
+    headerDataTestid: qa('remote-syslog-header-port')
+  },
+  {
+    key: 'Protocol',
+    label: t('remoteSyslog.protocol'),
+    sortable: true,
+    headerDataTestid: qa('remote-syslog-header-protocol')
+  },
+  {
+    key: 'actions',
+    label: t('common.action'),
+    sortable: false,
+    headerDataTestid: qa('remote-syslog-header-actions')
+  }
 ]);
 
 // Validation
-const validationErrors = ref({
-  messages: '',
-  wifi: '',
-  hostapd: '',
-});
-
-const validateIPAddressOrHostname = (addr: string): boolean => {
-  if (!addr) return false;
+const validateIPAddress = (addr: string): boolean => {
   const ipv4 = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  const hostname = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*$/;
-  return ipv4.test(addr) || hostname.test(addr);
+  return ipv4.test(addr);
 };
 
 const validatePort = (port: number): boolean => {
   return port >= 1 && port <= 65535;
 };
 
+const validateEntry = (): string | null => {
+  // Required fields
+  if (!formData.value.Type) {
+    return t('remoteSyslog.errors.typeRequired');
+  }
+  if (!formData.value.Address) {
+    return t('remoteSyslog.errors.addressRequired');
+  }
+
+  // IP format validation
+  if (!validateIPAddress(formData.value.Address)) {
+    return t('remoteSyslog.errors.invalidIp');
+  }
+
+  // Port range validation
+  if (!validatePort(formData.value.Port)) {
+    return t('remoteSyslog.errors.invalidPort');
+  }
+
+  // Rule 1: Type must be unique (dropdown disables already-configured, but validate as safety)
+  const existingEntry = tableEntries.value.find(e =>
+    e.Type === formData.value.Type &&
+    (!editingEntry.value || e.Type !== editingEntry.value.Type)
+  );
+  if (existingEntry) {
+    return t('remoteSyslog.errors.typeDuplicate');
+  }
+
+  // Rule 2: IP:Port combination must be unique (avoid persist-name conflict)
+  const destination = `${formData.value.Address}:${formData.value.Port}`;
+  const duplicateDestination = tableEntries.value.find(e =>
+    `${e.Address}:${e.Port}` === destination &&
+    e.Type !== formData.value.Type
+  );
+  if (duplicateDestination) {
+    return t('remoteSyslog.errors.destinationDuplicate', {
+      type: duplicateDestination.TypeLabel,
+      destination: destination
+    });
+  }
+
+  return null;
+};
+
+// Handlers
 const showSuccessMessage = (message: string) => {
   successMessage.value = message;
   triggerSuccessToast();
@@ -74,118 +205,63 @@ const showErrorMessage = (message: string) => {
   triggerErrorToast();
 };
 
-const validateSection = (
-  enable: number,
-  address: string,
-  port: number,
-  section: 'messages' | 'wifi' | 'hostapd'
-): boolean => {
-  validationErrors.value[section] = '';
-
-  if (enable === 1) {
-    if (!address) {
-      validationErrors.value[section] = t('remoteSyslog.addressRequired');
-      return false;
-    }
-    if (!validateIPAddressOrHostname(address)) {
-      validationErrors.value[section] = t('remoteSyslog.invalidIpAddress');
-      return false;
-    }
-    if (!validatePort(port)) {
-      validationErrors.value[section] = t('remoteSyslog.invalidPort');
-      return false;
-    }
-  }
-
-  return true;
+const handleAdd = () => {
+  editingEntry.value = null;
+  formData.value = {
+    Type: '',
+    Enable: 1,
+    Address: '',
+    Port: 514,
+    Protocol: 'UDP'
+  };
+  formError.value = null;
+  showModal.value = true;
 };
 
-const loadData = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    data.value = await remoteSyslogApi.getConfig();
-
-    // Populate form fields from response
-    const { messages_remote, wifi, hostapd } = data.value.DeviceSyslogAction;
-
-    messagesEnable.value = messages_remote.LogRemote.Enable;
-    messagesAddress.value = messages_remote.LogRemote.Address;
-    messagesPort.value = messages_remote.LogRemote.Port;
-    messagesProtocol.value = messages_remote.LogRemote.Protocol;
-
-    wifiEnable.value = wifi.LogRemote.Enable;
-    wifiAddress.value = wifi.LogRemote.Address;
-    wifiPort.value = wifi.LogRemote.Port;
-    wifiProtocol.value = wifi.LogRemote.Protocol;
-
-    hostapdEnable.value = hostapd.LogRemote.Enable;
-    hostapdAddress.value = hostapd.LogRemote.Address;
-    hostapdPort.value = hostapd.LogRemote.Port;
-    hostapdProtocol.value = hostapd.LogRemote.Protocol;
-  } catch (err) {
-    console.error('Error loading remote syslog config:', err);
-    error.value = t('remoteSyslog.loadFailed');
-  } finally {
-    loading.value = false;
-  }
+const handleEdit = (entry: RemoteSyslogEntry) => {
+  editingEntry.value = entry;
+  formData.value = {
+    Type: entry.Type,
+    Enable: entry.Enable,
+    Address: entry.Address,
+    Port: entry.Port,
+    Protocol: entry.Protocol
+  };
+  formError.value = null;
+  showModal.value = true;
 };
 
-const handleSubmit = async () => {
-  // Validate all sections
-  const messagesValid = validateSection(messagesEnable.value, messagesAddress.value, messagesPort.value, 'messages');
-  const wifiValid = validateSection(wifiEnable.value, wifiAddress.value, wifiPort.value, 'wifi');
-  const hostapdValid = validateSection(hostapdEnable.value, hostapdAddress.value, hostapdPort.value, 'hostapd');
-
-  if (!messagesValid || !wifiValid || !hostapdValid) {
-    showErrorMessage(t('remoteSyslog.validationFailed'));
+const handleDelete = async (entry: RemoteSyslogEntry) => {
+  if (!confirm(t('remoteSyslog.confirmDelete', { type: entry.TypeLabel }))) {
     return;
   }
+
+  // Delete = Set Enable=0, Address=""
+  const payload: RemoteSyslogUpdateRequest = {
+    [entry.Type]: {
+      LogRemote: {
+        Enable: 0 as const,
+        Address: '',
+        Port: 514,
+        Protocol: 'UDP'
+      }
+    }
+  };
 
   saving.value = true;
   error.value = null;
 
   try {
-    const result = await remoteSyslogApi.updateConfig({
-      DeviceSyslogAction: {
-        messages_remote: {
-          LogRemote: {
-            Enable: messagesEnable.value,
-            Address: messagesAddress.value,
-            Port: messagesPort.value,
-            Protocol: messagesProtocol.value,
-          },
-        },
-        wifi: {
-          LogRemote: {
-            Enable: wifiEnable.value,
-            Address: wifiAddress.value,
-            Port: wifiPort.value,
-            Protocol: wifiProtocol.value,
-          },
-        },
-        hostapd: {
-          LogRemote: {
-            Enable: hostapdEnable.value,
-            Address: hostapdAddress.value,
-            Port: hostapdPort.value,
-            Protocol: hostapdProtocol.value,
-          },
-        },
-      },
-    });
-
-    // Check for error (NOK at top level, following Ddns.lua pattern)
+    const result = await remoteSyslogApi.updateConfig(payload);
     if (result.NOK) {
-      const errorMsg = extractNokMessage(result.NOK) || t('remoteSyslog.updateFailed');
+      const errorMsg = extractNokMessage(result.NOK) || t('remoteSyslog.errors.deleteFailed');
       showErrorMessage(errorMsg);
     } else {
-      // Success - result is unwrapped data
-      showSuccessMessage(t('remoteSyslog.updateSuccess'));
-      await loadData(); // Refresh data
+      showSuccessMessage(t('remoteSyslog.deleteSuccess', { type: entry.TypeLabel }));
+      await loadData();
     }
   } catch (err) {
-    console.error('Error saving remote syslog config:', err);
+    console.error('Error deleting remote syslog:', err);
     const errorMsg = err instanceof Error ? err.message : String(err);
     showErrorMessage(errorMsg);
   } finally {
@@ -193,9 +269,63 @@ const handleSubmit = async () => {
   }
 };
 
-const handleCancel = async () => {
-  await loadData(); // Reload data to reset form
+const handleSubmit = async () => {
+  // Validate
+  const validationError = validateEntry();
+  if (validationError) {
+    formError.value = validationError;
+    return;
+  }
+
+  // Build payload
+  const payload = {
+    [formData.value.Type]: {
+      LogRemote: {
+        Enable: formData.value.Enable,
+        Address: formData.value.Address,
+        Port: formData.value.Port,
+        Protocol: formData.value.Protocol
+      }
+    }
+  };
+
+  saving.value = true;
+  formError.value = null;
+
+  try {
+    const result = await remoteSyslogApi.updateConfig(payload);
+    if (result.NOK) {
+      const errorMsg = extractNokMessage(result.NOK) || t('remoteSyslog.errors.saveFailed');
+      formError.value = errorMsg;
+    } else {
+      showModal.value = false;
+      showSuccessMessage(t('remoteSyslog.updateSuccess'));
+      await loadData();
+    }
+  } catch (err) {
+    console.error('Error saving remote syslog:', err);
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    formError.value = errorMsg;
+  } finally {
+    saving.value = false;
+  }
 };
+
+const loadData = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    data.value = await remoteSyslogApi.getConfig();
+  } catch (err) {
+    console.error('Error loading remote syslog config:', err);
+    error.value = t('remoteSyslog.errors.loadFailed');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const getRowTestId = (_row: RemoteSyslogEntry, index: number, mobile: boolean) =>
+  qa(mobile ? `remote-syslog-card-${index}` : `remote-syslog-row-${index}`) ?? '';
 
 onMounted(loadData);
 </script>
@@ -217,199 +347,168 @@ onMounted(loadData);
       </div>
 
       <template v-else-if="data">
-        <div class="panel-section" :data-testid="qa('remote-syslog-section')">
-          <div class="section-title">{{ t('remoteSyslog.title') }}</div>
-          <div class="card-content">
-            <p class="section-description">{{ t('remoteSyslog.description') }}</p>
+        <SectionCard
+          :data-testid="qa('remote-syslog-section')"
+          header-mode="row"
+          :title="t('remoteSyslog.sectionTitle')"
+          :title-data-testid="qa('remote-syslog-section-title')"
+        >
+          <template #actions>
+            <button
+              class="btn btn-primary add-rule-btn"
+              :data-testid="qa('remote-syslog-add-button')"
+              @click="handleAdd"
+            >
+              <span class="material-icons">add</span>
+              <span>{{ t('remoteSyslog.addDestination') }}</span>
+            </button>
+          </template>
 
-            <form @submit.prevent="handleSubmit">
-              <!-- System Messages Subsection -->
-              <div class="subsection" :data-testid="qa('remote-syslog-messages-section')">
-                <div class="subsection-header">
-                  <h3 class="subsection-title">{{ t('remoteSyslog.systemMessages') }}</h3>
-                  <span class="subsection-subtitle">{{ t('remoteSyslog.systemMessagesDesc') }}</span>
-                </div>
+          <BaseTable
+            :columns="columns"
+            :data="tableEntries"
+            row-key="Type"
+            :table-data-testid="qa('remote-syslog-table')"
+            :mobile-data-testid="qa('remote-syslog-mobile')"
+            initial-sort-key="TypeLabel"
+            initial-sort-order="asc"
+            :row-data-testid="getRowTestId"
+          >
+            <!-- Enable column -->
+            <template #cell-Enable="{ row }">
+              <span
+                class="status-badge"
+                :class="row.Enable ? 'status-enabled' : 'status-disabled'"
+                :data-testid="qa(`status-badge-${row.Type}`)"
+              >
+                {{ row.Enable ? t('common.enabled') : t('common.disabled') }}
+              </span>
+            </template>
 
-                <div class="form-group">
-                  <BaseSwitch
-                    v-model="messagesEnable"
-                    :true-value="1"
-                    :false-value="0"
-                    :label="t('remoteSyslog.enableRemoteLogging')"
-                    :data-testid="qa('messages-enable-toggle')"
-                  />
-                </div>
-
-                <div v-if="messagesEnable === 1">
-                  <div class="form-group">
-                    <BaseInput
-                      v-model="messagesAddress"
-                      :label="t('remoteSyslog.serverAddress')"
-                      :placeholder="t('remoteSyslog.serverAddressPlaceholder')"
-                      required
-                      :data-testid="qa('messages-address-input')"
-                    />
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-group">
-                      <BaseInput
-                        v-model="messagesPort"
-                        type="number"
-                        :label="t('remoteSyslog.port')"
-                        :placeholder="t('remoteSyslog.portPlaceholder')"
-                        :min="1"
-                        :max="65535"
-                        :data-testid="qa('messages-port-input')"
-                      />
-                    </div>
-
-                    <div class="form-group">
-                      <BaseSelect
-                        v-model="messagesProtocol"
-                        :label="t('remoteSyslog.protocol')"
-                        :options="protocolOptions"
-                        :data-testid="qa('messages-protocol-select')"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div v-if="validationErrors.messages" class="validation-error">
-                  {{ validationErrors.messages }}
-                </div>
+            <!-- Actions column -->
+            <template #cell-actions="{ row }">
+              <div class="action-buttons">
+                <button
+                  class="btn-action"
+                  :data-testid="qa(`edit-${row.Type}`)"
+                  :title="t('common.edit')"
+                  @click="handleEdit(row)"
+                >
+                  <span class="material-icons">edit</span>
+                </button>
+                <button
+                  class="btn-action"
+                  :data-testid="qa(`delete-${row.Type}`)"
+                  :title="t('common.delete')"
+                  @click="handleDelete(row)"
+                >
+                  <span class="material-icons">delete</span>
+                </button>
               </div>
-
-              <!-- WiFi Logs Subsection -->
-              <div class="subsection" :data-testid="qa('remote-syslog-wifi-section')">
-                <div class="subsection-header">
-                  <h3 class="subsection-title">{{ t('remoteSyslog.wifiLogs') }}</h3>
-                  <span class="subsection-subtitle">{{ t('remoteSyslog.wifiLogsDesc') }}</span>
-                </div>
-
-                <div class="form-group">
-                  <BaseSwitch
-                    v-model="wifiEnable"
-                    :true-value="1"
-                    :false-value="0"
-                    :label="t('remoteSyslog.enableRemoteLogging')"
-                    :data-testid="qa('wifi-enable-toggle')"
-                  />
-                </div>
-
-                <div v-if="wifiEnable === 1">
-                  <div class="form-group">
-                    <BaseInput
-                      v-model="wifiAddress"
-                      :label="t('remoteSyslog.serverAddress')"
-                      :placeholder="t('remoteSyslog.serverAddressPlaceholder')"
-                      required
-                      :data-testid="qa('wifi-address-input')"
-                    />
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-group">
-                      <BaseInput
-                        v-model="wifiPort"
-                        type="number"
-                        :label="t('remoteSyslog.port')"
-                        :placeholder="t('remoteSyslog.portPlaceholder')"
-                        :min="1"
-                        :max="65535"
-                        :data-testid="qa('wifi-port-input')"
-                      />
-                    </div>
-
-                    <div class="form-group">
-                      <BaseSelect
-                        v-model="wifiProtocol"
-                        :label="t('remoteSyslog.protocol')"
-                        :options="protocolOptions"
-                        :data-testid="qa('wifi-protocol-select')"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div v-if="validationErrors.wifi" class="validation-error">
-                  {{ validationErrors.wifi }}
-                </div>
-              </div>
-
-              <!-- Hostapd Logs Subsection -->
-              <div class="subsection" :data-testid="qa('remote-syslog-hostapd-section')">
-                <div class="subsection-header">
-                  <h3 class="subsection-title">{{ t('remoteSyslog.hostapdLogs') }}</h3>
-                  <span class="subsection-subtitle">{{ t('remoteSyslog.hostapdLogsDesc') }}</span>
-                </div>
-
-                <div class="form-group">
-                  <BaseSwitch
-                    v-model="hostapdEnable"
-                    :true-value="1"
-                    :false-value="0"
-                    :label="t('remoteSyslog.enableRemoteLogging')"
-                    :data-testid="qa('hostapd-enable-toggle')"
-                  />
-                </div>
-
-                <div v-if="hostapdEnable === 1">
-                  <div class="form-group">
-                    <BaseInput
-                      v-model="hostapdAddress"
-                      :label="t('remoteSyslog.serverAddress')"
-                      :placeholder="t('remoteSyslog.serverAddressPlaceholder')"
-                      required
-                      :data-testid="qa('hostapd-address-input')"
-                    />
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-group">
-                      <BaseInput
-                        v-model="hostapdPort"
-                        type="number"
-                        :label="t('remoteSyslog.port')"
-                        :placeholder="t('remoteSyslog.portPlaceholder')"
-                        :min="1"
-                        :max="65535"
-                        :data-testid="qa('hostapd-port-input')"
-                      />
-                    </div>
-
-                    <div class="form-group">
-                      <BaseSelect
-                        v-model="hostapdProtocol"
-                        :label="t('remoteSyslog.protocol')"
-                        :options="protocolOptions"
-                        :data-testid="qa('hostapd-protocol-select')"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div v-if="validationErrors.hostapd" class="validation-error">
-                  {{ validationErrors.hostapd }}
-                </div>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="form-actions">
-                <ActionButtons
-                  :apply-loading="saving"
-                  :apply-disabled="saving || loading"
-                  :cancel-data-testid="qa('remote-syslog-cancel')"
-                  :apply-data-testid="qa('remote-syslog-apply')"
-                  @cancel="handleCancel"
-                  @apply="handleSubmit"
-                />
-              </div>
-            </form>
-          </div>
-        </div>
+            </template>
+          </BaseTable>
+        </SectionCard>
       </template>
     </div>
+
+    <!-- Add/Edit Modal -->
+    <BaseModal
+      v-model="showModal"
+      :title="editingEntry ? t('remoteSyslog.editDestination') : t('remoteSyslog.addDestination')"
+      size="md"
+      :data-testid="qa('remote-syslog-modal')"
+    >
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <BaseSwitch
+            v-model="formData.Enable"
+            :true-value="1"
+            :false-value="0"
+            :label="t('remoteSyslog.enableRemoteLogging')"
+            :data-testid="qa('modal-enable-switch')"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ t('remoteSyslog.logType') }} <span class="required">*</span></label>
+          <select
+            v-model="formData.Type"
+            class="form-control"
+            :disabled="!!editingEntry"
+            :data-testid="qa('modal-type-select')"
+          >
+            <option value="">{{ t('remoteSyslog.selectType') }}</option>
+            <option
+              v-for="opt in availableTypes"
+              :key="opt.value"
+              :value="opt.value"
+              :disabled="opt.disabled"
+            >
+              {{ opt.label }}{{ opt.disabled ? ` ${t('remoteSyslog.typeConfigured')}` : '' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ t('remoteSyslog.address') }} <span class="required">*</span></label>
+          <input
+            v-model="formData.Address"
+            type="text"
+            class="form-control"
+            placeholder="192.168.1.100"
+            :data-testid="qa('modal-address-input')"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ t('remoteSyslog.port') }} <span class="required">*</span></label>
+          <input
+            v-model.number="formData.Port"
+            type="number"
+            class="form-control"
+            min="1"
+            max="65535"
+            :data-testid="qa('modal-port-input')"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ t('remoteSyslog.protocol') }}</label>
+          <select
+            v-model="formData.Protocol"
+            class="form-control"
+            :data-testid="qa('modal-protocol-select')"
+          >
+            <option v-for="opt in protocolOptions" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <div v-if="formError" class="form-error" :data-testid="qa('modal-error')">
+          {{ formError }}
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            :data-testid="qa('modal-cancel')"
+            @click="showModal = false"
+          >
+            {{ t('common.cancel') }}
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            :disabled="saving"
+            :data-testid="qa('modal-save')"
+          >
+            {{ saving ? t('common.saving') : t('common.save') }}
+          </button>
+        </div>
+      </form>
+    </BaseModal>
 
     <BaseToast
       v-model="showSuccessToast"
@@ -427,73 +526,111 @@ onMounted(loadData);
 </template>
 
 <style scoped>
-.section-description {
-  margin-bottom: var(--space-6);
-  color: var(--text-secondary);
-  font-size: var(--font-size-base);
-}
-
-.subsection {
-  padding: var(--space-6) 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.subsection:last-of-type {
-  border-bottom: none;
-}
-
-.subsection-header {
-  display: flex;
+.add-rule-btn {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+.add-rule-btn .material-icons {
+  font-size: 1.125rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
-.subsection-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  margin: 0;
-  flex-shrink: 0;
-}
-
-.subsection-subtitle {
-  font-size: var(--font-size-sm);
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: none;
+  border: none;
   color: var(--text-secondary);
-  flex: 1;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+.btn-action:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
-@media (max-width: 768px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.status-enabled {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-disabled {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .form-group {
   margin-bottom: var(--space-4);
 }
 
+.form-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.required {
+  color: var(--color-error);
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 112, 187, 0.1);
+}
+
+.form-control:disabled {
+  background-color: var(--bg-disabled);
+  cursor: not-allowed;
+}
+
+.form-control option:disabled {
+  color: var(--text-disabled, #aaa);
+}
+
+.form-error {
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  background-color: var(--color-error-light, #f8d7da);
+  color: var(--color-error);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: var(--space-6);
+  gap: var(--space-3);
   margin-top: var(--space-6);
-}
-
-.validation-error {
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background-color: var(--color-error-light);
-  border-radius: var(--radius-md);
 }
 
 .loading-state {
@@ -514,5 +651,42 @@ onMounted(loadData);
   background-color: var(--bg-secondary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+  :deep(.header-row) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  :deep(.section-title-sp) {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  :deep(.header-actions) {
+    width: auto !important;
+    flex-shrink: 0;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+
+  :deep(.header-actions .btn) {
+    width: auto;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
 }
 </style>
