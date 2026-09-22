@@ -2,7 +2,7 @@ export type Flag01 = 0 | 1;
 
 export interface WlanInterface {
   Alias: string;
-  Password: string;
+  KeyPassPhrase: string;
   Authentication: string;
   Encryption: string;
   BSSID: string;
@@ -21,7 +21,9 @@ export interface WlanAssociatedDevice {
 }
 
 export interface WlanBand {
-  Band: string;
+  Alias?: string;
+  InstanceIndex?: number;
+  OperatingFrequencyBand: string;
   Channel: number;
   AutoChannel: Flag01;
   Bandwidth: string;

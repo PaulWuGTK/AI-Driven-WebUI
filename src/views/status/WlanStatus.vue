@@ -17,14 +17,14 @@ const fetchWlanStatus = async () => {
     const response = await getWlanStatus();
 
     response.StatusWlan.sort((a, b) => {
-  const aIndex = bandOrder.indexOf(a.Band);
-  const bIndex = bandOrder.indexOf(b.Band);
+  const aIndex = bandOrder.indexOf(a.OperatingFrequencyBand);
+  const bIndex = bandOrder.indexOf(b.OperatingFrequencyBand);
   return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
 });
 
     wlanData.value = response;
     associatedCollapsedState.value = response.StatusWlan.reduce((acc, band) => {
-      acc[band.Band] = true;
+      acc[band.OperatingFrequencyBand] = true;
       return acc;
     }, {} as Record<string, boolean>);
   } catch (error) {
@@ -97,13 +97,13 @@ onMounted(() => {
     <h1 class="page-title" :data-testid="qa('wlan-title')">{{ t('wlan.title') }}</h1>
     
     <div v-if="wlanData" class="status-content" :data-testid="qa('wlan-content')">
-      <div v-for="band in wlanData.StatusWlan" :key="band.Band" class="panel-section" :data-testid="qa(`wlan-band-${slug(band.Band)}`)">
-        <div class="section-title" :data-testid="qa(`wlan-band-title-${slug(band.Band)}`)">WiFi {{ band.Band }}</div>
+      <div v-for="band in wlanData.StatusWlan" :key="band.OperatingFrequencyBand" class="panel-section" :data-testid="qa(`wlan-band-${slug(band.OperatingFrequencyBand)}`)">
+        <div class="section-title" :data-testid="qa(`wlan-band-title-${slug(band.OperatingFrequencyBand)}`)">WiFi {{ band.OperatingFrequencyBand }}</div>
         
         <div class="card-content">
           <WlanBandInfo :band="band" />
           
-          <div class="table-container" :data-testid="qa(`wlan-band-table-${slug(band.Band)}`)">
+          <div class="table-container" :data-testid="qa(`wlan-band-table-${slug(band.OperatingFrequencyBand)}`)">
             <table>
               <thead>
                 <tr>
@@ -118,82 +118,82 @@ onMounted(() => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(iface, ifaceIndex) in band.Interface" :key="iface.Name" :data-testid="qa(`wlan-interface-row-${slug(band.Band)}-${ifaceIndex}`)">
-                  <td :data-testid="qa(`wlan-interface-name-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Name }}</td>
-                  <td :data-testid="qa(`wlan-interface-alias-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Alias }}</td>
-                  <td :data-testid="qa(`wlan-interface-status-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</td>
-                  <td :data-testid="qa(`wlan-interface-ssid-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.SSID }}</td>
-                  <td :data-testid="qa(`wlan-interface-authentication-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Authentication }}</td>
-                  <td :data-testid="qa(`wlan-interface-encryption-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Encryption }}</td>
-                  <td :data-testid="qa(`wlan-interface-password-${slug(band.Band)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.Password) }}</td>
-                  <td :data-testid="qa(`wlan-interface-bssid-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.BSSID }}</td>
+                <tr v-for="(iface, ifaceIndex) in band.Interface" :key="iface.Name" :data-testid="qa(`wlan-interface-row-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">
+                  <td :data-testid="qa(`wlan-interface-name-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Name }}</td>
+                  <td :data-testid="qa(`wlan-interface-alias-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Alias }}</td>
+                  <td :data-testid="qa(`wlan-interface-status-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</td>
+                  <td :data-testid="qa(`wlan-interface-ssid-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.SSID }}</td>
+                  <td :data-testid="qa(`wlan-interface-authentication-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Authentication }}</td>
+                  <td :data-testid="qa(`wlan-interface-encryption-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Encryption }}</td>
+                  <td :data-testid="qa(`wlan-interface-password-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.KeyPassPhrase) }}</td>
+                  <td :data-testid="qa(`wlan-interface-bssid-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.BSSID }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="mobile-cards" :data-testid="qa(`wlan-band-mobile-${slug(band.Band)}`)">
-            <div class="table-card" v-for="(iface, ifaceIndex) in band.Interface" :key="iface.Name" :data-testid="qa(`wlan-interface-card-${slug(band.Band)}-${ifaceIndex}`)">
+          <div class="mobile-cards" :data-testid="qa(`wlan-band-mobile-${slug(band.OperatingFrequencyBand)}`)">
+            <div class="table-card" v-for="(iface, ifaceIndex) in band.Interface" :key="iface.Name" :data-testid="qa(`wlan-interface-card-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-name-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.name') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-name-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Name }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-name-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.name') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-name-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Name }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-alias-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.alias') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-alias-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Alias }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-alias-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.alias') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-alias-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Alias }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-status-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.status') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-status-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-status-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.status') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-status-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Enable === 1 ? t('wlan.enable') : t('wlan.disable') }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-ssid-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.ssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-ssid-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.SSID }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-ssid-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.ssid') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-ssid-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.SSID }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-authentication-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.authentication') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-authentication-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Authentication }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-authentication-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.authentication') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-authentication-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Authentication }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-encryption-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.encryption') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-encryption-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.Encryption }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-encryption-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.encryption') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-encryption-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.Encryption }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-password-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.password') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-password-value-${slug(band.Band)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.Password) }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-password-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.password') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-password-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ formatPassword(iface.Authentication, iface.KeyPassPhrase) }}</span>
               </div>
               <div class="card-row">
-                <span class="card-label" :data-testid="qa(`wlan-interface-card-bssid-label-${slug(band.Band)}-${ifaceIndex}`)">{{ t('wlan.bssid') }}</span>
-                <span class="card-value" :data-testid="qa(`wlan-interface-card-bssid-value-${slug(band.Band)}-${ifaceIndex}`)">{{ iface.BSSID }}</span>
+                <span class="card-label" :data-testid="qa(`wlan-interface-card-bssid-label-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ t('wlan.bssid') }}</span>
+                <span class="card-value" :data-testid="qa(`wlan-interface-card-bssid-value-${slug(band.OperatingFrequencyBand)}-${ifaceIndex}`)">{{ iface.BSSID }}</span>
               </div>
             </div>
           </div>
 
-          <div class="associated-devices-container" :data-testid="qa(`wlan-associated-${slug(band.Band)}`)">
+          <div class="associated-devices-container" :data-testid="qa(`wlan-associated-${slug(band.OperatingFrequencyBand)}`)">
             <button
               type="button"
               class="associated-devices-header"
-              :data-testid="qa(`wlan-associated-toggle-${slug(band.Band)}`)"
-              @click="toggleAssociated(band.Band)"
+              :data-testid="qa(`wlan-associated-toggle-${slug(band.OperatingFrequencyBand)}`)"
+              @click="toggleAssociated(band.OperatingFrequencyBand)"
             >
-              <span :data-testid="qa(`wlan-associated-title-${slug(band.Band)}`)">
+              <span :data-testid="qa(`wlan-associated-title-${slug(band.OperatingFrequencyBand)}`)">
                 {{ t('wlan.associatedDevicesTotal', { count: getAssociatedDevices(band).length }) }}
               </span>
               <span
                 class="material-icons associated-toggle-icon"
-                :class="{ expanded: !isAssociatedCollapsed(band.Band) }"
-                :data-testid="qa(`wlan-associated-toggle-icon-${slug(band.Band)}`)"
+                :class="{ expanded: !isAssociatedCollapsed(band.OperatingFrequencyBand) }"
+                :data-testid="qa(`wlan-associated-toggle-icon-${slug(band.OperatingFrequencyBand)}`)"
               >
                 chevron_right
               </span>
             </button>
 
             <div
-              v-show="!isAssociatedCollapsed(band.Band)"
+              v-show="!isAssociatedCollapsed(band.OperatingFrequencyBand)"
               class="associated-devices-content"
-              :data-testid="qa(`wlan-associated-content-${slug(band.Band)}`)"
+              :data-testid="qa(`wlan-associated-content-${slug(band.OperatingFrequencyBand)}`)"
             >
-              <div class="table-container" :data-testid="qa(`wlan-associated-table-${slug(band.Band)}`)">
+              <div class="table-container" :data-testid="qa(`wlan-associated-table-${slug(band.OperatingFrequencyBand)}`)">
                 <table>
                   <thead>
                     <tr>
@@ -208,27 +208,27 @@ onMounted(() => {
                     <tr
                       v-for="(device, deviceIndex) in getAssociatedDevices(band)"
                       :key="`${device.MACAddress}-${deviceIndex}`"
-                      :data-testid="qa(`wlan-associated-row-${slug(band.Band)}-${deviceIndex}`)"
+                      :data-testid="qa(`wlan-associated-row-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)"
                     >
-                      <td :data-testid="qa(`wlan-associated-mac-${slug(band.Band)}-${deviceIndex}`)">{{ device.MACAddress }}</td>
-                      <td :data-testid="qa(`wlan-associated-bssid-${slug(band.Band)}-${deviceIndex}`)">{{ formatAssociatedApBssid(band, device) }}</td>
-                      <td :data-testid="qa(`wlan-associated-conn-time-${slug(band.Band)}-${deviceIndex}`)">{{ formatDuration(device.ConnectionDuration) }}</td>
-                      <td :data-testid="qa(`wlan-associated-rssi-${slug(band.Band)}-${deviceIndex}`)">{{ formatSignalStrength(device.SignalStrength) }}</td>
-                      <td :data-testid="qa(`wlan-associated-rate-${slug(band.Band)}-${deviceIndex}`)">{{ formatDlUlRate(device.LastDataDownlinkRate, device.LastDataUplinkRate) }}</td>
+                      <td :data-testid="qa(`wlan-associated-mac-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)">{{ device.MACAddress }}</td>
+                      <td :data-testid="qa(`wlan-associated-bssid-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)">{{ formatAssociatedApBssid(band, device) }}</td>
+                      <td :data-testid="qa(`wlan-associated-conn-time-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)">{{ formatDuration(device.ConnectionDuration) }}</td>
+                      <td :data-testid="qa(`wlan-associated-rssi-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)">{{ formatSignalStrength(device.SignalStrength) }}</td>
+                      <td :data-testid="qa(`wlan-associated-rate-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)">{{ formatDlUlRate(device.LastDataDownlinkRate, device.LastDataUplinkRate) }}</td>
                     </tr>
-                    <tr v-if="getAssociatedDevices(band).length === 0" :data-testid="qa(`wlan-associated-empty-${slug(band.Band)}`)">
+                    <tr v-if="getAssociatedDevices(band).length === 0" :data-testid="qa(`wlan-associated-empty-${slug(band.OperatingFrequencyBand)}`)">
                       <td colspan="5" class="associated-empty">{{ t('wlan.noAssociatedDevices') }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div class="mobile-cards associated-mobile-cards" :data-testid="qa(`wlan-associated-mobile-${slug(band.Band)}`)">
+              <div class="mobile-cards associated-mobile-cards" :data-testid="qa(`wlan-associated-mobile-${slug(band.OperatingFrequencyBand)}`)">
                 <div
                   class="table-card"
                   v-for="(device, deviceIndex) in getAssociatedDevices(band)"
                   :key="`${device.MACAddress}-card-${deviceIndex}`"
-                  :data-testid="qa(`wlan-associated-card-${slug(band.Band)}-${deviceIndex}`)"
+                  :data-testid="qa(`wlan-associated-card-${slug(band.OperatingFrequencyBand)}-${deviceIndex}`)"
                 >
                   <div class="card-row">
                     <span class="card-label">{{ t('wlan.macAddress') }}</span>
@@ -255,7 +255,7 @@ onMounted(() => {
                 <div
                   v-if="getAssociatedDevices(band).length === 0"
                   class="associated-empty associated-empty-mobile"
-                  :data-testid="qa(`wlan-associated-mobile-empty-${slug(band.Band)}`)"
+                  :data-testid="qa(`wlan-associated-mobile-empty-${slug(band.OperatingFrequencyBand)}`)"
                 >
                   {{ t('wlan.noAssociatedDevices') }}
                 </div>

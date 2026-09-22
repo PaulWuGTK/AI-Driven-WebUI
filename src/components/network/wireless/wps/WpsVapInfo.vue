@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { WlanWpsBand } from '../../../../types/wireless';
+import type { WlanWpsInterface } from '../../../../types/wireless';
 import { useQA } from '../../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
 
 const { t } = useI18n();
 defineProps<{
-  bands: WlanWpsBand[];
+  bands: WlanWpsInterface[];
 }>();
 </script>
 
@@ -32,8 +32,8 @@ defineProps<{
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(band, bandIndex) in bands" :key="band.Band" :data-testid="qa(`wps-vap-info-row-${bandIndex}`)">
-            <td :data-testid="qa(`wps-vap-info-band-${bandIndex}`)">{{ band.Band }}</td>
+          <tr v-for="(band, bandIndex) in bands" :key="band.OperatingFrequencyBand" :data-testid="qa(`wps-vap-info-row-${bandIndex}`)">
+            <td :data-testid="qa(`wps-vap-info-band-${bandIndex}`)">{{ band.OperatingFrequencyBand }}</td>
             <td :data-testid="qa(`wps-vap-info-ssid-${bandIndex}`)">{{ band.SSID }}</td>
             <td :data-testid="qa(`wps-vap-info-authentication-${bandIndex}`)">{{ band.AuthType }}</td>
             <td :data-testid="qa(`wps-vap-info-encryption-${bandIndex}`)">{{ band.EncryType }}</td>
@@ -44,10 +44,10 @@ defineProps<{
     </div>
 
     <div class="mobile-cards" :data-testid="qa('wps-vap-info-mobile')">
-      <div class="table-card" v-for="(band, bandIndex) in bands" :key="band.Band" :data-testid="qa(`wps-vap-info-card-${bandIndex}`)">
+      <div class="table-card" v-for="(band, bandIndex) in bands" :key="band.OperatingFrequencyBand" :data-testid="qa(`wps-vap-info-card-${bandIndex}`)">
         <div class="card-row">
           <span class="card-label" :data-testid="qa(`wps-vap-info-card-band-label-${bandIndex}`)">{{ t('wireless.band') }}</span>
-          <span class="card-value" :data-testid="qa(`wps-vap-info-card-band-value-${bandIndex}`)">{{ band.Band }}</span>
+          <span class="card-value" :data-testid="qa(`wps-vap-info-card-band-value-${bandIndex}`)">{{ band.OperatingFrequencyBand }}</span>
         </div>
         <div class="card-row">
           <span class="card-label" :data-testid="qa(`wps-vap-info-card-ssid-label-${bandIndex}`)">{{ t('wireless.ssid') }}</span>

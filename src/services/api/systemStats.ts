@@ -36,20 +36,29 @@ const generateMockData = (): SystemStatsResponse => {
           interface: "ETH2"
         }
       ],
-      WiFi: {
-        wifi2g: {
+      WiFi: [
+        {
+          Alias: "radio0",
+          InstanceIndex: 1,
+          OperatingFrequencyBand: "2.4GHz",
           Receive: randomBytes(0, 1000000),
           Sent: randomBytes(70000000, 80000000)
         },
-        wifi5g: {
+        {
+          Alias: "radio1",
+          InstanceIndex: 2,
+          OperatingFrequencyBand: "5GHz",
           Receive: randomBytes(300000, 400000),
           Sent: randomBytes(70000000, 80000000)
         },
-        wifi6g: {
+        {
+          Alias: "radio2",
+          InstanceIndex: 3,
+          OperatingFrequencyBand: "6GHz",
           Receive: randomBytes(0, 500000),
           Sent: randomBytes(70000000, 80000000)
         }
-      }
+      ]
     }
   };
 };

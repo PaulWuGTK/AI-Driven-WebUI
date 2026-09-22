@@ -1,9 +1,25 @@
-export interface WizardWifiInfo {
+export interface WizardWifiInterface {
+  InstanceIndex?: number;
+  Alias?: string;
+  OperatingFrequencyBand?: string;
   Enable: number;
   SSID: string;
   SecurityMode: string;
   SecurityModeAvailable: string;
-  Password: string;
+  KeyPassPhrase: string;
+}
+
+export interface WizardWifiIntfGroup {
+  InstanceIndex?: number;
+  Alias?: string;
+  Enable: number;
+  SSID: string;
+  KeyPassPhrase: string;
+  SecurityMode: string;
+  SecurityModeAvailable: string;
+  CommonSSIDEnable: number;
+  MLOEnable: number;
+  Interface: WizardWifiInterface[];
 }
 
 export interface WizardData {
@@ -14,15 +30,10 @@ export interface WizardData {
     WANModeList: string[];
   };
   WiFi: {
-    CommonSSIDEnable: number;
-    MLOEnable: number;
     MeshEnable: number;
     MFPConfig: number;
     PSC6g: number;
-    wificommon: WizardWifiInfo;
-    wifi2g: WizardWifiInfo;
-    wifi5g: WizardWifiInfo;
-    wifi6g: WizardWifiInfo;
+    IntfGroup: WizardWifiIntfGroup[];
   };
   TimeZone: {
     CurrentTimezone: string;
@@ -71,35 +82,25 @@ export interface WizardSubmitData {
       WANMode: string;
     };
     WiFi?: {
-      CommonSSIDEnable: number;
-      MLOEnable: number;
       MeshEnable: number;
       MFPConfig: number;
       PSC6g: number;
-      wificommon: {
+      IntfGroup: Array<{
+        Alias?: string;
         Enable: number;
         SSID: string;
         SecurityMode: string;
-        Password: string;
-      };
-      wifi2g: {
-        Enable: number;
-        SSID: string;
-        SecurityMode: string;
-        Password: string;
-      };
-      wifi5g: {
-        Enable: number;
-        SSID: string;
-        SecurityMode: string;
-        Password: string;
-      };
-      wifi6g: {
-        Enable: number;
-        SSID: string;
-        SecurityMode: string;
-        Password: string;
-      };
+        KeyPassPhrase: string;
+        CommonSSIDEnable: number;
+        MLOEnable: number;
+        Interface: Array<{
+          Alias?: string;
+          Enable: number;
+          SSID: string;
+          SecurityMode: string;
+          KeyPassPhrase: string;
+        }>;
+      }>;
     };
     Admin?: {
       Username: string;

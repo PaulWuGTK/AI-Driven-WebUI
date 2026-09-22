@@ -1,4 +1,7 @@
 export interface ThroughputData {
+  Alias?: string;
+  InstanceIndex?: number;
+  OperatingFrequencyBand?: string;
   Receive: string;
   Sent: string;
   interface?: string;
@@ -8,11 +11,7 @@ export interface SystemStatsResponse {
   StatusSystemStat: {
     LAN: ThroughputData[];
     WAN: ThroughputData[];
-    WiFi: {
-      wifi2g: ThroughputData;
-      wifi5g: ThroughputData;
-      wifi6g: ThroughputData;
-    };
+    WiFi: ThroughputData[];
   };
 }
 

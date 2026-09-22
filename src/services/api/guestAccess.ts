@@ -14,13 +14,23 @@ export const getGuestWiFi = async (): Promise<GuestWiFiResponse> => {
   if (isDevelopment) {
     return {
       GuestWiFi: {
-        Enable: 0,
-        MLOEnable: 0,
         MeshEnable: 1,
-        Password: "password",
-        SecurityMode: "WPA3-Personal",
-        SSID: "prplOS-guest-2g",
-        SecurityModeAvailable: "WPA3-Personal,WPA2-WPA3-Personal"
+        IntfGroup: [{
+          InstanceIndex: 1,
+          Alias: "GUEST",
+          Enable: 0,
+          SSID: "prplOS-guest",
+          KeyPassPhrase: "password",
+          SecurityMode: "WPA3-Personal",
+          SecurityModeAvailable: "WPA3-Personal,WPA2-WPA3-Personal",
+          CommonSSIDEnable: 1,
+          MLOEnable: 0,
+          BridgeInterface: "br-guest",
+          Interface: [
+            { InstanceIndex: 1, Alias: "GUEST_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "prplOS-guest-2g", KeyPassPhrase: "password" },
+            { InstanceIndex: 2, Alias: "GUEST_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "prplOS-guest-5g", KeyPassPhrase: "password" },
+          ]
+        }]
       }
     };
   }
@@ -32,8 +42,14 @@ export const updateGuestWiFi = async (data: GuestWiFiUpdateRequest): Promise<Gue
     console.log('Update Guest WiFi:', data);
     return {
       GuestWiFi: {
-        ...data.GuestWiFi,
-        SecurityModeAvailable: "WPA3-Personal,WPA2-WPA3-Personal"
+        MeshEnable: 1,
+        IntfGroup: data.GuestWiFi.IntfGroup.map((g) => ({
+          ...g,
+          SecurityModeAvailable: "WPA3-Personal,WPA2-WPA3-Personal",
+          CommonSSIDEnable: 1,
+          BridgeInterface: "br-guest",
+          Interface: [],
+        }))
       }
     };
   }

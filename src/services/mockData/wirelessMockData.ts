@@ -40,39 +40,47 @@ export const wlanBasicMockData: WlanBasicResponse = {
 export const wlanAdvancedMockData: WlanAdvancedResponse = {
   WlanAdvanced: {
     MLOEnable: 1,
-    wifi2g: {
-      RadioEnable: 1,
-      Mode: "n",
-      Channel: "6",
-      ChannelBandwidth: "20MHz",
-      AutoChannelEnable: 0,
-      ModeList: "b,g,n,bg,gn,bgn,ax",
-      ChannelBandwidthList: "20MHz,40MHz",
-      ChannelList: "1,2,3,4,5,6,7,8,9,10,11",
-      Band: "2.4GHz"
-    },
-    wifi5g: {
-      RadioEnable: 1,
-      Mode: "ac",
-      Channel: "128",
-      ChannelBandwidth: "80MHz",
-      AutoChannelEnable: 0,
-      ModeList: "a,n,an,ac,ax",
-      ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz",
-      ChannelList: "36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,144,149,153,157,161,165",
-      Band: "5GHz"
-    },
-    wifi6g: {
-      RadioEnable: 1,
-      Mode: "ax",
-      Channel: "37",
-      ChannelBandwidth: "80MHz",
-      AutoChannelEnable: 1,
-      ModeList: "ax",
-      ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz,320MHz",
-      ChannelList: "1,187,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,129,133,137,141,145,149,153,157,161,165,169,173,177,181,185,189,193,197,201,205,209,213,217,221,225,229,233",
-      Band: "6GHz"
-    }
+    Radios: [
+      {
+        Alias: "radio0",
+        InstanceIndex: 1,
+        OperatingFrequencyBand: "2.4GHz",
+        RadioEnable: 1,
+        Mode: "n",
+        Channel: "6",
+        ChannelBandwidth: "20MHz",
+        AutoChannelEnable: 0,
+        ModeList: "b,g,n,bg,gn,bgn,ax",
+        ChannelBandwidthList: "20MHz,40MHz",
+        ChannelList: "1,2,3,4,5,6,7,8,9,10,11"
+      },
+      {
+        Alias: "radio1",
+        InstanceIndex: 2,
+        OperatingFrequencyBand: "5GHz",
+        RadioEnable: 1,
+        Mode: "ac",
+        Channel: "128",
+        ChannelBandwidth: "80MHz",
+        AutoChannelEnable: 0,
+        ModeList: "a,n,an,ac,ax",
+        ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz",
+        ChannelList: "36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,144,149,153,157,161,165"
+      },
+      {
+        Alias: "radio2",
+        InstanceIndex: 3,
+        OperatingFrequencyBand: "6GHz",
+        RadioEnable: 1,
+        Mode: "ax",
+        Channel: "37",
+        ChannelBandwidth: "80MHz",
+        AutoChannelEnable: 1,
+        ModeList: "ax",
+        ChannelBandwidthList: "20MHz,40MHz,80MHz,160MHz,320MHz",
+        ChannelList: "1,187,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,117,121,125,129,133,137,141,145,149,153,157,161,165,169,173,177,181,185,189,193,197,201,205,209,213,217,221,225,229,233"
+      }
+    ]
   }
 };
 
@@ -85,9 +93,9 @@ export const wlanWpsMockData: WlanWpsResponse = {
     Enable: 1,
     PINCode: "60668011",
     PairingResult: wpsPairingState,
-    Band: [
+    Interfaces: [
       {
-        Band: "2.4GHz",
+        OperatingFrequencyBand: "2.4GHz",
         SSID: "prplOS-2G",
         AuthType: "WPA2-Personal",
         ConnectStatus: "Disabled",
@@ -95,7 +103,7 @@ export const wlanWpsMockData: WlanWpsResponse = {
         Configured: "Not Configured"
       },
       {
-        Band: "5GHz",
+        OperatingFrequencyBand: "5GHz",
         SSID: "prplOS-5G",
         AuthType: "WPA2-Personal",
         ConnectStatus: "Disabled",
@@ -157,12 +165,22 @@ export const updateWlanWpsMock = (data: { WlanWps: { Enable?: number; Action?: s
 export const wlanMeshMockData: WlanMeshResponse = {
   WlanMesh: {
     MeshEnable: 0,
-    Enable: 0,
-    SSID: "Gemtek_prplmesh",
-    SecurityMode: "WPA2-WPA3-Personal",
-    Password: "password",
-    MLOEnable: 0,
-    CommonSSIDEnable: 1
+    IntfGroup: [{
+      InstanceIndex: 1,
+      Alias: "MESH",
+      Enable: 0,
+      SSID: "Gemtek_prplmesh",
+      KeyPassPhrase: "password",
+      SecurityMode: "WPA2-WPA3-Personal",
+      SecurityModeAvailable: "WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
+      CommonSSIDEnable: 1,
+      MLOEnable: 0,
+      BridgeInterface: "br-mesh",
+      Interface: [
+        { InstanceIndex: 1, Alias: "MESH_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "Gemtek_prplmesh_2g", KeyPassPhrase: "password" },
+        { InstanceIndex: 2, Alias: "MESH_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "Gemtek_prplmesh_5g", KeyPassPhrase: "password" },
+      ]
+    }]
   }
 };
 
@@ -171,12 +189,12 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
     WlanGroup: [
       {
         SSIDAdvertisementEnabled: 1,
-        Index: 5,
+        InstanceIndex: 5,
         KeyPassPhrase: "GemtekVIP",
         BridgeInterface: "br-lan",
         Interface: [
           {
-            Band: "6GHz",
+            OperatingFrequencyBand: "6GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.15",
@@ -189,7 +207,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA3-Personal"
           },
           {
-            Band: "5GHz",
+            OperatingFrequencyBand: "5GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.14",
@@ -202,7 +220,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA2-WPA3-Personal"
           },
           {
-            Band: "2.4GHz",
+            OperatingFrequencyBand: "2.4GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.13",
@@ -226,12 +244,12 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
       },
       {
         SSIDAdvertisementEnabled: 1,
-        Index: 4,
+        InstanceIndex: 4,
         KeyPassPhrase: "GemtekVIP",
         BridgeInterface: "br-lan",
         Interface: [
           {
-            Band: "6GHz",
+            OperatingFrequencyBand: "6GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.12",
@@ -244,7 +262,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA3-Personal"
           },
           {
-            Band: "5GHz",
+            OperatingFrequencyBand: "5GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.11",
@@ -257,7 +275,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA2-WPA3-Personal"
           },
           {
-            Band: "2.4GHz",
+            OperatingFrequencyBand: "2.4GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.10",
@@ -281,12 +299,12 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
       },
       {
         SSIDAdvertisementEnabled: 1,
-        Index: 3,
+        InstanceIndex: 3,
         KeyPassPhrase: "GemtekVIP",
         BridgeInterface: "br-lan",
         Interface: [
           {
-            Band: "2.4GHz",
+            OperatingFrequencyBand: "2.4GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.7",
@@ -299,7 +317,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA2-WPA3-Personal"
           },
           {
-            Band: "6GHz",
+            OperatingFrequencyBand: "6GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.9",
@@ -312,7 +330,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA3-Personal"
           },
           {
-            Band: "5GHz",
+            OperatingFrequencyBand: "5GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.8",
@@ -336,12 +354,12 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
       },
       {
         SSIDAdvertisementEnabled: 1,
-        Index: 1,
+        InstanceIndex: 1,
         KeyPassPhrase: "GemtekVIP",
         BridgeInterface: "br-lan",
         Interface: [
           {
-            Band: "6GHz",
+            OperatingFrequencyBand: "6GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.3",
@@ -354,7 +372,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA3-Personal"
           },
           {
-            Band: "5GHz",
+            OperatingFrequencyBand: "5GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.2",
@@ -367,7 +385,7 @@ export const wlanBasicMultiMockData: WlanBasicMultiGetResponse = {
             SecurityMode: "WPA2-WPA3-Personal"
           },
           {
-            Band: "2.4GHz",
+            OperatingFrequencyBand: "2.4GHz",
             SSIDAdvertisementEnabled: 1,
             KeyPassPhrase: "GemtekVIP",
             AccessPointReference: "Device.WiFi.AccessPoint.1",

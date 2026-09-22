@@ -11,16 +11,21 @@ export interface WifiNeighborScanResponse {
   WifiNeighbor: WifiNeighborInfo[];
 }
 
+export interface WifiNeighborInterface {
+  InstanceIndex?: number;
+  Alias: string;
+  OperatingFrequencyBand: string;
+  Enable: number;
+}
+
 export interface WifiNeighborStatusResponse {
   WifiNeighbor: {
-    Enable2g: number;
-    Enable5g: number;
-    Enable6g: number;
+    Interfaces: WifiNeighborInterface[];
   };
 }
 
 export interface WifiNeighborScanRequest {
   WifiNeighbor: {
-    Band: string;
+    Alias: string;
   }
 }

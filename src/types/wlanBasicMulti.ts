@@ -8,7 +8,7 @@ export type WlanBandName = '2.4GHz' | '5GHz' | '6GHz';
 
 export interface WlanGroupBandSetting {
   /** e.g., "2.4GHz", "5GHz", "6GHz" */
-  Band: WlanBandName | string;
+  OperatingFrequencyBand: WlanBandName | string;
   Enable: BooleanInt;
 }
 
@@ -20,7 +20,7 @@ export interface WlanGroupInterface {
   Alias?: string;
 
   /** e.g., "2.4GHz", "5GHz", "6GHz" */
-  Band: WlanBandName | string;
+  OperatingFrequencyBand: WlanBandName | string;
 
   Enable: BooleanInt;
   SSID: string;
@@ -60,8 +60,8 @@ export interface WlanGroupInterface {
 }
 
 export interface WlanGroup {
-  /** Display order index for sorting */
-  Index?: number;
+  /** Instance index from backend */
+  InstanceIndex?: number;
 
   /** Group-level enable flag */
   Enable?: BooleanInt;
@@ -115,7 +115,7 @@ export interface WlanBasicMultiGetResponse {
 
 export interface WlanBasicMultiPostRequest {
   WlanGroup: Array<{
-    Index?: number;
+    InstanceIndex?: number;
     Enable?: BooleanInt;
     Alias: string;
     SSID?: string;
@@ -129,7 +129,7 @@ export interface WlanBasicMultiPostRequest {
     IsolationEnable?: BooleanInt;
     Interface: Array<{
       Enable: BooleanInt;
-      Band: string;
+      OperatingFrequencyBand: string;
       Alias?: string;
       SSID: string;
       KeyPassPhrase?: string;

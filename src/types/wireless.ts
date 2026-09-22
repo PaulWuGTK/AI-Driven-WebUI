@@ -21,6 +21,9 @@ export interface WlanBasicResponse {
 
 // Advanced Config Types
 export interface WlanAdvancedConfig {
+  Alias?: string;
+  InstanceIndex?: number;
+  OperatingFrequencyBand?: string;
   RadioEnable: number;
   Mode: string;
   Channel: string | number;
@@ -31,22 +34,21 @@ export interface WlanAdvancedConfig {
   ModeList?: string;
   ChannelBandwidthList?: string;
   ChannelList?: string;
-  Band?: string;
 }
 
 export interface WlanAdvancedResponse {
   WlanAdvanced: {
     MLOEnable?: number;
     MLOEnabledGroups?: string[];
-    wifi2g: WlanAdvancedConfig;
-    wifi5g: WlanAdvancedConfig;
-    wifi6g: WlanAdvancedConfig;
+    Radios: WlanAdvancedConfig[];
   };
 }
 
 // WPS Types
-export interface WlanWpsBand {
-  Band: string;
+export interface WlanWpsInterface {
+  InstanceIndex?: number;
+  Alias?: string;
+  OperatingFrequencyBand: string;
   SSID: string;
   AuthType: string;
   ConnectStatus: string;
@@ -54,24 +56,53 @@ export interface WlanWpsBand {
   Configured: string;
 }
 
+/** @deprecated Use WlanWpsInterface instead */
+export type WlanWpsBand = WlanWpsInterface;
+
 export interface WlanWpsResponse {
   WlanWps: {
     Enable: number;
     PINCode: string;
-    Band: WlanWpsBand[];
+    Interfaces: WlanWpsInterface[];
     PairingResult?: "NotExecute" | "PairingInprogress" | "Success" | "NotSuccess";
   };
 }
 
 // Mesh Types
+export interface WlanMeshInterface {
+  InstanceIndex?: number;
+  Alias?: string;
+  OperatingFrequencyBand?: string;
+  Enable: number;
+  SSID: string;
+  KeyPassPhrase?: string;
+  SecurityMode?: string;
+  SecurityModeAvailable?: string;
+  MFPConfig?: string | number;
+  SSIDAdvertisementEnabled?: number;
+  IsolationEnable?: number;
+}
+
+export interface WlanMeshIntfGroup {
+  InstanceIndex?: number;
+  Alias?: string;
+  Enable: number;
+  SSID: string;
+  KeyPassPhrase: string;
+  SecurityMode: string;
+  SecurityModeAvailable?: string;
+  SSIDAdvertisementEnabled?: number;
+  IsolationEnable?: number;
+  CommonSSIDEnable: number;
+  MLOEnable: number;
+  BridgeInterface?: string;
+  MFPConfig?: string | number;
+  Interface: WlanMeshInterface[];
+}
+
 export interface WlanMeshResponse {
   WlanMesh: {
     MeshEnable: number;
-    Enable: number;
-    SSID: string;
-    SecurityMode: string;
-    Password: string;
-    MLOEnable: number;
-    CommonSSIDEnable: number;
+    IntfGroup: WlanMeshIntfGroup[];
   };
 }

@@ -17,6 +17,11 @@ const loading = ref(false);
 const showSuccess = ref(false);
 const showBlockingOverlay = ref(false);
 
+const sortedRadios = computed(() => {
+  const radios = advancedData.value?.WlanAdvanced.Radios ?? [];
+  return [...radios].sort((a, b) => (a.InstanceIndex ?? 0) - (b.InstanceIndex ?? 0));
+});
+
 const mloEnabledGroupsText = computed(() => {
   if (!advancedData.value?.WlanAdvanced.MLOEnabledGroups?.length) {
     return '';
@@ -54,30 +59,15 @@ const handleSubmit = async () => {
   try {
     const postData: WlanAdvancedResponse = {
       WlanAdvanced: {
-        wifi2g: {
-          RadioEnable: advancedData.value.WlanAdvanced.wifi2g.RadioEnable,
-          Mode: advancedData.value.WlanAdvanced.wifi2g.Mode,
-          Channel: advancedData.value.WlanAdvanced.wifi2g.Channel.toString(),
-          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi2g.ChannelBandwidth,
-          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi2g.AutoChannelEnable),
-          MultiUserMIMOEnabled: advancedData.value.WlanAdvanced.wifi2g.MultiUserMIMOEnabled ?? 0
-        },
-        wifi5g: {
-          RadioEnable: advancedData.value.WlanAdvanced.wifi5g.RadioEnable,
-          Mode: advancedData.value.WlanAdvanced.wifi5g.Mode,
-          Channel: advancedData.value.WlanAdvanced.wifi5g.Channel.toString(),
-          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi5g.ChannelBandwidth,
-          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi5g.AutoChannelEnable),
-          MultiUserMIMOEnabled: advancedData.value.WlanAdvanced.wifi5g.MultiUserMIMOEnabled ?? 0
-        },
-        wifi6g: {
-          RadioEnable: advancedData.value.WlanAdvanced.wifi6g.RadioEnable,
-          Mode: advancedData.value.WlanAdvanced.wifi6g.Mode,
-          Channel: advancedData.value.WlanAdvanced.wifi6g.Channel.toString(),
-          ChannelBandwidth: advancedData.value.WlanAdvanced.wifi6g.ChannelBandwidth,
-          AutoChannelEnable: Number(advancedData.value.WlanAdvanced.wifi6g.AutoChannelEnable),
-          MultiUserMIMOEnabled: advancedData.value.WlanAdvanced.wifi6g.MultiUserMIMOEnabled ?? 0
-        }
+        Radios: advancedData.value.WlanAdvanced.Radios.map((radio) => ({
+          Alias: radio.Alias,
+          RadioEnable: radio.RadioEnable,
+          Mode: radio.Mode,
+          Channel: radio.Channel.toString(),
+          ChannelBandwidth: radio.ChannelBandwidth,
+          AutoChannelEnable: Number(radio.AutoChannelEnable),
+          MultiUserMIMOEnabled: radio.MultiUserMIMOEnabled ?? 0
+        }))
       }
     };
 
@@ -118,21 +108,11 @@ onMounted(fetchAdvancedConfig);
         </div>
 
         <WirelessAdvancedBandConfig
-          :data-testid="qa('wireless-advanced-config-2g-band')"
-          title="2.4GHz"
-          v-model="advancedData.WlanAdvanced.wifi2g"
-          :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
-        />
-        <WirelessAdvancedBandConfig
-          :data-testid="qa('wireless-advanced-config-5g-band')"
-          title="5GHz"
-          v-model="advancedData.WlanAdvanced.wifi5g"
-          :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
-        />
-        <WirelessAdvancedBandConfig
-          :data-testid="qa('wireless-advanced-config-6g-band')"
-          title="6GHz"
-          v-model="advancedData.WlanAdvanced.wifi6g"
+          v-for="(radio, idx) in sortedRadios"
+          :key="radio.Alias ?? idx"
+          :data-testid="qa(`wireless-advanced-config-${slug(radio.OperatingFrequencyBand ?? '')}-band`)"
+          :title="radio.OperatingFrequencyBand ?? ''"
+          v-model="sortedRadios[idx]"
           :mloEnabled="advancedData.WlanAdvanced.MLOEnable === 1"
         />
       </div>

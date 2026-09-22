@@ -51,6 +51,6 @@ export interface ExtenderConnectRequest {
     Band: string;
     SSID: string;
     Security: string;
-    Password: string;
+    KeyPassPhrase: string;
   };
 }
