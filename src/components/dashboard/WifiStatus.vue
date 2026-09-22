@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { DashboardWiFi } from '../../types/dashboard';
+import type { DashboardWiFiBand } from '../../types/dashboard';
 import { useQA } from '../../utils/qa';
 import BaseSecretInput from '../common/BaseSecretInput.vue';
 const { isQAMode, qa, slug } = useQA();
@@ -9,27 +9,16 @@ const { isQAMode, qa, slug } = useQA();
 const { t } = useI18n();
 
 const props = defineProps<{
-  wifiInfo?: DashboardWiFi;
+  wifiInfo?: DashboardWiFiBand[];
 }>();
-
-// Map band keys to display names
-const bandNames = {
-  'wifi2g': '2.4GHz',
-  'wifi5g': '5GHz',
-  'wifi6g': '6GHz'
-};
 
 // Get enabled WiFi bands
 const enabledBands = computed(() => {
   if (!props.wifiInfo) return [];
-  
-  return Object.entries(props.wifiInfo)
-    .filter(([_, band]) => band && band.Enable === 1)
-    .map(([key, band]) => ({
-      key,
-      displayName: bandNames[key as keyof typeof bandNames],
-      ...band
-    }));
+
+  return [...props.wifiInfo]
+    .sort((a, b) => (a.InstanceIndex ?? 0) - (b.InstanceIndex ?? 0))
+    .filter((band) => band.Enable === 1);
 });
 
 // Check if any WiFi is enabled
@@ -46,7 +35,7 @@ const requiresPassword = (securityMode: string): boolean => {
     <h2 class="card-title" :data-testid="qa('dashboard-wifi-status-title')">{{ t('dashboard.wifi') }}</h2>
     
     <div v-if="hasEnabledWifi" class="wifi-networks" :data-testid="qa('dashboard-wifi-status-networks')">
-      <div v-for="(band, index) in enabledBands" :key="band.key" class="wifi-network" :data-testid="qa(`dashboard-wifi-status-network-${index}`)">
+      <div v-for="(band, index) in enabledBands" :key="band.Alias ?? index" class="wifi-network" :data-testid="qa(`dashboard-wifi-status-network-${index}`)">
         <div class="network-row" :data-testid="qa(`dashboard-wifi-status-network-ssid-row-${index}`)">
           <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-ssid-label-${index}`)">SSID</div>
           <div class="row-value" :data-testid="qa(`dashboard-wifi-status-network-ssid-value-${index}`)">
@@ -56,14 +45,14 @@ const requiresPassword = (securityMode: string): boolean => {
         </div>
         <div class="network-row" :data-testid="qa(`dashboard-wifi-status-network-band-row-${index}`)">
           <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-band-label-${index}`)">{{ t('wireless.band') }}</div>
-          <div class="row-value" :data-testid="qa(`dashboard-wifi-status-network-band-value-${index}`)">{{ band.displayName }}</div>
+          <div class="row-value" :data-testid="qa(`dashboard-wifi-status-network-band-value-${index}`)">{{ band.OperatingFrequencyBand }}</div>
         </div>
         <div class="network-row" v-if="requiresPassword(band.SecurityMode)" :data-testid="qa(`dashboard-wifi-status-network-password-row-${index}`)">
           <div class="row-label" :data-testid="qa(`dashboard-wifi-status-network-password-label-${index}`)">{{ t('dashboard.password') }}</div>
           <div class="row-value password" :data-testid="qa(`dashboard-wifi-status-network-password-value-${index}`)">
             <BaseSecretInput
               mode="display"
-              :model-value="band.Password"
+              :model-value="band.KeyPassPhrase"
               mask-symbol="•"
               :toggle-data-testid="qa(`dashboard-wifi-status-network-password-toggle-${index}`)"
               :value-data-testid="qa(`dashboard-wifi-status-network-password-plain-${index}`)"

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import type { GuestWiFiResponse } from '../../../../types/guest';
+import type { GuestWiFiResponse, GuestWiFiIntfGroup } from '../../../../types/guest';
 import { getGuestWiFi, updateGuestWiFi } from '../../../../services/api/guestAccess';
 import BlockingOverlay from '../../../../components/BlockingOverlay.vue';
 import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../../components/common';
@@ -21,6 +21,11 @@ const errorToastMessage = ref('');
 const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
 const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 const showBlockingOverlay = ref(false);
+
+/** Convenience accessor for the first (and usually only) Guest IntfGroup */
+const group = computed<GuestWiFiIntfGroup | undefined>(() => {
+  return guestWiFiData.value?.GuestWiFi.IntfGroup[0];
+});
 
 // Computed property to check if MLO is disabled by Mesh
 const isMLODisabledByMesh = computed(() => {
@@ -48,8 +53,8 @@ const fetchGuestWiFi = async () => {
 };
 
 const securityModes = computed(() => {
-  if (!guestWiFiData.value) return [];
-  return guestWiFiData.value.GuestWiFi.SecurityModeAvailable.split(',');
+  if (!group.value?.SecurityModeAvailable) return [];
+  return group.value.SecurityModeAvailable.split(',');
 });
 
 const showSuccessMessage = (message = `${t('common.apply')} successful`) => {
@@ -69,18 +74,22 @@ const handleBlockingComplete = () => {
 };
 
 const handleSubmit = async () => {
-  if (!guestWiFiData.value) return;
-  
+  if (!group.value) return;
+
   loading.value = true;
   error.value = null;
   try {
+    const g = group.value;
     const response = await updateGuestWiFi({
       GuestWiFi: {
-        Enable: guestWiFiData.value.GuestWiFi.Enable,
-        MLOEnable: guestWiFiData.value.GuestWiFi.MLOEnable,
-        Password: guestWiFiData.value.GuestWiFi.Password,
-        SecurityMode: guestWiFiData.value.GuestWiFi.SecurityMode,
-        SSID: guestWiFiData.value.GuestWiFi.SSID
+        IntfGroup: [{
+          Alias: g.Alias,
+          Enable: g.Enable,
+          MLOEnable: g.MLOEnable,
+          SSID: g.SSID,
+          SecurityMode: g.SecurityMode,
+          KeyPassPhrase: g.KeyPassPhrase
+        }]
       }
     });
     const nokMessage = extractNokMessage(response);
@@ -114,7 +123,7 @@ onMounted(fetchGuestWiFi);
       {{ error }}
     </div>
 
-    <form v-else-if="guestWiFiData" @submit.prevent="handleSubmit" :data-testid="qa('guest-wifi-form')">
+    <form v-else-if="group" @submit.prevent="handleSubmit" :data-testid="qa('guest-wifi-form')">
       <!-- Show info banner when MLO is disabled by Mesh -->
       <div v-if="isMLODisabledByMesh" class="mesh-status" :data-testid="qa('guest-wifi-mesh-status')">
         <div class="info-banner" :data-testid="qa('guest-wifi-mesh-info-banner')">
@@ -127,7 +136,7 @@ onMounted(fetchGuestWiFi);
         <div class="switch-label">
           <span :data-testid="qa('guest-wifi-enable-label')">{{ t('guest.enable') }}</span>
           <BaseSwitch
-            v-model="guestWiFiData.GuestWiFi.Enable"
+            v-model="group.Enable"
             :true-value="1"
             :false-value="0"
             :data-testid="qa('guest-wifi-enable-toggle')"
@@ -140,10 +149,10 @@ onMounted(fetchGuestWiFi);
         <div class="switch-label">
           <span :data-testid="qa('guest-wifi-mlo-enable-label')">MLO {{ t('guest.enable') }}</span>
           <BaseSwitch
-            v-model="guestWiFiData.GuestWiFi.MLOEnable"
+            v-model="group.MLOEnable"
             :true-value="1"
             :false-value="0"
-            :disabled="guestWiFiData.GuestWiFi.Enable === 0 || isMLODisabledByMesh"
+            :disabled="group.Enable === 0 || isMLODisabledByMesh"
             :data-testid="qa('guest-wifi-mlo-enable-toggle')"
             :slider-data-testid="qa('guest-wifi-mlo-enable-toggle-slider')"
           />
@@ -155,8 +164,8 @@ onMounted(fetchGuestWiFi);
         <input
           type="text"
           :data-testid="qa('guest-wifi-ssid-input')"
-          v-model="guestWiFiData.GuestWiFi.SSID"
-          :disabled="guestWiFiData.GuestWiFi.Enable === 0"
+          v-model="group.SSID"
+          :disabled="group.Enable === 0"
           required
         />
       </div>
@@ -165,8 +174,8 @@ onMounted(fetchGuestWiFi);
         <label :data-testid="qa('guest-wifi-authentication-label')">{{ t('guest.authentication') }}</label>
         <select
           :data-testid="qa('guest-wifi-authentication-select')"
-          v-model="guestWiFiData.GuestWiFi.SecurityMode"
-          :disabled="guestWiFiData.GuestWiFi.Enable === 0"
+          v-model="group.SecurityMode"
+          :disabled="group.Enable === 0"
         >
           <option v-for="mode in securityModes" :key="mode" :value="mode" :data-testid="qa(`guest-wifi-authentication-option-${slug(mode)}`)">
             {{ mode }}
@@ -177,11 +186,11 @@ onMounted(fetchGuestWiFi);
       <div class="form-group">
         <label :data-testid="qa('guest-wifi-password-label')">{{ t('guest.password') }}</label>
         <BaseSecretInput
-          v-model="guestWiFiData.GuestWiFi.Password"
+          v-model="group.KeyPassPhrase"
           :container-data-testid="qa('guest-wifi-password-container')"
           :input-data-testid="qa('guest-wifi-password-input')"
           :toggle-data-testid="qa('guest-wifi-password-toggle')"
-          :disabled="guestWiFiData.GuestWiFi.Enable === 0"
+          :disabled="group.Enable === 0"
         />
       </div>
 

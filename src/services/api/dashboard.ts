@@ -87,49 +87,67 @@ const generateMockData = (): DashboardResponse => {
           Duplex: "Full"
         }
       ],
-      WiFi: {
-        "wifi2g": {
-          Password: "GemtekVIP",
+      WiFi: [
+        {
+          Alias: "PRIV_2G",
+          InstanceIndex: 1,
+          OperatingFrequencyBand: "2.4GHz",
+          KeyPassPhrase: "GemtekVIP",
           Enable: 1,
           SecurityModeAvailable: "None,WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
           SSID: "Gemtek_prplmesh",
           SecurityMode: "WPA2-Personal"
         },
-        "wifi5g": {
-          Password: "GemtekVIP",
+        {
+          Alias: "PRIV_5G",
+          InstanceIndex: 2,
+          OperatingFrequencyBand: "5GHz",
+          KeyPassPhrase: "GemtekVIP",
           Enable: 1,
           SecurityModeAvailable: "None,WPA2-Personal,WPA3-Personal,WPA2-WPA3-Personal",
           SSID: "Gemtek_prplmesh_5GHz",
           SecurityMode: "None"
         },
-        "wifi6g": {
-          Password: "GemtekVIP",
+        {
+          Alias: "PRIV_6G",
+          InstanceIndex: 3,
+          OperatingFrequencyBand: "6GHz",
+          KeyPassPhrase: "GemtekVIP",
           Enable: 1,
           SecurityModeAvailable: "WPA3-Personal",
           SSID: "Gemtek_prplmesh_6GHz",
           SecurityMode: "WPA3-Personal"
         }
-      },
-      Guest: {
-        "wifi2g": {
+      ],
+      Guest: [
+        {
+          Alias: "GUEST_2G",
+          InstanceIndex: 1,
+          OperatingFrequencyBand: "2.4GHz",
           Enable: 0,
           GuestClients: 0,
           SSID: "prplOS-guest",
-          Password: "GemtekGuest"
+          KeyPassPhrase: "GemtekGuest"
         },
-        "wifi5g": {
+        {
+          Alias: "GUEST_5G",
+          InstanceIndex: 2,
+          OperatingFrequencyBand: "5GHz",
           Enable: 0,
           GuestClients: 0,
           SSID: "prplOS-guest",
-          Password: "GemtekGuest"
+          KeyPassPhrase: "GemtekGuest"
         },
-        "wifi6g": {
+        {
+          Alias: "GUEST_6G",
+          InstanceIndex: 3,
+          OperatingFrequencyBand: "6GHz",
           Enable: 0,
           GuestClients: 0,
           SSID: "prplOS-guest",
-          Password: "GemtekGuest"
+          KeyPassPhrase: "GemtekGuest"
         }
-      },
+      ],
       WAN: {
         Protocol: "DHCP",
         InternetAddress: "192.168.99.51",

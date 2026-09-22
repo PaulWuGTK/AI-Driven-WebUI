@@ -35,7 +35,7 @@ defineProps<{
           <td :data-testid="qa(`wlan-interface-ssid-${index}`)">{{ iface.SSID }}</td>
           <td :data-testid="qa(`wlan-interface-authentication-${index}`)">{{ iface.Authentication }}</td>
           <td :data-testid="qa(`wlan-interface-encryption-${index}`)">{{ iface.Encryption }}</td>
-          <td :data-testid="qa(`wlan-interface-password-${index}`)">{{ iface.Password }}</td>
+          <td :data-testid="qa(`wlan-interface-password-${index}`)">{{ iface.KeyPassPhrase }}</td>
           <td :data-testid="qa(`wlan-interface-bssid-${index}`)">{{ iface.BSSID }}</td>
         </tr>
       </tbody>

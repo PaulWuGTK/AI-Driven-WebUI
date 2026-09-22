@@ -1,4 +1,7 @@
 export interface MACFilteringEntry {
+  Alias?: string;
+  InstanceIndex?: number;
+  OperatingFrequencyBand?: string;
   Path: string;
   SSID: string;
   ACLMode: string;
@@ -7,17 +10,17 @@ export interface MACFilteringEntry {
 
 export interface MACFilteringResponse {
   WifiMACFiltering: {
-    wifi2g: MACFilteringEntry[];
-    wifi5g: MACFilteringEntry[];
-    wifi6g: MACFilteringEntry[];
+    Interfaces: MACFilteringEntry[];
   };
 }
 
 export interface MACFilteringUpdateRequest {
   WifiMACFiltering: {
-    wifi2g: MACFilteringEntry[];
-    wifi5g: MACFilteringEntry[];
-    wifi6g: MACFilteringEntry[];
+    Interfaces: Array<{
+      Alias?: string;
+      ACLMode: string;
+      MACList: string;
+    }>;
   };
 }
 

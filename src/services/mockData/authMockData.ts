@@ -90,39 +90,25 @@ const wizardScenarios = {
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]
       },
       WiFi: {
-        CommonSSIDEnable: 1,
-        MLOEnable: 0,
         MeshEnable: 0,
         MFPConfig: 0,
         PSC6g: 0,
-        wificommon: {
+        IntfGroup: [{
+          InstanceIndex: 1,
+          Alias: "PRIV",
           Enable: 1,
           SSID: "prplOS_prplmesh",
+          KeyPassPhrase: "password",
           SecurityMode: "WPA3-Personal",
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi2g: {
-          Enable: 1,
-          SSID: "prplOS_2g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi5g: {
-          Enable: 1,
-          SSID: "prplOS_5g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi6g: {
-          Enable: 0,
-          SSID: "",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        }
+          CommonSSIDEnable: 1,
+          MLOEnable: 0,
+          Interface: [
+            { InstanceIndex: 1, Alias: "WIFI_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "prplOS_2g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 2, Alias: "WIFI_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "prplOS_5g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 3, Alias: "WIFI_6G", OperatingFrequencyBand: "6GHz", Enable: 0, SSID: "", KeyPassPhrase: "", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" }
+          ]
+        }]
       },
       TimeZone: {
         CurrentTimezone: "8",
@@ -171,39 +157,25 @@ const wizardScenarios = {
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]
       },
       WiFi: {
-        CommonSSIDEnable: 1,
-        MLOEnable: 0,
         MeshEnable: 0,
         MFPConfig: 0,
         PSC6g: 0,
-        wificommon: {
+        IntfGroup: [{
+          InstanceIndex: 1,
+          Alias: "PRIV",
           Enable: 1,
           SSID: "",
+          KeyPassPhrase: "",
           SecurityMode: "WPA3-Personal",
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        },
-        wifi2g: {
-          Enable: 1,
-          SSID: "",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        },
-        wifi5g: {
-          Enable: 1,
-          SSID: "",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        },
-        wifi6g: {
-          Enable: 0,
-          SSID: "",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        }
+          CommonSSIDEnable: 1,
+          MLOEnable: 0,
+          Interface: [
+            { InstanceIndex: 1, Alias: "WIFI_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "", KeyPassPhrase: "", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 2, Alias: "WIFI_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "", KeyPassPhrase: "", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 3, Alias: "WIFI_6G", OperatingFrequencyBand: "6GHz", Enable: 0, SSID: "", KeyPassPhrase: "", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" }
+          ]
+        }]
       },
       TimeZone: {
         CurrentTimezone: "8",
@@ -230,39 +202,25 @@ const wizardScenarios = {
         WANModeList: ["Cellular", "Ethernet_DHCP", "GPON_DHCP", "demo_wanmode"]
       },
       WiFi: {
-        CommonSSIDEnable: 1,
-        MLOEnable: 1,
         MeshEnable: 1,
         MFPConfig: 1,
         PSC6g: 1,
-        wificommon: {
+        IntfGroup: [{
+          InstanceIndex: 1,
+          Alias: "PRIV",
           Enable: 1,
           SSID: "prplOS_prplmesh",
+          KeyPassPhrase: "password",
           SecurityMode: "WPA3-Personal",
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi2g: {
-          Enable: 1,
-          SSID: "prplOS_2g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi5g: {
-          Enable: 1,
-          SSID: "prplOS_5g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi6g: {
-          Enable: 1,
-          SSID: "prplOS_6g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        }
+          CommonSSIDEnable: 1,
+          MLOEnable: 1,
+          Interface: [
+            { InstanceIndex: 1, Alias: "WIFI_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "prplOS_2g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 2, Alias: "WIFI_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "prplOS_5g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 3, Alias: "WIFI_6G", OperatingFrequencyBand: "6GHz", Enable: 1, SSID: "prplOS_6g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" }
+          ]
+        }]
       },
       TimeZone: {
         CurrentTimezone: "8",
@@ -289,39 +247,25 @@ const wizardScenarios = {
         WANModeList: ["Ethernet_DHCP", "demo_wanmode"]
       },
       WiFi: {
-        CommonSSIDEnable: 1,
-        MLOEnable: 0,
         MeshEnable: 0,
         MFPConfig: 0,
         PSC6g: 0,
-        wificommon: {
+        IntfGroup: [{
+          InstanceIndex: 1,
+          Alias: "PRIV",
           Enable: 1,
           SSID: "prplOS_prplmesh",
+          KeyPassPhrase: "password",
           SecurityMode: "WPA3-Personal",
           SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi2g: {
-          Enable: 1,
-          SSID: "prplOS_2g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi5g: {
-          Enable: 1,
-          SSID: "prplOS_5g",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: "password"
-        },
-        wifi6g: {
-          Enable: 0,
-          SSID: "",
-          SecurityMode: "WPA3-Personal",
-          SecurityModeAvailable: "WPA3-Personal,WPA2-Personal",
-          Password: ""
-        }
+          CommonSSIDEnable: 1,
+          MLOEnable: 0,
+          Interface: [
+            { InstanceIndex: 1, Alias: "WIFI_2G", OperatingFrequencyBand: "2.4GHz", Enable: 1, SSID: "prplOS_2g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 2, Alias: "WIFI_5G", OperatingFrequencyBand: "5GHz", Enable: 1, SSID: "prplOS_5g", KeyPassPhrase: "password", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" },
+            { InstanceIndex: 3, Alias: "WIFI_6G", OperatingFrequencyBand: "6GHz", Enable: 0, SSID: "", KeyPassPhrase: "", SecurityMode: "WPA3-Personal", SecurityModeAvailable: "WPA3-Personal,WPA2-Personal" }
+          ]
+        }]
       },
       TimeZone: {
         CurrentTimezone: "8",

@@ -68,14 +68,14 @@ const normalizeGroup = (group: WlanGroup): WlanGroup => {
     IsolationEnable: i.IsolationEnable ?? 0
   }));
   for (const b of bands) {
-    if (!copy.Interface.some((i) => i.Band === b)) {
+    if (!copy.Interface.some((i) => i.OperatingFrequencyBand === b)) {
       const groupSSID = (copy as any).SSID || copy.Alias || '';
       const groupSecurityMode = (copy as any).SecurityMode || '';
       const groupKeyPassphrase = (copy as any).KeyPassPhrase || '';
       const groupSecurityModeAvailable = (copy as any).SecurityModeAvailable || '';
 
       copy.Interface.push({
-        Band: b,
+        OperatingFrequencyBand: b,
         Enable: 1,
         SSID: groupSSID,
         SecurityMode: groupSecurityMode,
@@ -90,8 +90,8 @@ const normalizeGroup = (group: WlanGroup): WlanGroup => {
 
   // Sort Interface array to match bands order (2.4GHz, 5GHz, 6GHz)
   copy.Interface.sort((a, b) => {
-    const indexA = bands.indexOf(a.Band as typeof bands[number]);
-    const indexB = bands.indexOf(b.Band as typeof bands[number]);
+    const indexA = bands.indexOf(a.OperatingFrequencyBand as typeof bands[number]);
+    const indexB = bands.indexOf(b.OperatingFrequencyBand as typeof bands[number]);
     return indexA - indexB;
   });
 
@@ -120,7 +120,7 @@ const fetchConfig = async () => {
               MLOEnable: legacy?.WlanBasic?.MLOEnable ?? 0,
               Interface: [
                 {
-                  Band: '2.4GHz',
+                  OperatingFrequencyBand: '2.4GHz',
                   Enable: legacy?.WlanBasic?.wifi2g?.Enable ?? 1,
                   SSID: legacy?.WlanBasic?.wifi2g?.SSID ?? '',
                   SecurityMode: legacy?.WlanBasic?.wifi2g?.SecurityMode ?? '',
@@ -130,7 +130,7 @@ const fetchConfig = async () => {
                   IsolationEnable: 0
                 },
                 {
-                  Band: '5GHz',
+                  OperatingFrequencyBand: '5GHz',
                   Enable: legacy?.WlanBasic?.wifi5g?.Enable ?? 1,
                   SSID: legacy?.WlanBasic?.wifi5g?.SSID ?? '',
                   SecurityMode: legacy?.WlanBasic?.wifi5g?.SecurityMode ?? '',
@@ -140,7 +140,7 @@ const fetchConfig = async () => {
                   IsolationEnable: 0
                 },
                 {
-                  Band: '6GHz',
+                  OperatingFrequencyBand: '6GHz',
                   Enable: legacy?.WlanBasic?.wifi6g?.Enable ?? 1,
                   SSID: legacy?.WlanBasic?.wifi6g?.SSID ?? '',
                   SecurityMode: legacy?.WlanBasic?.wifi6g?.SecurityMode ?? '',
@@ -168,8 +168,8 @@ const fetchConfig = async () => {
 const groups = computed(() => {
   const wlanGroups = data.value?.WlanBasic?.WlanGroup ?? [];
   return wlanGroups.slice().sort((a, b) => {
-    const indexA = a.Index ?? 0;
-    const indexB = b.Index ?? 0;
+    const indexA = a.InstanceIndex ?? 0;
+    const indexB = b.InstanceIndex ?? 0;
     return indexA - indexB;
   });
 });
@@ -215,8 +215,8 @@ const enterEdit = (index: number) => {
   // Initialize SSID validation for per-band interfaces
   if (draft.value?.Interface) {
     draft.value.Interface.forEach((iface) => {
-      validateSsidField(iface.SSID || '', iface.Band);
-      validatePasswordField((iface.KeyPassPhrase ?? '').toString(), iface.Band, iface.SecurityMode);
+      validateSsidField(iface.SSID || '', iface.OperatingFrequencyBand);
+      validatePasswordField((iface.KeyPassPhrase ?? '').toString(), iface.OperatingFrequencyBand, iface.SecurityMode);
     });
   }
 };
@@ -245,7 +245,7 @@ const updateLocal = () => {
 
   // Find the index in the original unsorted array by matching the Index field
   const originalIdx = data.value.WlanBasic.WlanGroup.findIndex(
-    (g) => (g as any).Index === (editedGroup as any).Index
+    (g) => (g as any).InstanceIndex === (editedGroup as any).InstanceIndex
   );
 
   if (originalIdx === -1) return;
@@ -304,12 +304,12 @@ const is6GDisabledBySecurityNone = computed((): boolean => {
     return commonSsidConfig.value?.SecurityMode === 'None';
   }
   return draft.value.Interface?.some(
-    (i) => i.Band !== '6GHz' && i.SecurityMode === 'None'
+    (i) => i.OperatingFrequencyBand !== '6GHz' && i.SecurityMode === 'None'
   ) ?? false;
 });
 
 const getInterfaceByBand = (band: string): WlanGroupInterface | undefined => {
-  return draft.value?.Interface?.find((x) => x.Band === band);
+  return draft.value?.Interface?.find((x) => x.OperatingFrequencyBand === band);
 };
 
 const validateSsidField = (ssid: string, key: string) => {
@@ -404,7 +404,7 @@ const validateDraftPasswords = () => {
       if (Number(iface.Enable) === 1) {
         valid = validatePasswordField(
           (iface.KeyPassPhrase ?? '').toString(),
-          iface.Band,
+          iface.OperatingFrequencyBand,
           iface.SecurityMode
         ) && valid;
       }
@@ -466,7 +466,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
     // Per-band mode: group-level fields stay as-is, interfaces keep their own values
 
     return {
-      Index: (g as any).Index,
+      InstanceIndex: (g as any).InstanceIndex,
       Enable: (g as any).Enable,
       Alias: (g as any).Alias || norm.Alias,
       SSID: typeof groupSSID === 'string' ? normalizeSsid(groupSSID) : groupSSID,
@@ -480,7 +480,7 @@ const buildPostPayload = (): WlanBasicMultiPostRequest | null => {
       IsolationEnable: (g as any).IsolationEnable,
       Interface: norm.Interface.map((i) => ({
         Enable: i.Enable,
-        Band: i.Band,
+        OperatingFrequencyBand: i.OperatingFrequencyBand,
         Alias: i.Alias,
         SSID: normalizeSsid(i.SSID),
         KeyPassPhrase: (i.KeyPassPhrase ?? i.WpaPreShareKey ?? '').toString(),

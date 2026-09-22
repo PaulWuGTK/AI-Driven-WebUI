@@ -171,7 +171,7 @@ const handleConnect = async () => {
         Band,
         SSID,
         Security,
-        Password: password.value
+        KeyPassPhrase: password.value
       }
     };
 

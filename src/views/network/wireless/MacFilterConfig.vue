@@ -17,21 +17,16 @@ const showSuccess = ref(false);
 const error = ref<string | null>(null);
 const showConfirmDialog = ref(false);
 
-const wifi2gEntries = computed(() =>
-  macFilteringData.value?.WifiMACFiltering.wifi2g || []
-);
+const filterByBand = (freq: string) =>
+  macFilteringData.value?.WifiMACFiltering.Interfaces.filter(
+    (e) => e.OperatingFrequencyBand === freq
+  ) || [];
 
-const wifi5gEntries = computed(() =>
-  macFilteringData.value?.WifiMACFiltering.wifi5g || []
-);
+const wifi2gEntries = computed(() => filterByBand('2.4GHz'));
+const wifi5gEntries = computed(() => filterByBand('5GHz'));
+const wifi6gEntries = computed(() => filterByBand('6GHz'));
 
-const wifi6gEntries = computed(() =>
-  macFilteringData.value?.WifiMACFiltering.wifi6g || []
-);
-
-const originalWifi2gEntries = ref<MACFilteringEntry[]>([]);
-const originalWifi5gEntries = ref<MACFilteringEntry[]>([]);
-const originalWifi6gEntries = ref<MACFilteringEntry[]>([]);
+const originalEntries = ref<MACFilteringEntry[]>([]);
 
 const fetchMACFiltering = async () => {
   loading.value = true;
@@ -40,9 +35,7 @@ const fetchMACFiltering = async () => {
     const response = await getMACFiltering();
     macFilteringData.value = response;
 
-    originalWifi2gEntries.value = JSON.parse(JSON.stringify(response.WifiMACFiltering.wifi2g));
-    originalWifi5gEntries.value = JSON.parse(JSON.stringify(response.WifiMACFiltering.wifi5g));
-    originalWifi6gEntries.value = JSON.parse(JSON.stringify(response.WifiMACFiltering.wifi6g));
+    originalEntries.value = JSON.parse(JSON.stringify(response.WifiMACFiltering.Interfaces));
   } catch (err) {
     console.error('Error fetching MAC filtering data:', err);
     error.value = 'Failed to fetch MAC filtering data';
@@ -51,19 +44,13 @@ const fetchMACFiltering = async () => {
   }
 };
 
-const update2GEntries = (entries: MACFilteringEntry[]) => {
+const updateBandEntries = (freq: string, entries: MACFilteringEntry[]) => {
   if (!macFilteringData.value) return;
-  macFilteringData.value.WifiMACFiltering.wifi2g = entries;
-};
-
-const update5GEntries = (entries: MACFilteringEntry[]) => {
-  if (!macFilteringData.value) return;
-  macFilteringData.value.WifiMACFiltering.wifi5g = entries;
-};
-
-const update6GEntries = (entries: MACFilteringEntry[]) => {
-  if (!macFilteringData.value) return;
-  macFilteringData.value.WifiMACFiltering.wifi6g = entries;
+  // Replace entries matching this band in the flat Interfaces array
+  const others = macFilteringData.value.WifiMACFiltering.Interfaces.filter(
+    (e) => e.OperatingFrequencyBand !== freq
+  );
+  macFilteringData.value.WifiMACFiltering.Interfaces = [...others, ...entries];
 };
 
 const showSuccessMessage = () => {
@@ -87,18 +74,14 @@ const handleApply = () => {
 const checkOffToOnTransition = (): boolean => {
   if (!macFilteringData.value) return false;
 
-  const checkBandTransitions = (currentEntries: MACFilteringEntry[], originalEntries: MACFilteringEntry[]): boolean => {
-    return currentEntries.some(currentEntry => {
-      const originalEntry = originalEntries.find(orig => orig.Path === currentEntry.Path);
-      if (!originalEntry) return false;
-
-      return originalEntry.ACLMode === 'Off' &&
-             (currentEntry.ACLMode === 'WhiteList' || currentEntry.ACLMode === 'BlackList');
-    });
-  };
-
-  return checkBandTransitions(macFilteringData.value.WifiMACFiltering.wifi2g, originalWifi2gEntries.value) ||
-         checkBandTransitions(macFilteringData.value.WifiMACFiltering.wifi5g, originalWifi5gEntries.value);
+  return macFilteringData.value.WifiMACFiltering.Interfaces.some((currentEntry) => {
+    const orig = originalEntries.value.find(
+      (o) => (o.Alias && o.Alias === currentEntry.Alias) || o.Path === currentEntry.Path
+    );
+    if (!orig) return false;
+    return orig.ACLMode === 'Off' &&
+           (currentEntry.ACLMode === 'WhiteList' || currentEntry.ACLMode === 'BlackList');
+  });
 };
 
 const confirmApply = async () => {
@@ -108,7 +91,13 @@ const confirmApply = async () => {
   error.value = null;
   try {
     await updateMACFiltering({
-      WifiMACFiltering: macFilteringData.value.WifiMACFiltering
+      WifiMACFiltering: {
+        Interfaces: macFilteringData.value.WifiMACFiltering.Interfaces.map((e) => ({
+          Alias: e.Alias,
+          ACLMode: e.ACLMode,
+          MACList: e.MACList
+        }))
+      }
     });
     showSuccessMessage();
     await fetchMACFiltering();
@@ -177,21 +166,21 @@ onMounted(fetchMACFiltering);
               :entries="wifi2gEntries"
               band="2.4G"
               :data-testid="qa('mac-filter-2g-band')"
-              @update:entries="update2GEntries"
+              @update:entries="(e: MACFilteringEntry[]) => updateBandEntries('2.4GHz', e)"
             />
             <MacFilterBand
               v-if="activeTab === '5G'"
               :entries="wifi5gEntries"
               band="5G"
               :data-testid="qa('mac-filter-5g-band')"
-              @update:entries="update5GEntries"
+              @update:entries="(e: MACFilteringEntry[]) => updateBandEntries('5GHz', e)"
             />
             <MacFilterBand
               v-if="activeTab === '6G'"
               :entries="wifi6gEntries"
               band="6G"
               :data-testid="qa('mac-filter-6g-band')"
-              @update:entries="update6GEntries"
+              @update:entries="(e: MACFilteringEntry[]) => updateBandEntries('6GHz', e)"
             />
           </div>
 

@@ -47,8 +47,8 @@ ssh root@192.168.1.1 "cp -a /tmp/<filename>.lua <target-path> && chmod 755 <targ
 ### Token Usage Monitoring
 
 - Monitor token usage from system warnings: `Token usage: X/200000; Y remaining`
-- **Alert threshold**: 85% usage (170,000/200,000 tokens)
-- When reaching 85%, proactively remind user and offer to clean up
+- **Alert threshold**: 90% usage (180,000/200,000 tokens)
+- When reaching 90%, proactively remind user and offer to clean up
 
 ### Plan File Cleanup
 
@@ -56,7 +56,7 @@ ssh root@192.168.1.1 "cp -a /tmp/<filename>.lua <target-path> && chmod 755 <targ
 
 #### When to clean up:
 1. **Task completed**: Immediately after finishing implementation and testing
-2. **Before session compression**: When approaching 85% token usage
+2. **Before session compression**: When approaching 90% token usage
 3. **On explicit completion**: When user confirms task is done
 
 #### How to clean up:
@@ -199,6 +199,58 @@ Append to the `Known Issues & Solutions` section below with format:
   netsh advfirewall firewall add rule name="Syslog UDP 514" protocol=UDP dir=in localport=514 action=allow
   ```
 - **Verification**: `netsh advfirewall firewall show rule name="Syslog UDP 514"`
+
+## Page Development Guidelines
+
+### Modal Form Pattern (Reference: QosRuleTab.vue)
+
+When building pages with Add/Edit modals, always reference `src/views/network/qos/QosRuleTab.vue` as the canonical pattern:
+
+```html
+<BaseModal v-model="showModal" :title="modalTitle">
+  <div class="modal-form">
+    <div v-if="formError" class="modal-error-banner">{{ formError }}</div>
+    <div class="form-group">
+      <label class="form-label form-label-required">Label</label>
+      <BaseInput v-model="formData.field" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Label</label>
+      <BaseSelect v-model="formData.field" :options="options" />
+    </div>
+    <ActionButtons class="modal-actions"
+      :apply-text="editMode ? t('common.save') : t('common.add')"
+      :apply-loading="saving"
+      @cancel="showModal = false" @apply="handleSubmit" />
+  </div>
+</BaseModal>
+```
+
+CSS classes used with this pattern:
+- `modal-form` — flex column with gap
+- `modal-error-banner` — error banner inside modal
+- `modal-actions` — flex end-aligned button group
+
+### Use Existing Base* Components
+
+- **BaseInput** — for text/number/password inputs (wraps `<input>` with form-group, label, error display)
+- **BaseSelect** — for dropdowns with simple option lists
+- **BaseSwitch** — for on/off toggles (supports `trueValue`/`falseValue`)
+- **ActionButtons** — for save/cancel button pairs (supports `applyLoading`, `applyType="submit"`)
+- **SectionCard** — for page sections with title bar (`header-mode="row"` + `#actions` slot for table headers)
+- **BaseTable** — for data tables
+- **BaseModal** — for modal dialogs
+- **BaseToast** — for success/error notifications
+
+**Exception**: `BaseSelect` does NOT support per-option `:disabled`. When individual options need to be disabled, use a raw `<select>` with the `form-select` CSS class.
+
+### Efficient Page Planning
+
+When creating a new page or feature:
+1. **Pick one existing page** that has the closest UI pattern (table + modal → QosRuleTab, simple form → DdnsForm)
+2. **Read that reference page once** and adapt its structure directly
+3. **Do NOT search extensively** across many files during initial planning — this wastes context and time
+4. Import components from `'../../../components/common'` (barrel export)
 
 ## Jira API
 

@@ -1,22 +1,53 @@
+export interface GuestWiFiInterface {
+  InstanceIndex?: number;
+  Alias?: string;
+  OperatingFrequencyBand?: string;
+  Enable: number;
+  SSID: string;
+  KeyPassPhrase?: string;
+  SecurityMode?: string;
+  SecurityModeAvailable?: string;
+  MFPConfig?: string | number;
+  SSIDAdvertisementEnabled?: number;
+  IsolationEnable?: number;
+  AccessPointReference?: string;
+  SSIDReference?: string;
+}
+
+export interface GuestWiFiIntfGroup {
+  InstanceIndex?: number;
+  Alias?: string;
+  Enable: number;
+  SSID: string;
+  KeyPassPhrase: string;
+  SecurityMode: string;
+  SecurityModeAvailable?: string;
+  SSIDAdvertisementEnabled?: number;
+  IsolationEnable?: number;
+  CommonSSIDEnable: number;
+  MLOEnable: number;
+  BridgeInterface?: string;
+  MFPConfig?: string | number;
+  Interface: GuestWiFiInterface[];
+}
+
 export interface GuestWiFiResponse {
   GuestWiFi: {
-    Enable: number;
-    MLOEnable: number;
     MeshEnable?: number;
-    Password: string;
-    SecurityMode: string;
-    SSID: string;
-    SecurityModeAvailable: string;
+    IntfGroup: GuestWiFiIntfGroup[];
   };
 }
 
 export interface GuestWiFiUpdateRequest {
   GuestWiFi: {
-    Enable: number;
-    MLOEnable: number;
-    Password: string;
-    SecurityMode: string;
-    SSID: string;
+    IntfGroup: Array<{
+      Alias?: string;
+      Enable: number;
+      MLOEnable: number;
+      SSID: string;
+      SecurityMode: string;
+      KeyPassPhrase: string;
+    }>;
   };
 }
 

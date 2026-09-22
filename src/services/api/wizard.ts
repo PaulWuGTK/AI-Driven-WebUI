@@ -41,10 +41,16 @@ function pickSupportedSecurityMode(requested: string, options: string[]): string
 }
 
 function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
-  const smartConnect = data.WiFi.CommonSSIDEnable === 1;
-  const mloEnable = data.WiFi.MLOEnable === 1;
+  const group = data.WiFi.IntfGroup?.[0];
+  const smartConnect = group?.CommonSSIDEnable === 1;
+  const mloEnable = group?.MLOEnable === 1;
   const psc = data.WiFi.PSC6g === 1;
   const pmf = data.WiFi.MFPConfig === 1;
+
+  const findIface = (freq: string) => group?.Interface?.find(i => i.OperatingFrequencyBand === freq);
+  const iface2g = findIface('2.4GHz');
+  const iface5g = findIface('5GHz');
+  const iface6g = findIface('6GHz');
 
   return {
     wan: {
@@ -56,32 +62,32 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
       psc,
       pmf,
       common: {
-        ssid: data.WiFi.wificommon.SSID,
-        security: data.WiFi.wificommon.SecurityMode,
-        password: data.WiFi.wificommon.Password,
-        securityOptions: parseSecurityOptions(data.WiFi.wificommon.SecurityModeAvailable)
+        ssid: group?.SSID ?? '',
+        security: group?.SecurityMode ?? '',
+        password: group?.KeyPassPhrase ?? '',
+        securityOptions: parseSecurityOptions(group?.SecurityModeAvailable ?? '')
       },
       bands: {
         '2g': {
-          enabled: data.WiFi.wifi2g.Enable === 1,
-          ssid: data.WiFi.wifi2g.SSID,
-          security: data.WiFi.wifi2g.SecurityMode,
-          password: data.WiFi.wifi2g.Password,
-          securityOptions: parseSecurityOptions(data.WiFi.wifi2g.SecurityModeAvailable)
+          enabled: iface2g?.Enable === 1,
+          ssid: iface2g?.SSID ?? '',
+          security: iface2g?.SecurityMode ?? '',
+          password: iface2g?.KeyPassPhrase ?? '',
+          securityOptions: parseSecurityOptions(iface2g?.SecurityModeAvailable ?? '')
         },
         '5g': {
-          enabled: data.WiFi.wifi5g.Enable === 1,
-          ssid: data.WiFi.wifi5g.SSID,
-          security: data.WiFi.wifi5g.SecurityMode,
-          password: data.WiFi.wifi5g.Password,
-          securityOptions: parseSecurityOptions(data.WiFi.wifi5g.SecurityModeAvailable)
+          enabled: iface5g?.Enable === 1,
+          ssid: iface5g?.SSID ?? '',
+          security: iface5g?.SecurityMode ?? '',
+          password: iface5g?.KeyPassPhrase ?? '',
+          securityOptions: parseSecurityOptions(iface5g?.SecurityModeAvailable ?? '')
         },
         '6g': {
-          enabled: data.WiFi.wifi6g.Enable === 1,
-          ssid: data.WiFi.wifi6g.SSID,
-          security: data.WiFi.wifi6g.SecurityMode,
-          password: data.WiFi.wifi6g.Password,
-          securityOptions: parseSecurityOptions(data.WiFi.wifi6g.SecurityModeAvailable)
+          enabled: iface6g?.Enable === 1,
+          ssid: iface6g?.SSID ?? '',
+          security: iface6g?.SecurityMode ?? '',
+          password: iface6g?.KeyPassPhrase ?? '',
+          securityOptions: parseSecurityOptions(iface6g?.SecurityModeAvailable ?? '')
         }
       }
     },
@@ -120,35 +126,40 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
         WANMode: config.wan.wanMode
       },
       WiFi: {
-        CommonSSIDEnable: config.wifi.smartConnect ? 1 : 0,
-        MLOEnable: config.wifi.mloEnable ? 1 : 0,
         MeshEnable: config.mesh.enable ? 1 : 0,
         MFPConfig: config.wifi.pmf ? 1 : 0,
         PSC6g: config.wifi.psc ? 1 : 0,
-        wificommon: {
+        IntfGroup: [{
           Enable: config.wifi.smartConnect ? 1 : 0,
           SSID: config.wifi.common.ssid,
           SecurityMode: commonSecurity,
-          Password: config.wifi.common.password
-        },
-        wifi2g: {
-          Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
-          SSID: config.wifi.bands['2g'].ssid,
-          SecurityMode: security2g,
-          Password: config.wifi.bands['2g'].password
-        },
-        wifi5g: {
-          Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
-          SSID: config.wifi.bands['5g'].ssid,
-          SecurityMode: security5g,
-          Password: config.wifi.bands['5g'].password
-        },
-        wifi6g: {
-          Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
-          SSID: config.wifi.bands['6g'].ssid,
-          SecurityMode: security6g,
-          Password: config.wifi.bands['6g'].password
-        }
+          KeyPassPhrase: config.wifi.common.password,
+          CommonSSIDEnable: config.wifi.smartConnect ? 1 : 0,
+          MLOEnable: config.wifi.mloEnable ? 1 : 0,
+          Interface: [
+            {
+              Alias: 'WIFI_2G',
+              Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
+              SSID: config.wifi.bands['2g'].ssid,
+              SecurityMode: security2g,
+              KeyPassPhrase: config.wifi.bands['2g'].password
+            },
+            {
+              Alias: 'WIFI_5G',
+              Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
+              SSID: config.wifi.bands['5g'].ssid,
+              SecurityMode: security5g,
+              KeyPassPhrase: config.wifi.bands['5g'].password
+            },
+            {
+              Alias: 'WIFI_6G',
+              Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
+              SSID: config.wifi.bands['6g'].ssid,
+              SecurityMode: security6g,
+              KeyPassPhrase: config.wifi.bands['6g'].password
+            }
+          ]
+        }]
       },
       Admin: {
         Username: config.admin.username,

@@ -72,9 +72,11 @@ export async function getWifiNeighbors(): Promise<WifiNeighborStatusResponse> {
   if (isDevelopment) {
     return {
       "WifiNeighbor": {
-          Enable2g: 1,
-          Enable5g: 1,
-          Enable6g: 0,
+          Interfaces: [
+            { InstanceIndex: 1, Alias: "radio0", OperatingFrequencyBand: "2.4GHz", Enable: 1 },
+            { InstanceIndex: 2, Alias: "radio1", OperatingFrequencyBand: "5GHz", Enable: 1 },
+            { InstanceIndex: 3, Alias: "radio2", OperatingFrequencyBand: "6GHz", Enable: 0 },
+          ]
       }
     };
   }
@@ -108,7 +110,7 @@ export async function scanWifiNeighbors(band: string): Promise<WifiNeighborScanR
   return callApi<WifiNeighborScanResponse>(`${API_BASE_URL}/info?list=WifiNeighbor`, {
     method: 'POST',
     body: JSON.stringify({
-      WifiNeighbor: { Band: band }
+      WifiNeighbor: { Alias: band }
     } as WifiNeighborScanRequest),
   });
 }

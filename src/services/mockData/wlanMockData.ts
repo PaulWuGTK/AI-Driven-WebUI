@@ -4,7 +4,7 @@ export const wlanMockData: WlanStatusResponse = {
   "StatusWlan": [
     {
       "Enable": 1,
-      "Band": "2.4GHz",
+      "OperatingFrequencyBand": "2.4GHz",
       "Channel": 1,
       "AutoChannel": 0,
       "Bandwidth": "20MHz",
@@ -12,7 +12,7 @@ export const wlanMockData: WlanStatusResponse = {
       "Interface": [
         {
           "Alias": "guest",
-          "Password": "passwordGuest",
+          "KeyPassPhrase": "passwordGuest",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5e:80",
@@ -22,7 +22,7 @@ export const wlanMockData: WlanStatusResponse = {
         },
         {
           "Alias": "main",
-          "Password": "password",
+          "KeyPassPhrase": "password",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5d:7f",
@@ -52,7 +52,7 @@ export const wlanMockData: WlanStatusResponse = {
     },
     {
       "Enable": 1,
-      "Band": "5GHz",
+      "OperatingFrequencyBand": "5GHz",
       "Channel": 36,
       "AutoChannel": 0,
       "Bandwidth": "80MHz",
@@ -60,7 +60,7 @@ export const wlanMockData: WlanStatusResponse = {
       "Interface": [
         {
           "Alias": "guest",
-          "Password": "passwordGuest",
+          "KeyPassPhrase": "passwordGuest",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5e:80",
@@ -70,7 +70,7 @@ export const wlanMockData: WlanStatusResponse = {
         },
         {
           "Alias": "main",
-          "Password": "password",
+          "KeyPassPhrase": "password",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5d:7f",
@@ -83,7 +83,7 @@ export const wlanMockData: WlanStatusResponse = {
     },
     {
       "Enable": 1,
-      "Band": "6GHz",
+      "OperatingFrequencyBand": "6GHz",
       "Channel": 33,
       "AutoChannel": 0,
       "Bandwidth": "160MHz",
@@ -91,7 +91,7 @@ export const wlanMockData: WlanStatusResponse = {
       "Interface": [
         {
           "Alias": "guest",
-          "Password": "passwordGuest",
+          "KeyPassPhrase": "passwordGuest",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5e:80",
@@ -101,7 +101,7 @@ export const wlanMockData: WlanStatusResponse = {
         },
         {
           "Alias": "main",
-          "Password": "password",
+          "KeyPassPhrase": "password",
           "Authentication": "WPA2-Personal",
           "Encryption": "AES",
           "BSSID": "76:e2:f9:a5:5d:7f",

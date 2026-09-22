@@ -122,12 +122,9 @@ async function fetchAndUpdate() {
     }
 
     // Process WiFi data
-    const wifiList: [WifiBand, { Receive: string; Sent: string }][] = [
-      ['2.4G', resp.StatusSystemStat.WiFi.wifi2g],
-      ['5G', resp.StatusSystemStat.WiFi.wifi5g],
-      ['6G', resp.StatusSystemStat.WiFi.wifi6g]
-    ];
-    for (const [band, v] of wifiList) {
+    const freqToBand: Record<string, WifiBand> = { '2.4GHz': '2.4G', '5GHz': '5G', '6GHz': '6G' };
+    for (const v of resp.StatusSystemStat.WiFi) {
+      const band: WifiBand = freqToBand[v.OperatingFrequencyBand ?? ''] ?? '2.4G';
       if (!wifiData.value.has(band)) wifiData.value.set(band, []);
       const list = wifiData.value.get(band)!;
       const bytesRx = Number(v.Receive);

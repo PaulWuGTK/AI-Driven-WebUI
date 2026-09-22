@@ -203,7 +203,7 @@ onMounted(fetchWpsConfig);
       />
       <WpsVapInfo 
         :data-testid="qa('wireless-wps-config-vap-info')"
-        :bands="wpsData.WlanWps.Band"
+        :bands="wpsData.WlanWps.Interfaces"
       />
     </template>
 

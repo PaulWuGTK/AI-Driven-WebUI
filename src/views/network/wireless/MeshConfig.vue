@@ -3,7 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
 import { getWlanMesh, updateWlanMesh } from '../../../services/api/wireless';
-import type { WlanMeshResponse } from '../../../types/wireless';
+import type { WlanMeshResponse, WlanMeshIntfGroup } from '../../../types/wireless';
 import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 import { ActionButtons, BaseSecretInput, BaseSwitch, BaseToast } from '../../../components/common';
 import { useAutoDismiss } from '../../../composables/useAutoDismiss';
@@ -23,9 +23,14 @@ const errorToastMessage = ref('');
 const { visible: showSuccessToast, show: triggerSuccessToast } = useAutoDismiss();
 const { visible: showErrorToast, show: triggerErrorToast } = useAutoDismiss();
 
+/** Convenience accessor for the first (and usually only) Mesh IntfGroup */
+const group = computed<WlanMeshIntfGroup | undefined>(() => {
+  return meshData.value?.WlanMesh.IntfGroup[0];
+});
+
 watch(() => meshData.value?.WlanMesh.MeshEnable, (newValue) => {
-  if (meshData.value && newValue !== undefined) {
-    meshData.value.WlanMesh.Enable = newValue;
+  if (group.value && newValue !== undefined) {
+    group.value.Enable = newValue;
   }
 });
 
@@ -68,20 +73,31 @@ const handleBlockingComplete = () => {
 };
 
 const handleSubmit = async () => {
-  if (!meshData.value) return;
+  if (!meshData.value || !group.value) return;
   showBlockingOverlay.value = true;
   loading.value = true;
   error.value = null;
   try {
+    const g = group.value;
     const response = await updateWlanMesh({
       WlanMesh: {
         MeshEnable: Number(meshData.value.WlanMesh.MeshEnable),
-        Enable: Number(meshData.value.WlanMesh.Enable),
-        SSID: meshData.value.WlanMesh.SSID,
-        SecurityMode: meshData.value.WlanMesh.SecurityMode,
-        Password: meshData.value.WlanMesh.Password,
-        MLOEnable: Number(meshData.value.WlanMesh.MLOEnable),
-        CommonSSIDEnable: Number(meshData.value.WlanMesh.CommonSSIDEnable)
+        IntfGroup: [{
+          Alias: g.Alias,
+          Enable: Number(g.Enable),
+          SSID: g.SSID,
+          KeyPassPhrase: g.KeyPassPhrase,
+          SecurityMode: g.SecurityMode,
+          CommonSSIDEnable: Number(g.CommonSSIDEnable),
+          MLOEnable: Number(g.MLOEnable),
+          Interface: g.Interface.map((iface) => ({
+            Alias: iface.Alias,
+            Enable: iface.Enable,
+            SSID: iface.SSID,
+            KeyPassPhrase: iface.KeyPassPhrase ?? '',
+            SecurityMode: iface.SecurityMode ?? g.SecurityMode
+          }))
+        }]
       }
     });
     const nokMessage = extractNokMessage(response);
@@ -126,54 +142,56 @@ onMounted(fetchMeshConfig);
         />
       </div>
 
-      <div class="common-ssid" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-ssid-section')">
-        <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.backhaulSsidConfig') }}</div>
-        <div class="ssid-content" :data-testid="qa('wireless-mesh-config-ssid-content')">
-          <div class="form-group">
-            <label :data-testid="qa('wireless-mesh-config-ssid-label')">SSID</label>
-            <input
-              type="text"
-              :data-testid="qa('wireless-mesh-config-ssid-input')"
-              v-model="meshData.WlanMesh.SSID"
-              disabled
-              class="disabled-input"
-            />
-          </div>
-          <div class="form-group">
-            <label :data-testid="qa('wireless-mesh-config-security-label')">Security Mode</label>
-            <input
-              type="text"
-              :data-testid="qa('wireless-mesh-config-security-input')"
-              v-model="meshData.WlanMesh.SecurityMode"
-              disabled
-              class="disabled-input"
-            />
-          </div>
-          <div class="form-group">
-            <label :data-testid="qa('wireless-mesh-config-password-label')">Password</label>
-            <BaseSecretInput
-              v-model="meshData.WlanMesh.Password"
-              class="secret-password disabled-input"
-              :input-data-testid="qa('wireless-mesh-config-password-input')"
-              :disabled="true"
-              :show-toggle="false"
-            />
+      <template v-if="meshData.WlanMesh.MeshEnable === 1 && group">
+        <div class="common-ssid" :data-testid="qa('wireless-mesh-config-ssid-section')">
+          <div class="section-title" :data-testid="qa('wireless-mesh-config-ssid-title')">{{ t('wireless.backhaulSsidConfig') }}</div>
+          <div class="ssid-content" :data-testid="qa('wireless-mesh-config-ssid-content')">
+            <div class="form-group">
+              <label :data-testid="qa('wireless-mesh-config-ssid-label')">SSID</label>
+              <input
+                type="text"
+                :data-testid="qa('wireless-mesh-config-ssid-input')"
+                v-model="group.SSID"
+                disabled
+                class="disabled-input"
+              />
+            </div>
+            <div class="form-group">
+              <label :data-testid="qa('wireless-mesh-config-security-label')">Security Mode</label>
+              <input
+                type="text"
+                :data-testid="qa('wireless-mesh-config-security-input')"
+                v-model="group.SecurityMode"
+                disabled
+                class="disabled-input"
+              />
+            </div>
+            <div class="form-group">
+              <label :data-testid="qa('wireless-mesh-config-password-label')">Password</label>
+              <BaseSecretInput
+                v-model="group.KeyPassPhrase"
+                class="secret-password disabled-input"
+                :input-data-testid="qa('wireless-mesh-config-password-input')"
+                :disabled="true"
+                :show-toggle="false"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="mlo-section" v-if="meshData.WlanMesh.MeshEnable === 1" :data-testid="qa('wireless-mesh-config-mlo-section')">
-        <div class="switch-label">
-          <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO Enable</span>
-          <BaseSwitch
-            v-model="meshData.WlanMesh.MLOEnable"
-            :true-value="1"
-            :false-value="0"
-            :data-testid="qa('wireless-mesh-config-mlo-toggle')"
-            :slider-data-testid="qa('wireless-mesh-config-mlo-toggle-slider')"
-          />
+        <div class="mlo-section" :data-testid="qa('wireless-mesh-config-mlo-section')">
+          <div class="switch-label">
+            <span :data-testid="qa('wireless-mesh-config-mlo-label')">MLO Enable</span>
+            <BaseSwitch
+              v-model="group.MLOEnable"
+              :true-value="1"
+              :false-value="0"
+              :data-testid="qa('wireless-mesh-config-mlo-toggle')"
+              :slider-data-testid="qa('wireless-mesh-config-mlo-toggle-slider')"
+            />
+          </div>
         </div>
-      </div>
+      </template>
 
       <div class="button-group" :data-testid="qa('wireless-mesh-config-button-group')">
         <ActionButtons

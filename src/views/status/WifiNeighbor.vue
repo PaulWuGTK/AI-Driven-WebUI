@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { WifiNeighborStatusResponse, WifiNeighborInfo } from '../../types/wifiNeighbor';
+import type { WifiNeighborStatusResponse, WifiNeighborInfo, WifiNeighborInterface } from '../../types/wifiNeighbor';
 import { getWifiNeighbors, scanWifiNeighbors } from '../../services/api';
 import { BaseTable, SectionCard } from '../../components/common';
 import { extractNokMessage } from '../../utils/apiUtils';
@@ -25,6 +25,22 @@ const errors = ref<{ [key: string]: string | null }>({
   '5': null,
   '6': null
 });
+
+/** Map band shorthand ('2','5','6') to OperatingFrequencyBand value used by the backend */
+const bandFreqMap: Record<string, string> = { '2': '2.4GHz', '5': '5GHz', '6': '6GHz' };
+
+/** Find the Interfaces[] entry for a given band shorthand */
+const findInterface = (band: string): WifiNeighborInterface | undefined => {
+  return wifiNeighborData.value?.WifiNeighbor.Interfaces.find(
+    (iface) => iface.OperatingFrequencyBand === bandFreqMap[band]
+  );
+};
+
+/** Check whether a band is enabled */
+const isBandEnabled = (band: string): boolean => {
+  const iface = findInterface(band);
+  return iface ? iface.Enable === 1 : false;
+};
 
 const neighborColumns = computed(() => [
   { key: 'SSID', label: t('wifiNeighbor.ssid'), headerDataTestid: qa('wifi-neighbor-header-ssid') },
@@ -59,10 +75,13 @@ const fetchWifiNeighbors = async () => {
 const handleScan = async (band: string) => {
   if (loading.value[band]) return;
 
+  const iface = findInterface(band);
+  const alias = iface?.Alias ?? band;
+
   loading.value[band] = true;
   errors.value[band] = null;
   try {
-    const response = await scanWifiNeighbors(band);
+    const response = await scanWifiNeighbors(alias);
     const nokMessage = extractNokMessage(response);
     if (nokMessage) {
       errors.value[band] = nokMessage;
@@ -131,7 +150,7 @@ onMounted(fetchWifiNeighbors);
             class="btn btn-primary"
             :data-testid="qa('wifi-neighbor-2g-scan-button')"
             @click="handleScan('2')"
-            :disabled="loading['2'] || !wifiNeighborData?.WifiNeighbor.Enable2g"
+            :disabled="loading['2'] || !isBandEnabled('2')"
           >
             {{ loading['2'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
           </button>
@@ -181,7 +200,7 @@ onMounted(fetchWifiNeighbors);
             class="btn btn-primary"
             :data-testid="qa('wifi-neighbor-5g-scan-button')"
             @click="handleScan('5')"
-            :disabled="loading['5'] || !wifiNeighborData?.WifiNeighbor.Enable5g"
+            :disabled="loading['5'] || !isBandEnabled('5')"
           >
             {{ loading['5'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
           </button>
@@ -231,7 +250,7 @@ onMounted(fetchWifiNeighbors);
             class="btn btn-primary"
             :data-testid="qa('wifi-neighbor-6g-scan-button')"
             @click="handleScan('6')"
-            :disabled="loading['6'] || !wifiNeighborData?.WifiNeighbor.Enable6g"
+            :disabled="loading['6'] || !isBandEnabled('6')"
           >
             {{ loading['6'] ? t('wifiNeighbor.scanning') : t('wifiNeighbor.scan') }}
           </button>
