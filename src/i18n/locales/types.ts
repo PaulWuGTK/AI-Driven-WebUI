@@ -377,6 +377,13 @@ export interface Translations {
     connect: string;
     connected: string;
     disconnected: string;
+    switchedToExtender: string;
+    switchedToRouter: string;
+    extenderAccessInfo: string;
+    routerAccessInfo: string;
+    applyingConfig: string;
+    applyingDescription: string;
+    applyingDurationHint: string;
   };
   wanSetup: {
     title: string;

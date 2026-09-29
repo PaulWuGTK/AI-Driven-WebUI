@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: 'クイックセットアップ',
     matterManualPairing: '手動ペアリング',
     systemDebug: 'システムデバッグ',
-    networkTopology: 'ネットワークトポロジー'
+    networkTopology: 'ネットワークマップ'
   },
   header: {
     account: 'アカウント',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: 'エクステンダーモードに切り替えました',
     switchedToRouter: 'ルーターモードに切り替えました',
     extenderAccessInfo: 'デバイスはエクステンダーモードに切り替え中です。DHCP で IP アドレスが割り当てられている場合はそのアドレスでアクセスしてください。IP が取得できない場合は {ip} でアクセスしてください。',
-    routerAccessInfo: 'デバイスはルーターモードに切り替え中です。{ip} でアクセスしてください。'
+    routerAccessInfo: 'デバイスはルーターモードに切り替え中です。{ip} でアクセスしてください。',
+    applyingConfig: '{mode} モード設定を適用中...',
+    applyingDescription: 'エクステンダー設定を適用しています。しばらくお待ちください。',
+    applyingDurationHint: 'この処理には最大 {seconds} 秒かかる場合があります。'
   },
   wanSetup: {
     title: 'WAN設定',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: 'ネットワークトポロジー',
+    title: 'ネットワークマップ',
     treeView: 'ツリー表示',
     deviceList: 'デバイス一覧',
     textView: 'テキスト表示',

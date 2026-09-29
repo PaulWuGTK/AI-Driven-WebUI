@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { ExtenderResponse, ExtenderNeighbor, ExtenderConnectRequest } from '../../../types/extender';
 import { getExtenderStatus, updateExtenderSettings, scanNeighborAPs, connectToAP, triggerWPS } from '../../../services/api/extender';
 import { ActionButtons, BaseSecretInput, BaseSwitch } from '../../../components/common';
+import BlockingOverlay from '../../../components/BlockingOverlay.vue';
 
 import { useQA } from '../../../utils/qa';
 const { isQAMode, qa, slug } = useQA();
@@ -24,6 +25,13 @@ const successMessage = ref('');
 const showModeSwitchNotice = ref(false);
 const modeSwitchIp = ref<string | null>(null);
 const modeSwitchMode = ref<'extender' | 'router'>('extender');
+const showCountdown = ref(false);
+const countdownMessage = ref('');
+const overlayDurationSeconds = 30;
+const overlayDescription1 = computed(() => t('wirelessExtender.applyingDescription'));
+const overlayDescription2 = computed(() =>
+  t('wirelessExtender.applyingDurationHint', { seconds: overlayDurationSeconds })
+);
 
 // Computed properties
 const isExtenderEnabled = computed(() => 
@@ -73,9 +81,24 @@ const handleRoleChange = (event: Event) => {
   tempExtenderRole.value = (event.target as HTMLSelectElement).value as "MeshAgent" | "Repeater";
 };
 
+// Helper to get fallback IP based on mode
+const getAccessIp = (mode: 'extender' | 'router'): string => {
+  return mode === 'router' ? '192.168.1.1' : '192.168.1.1';
+};
+
+// Handle countdown complete — show mode switch notice
+const handleCountdownComplete = () => {
+  showCountdown.value = false;
+  showModeSwitchNotice.value = true;
+};
+
 // Apply configuration changes
 const applyConfigChanges = async () => {
   loading.value = true;
+  error.value = null;
+  const isEnablingExtender = tempExtenderEnabled.value === 1;
+  modeSwitchMode.value = isEnablingExtender ? 'extender' : 'router';
+
   try {
     const response = await updateExtenderSettings({
       Extender: {
@@ -84,19 +107,33 @@ const applyConfigChanges = async () => {
         Role: tempExtenderRole.value
       }
     });
-    
-    // Check if mode switch occurred
+
+    // Response received — check if mode switch occurred
     if (response.Extender && 'ip_address' in response.Extender && response.Extender.ip_address) {
       modeSwitchIp.value = response.Extender.ip_address;
-      modeSwitchMode.value = tempExtenderEnabled.value === 1 ? 'extender' : 'router';
-      showModeSwitchNotice.value = true;
+      countdownMessage.value = t('wirelessExtender.applyingConfig', {
+        mode: isEnablingExtender ? 'Extender' : 'Router'
+      });
+      showCountdown.value = true;
     } else {
       await fetchExtenderStatus();
       showSuccessNotification('Configuration updated successfully');
     }
-  } catch (err) {
-    console.error('Error updating extender configuration:', err);
-    error.value = 'Failed to update extender configuration';
+  } catch (err: unknown) {
+    // Network error means device IP changed before response — treat as mode switch
+    const isNetworkError = err instanceof TypeError ||
+      (err instanceof Error && /fetch|network/i.test(err.message));
+
+    if (isNetworkError) {
+      modeSwitchIp.value = getAccessIp(modeSwitchMode.value);
+      countdownMessage.value = t('wirelessExtender.applyingConfig', {
+        mode: isEnablingExtender ? 'Extender' : 'Router'
+      });
+      showCountdown.value = true;
+    } else {
+      console.error('Error updating extender configuration:', err);
+      error.value = err instanceof Error ? err.message : 'Failed to update extender configuration';
+    }
   } finally {
     loading.value = false;
   }
@@ -568,6 +605,15 @@ onMounted(() => {
       <div v-if="showSuccess" class="success-message" :data-testid="qa('wireless-extender-success-message')">
         {{ successMessage }}
       </div>
+
+      <BlockingOverlay
+        :is-visible="showCountdown"
+        :message="countdownMessage"
+        :description1="overlayDescription1"
+        :description2="overlayDescription2"
+        :duration="overlayDurationSeconds"
+        @complete="handleCountdownComplete"
+      />
 
       <!-- Mode Switch Notice -->
       <div v-if="showModeSwitchNotice" class="mode-switch-overlay" :data-testid="qa('wireless-extender-mode-switch-overlay')">

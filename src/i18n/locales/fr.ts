@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: 'Configuration rapide',
     matterManualPairing: 'Appairage manuel',
     systemDebug: 'Débogage système',
-    networkTopology: 'Topologie réseau'
+    networkTopology: 'Carte réseau'
   },
   header: {
     account: 'Compte',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: 'Basculé en mode Extender',
     switchedToRouter: 'Basculé en mode Routeur',
     extenderAccessInfo: 'L\'appareil bascule en mode Extender. Si une adresse IP DHCP est disponible, utilisez-la pour accéder à l\'appareil. Sinon, accédez à l\'appareil via {ip}.',
-    routerAccessInfo: 'L\'appareil bascule en mode Routeur. Veuillez accéder à l\'appareil via {ip}.'
+    routerAccessInfo: 'L\'appareil bascule en mode Routeur. Veuillez accéder à l\'appareil via {ip}.',
+    applyingConfig: 'Application de la configuration en mode {mode}...',
+    applyingDescription: 'Veuillez patienter pendant l\'application de la configuration de l\'extender.',
+    applyingDurationHint: 'Ce processus peut prendre jusqu\'à {seconds} secondes.'
   },
   wanSetup: {
     title: 'Paramètres WAN',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: 'Topologie réseau',
+    title: 'Carte réseau',
     treeView: 'Vue arborescente',
     deviceList: 'Liste des appareils',
     textView: 'Vue texte',

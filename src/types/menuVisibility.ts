@@ -83,8 +83,7 @@ export const menuVisibilityRules: MenuVisibilityRules = {
   },
   'status.networkTopology': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },
-    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true },
-    qaOnly: true
+    operationModes: { Init: false, Gateway: true, Bridge: true, Extender: true }
   },
   'status.lcm': {
     netLayoutTypes: { prpl: true, genix: true, cht: true },

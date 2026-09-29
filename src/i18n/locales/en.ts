@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: 'Quick Setup',
     matterManualPairing: 'Manual Pairing',
     systemDebug: 'System Debug',
-    networkTopology: 'Network Topology'
+    networkTopology: 'Network Map'
   },
   header: {
     account: 'Account',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: 'Switched to Extender Mode',
     switchedToRouter: 'Switched to Router Mode',
     extenderAccessInfo: 'The device is switching to Extender mode. If a DHCP-assigned IP is available, use that address to access the device. Otherwise, access the device at {ip}.',
-    routerAccessInfo: 'The device is switching back to Router mode. Please access the device at {ip}.'
+    routerAccessInfo: 'The device is switching back to Router mode. Please access the device at {ip}.',
+    applyingConfig: 'Applying {mode} mode configuration...',
+    applyingDescription: 'Please wait while the extender configuration is being applied.',
+    applyingDurationHint: 'This process may take up to {seconds} seconds.'
   },
   wanSetup: {
     title: 'WAN Settings',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: 'Network Topology',
+    title: 'Network Map',
     treeView: 'Tree View',
     deviceList: 'Device List',
     textView: 'Text View',

@@ -153,6 +153,7 @@ export default defineComponent({
   font-weight: 500;
 }
 
+
 .node-ip,
 .node-mac {
   font-size: 0.75rem;

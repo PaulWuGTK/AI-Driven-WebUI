@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: '快速設定',
     matterManualPairing: '手動配對',
     systemDebug: '系統除錯',
-    networkTopology: '網路拓撲'
+    networkTopology: '網路地圖'
   },
   header: {
     account: '帳號',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: '已切換至延伸器模式',
     switchedToRouter: '已切換至路由器模式',
     extenderAccessInfo: '裝置正在切換至延伸器模式。若已取得 DHCP 配發的 IP，請使用該位址存取裝置；若未取得 IP，請透過 {ip} 存取。',
-    routerAccessInfo: '裝置正在切換回路由器模式，請透過 {ip} 存取裝置。'
+    routerAccessInfo: '裝置正在切換回路由器模式，請透過 {ip} 存取裝置。',
+    applyingConfig: '正在套用 {mode} 模式設定...',
+    applyingDescription: '正在套用延伸器設定，請稍候。',
+    applyingDurationHint: '此過程最多需要 {seconds} 秒。'
   },
   wanSetup: {
     title: 'WAN 設定',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: '網路拓撲',
+    title: '網路地圖',
     treeView: '樹狀檢視',
     deviceList: '裝置列表',
     textView: '文字檢視',

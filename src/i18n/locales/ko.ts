@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: '빠른 설정',
     matterManualPairing: '수동 페어링',
     systemDebug: '시스템 디버그',
-    networkTopology: '네트워크 토폴로지'
+    networkTopology: '네트워크 맵'
   },
   header: {
     account: '계정',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: '확장기 모드로 전환됨',
     switchedToRouter: '라우터 모드로 전환됨',
     extenderAccessInfo: '장치가 확장기 모드로 전환 중입니다. DHCP에서 할당된 IP가 있으면 해당 주소로 접속하십시오. IP를 받지 못한 경우 {ip}로 접속하십시오.',
-    routerAccessInfo: '장치가 라우터 모드로 전환 중입니다. {ip}로 접속하십시오.'
+    routerAccessInfo: '장치가 라우터 모드로 전환 중입니다. {ip}로 접속하십시오.',
+    applyingConfig: '{mode} 모드 구성 적용 중...',
+    applyingDescription: '확장기 구성을 적용하는 중입니다. 잠시 기다려 주십시오.',
+    applyingDurationHint: '이 과정은 최대 {seconds}초가 소요될 수 있습니다.'
   },
   wanSetup: {
     title: 'WAN 설정',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: '네트워크 토폴로지',
+    title: '네트워크 맵',
     treeView: '트리 보기',
     deviceList: '장치 목록',
     textView: '텍스트 보기',

@@ -92,6 +92,7 @@ const config = ref<WizardConfig>({
     wanMode: ''
   },
   wifi: {
+    groupAlias: 'PRIV',
     smartConnect: true,
     mloEnable: true,
     psc: true,
@@ -103,9 +104,9 @@ const config = ref<WizardConfig>({
       securityOptions: []
     },
     bands: {
-      '2g': { enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] },
-      '5g': { enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] },
-      '6g': { enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] }
+      '2g': { alias: '', enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] },
+      '5g': { alias: '', enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] },
+      '6g': { alias: '', enabled: true, ssid: '', security: 'WPA3-Personal', password: '', securityOptions: [] }
     }
   },
   mesh: {
