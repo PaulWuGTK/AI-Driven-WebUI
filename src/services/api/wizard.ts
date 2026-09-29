@@ -57,6 +57,7 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
       wanMode: data.Wan.WANMode || ''
     },
     wifi: {
+      groupAlias: group?.Alias ?? 'PRIV',
       smartConnect,
       mloEnable,
       psc,
@@ -69,6 +70,7 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
       },
       bands: {
         '2g': {
+          alias: iface2g?.Alias ?? '',
           enabled: iface2g?.Enable === 1,
           ssid: iface2g?.SSID ?? '',
           security: iface2g?.SecurityMode ?? '',
@@ -76,6 +78,7 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
           securityOptions: parseSecurityOptions(iface2g?.SecurityModeAvailable ?? '')
         },
         '5g': {
+          alias: iface5g?.Alias ?? '',
           enabled: iface5g?.Enable === 1,
           ssid: iface5g?.SSID ?? '',
           security: iface5g?.SecurityMode ?? '',
@@ -83,6 +86,7 @@ function transformWizardDataToConfig(data: WizardData): Partial<WizardConfig> {
           securityOptions: parseSecurityOptions(iface5g?.SecurityModeAvailable ?? '')
         },
         '6g': {
+          alias: iface6g?.Alias ?? '',
           enabled: iface6g?.Enable === 1,
           ssid: iface6g?.SSID ?? '',
           security: iface6g?.SecurityMode ?? '',
@@ -130,6 +134,7 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
         MFPConfig: config.wifi.pmf ? 1 : 0,
         PSC6g: config.wifi.psc ? 1 : 0,
         IntfGroup: [{
+          Alias: config.wifi.groupAlias,
           Enable: config.wifi.smartConnect ? 1 : 0,
           SSID: config.wifi.common.ssid,
           SecurityMode: commonSecurity,
@@ -138,21 +143,21 @@ function transformConfigToSubmitData(config: WizardConfig): WizardSubmitData {
           MLOEnable: config.wifi.mloEnable ? 1 : 0,
           Interface: [
             {
-              Alias: 'WIFI_2G',
+              Alias: config.wifi.bands['2g'].alias,
               Enable: config.wifi.bands['2g'].enabled ? 1 : 0,
               SSID: config.wifi.bands['2g'].ssid,
               SecurityMode: security2g,
               KeyPassPhrase: config.wifi.bands['2g'].password
             },
             {
-              Alias: 'WIFI_5G',
+              Alias: config.wifi.bands['5g'].alias,
               Enable: config.wifi.bands['5g'].enabled ? 1 : 0,
               SSID: config.wifi.bands['5g'].ssid,
               SecurityMode: security5g,
               KeyPassPhrase: config.wifi.bands['5g'].password
             },
             {
-              Alias: 'WIFI_6G',
+              Alias: config.wifi.bands['6g'].alias,
               Enable: config.wifi.bands['6g'].enabled ? 1 : 0,
               SSID: config.wifi.bands['6g'].ssid,
               SecurityMode: security6g,

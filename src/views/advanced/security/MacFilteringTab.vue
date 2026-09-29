@@ -93,7 +93,13 @@ const confirmApply = async () => {
   error.value = null;
   try {
     await updateMACFiltering({
-      WifiMACFiltering: macFilteringData.value.WifiMACFiltering
+      WifiMACFiltering: {
+        Interfaces: macFilteringData.value.WifiMACFiltering.Interfaces.map((e) => ({
+          Alias: e.Alias,
+          ACLMode: e.ACLMode,
+          MACList: e.MACList
+        }))
+      }
     });
     showSuccessMessage();
     await fetchMACFiltering();

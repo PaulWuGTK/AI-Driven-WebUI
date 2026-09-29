@@ -47,6 +47,7 @@ export interface WizardConfig {
     wanMode: string;
   };
   wifi: {
+    groupAlias: string;
     smartConnect: boolean;
     mloEnable: boolean;
     psc: boolean;
@@ -58,9 +59,9 @@ export interface WizardConfig {
       securityOptions: string[];
     };
     bands: {
-      '2g': { enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
-      '5g': { enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
-      '6g': { enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
+      '2g': { alias: string; enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
+      '5g': { alias: string; enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
+      '6g': { alias: string; enabled: boolean; ssid: string; security: string; password: string; securityOptions: string[] };
     };
   };
   mesh: {

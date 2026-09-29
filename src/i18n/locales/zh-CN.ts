@@ -81,7 +81,7 @@ const translations = {
     matterQuickSetup: '快速设置',
     matterManualPairing: '手动配对',
     systemDebug: '系统调试',
-    networkTopology: '网络拓扑'
+    networkTopology: '网络地图'
   },
   header: {
     account: '帐户',
@@ -616,7 +616,10 @@ const translations = {
     switchedToExtender: '已切换至扩展器模式',
     switchedToRouter: '已切换至路由器模式',
     extenderAccessInfo: '设备正在切换至扩展器模式。若已获取 DHCP 分配的 IP，请使用该地址访问设备；若未获取 IP，请通过 {ip} 访问。',
-    routerAccessInfo: '设备正在切换回路由器模式，请通过 {ip} 访问设备。'
+    routerAccessInfo: '设备正在切换回路由器模式，请通过 {ip} 访问设备。',
+    applyingConfig: '正在应用 {mode} 模式配置...',
+    applyingDescription: '正在应用扩展器配置，请稍候。',
+    applyingDurationHint: '此过程最多需要 {seconds} 秒。'
   },
   wanSetup: {
     title: 'WAN 设置',
@@ -1910,7 +1913,7 @@ const translations = {
     }
   },
   networkTopology: {
-    title: '网络拓扑',
+    title: '网络地图',
     treeView: '树状视图',
     deviceList: '设备列表',
     textView: '文本视图',
