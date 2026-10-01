@@ -17,10 +17,7 @@ const loading = ref(false);
 const showSuccess = ref(false);
 const showBlockingOverlay = ref(false);
 
-const sortedRadios = computed(() => {
-  const radios = advancedData.value?.WlanAdvanced.Radios ?? [];
-  return [...radios].sort((a, b) => (a.InstanceIndex ?? 0) - (b.InstanceIndex ?? 0));
-});
+const sortedRadios = computed(() => advancedData.value?.WlanAdvanced.Radios ?? []);
 
 const mloEnabledGroupsText = computed(() => {
   if (!advancedData.value?.WlanAdvanced.MLOEnabledGroups?.length) {
@@ -33,6 +30,10 @@ const fetchAdvancedConfig = async () => {
   loading.value = true;
   try {
     advancedData.value = await getWlanAdvanced();
+    // Sort radios by InstanceIndex in place so v-model writes propagate back
+    advancedData.value?.WlanAdvanced.Radios.sort(
+      (a, b) => (a.InstanceIndex ?? 0) - (b.InstanceIndex ?? 0)
+    );
   } catch (error) {
     console.error('Error fetching wireless advanced config:', error);
   } finally {
